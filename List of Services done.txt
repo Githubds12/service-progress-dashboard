@@ -86,12 +86,12 @@ Daily Summary: 14 services, 5600 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 62
-- Total Earnings: 24800 rs
-- Average Daily Earning (over 16 days since Apr 10): 1550.0 rs/day
-- Average Daily Services: 3.88 services/day
+- Total Services: 63
+- Total Earnings: 25200 rs
+- Average Daily Earning (over 16 days since Apr 10): 1575.0 rs/day
+- Average Daily Services: 3.94 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 11.6 Services / day (4657.14 rs/day for 14 days)
-- Services Needed to Goal: 163.0
+- Recovery Pace: 11.6 Services / day (4628.57 rs/day for 14 days)
+- Services Needed to Goal: 162.0
 - Recommended for Today (inc. buffer): 14 services
-- Projected Monthly Total: ₹46500.0
+- Projected Monthly Total: ₹47250.0
