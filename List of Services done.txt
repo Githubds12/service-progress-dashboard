@@ -82,16 +82,17 @@ Daily Summary: 11 services, 4400 rs
 61. WellTrade - com.weltrade.appterminal
 62. CubaMessenger - com.cubamessenger.cubamessengerapp
 63. Bolt Food - com.bolt.food
-Daily Summary: 14 services, 5600 rs
+64. PokerBet - com.pokerbet.casino
+Daily Summary: 15 services, 6000 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 63
-- Total Earnings: 25200 rs
-- Average Daily Earning (over 16 days since Apr 10): 1575.0 rs/day
-- Average Daily Services: 3.94 services/day
+- Total Services: 64
+- Total Earnings: 25600 rs
+- Average Daily Earning (over 16 days since Apr 10): 1600.0 rs/day
+- Average Daily Services: 4.0 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 11.6 Services / day (4628.57 rs/day for 14 days)
-- Services Needed to Goal: 162.0
+- Recovery Pace: 11.5 Services / day (4600.0 rs/day for 14 days)
+- Services Needed to Goal: 161.0
 - Recommended for Today (inc. buffer): 14 services
-- Projected Monthly Total: ₹47250.0
+- Projected Monthly Total: ₹48000.0
