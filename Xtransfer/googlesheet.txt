@@ -1,4 +1,0 @@
-com.xtapp.xtransfer 3.7.14
-12fdbde7-aa37-4070-b68c-bf7a5beda8c5
-75
-GeeTest v4 CAPTCHA protection on OTP request. Flow uses multiple session-linked headers (x-server-grant-id, x-flow-id) and Cloudflare WAF.
