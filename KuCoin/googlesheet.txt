@@ -1,0 +1,13 @@
+com.kubi.kucoin 2026-04-27
+App Name: KuCoin
+Service ID: cfb750db-6fe1-43ad-85cc-e5a2c2fb6219
+Package Name: com.kubi.kucoin
+App Version: 4.24.0
+Base Score: 50
+OTP Flow: Check User -> Captcha -> OTP Send -> OTP Verify -> Sign Up
+OTP Sample: [KuCoin]Verification code:981667. This code remains effective in 10 minutes.[Safe Word: 2747]
+Security: GeeTest v4, Forter, Device Fingerprinting.
+Date: 2026-04-27
+Status: Done
+Work Type: Security Analysis
+Port: 3000

@@ -1,13 +1,13 @@
 import json
 import sys
 
-har_path = 'iHerb/iHerb.har'
+har_path = 'KuCoin/KuCoin.har'
 with open(har_path, 'r', encoding='utf-8') as f:
     har_data = json.load(f)
 
 for entry in har_data['log']['entries']:
     url = entry['request']['url']
-    if '/auth/api/otp/send' in url or '/auth/api/otp/validate' in url or '/auth/api/register' in url:
+    if any(p in url for p in ['/auth/check-user-account', '/auth/captcha-validation', '/auth/validation-code', '/auth/verify-validation-code', '/auth/sign-up']):
         print(f"URL: {url}")
         print(f"Method: {entry['request']['method']}")
         if 'postData' in entry['request']:

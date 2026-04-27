@@ -93,16 +93,17 @@ Daily Summary: 15 services, 6000 rs
 67. XTransfer - com.xtapp.xtransfer
 68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke
 69. iHerb - com.iherb
-Daily Summary: 5 services, 2000 rs
+70. KuCoin - com.kubi.kucoin
+Daily Summary: 6 services, 2400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 69
-- Total Earnings: 27600 rs
-- Average Daily Earning (over 17 days since Apr 10): 1623.53 rs/day
-- Average Daily Services: 4.06 services/day
+- Total Services: 70
+- Total Earnings: 28000 rs
+- Average Daily Earning (over 17 days since Apr 10): 1647.06 rs/day
+- Average Daily Services: 4.12 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.0 Services / day (4800.0 rs/day for 13 days)
-- Services Needed to Goal: 156.0
+- Recovery Pace: 11.9 Services / day (4769.23 rs/day for 13 days)
+- Services Needed to Goal: 155.0
 - Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹48705.88
+- Projected Monthly Total: ₹49411.76
