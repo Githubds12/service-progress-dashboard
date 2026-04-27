@@ -90,16 +90,17 @@ Daily Summary: 15 services, 6000 rs
 27th April, Monday
 65. BPme - com.bp.app.bpme.global.pl
 66. Sage - com.sage.accounting
-Daily Summary: 2 services, 800 rs
+67. XTransfer - com.xtapp.xtransfer
+Daily Summary: 3 services, 1400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 66
-- Total Earnings: 26400 rs
-- Average Daily Earning (over 17 days since Apr 10): 1552.94 rs/day
-- Average Daily Services: 3.88 services/day
+- Total Services: 67
+- Total Earnings: 27000 rs
+- Average Daily Earning (over 17 days since Apr 10): 1588.24 rs/day
+- Average Daily Services: 3.94 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.2 Services / day (4892.31 rs/day for 13 days)
-- Services Needed to Goal: 159.0
+- Recovery Pace: 12.1 Services / day (4846.15 rs/day for 13 days)
+- Services Needed to Goal: 157.5
 - Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹46588.24
+- Projected Monthly Total: ₹47647.06
