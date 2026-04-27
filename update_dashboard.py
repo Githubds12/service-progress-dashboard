@@ -331,7 +331,7 @@ def update_html(header, days, stats):
         </div>
 
         <div class="banner-container">
-            <img src="productivity_focus.png" class="banner-img" alt="Productivity">
+            <img src="productivity_banner.png" class="banner-img" alt="Productivity">
             <div class="banner-overlay"></div>
         </div>
 
