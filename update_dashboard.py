@@ -138,7 +138,7 @@ def update_html(header, days, stats):
     services = [d['count'] for d in days]
     
     services_by_day = []
-    for d in reversed(days):
+    for d in days:
         services_list = "".join(f"<li>• {s}</li>" for s in d['services'])
         day_html = f"""
         <div class="service-day">
