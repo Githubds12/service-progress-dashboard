@@ -311,7 +311,18 @@ def update_html(header, days, stats):
 
         .chart-container {{ height: 180px; }}
         
-        .recent-activity h2 {{ font-size: 18px; margin-bottom: 15px; font-weight: 700; }}
+        .recent-activity h2 {{ font-size: 18px; margin-bottom: 15px; font-weight: 700; position: sticky; top: 0; background: var(--card-bg); z-index: 10; padding-bottom: 10px; }}
+        .recent-activity {{ 
+            max-height: 500px; 
+            overflow-y: auto; 
+            padding-right: 10px;
+        }}
+        
+        /* Custom Scrollbar for Recent Activity */
+        .recent-activity::-webkit-scrollbar {{ width: 6px; }}
+        .recent-activity::-webkit-scrollbar-track {{ background: rgba(255,255,255,0.05); border-radius: 10px; }}
+        .recent-activity::-webkit-scrollbar-thumb {{ background: linear-gradient(to bottom, var(--primary), #10b981); border-radius: 10px; }}
+        
         .service-item {{ padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }}
         .service-item:last-child {{ border-bottom: none; }}
         .service-header {{ display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; }}
