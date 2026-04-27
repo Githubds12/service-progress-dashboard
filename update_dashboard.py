@@ -605,6 +605,33 @@ def update_html(header, days, stats):
     with open('c:/Users/Gorri/Documents/Reports/index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
 
+def update_readme(stats):
+    readme_path = 'c:/Users/Gorri/Documents/Reports/README.md'
+    if not os.path.exists(readme_path):
+        return
+        
+    with open(readme_path, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    stats_section = f"""
+## 📉 Live Stats
+- **Total Services**: {stats['total_services']}
+- **Total Earnings**: ₹{stats['total_earnings']}
+- **Average Daily Services**: {stats['avg_daily_services']:.2f} services/day
+- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day
+- **Monthly Projection**: ₹{stats['projected_total']:.2f}
+- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+"""
+    
+    # Replace existing stats section if it exists, or add before Tech Stack
+    if "## 📉 Live Stats" in content:
+        new_content = re.sub(r'## 📉 Live Stats\n.*?\n---', stats_section + "\n---", content, flags=re.DOTALL)
+    else:
+        new_content = content.replace("## 📊 Tech Stack", stats_section + "\n## 📊 Tech Stack")
+        
+    with open(readme_path, 'w', encoding='utf-8') as f:
+        f.write(new_content)
+
 def update_github():
     print("Updating GitHub...")
     try:
@@ -634,7 +661,8 @@ def main():
     stats = calculate_stats(days)
     update_txt(body, stats)
     update_html(header, days, stats)
-    print("Dashboard updated with Avg Daily Services!")
+    update_readme(stats)
+    print("Dashboard and README updated with Avg Daily Services!")
     update_github()
 
 if __name__ == "__main__":
