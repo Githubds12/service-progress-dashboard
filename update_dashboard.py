@@ -613,19 +613,17 @@ def update_readme(stats):
     with open(readme_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
-    stats_section = f"""
-## 📉 Live Stats
-- **Total Services**: {stats['total_services']}
-- **Total Earnings**: ₹{stats['total_earnings']}
-- **Average Daily Services**: {stats['avg_daily_services']:.2f} services/day
-- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day
-- **Monthly Projection**: ₹{stats['projected_total']:.2f}
-- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-"""
+    stats_section = f"## 📉 Live Stats\n" \
+                    f"- **Total Services**: {stats['total_services']}\n" \
+                    f"- **Total Earnings**: ₹{stats['total_earnings']}\n" \
+                    f"- **Average Daily Services**: {stats['avg_daily_services']:.2f} services/day\n" \
+                    f"- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day\n" \
+                    f"- **Monthly Projection**: ₹{stats['projected_total']:.2f}\n" \
+                    f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
-    # Replace existing stats section if it exists, or add before Tech Stack
     if "## 📉 Live Stats" in content:
-        new_content = re.sub(r'## 📉 Live Stats\n.*?\n---', stats_section + "\n---", content, flags=re.DOTALL)
+        # Regex to find the section and replace it
+        new_content = re.sub(r'## 📉 Live Stats\n(.*?)(?=\n## |$)', stats_section, content, flags=re.DOTALL)
     else:
         new_content = content.replace("## 📊 Tech Stack", stats_section + "\n## 📊 Tech Stack")
         
