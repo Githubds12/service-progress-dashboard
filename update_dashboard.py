@@ -137,20 +137,21 @@ def update_html(header, days, stats):
     earnings = [d['earnings'] for d in days]
     services = [d['count'] for d in days]
     
-    services_html = ''
+    services_by_day = []
     for d in reversed(days):
         services_list = "".join(f"<li>• {s}</li>" for s in d['services'])
-        services_html += f"""
+        day_html = f"""
         <div class="service-day">
-            <h3>
+            <div class="service-header">
                 <span>{d['date']} <small style="font-weight:normal; color:#8a8d91;">({d['count']} services)</small></span>
-                <span style="color:#1877f2;">₹{d['earnings']}</span>
-            </h3>
+                <span style="color: var(--primary);">₹{d['earnings']}</span>
+            </div>
             <ul class="service-list">
                 {services_list}
             </ul>
         </div>
         """
+        services_by_day.append(day_html)
 
     data_dict = {
         'header': header,
@@ -158,7 +159,7 @@ def update_html(header, days, stats):
         'labels': labels,
         'earnings': earnings,
         'services': services,
-        'services_html': services_html
+        'services_by_day': services_by_day
     }
     
     with open('c:/Users/Gorri/Documents/Reports/dashboard_data.js', 'w', encoding='utf-8') as f:
@@ -324,6 +325,42 @@ def update_html(header, days, stats):
         .recent-activity::-webkit-scrollbar-thumb {{ background: linear-gradient(to bottom, var(--primary), #10b981); border-radius: 10px; }}
         
         .service-item {{ padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }}
+        
+        .pagination-controls {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }}
+        .pager-btn {{
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+        }}
+        .pager-btn:hover:not(:disabled) {{
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }}
+        .pager-btn:disabled {{
+            opacity: 0.3;
+            cursor: not-allowed;
+        }}
+        .page-info {{
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }}
         .service-item:last-child {{ border-bottom: none; }}
         .service-header {{ display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; }}
         .service-list {{ list-style: none; color: #94a3b8; font-size: 11px; }}
@@ -405,8 +442,16 @@ def update_html(header, days, stats):
         </div>
 
         <div class="glass-card recent-activity">
-            <h2>Recent Activity</h2>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">Recent Activity</h2>
+                <span class="page-info" id="page-indicator">Page 1 of 1</span>
+            </div>
             <div id="services-html"></div>
+            
+            <div class="pagination-controls">
+                <button class="pager-btn" id="prev-btn" onclick="changePage(-1)">← PREVIOUS</button>
+                <button class="pager-btn" id="next-btn" onclick="changePage(1)">NEXT →</button>
+            </div>
         </div>
 
         <p style="text-align: center; color: #475569; font-size: 10px; margin-bottom: 20px;">
@@ -418,6 +463,10 @@ def update_html(header, days, stats):
         let earningsChart = null;
         let lastDataStr = "";
         let confettiTriggered = false;
+        let currentPage = 0;
+        let totalPages = 0;
+        let serviceData = [];
+
         const quotes = [
             {{ text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }},
             {{ text: "The only way to do great work is to love what you do.", author: "Steve Jobs" }},
@@ -439,10 +488,29 @@ def update_html(header, days, stats):
         updateQuote();
         setInterval(updateQuote, 10000);
 
+        function changePage(delta) {{
+            currentPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
+            renderPage();
+        }}
+
+        function renderPage() {{
+            if (serviceData && serviceData.length > 0) {{
+                document.getElementById('services-html').innerHTML = serviceData[currentPage];
+                document.getElementById('page-indicator').innerText = `DAY ${{currentPage + 1}} OF ${{totalPages}}`;
+                document.getElementById('prev-btn').disabled = currentPage === 0;
+                document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
+            }}
+        }}
+
         function renderUI(data) {{
             const dataStr = JSON.stringify(data);
             if (dataStr === lastDataStr) return; 
             lastDataStr = dataStr;
+
+            serviceData = data.services_by_day;
+            totalPages = serviceData.length;
+            if (currentPage >= totalPages) currentPage = 0;
+            renderPage();
 
             document.getElementById('period-header').innerText = data.header;
             document.getElementById('total-services').innerText = data.stats.total_services;
@@ -453,7 +521,6 @@ def update_html(header, days, stats):
             document.getElementById('pace-services').innerText = data.stats.recovery_pace_services + '/d';
             document.getElementById('pace-earnings').innerText = '₹' + data.stats.recovery_pace_earnings + '/d';
             document.getElementById('services-to-goal').innerText = Math.ceil(data.stats.total_services_needed);
-            document.getElementById('services-html').innerHTML = data.services_html.replace(/service-day/g, 'service-item').replace(/<h3>/g, '<div class="service-header">').replace(/<\/h3>/g, '</div>');
             
             document.getElementById('target-count').innerText = data.stats.recommended_today;
             document.getElementById('target-count-2').innerText = data.stats.recommended_today;
