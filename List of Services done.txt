@@ -92,16 +92,17 @@ Daily Summary: 15 services, 6000 rs
 66. Sage - com.sage.accounting
 67. XTransfer - com.xtapp.xtransfer
 68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke
-Daily Summary: 4 services, 1600 rs
+69. iHerb - com.iherb
+Daily Summary: 5 services, 2000 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 68
-- Total Earnings: 27200 rs
-- Average Daily Earning (over 17 days since Apr 10): 1600.0 rs/day
-- Average Daily Services: 4.0 services/day
+- Total Services: 69
+- Total Earnings: 27600 rs
+- Average Daily Earning (over 17 days since Apr 10): 1623.53 rs/day
+- Average Daily Services: 4.06 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.1 Services / day (4830.77 rs/day for 13 days)
-- Services Needed to Goal: 157.0
+- Recovery Pace: 12.0 Services / day (4800.0 rs/day for 13 days)
+- Services Needed to Goal: 156.0
 - Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹48000.0
+- Projected Monthly Total: ₹48705.88
