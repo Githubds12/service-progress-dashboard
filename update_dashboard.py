@@ -3,6 +3,7 @@ import re
 from datetime import datetime, date
 import json
 import math
+import subprocess
 
 REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
 TXT_FILE = os.path.join(REPORT_DIR, "List of Services done.txt")
@@ -429,12 +430,37 @@ def update_html(header, days, stats):
     with open('c:/Users/Gorri/Documents/Reports/Dashboard.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
 
+def update_github():
+    print("Updating GitHub...")
+    try:
+        # Add all changed files
+        subprocess.run(["git", "add", "."], check=True, capture_output=True)
+        
+        # Check if there are changes to commit
+        status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
+        if not status:
+            print("No changes to commit to GitHub.")
+            return
+
+        # Commit changes
+        commit_msg = f"Auto-update dashboard: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
+        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
+        
+        # Push changes
+        subprocess.run(["git", "push"], check=True, capture_output=True)
+        print("GitHub updated successfully!")
+    except subprocess.CalledProcessError as e:
+        print(f"Git command failed: {e.stderr.decode() if e.stderr else str(e)}")
+    except Exception as e:
+        print(f"An error occurred while updating GitHub: {e}")
+
 def main():
     header, days, body = parse_txt()
     stats = calculate_stats(days)
     update_txt(body, stats)
     update_html(header, days, stats)
     print("Dashboard updated with Avg Daily Services!")
+    update_github()
 
 if __name__ == "__main__":
     main()
