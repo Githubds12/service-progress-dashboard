@@ -91,16 +91,17 @@ Daily Summary: 15 services, 6000 rs
 65. BPme - com.bp.app.bpme.global.pl
 66. Sage - com.sage.accounting
 67. XTransfer - com.xtapp.xtransfer
-Daily Summary: 3 services, 1200 rs
+68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke
+Daily Summary: 4 services, 1600 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 67
-- Total Earnings: 26800 rs
-- Average Daily Earning (over 17 days since Apr 10): 1576.47 rs/day
-- Average Daily Services: 3.94 services/day
+- Total Services: 68
+- Total Earnings: 27200 rs
+- Average Daily Earning (over 17 days since Apr 10): 1600.0 rs/day
+- Average Daily Services: 4.0 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.2 Services / day (4861.54 rs/day for 13 days)
-- Services Needed to Goal: 158.0
+- Recovery Pace: 12.1 Services / day (4830.77 rs/day for 13 days)
+- Services Needed to Goal: 157.0
 - Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹47294.12
+- Projected Monthly Total: ₹48000.0
