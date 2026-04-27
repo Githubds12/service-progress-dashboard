@@ -141,7 +141,12 @@
 
         .progress-section { text-align: center; }
         .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); }
+        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite, working 2s ease-in-out infinite; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); position: relative; transform-origin: left; }
+        
+        @keyframes working {
+            0%, 100% { transform: scaleX(1); opacity: 0.9; }
+            50% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.2); }
+        }
 
         .chart-container { height: 180px; }
         
@@ -236,7 +241,7 @@
                 <span id="completed-count" style="font-size: 42px; font-weight: 900;">0</span>
                 <span style="color: #64748b; font-size: 18px;">/ <span id="target-count-2">0</span></span>
             </div>
-            <div class="progress-bar-bg">
+            <div class="progress-bar-bg" style="position: relative;">
                 <div id="progress-fill" class="progress-bar-fill"></div>
             </div>
             <p id="explanation-text" style="font-size: 11px; color: #94a3b8; line-height: 1.4;"></p>
