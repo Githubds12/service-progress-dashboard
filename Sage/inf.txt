@@ -1,4 +1,0 @@
-com.sage.accounting 6.17.3
-sage [74aba4be-8a1b-407e-943e-e635e5afcad9]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Your Sage verification code is: 706764
