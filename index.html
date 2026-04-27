@@ -141,11 +141,11 @@
 
         .progress-section { text-align: center; }
         .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite, working 2s ease-in-out infinite; width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); position: relative; transform-origin: left; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); position: relative; transform-origin: left; }
         
-        @keyframes working {
-            0%, 100% { transform: scaleX(1); opacity: 0.9; }
-            50% { transform: scaleX(1.02); opacity: 1; filter: brightness(1.2); }
+        @keyframes reach {
+            0%, 100% { width: var(--p-width); filter: brightness(1); }
+            50% { width: var(--n-width); filter: brightness(1.3); box-shadow: 0 0 25px var(--success); }
         }
 
         .chart-container { height: 180px; }
@@ -376,7 +376,12 @@
             document.getElementById('projection-text').innerText = data.stats.projection_sentence;
 
             const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
-            document.getElementById('progress-fill').style.width = progress + '%';
+            const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
+            
+            const fill = document.getElementById('progress-fill');
+            fill.style.setProperty('--p-width', progress + '%');
+            fill.style.setProperty('--n-width', nextProgress + '%');
+            fill.style.width = progress + '%';
 
             if (data.stats.completed_today >= data.stats.recommended_today) {
                 document.getElementById('celebration').style.display = 'block';
