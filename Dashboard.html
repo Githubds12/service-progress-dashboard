@@ -256,6 +256,7 @@
             <div class="glass-card stat-card">
                 <h3>DAILY AVERAGE</h3>
                 <div id="avg-daily" class="value">₹0</div>
+                <div id="avg-services" class="subtext" style="color: var(--primary); font-weight: 700; margin-bottom: 4px;">0 services/day</div>
                 <div id="avg-target" class="subtext">Target: ₹3000/d</div>
             </div>
             <div class="glass-card stat-card">
@@ -352,6 +353,7 @@
             document.getElementById('total-services').innerText = data.stats.total_services;
             document.getElementById('total-earnings').innerText = '₹' + data.stats.total_earnings;
             document.getElementById('avg-daily').innerText = '₹' + data.stats.avg_daily;
+            document.getElementById('avg-services').innerText = data.stats.avg_daily_services + ' services/day';
             document.getElementById('avg-target').innerText = 'Goal: ₹' + data.stats.target + '/d';
             
             document.getElementById('pace-services').innerText = data.stats.recovery_pace_services + '/d';
