@@ -1,3 +1,4 @@
+# 📈 LIVE PROGRESS: **4.00 services/day** (Avg)
 # Service Progress Dashboard
 
 A premium, live-updating dashboard to track service progress and financial goals.
@@ -8,20 +9,6 @@ A premium, live-updating dashboard to track service progress and financial goals
 - **Financial Tracking**: Tracks total earnings, daily averages, and projected monthly totals.
 - **Strategic Targets**: Recommends daily service counts to stay on track for your goal.
 - **Live Indicator**: Pulsating "LIVE" status when the server is active.
-
-## 🛠️ How to Run
-1. **Update Data**:
-   ```powershell
-   python update_dashboard.py
-   ```
-2. **Start Server**:
-   ```powershell
-   python serve_dashboard.py
-   ```
-3. **Access**:
-   - Local: `http://localhost:8000/Dashboard.html`
-   - Mobile: `http://<your-ip>:8000/Dashboard.html`
-
 
 ## 📉 Live Stats
 - **Total Services**: 68
@@ -39,5 +26,3 @@ A premium, live-updating dashboard to track service progress and financial goals
 
 ---
 *Created with ❤️ by Antigravity*
-
-Last Sync: 2026-04-27 13:42:00
