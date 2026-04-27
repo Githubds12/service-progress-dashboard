@@ -496,7 +496,9 @@ def update_html(header, days, stats):
         function renderPage() {{
             if (serviceData && serviceData.length > 0) {{
                 document.getElementById('services-html').innerHTML = serviceData[currentPage];
-                document.getElementById('page-indicator').innerText = `DAY ${{currentPage + 1}} OF ${{totalPages}}`;
+                const isLastPage = currentPage === totalPages - 1;
+                const pageLabel = isLastPage ? `PAGE ${{currentPage + 1}} (TODAY)` : `PAGE ${{currentPage + 1}}`;
+                document.getElementById('page-indicator').innerText = `${{pageLabel}} OF ${{totalPages}}`;
                 document.getElementById('prev-btn').disabled = currentPage === 0;
                 document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
             }}
@@ -505,11 +507,12 @@ def update_html(header, days, stats):
         function renderUI(data) {{
             const dataStr = JSON.stringify(data);
             if (dataStr === lastDataStr) return; 
+            const isFirstLoad = lastDataStr === "";
             lastDataStr = dataStr;
 
             serviceData = data.services_by_day;
             totalPages = serviceData.length;
-            if (currentPage >= totalPages) currentPage = 0;
+            if (isFirstLoad || currentPage >= totalPages) currentPage = totalPages - 1;
             renderPage();
 
             document.getElementById('period-header').innerText = data.header;
