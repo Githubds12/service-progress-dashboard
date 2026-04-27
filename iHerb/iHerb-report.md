@@ -14,7 +14,7 @@ iHerb implements a robust, high-security onboarding flow leveraging multiple ent
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS OTP | 6-digit verification code sent via SMS |
-| **Captcha** | Yes | reCAPTCHA Enterprise (g-recaptcha header required) |
+| **Captcha** | reCAPTCHA Enterprise (Google) | reCAPTCHA Enterprise (g-recaptcha header required) |
 | **Encryption** | SSL/TLS | Standard HTTPS with strong SSL Pinning (observed in Forter/PX) |
 | **Rate Limits** | Medium | Managed by PerimeterX and Forter risk engines |
 | **Endpoints Involved** | 5 | exists, otp/send, otp/validate, register, connect/token |
