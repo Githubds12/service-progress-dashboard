@@ -14,7 +14,7 @@ Shop Apotheke (Redcare) implements a secure onboarding flow for its European pha
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS OTP | 6-digit code for phone verification |
-| **Captcha** | No | No visual captcha observed in the analyzed flows |
+| **Captcha** | undefined | No visual captcha observed in the analyzed flows |
 | **Encryption** | SSL/TLS | Standard HTTPS with SSL Pinning and Root Detection |
 | **Rate Limits** | Low | No strict cooldown observed on SMS OTP requests |
 | **Endpoints Involved** | 5 | register, erx-session-status, nfc-position, mfa-request, mfa-confirmation |
