@@ -1,4 +1,0 @@
-com.bp.app.bpme.global.pl 2.4.3
-bpverify [e630bbc7-5148-4288-8b2e-1176100b4354]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Twój kod weryfikacyjny bp to: 432740
