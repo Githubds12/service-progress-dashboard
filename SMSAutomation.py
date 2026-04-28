@@ -24,7 +24,12 @@ COUNTRY_DIAL_CODES = {
     "PE": "+51", "PH": "+63", "PL": "+48", "PT": "+351", "QA": "+974", "RO": "+40", "RU": "+7", "SA": "+966", "SN": "+221", "RS": "+381",
     "SG": "+65", "SK": "+421", "SI": "+386", "ZA": "+27", "KR": "+82", "ES": "+34", "LK": "+94", "SD": "+249", "SE": "+46", "CH": "+41",
     "SY": "+963", "TW": "+886", "TJ": "+992", "TZ": "+255", "TH": "+66", "TN": "+216", "TR": "+90", "TM": "+993", "UG": "+256", "UA": "+380",
-    "AE": "+971", "GB": "+44", "US": "+1", "UY": "+598", "UZ": "+998", "VE": "+58", "VN": "+84", "YE": "+967", "ZM": "+260", "ZW": "+263"
+    "US": "+1", "UY": "+598", "UZ": "+998", "VE": "+58", "VN": "+84", "YE": "+967", "ZM": "+260", "ZW": "+263"
+}
+
+# --- High Success Operators ---
+HIGH_SUCCESS_OPERATORS = {
+    "IT": ["fastweb", "windtre", "special", "iliad", "spusu", "tim"]
 }
 
 # Splitting the Base URLs to handle the different ports
@@ -51,11 +56,20 @@ def fetch_dynamic_providers(service_name):
             print(f"Total Operators: {data.get('total_operators_count')} | Total Access Count: {data.get('total_access_count')}")
             
             for i, item in enumerate(data["data"], start=1):
+                ccode = item["ccode"].upper()
+                op = item["operator"].lower()
+                
                 providers[str(i)] = {
                     "country_code": item["ccode"],
                     "operator": item["operator"]
                 }
-                print(f"[{i}] Country: {item['ccode'].upper()} ({item['country']}) | Operator: {item['operator'].title()} | Available: {item['access_count']}")
+                
+                # Highlight high success operators
+                highlight = ""
+                if ccode in HIGH_SUCCESS_OPERATORS and op in HIGH_SUCCESS_OPERATORS[ccode]:
+                    highlight = " [⭐ HIGH SUCCESS RATE]"
+                    
+                print(f"[{i}] Country: {ccode} ({item['country']}) | Operator: {item['operator'].title()} | Available: {item['access_count']}{highlight}")
             
             return providers
         else:
@@ -105,10 +119,22 @@ def get_number(country, operator):
         data = response.json()
         
         if data.get("success") and data.get("number"):
-            number = data["number"][0]
+            raw_num = data["number"][0]
             carrier = data.get("carrier", "Unknown")
-            print(f"[+] Success! Number obtained: {number} ({carrier})")
-            return number
+            
+            # Format the dial code
+            dial_code = COUNTRY_DIAL_CODES.get(country.upper(), "")
+            clean_dial = dial_code.replace("+", "")
+            
+            display_num = raw_num
+            if clean_dial and raw_num.startswith(clean_dial):
+                local_part = raw_num[len(clean_dial):]
+                display_num = f"{dial_code} {local_part}"
+            else:
+                display_num = f"+{raw_num}"
+                
+            print(f"[+] Success! Number obtained: {display_num} ({carrier})")
+            return raw_num
         else:
             print(f"[-] Failed to get number. API Response: {data}")
             return None
@@ -263,31 +289,24 @@ def service_offline_flow():
                 return
 
 def load_local_database_for_countries():
-    """Parses the local JSON file into a searchable dictionary of Countries."""
-    if not os.path.exists(DB_FILE):
-        print(f"[-] Error: '{DB_FILE}' not found.")
+    """Loads the massive new master JSON database for country searching."""
+    master_db_path = r"C:\HTB-Notes-Portal\full_live_operators_db.json"
+    if not os.path.exists(master_db_path):
+        print(f"[-] Error: Master Database '{master_db_path}' not found. Did you run the builder script?")
         return None
         
-    with open(DB_FILE, "r", encoding="utf-8") as file:
+    with open(master_db_path, "r", encoding="utf-8") as file:
         try:
             raw_data = json.load(file)
         except json.JSONDecodeError:
             return None
-        
+            
     country_db = {}
-    for service, providers in raw_data.items():
-        for p in providers:
-            ccode = p['ccode'].upper()
-            country_name = p['country'].title()
-            operator = p['operator']
-            
-            if ccode not in country_db:
-                country_db[ccode] = {'name': country_name, 'operators': set()}
-            
-            country_db[ccode]['operators'].add(operator)
-            
-    for ccode in country_db:
-        country_db[ccode]['operators'] = sorted(list(country_db[ccode]['operators']))
+    for ccode, data in raw_data.items():
+        country_db[ccode.upper()] = {
+            'name': data.get('country_name', ''),
+            'operators': data.get('operators', [])
+        }
         
     return country_db
 
