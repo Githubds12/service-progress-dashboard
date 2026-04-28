@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.eneba.app 1.9.34
+
+Service: eneba
+Service ID: f7343ad9-afb1-4328-ab5e-b6852c731816
+Service SMS: Use 923742 code to confirm your actions on eneba.com
+
+1. eneba
+Gaming marketplace for digital keys and gift cards.
+Official Website: eneba.com
+Google Play Store: Eneba
+Package Name: com.eneba.app
+
+Proof of Captcha: Cloudflare Challenge Platform
+Proof of Rate Limits: Strict (Cloudflare)
+Proof of Encryption: HTTPS / OAuth
+Flow: POST cloudflare/challenge -> POST /oauth/token -> POST /graphql/ (Verify)
