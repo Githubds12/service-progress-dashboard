@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.xingin.xhs 9.27.0
+
+Service: baidu (Rednote)
+Service ID: a4ed6d1d-d782-4f58-8ec4-e49d101b1a8d
+Service SMS: [rednote] Your verification code is 193692 (for linking your phone number), valid for 5 mins. Do not share it with anyone.
+
+1. Rednote (Xiaohongshu)
+Chinese social media and e-commerce platform.
+Official Website: xiaohongshu.com
+Google Play Store: Rednote
+Package Name: com.xingin.xhs
+
+Proof of Captcha: Geetest v4
+Proof of Rate Limits: Strict (Geetest)
+Proof of Encryption: HTTPS / Umi Sonoda Fingerprinting
+Flow: GET /vfc_code -> GET /check_code
