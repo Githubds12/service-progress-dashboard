@@ -253,7 +253,10 @@ class SMSAutomationApp:
         for ccode, details in db.items():
             country_name = details.get('country_name')
             country_upper = country_name.upper() if country_name else ""
-            if query == ccode or query == country_upper:
+            
+            # Check ISO Code, Country Name, or Dial Code
+            dial_code = COUNTRY_DIAL_CODES.get(ccode, "").replace("+", "")
+            if query == ccode or query == country_upper or query == dial_code:
                 matched_ccode = ccode
                 break
                 
@@ -267,7 +270,7 @@ class SMSAutomationApp:
                 
                 self.tree_country.insert("", "end", values=(matched_ccode, db[matched_ccode]['country_name'], display_op, "Cached", rating), tags=(tag,))
         else:
-            messagebox.showinfo("Not Found", "Country not found in DB.")
+            messagebox.showinfo("Not Found", f"Search '{query}' not found in DB.\n\nTry ISO codes (IN, TR) or Country Names (INDIA).")
 
     def get_number(self):
         if not self.selected_country or not self.selected_operator:

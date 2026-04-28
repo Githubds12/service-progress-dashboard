@@ -100,19 +100,20 @@ Daily Summary: 6 services, 2400 rs
 71. Pegasus - com.pozitron.pegasus
 72. Daraz - com.daraz.android
 73. ehamarkets - com.trade.trade211
-Daily Summary: 3 services, 1200 rs
+74. wave - com.wave.personal
+Daily Summary: 4 services, 1600 rs
 ----------
 29th April, Wednesday
 Daily Summary: 0 services, 0 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 73
-- Total Earnings: 29200 rs
-- Average Daily Earning (over 19 days since Apr 10): 1536.84 rs/day
-- Average Daily Services: 3.84 services/day
+- Total Services: 74
+- Total Earnings: 29600 rs
+- Average Daily Earning (over 19 days since Apr 10): 1557.89 rs/day
+- Average Daily Services: 3.89 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 13.8 Services / day (5527.27 rs/day for 11 days)
-- Services Needed to Goal: 152.0
+- Recovery Pace: 13.7 Services / day (5490.91 rs/day for 11 days)
+- Services Needed to Goal: 151.0
 - Recommended for Today (inc. buffer): 17 services
-- Projected Monthly Total: ₹46105.26
+- Projected Monthly Total: ₹46736.84
