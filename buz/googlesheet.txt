@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.interfun.buz 1.98.0
+
+Service: buz
+Service ID: 541fdf90-5df4-4b6e-9754-f535c575a432
+Service SMS: [Buz] Verification code: 892853, valid for 30 minutes fE77W1oZRjz
+
+1. buz
+Instant voice messenger and social app.
+Official Website: buz-app.com
+Google Play Store: Buz: Instant Messenger
+Package Name: com.interfun.buz
+
+Proof of Captcha: None
+Proof of Rate Limits: Moderate (Device/Trace based)
+Proof of Encryption: HTTPS
+Flow: POST /sendSmsCode -> POST /phoneLogin
