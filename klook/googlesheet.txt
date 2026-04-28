@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.klook 7.43.0
+
+Service: Klook
+Service ID: 4d8245f5-6b7c-4324-aada-0164fca06b5e
+Service SMS: [Klook] Your verification code is: 784327. It will expire in 30 minutes.
+
+1. Klook
+Global travel platform for booking activities and services.
+Official Website: klook.com
+Google Play Store: Klook: Travel & Leisure
+Package Name: com.klook
+
+Proof of Captcha: DataDome Interstitial
+Proof of Rate Limits: Strict (next_timestamp_sec)
+Proof of Encryption: Advanced (x-signature, Forter)
+Flow: POST /verification/code/send -> POST /verification/code/validate
