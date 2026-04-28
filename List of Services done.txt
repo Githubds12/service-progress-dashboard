@@ -96,14 +96,17 @@ Daily Summary: 15 services, 6000 rs
 70. KuCoin - com.kubi.kucoin
 Daily Summary: 6 services, 2400 rs
 ----------
+28th April, Tuesday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 70
 - Total Earnings: 28000 rs
-- Average Daily Earning (over 17 days since Apr 10): 1647.06 rs/day
-- Average Daily Services: 4.12 services/day
+- Average Daily Earning (over 18 days since Apr 10): 1555.56 rs/day
+- Average Daily Services: 3.89 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 11.9 Services / day (4769.23 rs/day for 13 days)
+- Recovery Pace: 12.9 Services / day (5166.67 rs/day for 12 days)
 - Services Needed to Goal: 155.0
-- Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹49411.76
+- Recommended for Today (inc. buffer): 16 services
+- Projected Monthly Total: ₹46666.67

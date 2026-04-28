@@ -51,6 +51,26 @@ def parse_txt():
             if current_day is not None:
                 current_day['services'].append(line)
                 
+    today_dt = date.today()
+    today_str = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %A')}"
+    
+    today_exists = False
+    for d in days:
+        if today_str.split(',')[0] in d['date']:
+            today_exists = True
+            break
+            
+    if not today_exists:
+        new_day_block = f"\n{today_str}\nDaily Summary: 0 services, 0 rs\n----------"
+        body += new_day_block
+        days.append({
+            'date': today_str,
+            'services': [],
+            'summary': 'Daily Summary: 0 services, 0 rs',
+            'earnings': 0,
+            'count': 0
+        })
+
     return header, days, body
 
 def calculate_stats(days):
