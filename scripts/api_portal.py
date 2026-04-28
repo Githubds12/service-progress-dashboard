@@ -207,14 +207,30 @@ def main():
     print("\n[*] 2. Creating project via API...")
     res_proj = requests.post(f"{API_BASE}/services/{uuid}/create-project", headers=headers, json=payload_project)
     print(f"Project Status Code: {res_proj.status_code}")
-    
+
     if res_proj.status_code == 200:
         proj_data = res_proj.json()
         project_id = proj_data.get('id')
-        print(f"[+] Project created successfully! ID: {project_id}")
+    elif res_proj.status_code == 400 and "already created" in res_proj.text:
+        # Fetch projects to find the existing one
+        print("[*] Project already exists. Fetching project ID...")
+        res_list = requests.get(f"{API_BASE}/projects", headers=headers)
+        if res_list.status_code == 200:
+            projs = res_list.json()
+            # Match by linked_service_id (uuid)
+            match = next((p for p in projs if p.get('linked_service_id') == uuid), None)
+            project_id = match.get('id') if match else None
+        else:
+            project_id = None
+    else:
+        print("[-] Project Creation Failed:", res_proj.text)
+        project_id = None
+
+    if project_id:
+        print(f"[+] Using Project ID: {project_id}")
         
         # 3. PUT UPLOAD DATA (Markdown content to Project fields)
-        if project_id and engineering_payload:
+        if engineering_payload:
             print(f"\n[*] 3. Uploading Markdown variables to Project {project_id}...")
             res_put = requests.put(f"{API_BASE}/projects/{project_id}", headers=headers, json=engineering_payload)
             print(f"PUT Status Code: {res_put.status_code}")
@@ -227,10 +243,7 @@ def main():
             mark_message_received(args.folder_path, project_id, headers)
             
         else:
-            print("[-] Cannot PUT data. Missing project_id or failed parser.")
-            
-    else:
-        print("[-] Project Creation Failed:", res_proj.text)
+            print("[-] Cannot PUT data. Failed parser.")
 
 def mark_message_received(folder_path, project_id, headers):
     inf_file = os.path.join(folder_path, "inf.txt")

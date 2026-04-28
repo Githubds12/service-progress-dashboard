@@ -14,7 +14,7 @@ Wave Mobile Money uses a GraphQL-based backend (`ml.mmapp.wave.com/graphql`). Th
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS | OTP sent after reCAPTCHA verification |
-| **Captcha** | Yes | Google reCAPTCHA Enterprise (`6Lc69y8r...`) |
+| **Captcha** | reCAPTCHA Enterprise | Google reCAPTCHA Enterprise (`6Lc69y8r...`) |
 | **Encryption** | Partial | HTTPS with GraphQL payloads |
 | **Rate Limits** | Unknown | Enforced via reCAPTCHA and backend |
 | **Endpoints Involved** | 2 | `recaptcha/api3/mri`, `/graphql` (SignupMutation) |

@@ -12,7 +12,7 @@ Official Website: wave.com
 Google Play Store: Wave Mobile Money
 Package Name: com.wave.personal
 
-Proof of Captcha: Google reCAPTCHA Enterprise
+Proof of Captcha: reCAPTCHA Enterprise
 Proof of Rate Limits: Unknown
 Proof of Encryption: HTTPS / GraphQL
 Flow: POST /recaptcha/api3/mri -> POST /graphql (SignupMutation) -> POST /graphql (CustomerVerifyAuthCode)
