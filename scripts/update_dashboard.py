@@ -654,8 +654,8 @@ def update_readme(stats):
                     f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
     if "## 📉 Live Stats" in content:
-        # Regex to find the section and replace it
-        new_content = re.sub(r'## 📉 Live Stats\n(.*?)(?=\n## |$)', stats_section, content, flags=re.DOTALL)
+        # Improved regex to handle the section replacement more reliably
+        new_content = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', stats_section.strip() + "\n", content, flags=re.DOTALL)
     else:
         new_content = content.replace("## 📊 Tech Stack", stats_section + "\n## 📊 Tech Stack")
         
