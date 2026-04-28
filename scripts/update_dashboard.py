@@ -6,8 +6,8 @@ import math
 import subprocess
 
 REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
-TXT_FILE = os.path.join(REPORT_DIR, "List of Services done.txt")
-HTML_FILE = os.path.join(REPORT_DIR, "Dashboard.html")
+TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
+HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
 
 def get_ordinal(n):
     if 11 <= n % 100 <= 13:
@@ -182,7 +182,7 @@ def update_html(header, days, stats):
         'services_by_day': services_by_day
     }
     
-    with open('c:/Users/Gorri/Documents/Reports/dashboard_data.js', 'w', encoding='utf-8') as f:
+    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
         f.write(f"window.dashboardData = {json.dumps(data_dict)};")
 
     html_content = f"""<!DOCTYPE html>
@@ -630,9 +630,9 @@ def update_html(header, days, stats):
     </script>
 </body>
 </html>"""
-    with open('c:/Users/Gorri/Documents/Reports/Dashboard_Live.html', 'w', encoding='utf-8') as f:
+    with open('c:/Users/Gorri/Documents/Reports/dashboard/Dashboard_Live.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
-    with open('c:/Users/Gorri/Documents/Reports/Dashboard.html', 'w', encoding='utf-8') as f:
+    with open('c:/Users/Gorri/Documents/Reports/dashboard/Dashboard.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
     with open('c:/Users/Gorri/Documents/Reports/index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)

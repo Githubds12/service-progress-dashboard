@@ -223,11 +223,27 @@ def main():
             print(f"\n[*] 4. Syncing Research Artifacts (HARs & Report) to Project {project_id}...")
             sync_research(args.folder_path, project_id, headers)
             
+            # 5. MARK MESSAGE RECEIVED (New step)
+            mark_message_received(args.folder_path, project_id, headers)
+            
         else:
             print("[-] Cannot PUT data. Missing project_id or failed parser.")
             
     else:
         print("[-] Project Creation Failed:", res_proj.text)
+
+def mark_message_received(folder_path, project_id, headers):
+    inf_file = os.path.join(folder_path, "inf.txt")
+    if os.path.exists(inf_file):
+        with open(inf_file, "r", encoding="utf-8") as f:
+            content = f.read()
+            if "Messages received successfully" in content or "OTP received" in content:
+                print(f"\n[*] 5. Marking Message Received for Project {project_id}...")
+                payload = {"message_received": "yes", "message_note": ""}
+                res = requests.put(f"{API_BASE}/projects/{project_id}/message-received", headers=headers, json=payload)
+                print(f"   -> Mark Message Status: {res.status_code}")
+                if res.status_code != 200:
+                    print("   [-] Details:", res.text)
 
 def sync_research(folder_path, project_id, headers):
     report_files = glob.glob(os.path.join(folder_path, "*report.md"))

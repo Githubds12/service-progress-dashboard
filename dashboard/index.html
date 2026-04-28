@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Live Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-glow: rgba(99, 102, 241, 0.5);
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --bg-dark: #0f172a;
+            --card-bg: rgba(30, 41, 59, 0.6);
+            --border: rgba(255, 255, 255, 0.08);
+            --accent-glow: rgba(99, 102, 241, 0.3);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+
+        @keyframes rainbow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .rainbow-text {
+            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: rainbow 3s linear infinite;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
+        
+        body { 
+            background: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+            color: #f8fafc; 
+            font-family: 'Outfit', sans-serif; 
+            padding: 10px;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.1); opacity: 0.7; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .live-indicator {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: rgba(239, 68, 68, 0.1);
+            color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);
+            padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+        .live-dot { width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite; }
+
+        .container { max-width: 600px; margin: auto; }
+        
+        .glass-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            position: relative;
+        }
+
+        .glass-card::after {
+            content: '';
+            position: absolute;
+            inset: -1px;
+            border-radius: 20px;
+            padding: 1px;
+            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
+            background-size: 300% 300%;
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0.5;
+            animation: rainbow 6s ease infinite;
+            pointer-events: none;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .header h1 { font-size: 40px; font-weight: 900; letter-spacing: -2px; margin: 10px 0; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: rainbow 3s linear infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); }
+
+        .banner-container {
+            width: 100%; height: 120px; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
+            position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            animation: float 6s ease-in-out infinite;
+        }
+        .banner-img { width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: brightness(0.8) contrast(1.2); }
+        .banner-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }
+
+        .quote-card {
+            background: url('quote_bg.png'); background-size: cover; background-position: center;
+            border: none; position: relative; overflow: hidden; min-height: 100px;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
+            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+        .quote-card::before { content: ''; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); }
+        .quote-text { position: relative; font-size: 16px; font-weight: 600; font-style: italic; line-height: 1.5; margin-bottom: 5px; }
+        .quote-author { position: relative; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }
+        .stat-card { padding: 15px; position: relative; overflow: hidden; }
+        .stat-card h3 { font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-card .value { font-size: 24px; font-weight: 700; color: #fff; }
+        .stat-card .subtext { font-size: 10px; color: #64748b; margin-top: 4px; }
+
+        .projection-card { 
+            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            color: white; border: none;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .proj-val { font-size: 28px; font-weight: 900; }
+
+        .progress-section { text-align: center; }
+        .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); position: relative; transform-origin: left; }
+        
+        @keyframes reach {
+            0%, 100% { width: var(--p-width); filter: brightness(1); }
+            50% { width: var(--n-width); filter: brightness(1.3); box-shadow: 0 0 25px var(--success); }
+        }
+
+        .chart-container { height: 180px; }
+        
+        .recent-activity h2 { font-size: 18px; margin-bottom: 15px; font-weight: 700; position: sticky; top: 0; background: var(--card-bg); z-index: 10; padding-bottom: 10px; }
+        .recent-activity { 
+            max-height: 500px; 
+            overflow-y: auto; 
+            padding-right: 10px;
+        }
+        
+        /* Custom Scrollbar for Recent Activity */
+        .recent-activity::-webkit-scrollbar { width: 6px; }
+        .recent-activity::-webkit-scrollbar-track { background: rgba(255,255,255,0.05); border-radius: 10px; }
+        .recent-activity::-webkit-scrollbar-thumb { background: linear-gradient(to bottom, var(--primary), #10b981); border-radius: 10px; }
+        
+        .service-item { padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        
+        .pagination-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            gap: 10px;
+        }
+        .pager-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 8px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+        .pager-btn:hover:not(:disabled) {
+            background: var(--primary);
+            box-shadow: 0 0 15px var(--primary-glow);
+            transform: translateY(-2px);
+        }
+        .pager-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        .page-info {
+            font-size: 11px;
+            color: #94a3b8;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .service-item:last-child { border-bottom: none; }
+        .service-header { display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; }
+        .service-list { list-style: none; color: #94a3b8; font-size: 11px; }
+        .service-list li { margin: 3px 0; }
+
+        #celebration { display: none; text-align: center; margin-top: 15px; }
+        .trophy { width: 80px; filter: drop-shadow(0 0 20px var(--success)); margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
+            <h1 id="today-badge">Dashboard</h1>
+            <p style="color: #64748b; font-weight: 500;" id="period-header"></p>
+        </div>
+
+        <div class="banner-container">
+            <img src="productivity_banner.png" class="banner-img" alt="Productivity">
+            <div class="banner-overlay"></div>
+        </div>
+
+        <div class="glass-card quote-card">
+            <div class="quote-text" id="random-quote"></div>
+            <div class="quote-author" id="quote-author"></div>
+        </div>
+
+        <div class="glass-card projection-card">
+            <div>
+                <h3>ESTIMATED MONTHLY END</h3>
+                <div id="projected-val" class="proj-val">₹0</div>
+                <p id="projection-text" style="font-size: 11px; opacity: 0.9; margin-top: 5px;"></p>
+            </div>
+            <img src="financial_growth_graphic_1777206994999.png" style="width: 70px; opacity: 0.8;" alt="Growth">
+        </div>
+
+        <div class="glass-card progress-section" id="recommendation-card">
+            <h3>DAILY MISSION: <span id="target-count">0</span> SERVICES</h3>
+            <div style="display: flex; justify-content: center; align-items: baseline; gap: 8px; margin: 10px 0;">
+                <span id="completed-count" style="font-size: 42px; font-weight: 900;">0</span>
+                <span style="color: #64748b; font-size: 18px;">/ <span id="target-count-2">0</span></span>
+            </div>
+            <div class="progress-bar-bg" style="position: relative;">
+                <div id="progress-fill" class="progress-bar-fill"></div>
+            </div>
+            <p id="explanation-text" style="font-size: 11px; color: #94a3b8; line-height: 1.4;"></p>
+            
+            <div id="celebration">
+                <img src="goal_achievement_icon_1777206977639.png" class="trophy" alt="Goal">
+                <h2 style="color: var(--success);">TARGET ACHIEVED! 🚀</h2>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="glass-card stat-card">
+                <h3>TOTAL EARNED</h3>
+                <div id="total-earnings" class="value" style="color: var(--success);">₹0</div>
+                <div class="subtext">Across <span id="total-services">0</span> services</div>
+            </div>
+            <div class="glass-card stat-card">
+                <h3>DAILY AVERAGE</h3>
+                <div id="avg-daily" class="value">₹0</div>
+                <div id="avg-services" class="subtext" style="color: var(--primary); font-weight: 700; margin-bottom: 4px;">0 services/day</div>
+                <div id="avg-target" class="subtext">Target: ₹3000/d</div>
+            </div>
+            <div class="glass-card stat-card">
+                <h3>RECOVERY PACE</h3>
+                <div id="pace-services" class="value" style="color: var(--warning);">0/d</div>
+                <div id="pace-earnings" class="subtext">Needed for ₹90k</div>
+            </div>
+            <div class="glass-card stat-card">
+                <h3>TO GOAL</h3>
+                <div id="services-to-goal" class="value" style="color: var(--danger);">0</div>
+                <div class="subtext">Services remaining</div>
+            </div>
+        </div>
+
+        <div class="glass-card chart-container">
+            <canvas id="earningsChart"></canvas>
+        </div>
+
+        <div class="glass-card recent-activity">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;">Recent Activity</h2>
+                <span class="page-info" id="page-indicator">Page 1 of 1</span>
+            </div>
+            <div id="services-html"></div>
+            
+            <div class="pagination-controls">
+                <button class="pager-btn" id="prev-btn" onclick="changePage(-1)">← PREVIOUS</button>
+                <button class="pager-btn" id="next-btn" onclick="changePage(1)">NEXT →</button>
+            </div>
+        </div>
+
+        <p style="text-align: center; color: #475569; font-size: 10px; margin-bottom: 20px;">
+            Last update: <span id="last-updated"></span>
+        </p>
+    </div>
+
+    <script>
+        let earningsChart = null;
+        let lastDataStr = "";
+        let confettiTriggered = false;
+        let currentPage = 0;
+        let totalPages = 0;
+        let serviceData = [];
+
+        const quotes = [
+            { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+            { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+            { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+            { text: "Your limit is only your imagination.", author: "Inspiration" },
+            { text: "Push yourself, because no one else is going to do it for you.", author: "Motivation" },
+            { text: "Great things never come from comfort zones.", author: "Growth" },
+            { text: "Dream it. Wish it. Do it.", author: "Success" },
+            { text: "Stay focused. Be kind. Work hard.", author: "Vision" },
+            { text: "The future depends on what you do today.", author: "Mahatma Gandhi" },
+            { text: "It always seems impossible until it's done.", author: "Nelson Mandela" }
+        ];
+
+        function updateQuote() {
+            const quote = quotes[Math.floor(Math.random() * quotes.length)];
+            document.getElementById('random-quote').innerText = `"${quote.text}"`;
+            document.getElementById('quote-author').innerText = `— ${quote.author}`;
+        }
+        updateQuote();
+        setInterval(updateQuote, 10000);
+
+        function changePage(delta) {
+            currentPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
+            renderPage();
+        }
+
+        function renderPage() {
+            if (serviceData && serviceData.length > 0) {
+                document.getElementById('services-html').innerHTML = serviceData[currentPage];
+                const isLastPage = currentPage === totalPages - 1;
+                const pageLabel = isLastPage ? `PAGE ${currentPage + 1} (TODAY)` : `PAGE ${currentPage + 1}`;
+                document.getElementById('page-indicator').innerText = `${pageLabel} OF ${totalPages}`;
+                document.getElementById('prev-btn').disabled = currentPage === 0;
+                document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
+            }
+        }
+
+        function renderUI(data) {
+            const dataStr = JSON.stringify(data);
+            if (dataStr === lastDataStr) return; 
+            const isFirstLoad = lastDataStr === "";
+            lastDataStr = dataStr;
+
+            serviceData = data.services_by_day;
+            totalPages = serviceData.length;
+            if (isFirstLoad || currentPage >= totalPages) currentPage = totalPages - 1;
+            renderPage();
+
+            document.getElementById('period-header').innerText = data.header;
+            document.getElementById('total-services').innerText = data.stats.total_services;
+            document.getElementById('total-earnings').innerText = '₹' + data.stats.total_earnings;
+            document.getElementById('avg-daily').innerText = '₹' + data.stats.avg_daily;
+            document.getElementById('avg-services').innerText = data.stats.avg_daily_services + ' services/day';
+            document.getElementById('avg-target').innerText = 'Goal: ₹' + data.stats.target + '/d';
+            
+            document.getElementById('pace-services').innerText = data.stats.recovery_pace_services + '/d';
+            document.getElementById('pace-earnings').innerText = '₹' + data.stats.recovery_pace_earnings + '/d';
+            document.getElementById('services-to-goal').innerText = Math.ceil(data.stats.total_services_needed);
+            
+            document.getElementById('target-count').innerText = data.stats.recommended_today;
+            document.getElementById('target-count-2').innerText = data.stats.recommended_today;
+            document.getElementById('completed-count').innerText = data.stats.completed_today;
+            document.getElementById('explanation-text').innerText = data.stats.explanation;
+            
+            const now = new Date();
+            document.getElementById('last-updated').innerText = now.toLocaleTimeString();
+            document.getElementById('projected-val').innerText = '₹' + data.stats.projected_total;
+            document.getElementById('projection-text').innerText = data.stats.projection_sentence;
+
+            const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
+            const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
+            
+            const fill = document.getElementById('progress-fill');
+            fill.style.setProperty('--p-width', progress + '%');
+            fill.style.setProperty('--n-width', nextProgress + '%');
+            fill.style.width = progress + '%';
+
+            if (data.stats.completed_today >= data.stats.recommended_today) {
+                document.getElementById('celebration').style.display = 'block';
+                if (!confettiTriggered) {
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#6366f1', '#10b981', '#f59e0b'] });
+                    confettiTriggered = true;
+                }
+            } else {
+                document.getElementById('celebration').style.display = 'none';
+                confettiTriggered = false;
+            }
+
+            // Chart
+            if (earningsChart) earningsChart.destroy();
+            const ctx = document.getElementById('earningsChart').getContext('2d');
+            earningsChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.labels,
+                    datasets: [{
+                        label: 'Earnings',
+                        data: data.earnings,
+                        borderColor: '#6366f1',
+                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderWidth: 3,
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#6366f1'
+                    }, {
+                        label: 'Target',
+                        data: data.labels.map(() => 3000),
+                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: {
+                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    }
+                }
+            });
+        }
+
+        function refreshData() {
+            let script = document.createElement('script');
+            script.src = 'dashboard_data.js?t=' + new Date().getTime();
+            script.onload = () => { if (window.dashboardData) renderUI(window.dashboardData); script.remove(); };
+            document.head.appendChild(script);
+        }
+        refreshData();
+        setInterval(refreshData, 3000);
+    </script>
+</body>
+</html>
