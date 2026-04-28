@@ -1,5 +1,3 @@
-coldbet [1d709e5b-3c4f-42cd-9112-8f1d80e3ae2c]
-
+submail [112c141d-981c-441a-a92b-c78ab511db1f]
 🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-
-<#> رمز التحقق 14209 kwlgDGPE33C
+[Bitget]Verification code: 002401
