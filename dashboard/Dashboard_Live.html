@@ -217,7 +217,7 @@
         </div>
 
         <div class="banner-container">
-            <img src="productivity_banner.png" class="banner-img" alt="Productivity">
+            <img src="dashboard/productivity_banner.png" class="banner-img" alt="Productivity">
             <div class="banner-overlay"></div>
         </div>
 
@@ -232,7 +232,7 @@
                 <div id="projected-val" class="proj-val">₹0</div>
                 <p id="projection-text" style="font-size: 11px; opacity: 0.9; margin-top: 5px;"></p>
             </div>
-            <img src="financial_growth_graphic_1777206994999.png" style="width: 70px; opacity: 0.8;" alt="Growth">
+            <img src="dashboard/financial_growth_graphic_1777206994999.png" style="width: 70px; opacity: 0.8;" alt="Growth">
         </div>
 
         <div class="glass-card progress-section" id="recommendation-card">
@@ -247,7 +247,7 @@
             <p id="explanation-text" style="font-size: 11px; color: #94a3b8; line-height: 1.4;"></p>
             
             <div id="celebration">
-                <img src="goal_achievement_icon_1777206977639.png" class="trophy" alt="Goal">
+                <img src="dashboard/goal_achievement_icon_1777206977639.png" class="trophy" alt="Goal">
                 <h2 style="color: var(--success);">TARGET ACHIEVED! 🚀</h2>
             </div>
         </div>
@@ -434,7 +434,7 @@
 
         function refreshData() {
             let script = document.createElement('script');
-            script.src = 'dashboard_data.js?t=' + new Date().getTime();
+            script.src = 'dashboard/dashboard_data.js?t=' + new Date().getTime();
             script.onload = () => { if (window.dashboardData) renderUI(window.dashboardData); script.remove(); };
             document.head.appendChild(script);
         }
