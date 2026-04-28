@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.live.soulchill 4.24_b2604233
+
+Service: SoulChill
+Service ID: d65b9ea9-4922-402f-b79d-8ca885e0449a
+Service SMS: هو رمز التحقق الخاص بك285478
+
+1. SoulChill
+Global social networking and voice chat platform.
+Official Website: soulchill.live
+Google Play Store: SoulChill - Voice Chat & Party
+Package Name: com.live.soulchill
+
+Proof of Captcha: Geetest v4 / reCAPTCHA
+Proof of Rate Limits: Strict (Momo Security Stack)
+Proof of Encryption: Advanced (Momo mzip encryption)
+Flow: POST /sendVerifyCode -> POST /loginPhone
