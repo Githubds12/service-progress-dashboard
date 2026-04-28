@@ -95,14 +95,14 @@ Daily Summary: 15 services, 6000 rs
 Daily Summary: 6 services, 2400 rs
 ----------
 28th April, Tuesday
+Daily Summary: 0 services, 0 rs
+----------
+29th April, Wednesday
 71. Pegasus - com.pozitron.pegasus - 400rs
 72. Daraz - com.daraz.android - 400rs
 73. ehamarkets - com.trade.trade211 - 500rs
 74. wave - com.wave.personal - 400rs
 Daily Summary: 4 services, 1700 rs
-----------
-29th April, Wednesday
-Daily Summary: 0 services, 0 rs
 ----------
 
 Dashboard Stats:
