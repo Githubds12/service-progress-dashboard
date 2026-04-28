@@ -249,28 +249,28 @@ class SMSAutomationApp:
         with open(MASTER_DB_FILE, "r", encoding="utf-8") as f:
             db = json.load(f)
             
-        matched_ccode = None
+        matched_results = []
         for ccode, details in db.items():
-            country_name = details.get('country_name')
-            country_upper = country_name.upper() if country_name else ""
+            country_name = details.get('country_name', "")
+            country_upper = country_name.upper()
+            dial_code = COUNTRY_DIAL_CODES.get(ccode.upper(), "").replace("+", "")
             
-            # Check ISO Code, Country Name, or Dial Code
-            dial_code = COUNTRY_DIAL_CODES.get(ccode, "").replace("+", "")
-            if query == ccode or query == country_upper or query == dial_code:
-                matched_ccode = ccode
-                break
+            # Match ISO Code, Full/Partial Country Name, or Dial Code
+            if query == ccode or query in country_upper or query == dial_code:
+                matched_results.append((ccode, details))
                 
-        if matched_ccode:
-            ops = db[matched_ccode]['operators']
-            for op in ops:
-                is_high = matched_ccode in HIGH_SUCCESS_OPERATORS and op.lower() in HIGH_SUCCESS_OPERATORS[matched_ccode]
-                display_op = f"*** {op.upper()} ***" if is_high else op
-                rating = "BEST RATE" if is_high else ""
-                tag = "high" if is_high else ""
-                
-                self.tree_country.insert("", "end", values=(matched_ccode, db[matched_ccode]['country_name'], display_op, "Cached", rating), tags=(tag,))
+        if matched_results:
+            for ccode, details in matched_results:
+                ops = details.get('operators', [])
+                for op in ops:
+                    is_high = ccode in HIGH_SUCCESS_OPERATORS and op.lower() in HIGH_SUCCESS_OPERATORS[ccode]
+                    display_op = f"*** {op.upper()} ***" if is_high else op
+                    rating = "BEST RATE" if is_high else ""
+                    tag = "high" if is_high else ""
+                    
+                    self.tree_country.insert("", "end", values=(ccode, details['country_name'], display_op, "Cached", rating), tags=(tag,))
         else:
-            messagebox.showinfo("Not Found", f"Search '{query}' not found in DB.\n\nTry ISO codes (IN, TR) or Country Names (INDIA).")
+            messagebox.showinfo("Not Found", f"Search '{query}' not found in DB.\n\nTry ISO codes (IN, TR), Dial Codes (91), or Country Names (INDIA).")
 
     def get_number(self):
         if not self.selected_country or not self.selected_operator:
