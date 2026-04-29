@@ -1,0 +1,20 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.lcwaikiki.android 4.0.41
+
+Service: LC Waikiki
+Service ID: lc-waikiki
+Service SMS: رمز التحقق الخاص بك لتأكيد رقم هاتفك هو: 76738 :LC WAIKIKI
+
+Official Website: lcwaikiki.com
+Google Play Store: LC Waikiki - Online Shopping
+Package Name: com.lcwaikiki.android
+
+Flow: Check Registration -> Preregister (SMS Request) -> Register (OTP Submission)
+Captcha: undefined
+Encryption: standard JSON over HTTPS
+Rate Limits: Unknown
+Bot Protection: undefined
+Endpoints: /api/v1/checkAlreadyRegisteredCustomer, /api/v5/preregister, /api/v4/register
+Automation Feasibility: High (85%)
+Description: LC Waikiki is a prominent Turkish fashion retailer offering clothing and accessories for all ages.
