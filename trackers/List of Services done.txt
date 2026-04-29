@@ -120,16 +120,17 @@ Daily Summary: 3 services, 1300 rs
 90. [22:50] Luno - co.bitx.android.wallet - 400rs
 91. [23:20] 1xCasino - org.xbet.casino - 400rs
 92. [23:33] LC Waikiki - com.lcwaikiki.android - 400rs
-Daily Summary: 19 services, 7600 rs
+93. [23:42] EZVIZ - com.ezviz - 400rs
+Daily Summary: 20 services, 8000 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 91
-- Total Earnings: 36500 rs
-- Average Daily Earning (over 19 days since Apr 10): 1921.05 rs/day
-- Average Daily Services: 4.79 services/day
+- Total Services: 92
+- Total Earnings: 36900 rs
+- Average Daily Earning (over 19 days since Apr 10): 1942.11 rs/day
+- Average Daily Services: 4.84 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.2 Services / day (4863.64 rs/day for 11 days)
-- Services Needed to Goal: 133.8
+- Recovery Pace: 12.1 Services / day (4827.27 rs/day for 11 days)
+- Services Needed to Goal: 132.8
 - Recommended for Today (inc. buffer): 15 services
-- Projected Monthly Total: ₹57631.58
+- Projected Monthly Total: ₹58263.16
