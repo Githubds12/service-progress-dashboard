@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.wave.personal 18.7.1
+
+Service: wave
+Service ID: ef4f0634-5039-468c-b266-ee5b327771c4
+Service SMS: [Transaction Message Found] Code de recharge Nigelec...
+
+1. Wave
+Mobile money service for Africa.
+Official Website: wave.com
+Google Play Store: Wave Mobile Money
+Package Name: com.wave.personal
+
+Proof of Captcha: reCAPTCHA Enterprise
+Proof of Rate Limits: Unknown
+Proof of Encryption: HTTPS / GraphQL
+Flow: POST /recaptcha/api3/mri -> POST /graphql (SignupMutation) -> POST /graphql (CustomerVerifyAuthCode)

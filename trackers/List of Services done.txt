@@ -116,16 +116,17 @@ Daily Summary: 3 services, 1300 rs
 86. [12:54] Tongcheng - com.tongcheng.android - 400rs
 87. [13:30] Gooobet - org.gooobet.client - 400rs
 88. [13:40] Live.me - com.cmcm.live - 400rs
-Daily Summary: 15 services, 6000 rs
+89. [14:30] E-GetS - com.egets.takeaways - 400rs
+Daily Summary: 16 services, 6400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 87
-- Total Earnings: 34900 rs
-- Average Daily Earning (over 19 days since Apr 10): 1836.84 rs/day
-- Average Daily Services: 4.58 services/day
+- Total Services: 89
+- Total Earnings: 35700 rs
+- Average Daily Earning (over 19 days since Apr 10): 1878.95 rs/day
+- Average Daily Services: 4.68 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 12.5 Services / day (5009.09 rs/day for 11 days)
-- Services Needed to Goal: 137.8
+- Recovery Pace: 12.1 Services / day (4845.45 rs/day for 11 days)
+- Services Needed to Goal: 135.8
 - Recommended for Today (inc. buffer): 16 services
-- Projected Monthly Total: ₹55105.26
+- Projected Monthly Total: ₹56368.42

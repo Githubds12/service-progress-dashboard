@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-26
+tv.medal.recorder 6.9.1
+
+Service: Medal
+Service ID: b67d5b70-df70-41ed-9bff-165d58f52db0
+Service SMS: Il codice di verifica per Medal è: 101802
+
+1. Medal
+Medal is a clip-sharing platform for gamers.
+Official Website: medal.tv
+Google Play Store: Medal
+Package Name: tv.medal.recorder
+
+Proof of Captcha: undefined
+Proof of Rate Limits: Unknown (No rate limits observed in HAR trace)
+Proof of Encryption: None observed (standard TLS)
+Flow: POST /users/{userId}/settings (phone) -> POST /users/{userId}/settings (phoneVerificationCode)

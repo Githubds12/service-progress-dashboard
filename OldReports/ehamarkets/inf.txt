@@ -1,0 +1,8 @@
+
+msgdog [4f0a874c-1e84-46a0-aa14-a2595eaa9d8e]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+Il codice di verifica della ehamarkets è: 8278
+
+Messages received successfully via smsautomation script
+
+[200] {"messages":[{"message":"You ehamarkets verification code is : 3905","service":"MSGDOG","timestamp":"2026-04-28T18:37:33 +0000 UTC"}],"success":true}

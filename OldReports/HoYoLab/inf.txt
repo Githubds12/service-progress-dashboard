@@ -1,0 +1,4 @@
+com.mihoyo.hoyolab 4.11.0
+hoyoverse [91f5d287-333c-4f98-b220-f00f0d455125]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+[HoYoverse]Your verification code is: 322949 (valid for 10 minutes). Please do not share this code with anyone else.

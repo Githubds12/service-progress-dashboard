@@ -1,0 +1,12 @@
+Researcher: Deepanshu Singh
+Date: 4/26/2026
+com.cubamessenger.cubamessengerapp 12.2
+Service: CubaMessenger
+Service ID: c04816b7-c58c-49bf-8ffb-b5f0c41ff79b
+Service SMS: Tu codigo para acceder a la aplicacion es: 10272
+Host: www.cubamessenger.com
+Verification: SMS
+Captcha: undefined
+Bot Protection: auth_token
+Description: CubaMessenger is a messaging service designed to facilitate communication and remittances to Cuba.
+Flow Proof: Send SMS (login/send_sms) -> Verify OTP (login/get_token) -> Auth Token Issued.

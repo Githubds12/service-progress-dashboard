@@ -1,0 +1,9 @@
+Researcher: Deepanshu Singh
+Date: 25-04-2026
+com.nestle.multibrandwaters.purelife (2.0.69)
+OTP Request: https://www.nestlewatersegypt.com/rest/en/V1/mobile/sendotp
+OTP Verify: https://www.nestlewatersegypt.com/rest/en/V1/mobile/verifyotp
+Registration: https://www.nestlewatersegypt.com/rest/en/V1/customer/customerregistration
+Security: Akamai Bot Manager, reCAPTCHA, Firebase
+Automation: Feasible with reCAPTCHA solving and Akamai bypass (if needed).
+Status: Completed

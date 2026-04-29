@@ -1,0 +1,5 @@
+eget [3dc3064b-775e-4b35-ba09-9ce4b803d64f]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+[eGet]Your Verification Code is 347671, and it is valid within 10 minutes.
+Package Name: com.egets.takeaways
+Version: 4.6.5

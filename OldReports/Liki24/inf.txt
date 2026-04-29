@@ -1,0 +1,7 @@
+liki24 [8c37f87a-b037-4f77-9226-d38c4de99c25]
+Official Website: liki24.it
+Google Play Store: Liki24
+Package Name: com.liki24.customerapp
+Version: 2.2.13
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+Je registratiecode is: 106145. Liki24 Team
