@@ -3,7 +3,7 @@ __pycache__/
 .gemini/
 *.har
 *.pdf
-OldReports/
+# OldReports/
 scratch/
 targets.txt
 weltrade_targets.txt

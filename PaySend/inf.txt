@@ -1,0 +1,8 @@
+Service: paysend.com
+UUID: [1d5a45f4-17d7-40a6-bb70-0a7e0f2b966a]
+SMS: Paysend: 810852 is your security code for registration. It expires in 10 minutes.
+Package Name: com.paysend.app
+Version: 4.9.10
+Official Website: https://paysend.com
+Google Play Store: Paysend: Send Money Abroad
+APKPure: Paysend: Send Money Abroad (apkpure.com)
