@@ -117,8 +117,8 @@ Daily Summary: 3 services, 1300 rs
 87. [13:30] Gooobet - org.gooobet.client - 400rs
 88. [13:40] Live.me - com.cmcm.live - 400rs
 89. [14:30] E-GetS - com.egets.takeaways - 400rs
-90. [17:00] Luno - co.bitx.android.wallet - 400rs
-91. [17:15] 1xCasino - org.xbet.casino - 400rs
+90. [22:50] Luno - co.bitx.android.wallet - 400rs
+91. [23:20] 1xCasino - org.xbet.casino - 400rs
 Daily Summary: 18 services, 7200 rs
 ----------
 

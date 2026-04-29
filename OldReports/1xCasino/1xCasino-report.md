@@ -3,7 +3,7 @@
 ## Metadata
 - **Target URL/App**: `org.xbet.casino`
 - **Researcher**: `Deepanshu Singh`
-- **Date**: `2026-04-29`
+- **Date**: `2026-04-29 23:24`
 - **Status**: `Completed`
 - **HAR Files**: `1xCasino.har`
 
