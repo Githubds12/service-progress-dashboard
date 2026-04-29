@@ -1,0 +1,22 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.cmcm.live 4.9.25
+
+Service: Live.me
+Service ID: eaccb63a-baa3-4306-8822-88a606266bb8
+Service SMS: [LiveMe+] "6889" is your confirmation code
+
+1. Live.me
+If you are logging into Live.me:
+Official Website: liveme.com
+Google Play Store: LiveMe - Live Stream, Go Live
+Package Name: com.cmcm.live
+APKPure: LiveMe - Live Stream, Go Live (apkpure.net)
+Service Description: LiveMe is a live broadcasting app that allows users to broadcast video content, interact with viewers, and earn rewards.
+
+Flow: The user enters their phone number to check existence (/1/cgi/is_exist), then triggers an SMS OTP (/2/cgi/sendsms), and submits the received code for verification (/1/cgi/code_exist).
+
+- Captcha: undefined. No interactive captcha was observed during the registration flow.
+- Bot Protection: Tongdun device fingerprinting SDK. Observed in payloads as `tongdun_black_box=rGPU51777449570XWBOPMdUtN1`.
+- Encryption: Custom hash signatures `lm_s_str` generated locally.
+- Rate Limits: Unknown. No rate limits were explicitly triggered during the trace.
