@@ -21,6 +21,19 @@ def parse_txt():
     
     parts = content.split('Dashboard Stats:')
     body = parts[0].strip()
+    old_stats_str = parts[1].strip() if len(parts) > 1 else ""
+    
+    # Extract previous values
+    prev_avg_services = 0.0
+    prev_recovery_pace = 0.0
+    
+    m_avg = re.search(r'Average Daily Services:\s+([\d.]+)', old_stats_str)
+    if m_avg:
+        prev_avg_services = float(m_avg.group(1))
+        
+    m_pace = re.search(r'Recovery Pace:\s+([\d.]+)', old_stats_str)
+    if m_pace:
+        prev_recovery_pace = float(m_pace.group(1))
     
     lines = body.split('\n')
     days = []
@@ -71,7 +84,7 @@ def parse_txt():
             'count': 0
         })
 
-    return header, days, body
+    return header, days, body, prev_avg_services, prev_recovery_pace
 
 def calculate_stats(days):
     total_services = sum(d['count'] for d in days)
@@ -142,9 +155,9 @@ Dashboard Stats:
 - Total Services: {stats['total_services']}
 - Total Earnings: {stats['total_earnings']} rs
 - Average Daily Earning (over {stats['days_elapsed']} days since Apr 10): {stats['avg_daily']} rs/day
-- Average Daily Services: {stats['avg_daily_services']} services/day
+- Average Daily Services: {stats['prev_avg_services']} -> {stats['avg_daily_services']} services/day
 - Target: {stats['target']} rs / day
-- Recovery Pace: {stats['recovery_pace_services']} Services / day ({stats['recovery_pace_earnings']} rs/day for {stats['days_remaining']} days)
+- Recovery Pace: {stats['prev_recovery_pace']} -> {stats['recovery_pace_services']} Services / day ({stats['recovery_pace_earnings']} rs/day for {stats['days_remaining']} days)
 - Services Needed to Goal: {stats['total_services_needed']}
 - Recommended for Today (inc. buffer): {stats['recommended_today']} services
 - Projected Monthly Total: ₹{stats['projected_total']}
@@ -648,8 +661,9 @@ def update_readme(stats):
     stats_section = f"## 📉 Live Stats\n" \
                     f"- **Total Services**: {stats['total_services']}\n" \
                     f"- **Total Earnings**: ₹{stats['total_earnings']}\n" \
-                    f"- **Average Daily Services**: {stats['avg_daily_services']:.2f} services/day\n" \
+                    f"- **Average Daily Services**: {stats['prev_avg_services']:.2f} -> {stats['avg_daily_services']:.2f} services/day\n" \
                     f"- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day\n" \
+                    f"- **Recovery Pace**: {stats['prev_recovery_pace']:.1f} -> {stats['recovery_pace_services']:.1f} services/day\n" \
                     f"- **Monthly Projection**: ₹{stats['projected_total']:.2f}\n" \
                     f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
@@ -687,8 +701,10 @@ def update_github():
         print(f"An error occurred while updating GitHub: {e}")
 
 def main():
-    header, days, body = parse_txt()
+    header, days, body, prev_avg_services, prev_recovery_pace = parse_txt()
     stats = calculate_stats(days)
+    stats['prev_avg_services'] = prev_avg_services
+    stats['prev_recovery_pace'] = prev_recovery_pace
     update_txt(body, stats)
     update_html(header, days, stats)
     update_readme(stats)
