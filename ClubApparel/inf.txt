@@ -1,0 +1,5 @@
+clubapparel [a9d549c2-9063-4c50-afa6-c93e13d56bec]
+Package Name: com.appemirates.clubapparel
+Version: 4.5.1
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+Use OTP 9012 for Club Apparel
