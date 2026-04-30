@@ -1,0 +1,20 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-30
+com.paybis 1.6.20
+
+Service: Paybis
+Service ID: paybis
+Service SMS: Paybis: 236416 is your code
+
+Official Website: paybis.com
+Google Play Store: Paybis: Buy Bitcoin, Crypto
+Package Name: com.paybis
+
+Flow: SMS Request (with reCaptcha) -> SMS Verification
+Captcha: reCaptcha v3
+Encryption: HTTPS
+Rate Limits: Variable (see expirationTime)
+Bot Protection: Cloudflare + reCaptcha
+Endpoints: /v1/session/{sessionId}/register, /v1/session/{sessionId}/confirm
+Automation Feasibility: Low (35%)
+Description: Paybis is a cryptocurrency exchange platform. Registration is protected by reCaptcha v3 and Cloudflare, making headless automation difficult without advanced solving services.

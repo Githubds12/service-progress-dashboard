@@ -125,16 +125,17 @@ Daily Summary: 20 services, 8000 rs
 ----------
 30th April, Thursday
 94. [09:50] Tuda - com.tuda.android - 400rs
-Daily Summary: 1 service, 400 rs
+95. [10:10] Paybis - com.paybis - 400rs
+Daily Summary: 2 services, 800 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 93
-- Total Earnings: 37300 rs
-- Average Daily Earning (over 20 days since Apr 10): 1865.0 rs/day
-- Average Daily Services: 4.65 services/day
+- Total Services: 94
+- Total Earnings: 37700 rs
+- Average Daily Earning (over 20 days since Apr 10): 1885.0 rs/day
+- Average Daily Services: 4.7 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 13.2 Services / day (5270.0 rs/day for 10 days)
-- Services Needed to Goal: 131.8
+- Recovery Pace: 13.1 Services / day (5230.0 rs/day for 10 days)
+- Services Needed to Goal: 130.8
 - Recommended for Today (inc. buffer): 16 services
-- Projected Monthly Total: ₹55950.0
+- Projected Monthly Total: ₹56550.0
