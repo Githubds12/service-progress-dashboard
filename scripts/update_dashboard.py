@@ -87,7 +87,7 @@ def parse_txt():
     return header, days, body, prev_avg_services, prev_recovery_pace
 
 def calculate_stats(days):
-    total_services = sum(d['count'] for d in days)
+    total_services = sum(len(d['services']) for d in days)
     total_earnings = sum(d['earnings'] for d in days)
     
     start_date = date(2026, 4, 10)
@@ -121,7 +121,7 @@ def calculate_stats(days):
     completed_today = 0
     for d in days:
         if today_str_check in d['date']:
-            completed_today = d['count']
+            completed_today = len(d['services'])
             break
 
     explanation = f"To reach your monthly target of ₹90,000, you need an average of {round(recovery_pace_services, 1)} services/day for the next {days_remaining} days. A {int((buffer_multiplier-1)*100)}% buffer ({recommended_today} total) is recommended to build a safety net. Baseline was {ideal_daily_baseline} services/day."
@@ -558,10 +558,10 @@ def update_html(header, days, stats):
             document.getElementById('total-services').innerText = data.stats.total_services;
             document.getElementById('total-earnings').innerText = '₹' + data.stats.total_earnings;
             document.getElementById('avg-daily').innerText = '₹' + data.stats.avg_daily;
-            document.getElementById('avg-services').innerText = data.stats.avg_daily_services + ' services/day';
+            document.getElementById('avg-services').innerText = data.stats.prev_avg_services + ' -> ' + data.stats.avg_daily_services + ' services/day';
             document.getElementById('avg-target').innerText = 'Goal: ₹' + data.stats.target + '/d';
             
-            document.getElementById('pace-services').innerText = data.stats.recovery_pace_services + '/d';
+            document.getElementById('pace-services').innerText = data.stats.prev_recovery_pace + ' -> ' + data.stats.recovery_pace_services + '/d';
             document.getElementById('pace-earnings').innerText = '₹' + data.stats.recovery_pace_earnings + '/d';
             document.getElementById('services-to-goal').innerText = Math.ceil(data.stats.total_services_needed);
             

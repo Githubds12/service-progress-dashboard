@@ -358,10 +358,10 @@
             document.getElementById('total-services').innerText = data.stats.total_services;
             document.getElementById('total-earnings').innerText = '₹' + data.stats.total_earnings;
             document.getElementById('avg-daily').innerText = '₹' + data.stats.avg_daily;
-            document.getElementById('avg-services').innerText = data.stats.avg_daily_services + ' services/day';
+            document.getElementById('avg-services').innerText = data.stats.prev_avg_services + ' -> ' + data.stats.avg_daily_services + ' services/day';
             document.getElementById('avg-target').innerText = 'Goal: ₹' + data.stats.target + '/d';
             
-            document.getElementById('pace-services').innerText = data.stats.recovery_pace_services + '/d';
+            document.getElementById('pace-services').innerText = data.stats.prev_recovery_pace + ' -> ' + data.stats.recovery_pace_services + '/d';
             document.getElementById('pace-earnings').innerText = '₹' + data.stats.recovery_pace_earnings + '/d';
             document.getElementById('services-to-goal').innerText = Math.ceil(data.stats.total_services_needed);
             

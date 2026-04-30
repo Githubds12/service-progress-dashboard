@@ -131,10 +131,10 @@ Daily Summary: 3 services, 1200 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 95
+- Total Services: 96
 - Total Earnings: 38100 rs
 - Average Daily Earning (over 20 days since Apr 10): 1905.0 rs/day
-- Average Daily Services: 4.75 -> 4.75 services/day
+- Average Daily Services: 4.75 -> 4.8 services/day
 - Target: 3000 rs / day
 - Recovery Pace: 13.0 -> 13.0 Services / day (5190.0 rs/day for 10 days)
 - Services Needed to Goal: 129.8
