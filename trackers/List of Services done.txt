@@ -131,7 +131,7 @@ Daily Summary: 20 services, 8000 rs
 Daily Summary: 4 services, 1600 rs
 ----------
 1st May, Friday
-98. [12:45] uo (Urban Outfitters) - com.urbanoutfitters.android - 400rs
+98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
 
