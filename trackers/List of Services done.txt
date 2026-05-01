@@ -130,14 +130,18 @@ Daily Summary: 20 services, 8000 rs
 97. [11:10] ClubApparel - com.appemirates.clubapparel - 400rs
 Daily Summary: 4 services, 1600 rs
 ----------
+1st May, Friday
+
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 97
 - Total Earnings: 38500 rs
-- Average Daily Earning (over 20 days since Apr 10): 1925.0 rs/day
-- Average Daily Services: 4.8 -> 4.85 services/day
+- Average Daily Earning (over 21 days since Apr 10): 1833.33 rs/day
+- Average Daily Services: 4.8 -> 4.62 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 13.0 -> 12.9 Services / day (5150.0 rs/day for 10 days)
+- Recovery Pace: 13.0 -> 14.3 Services / day (5722.22 rs/day for 9 days)
 - Services Needed to Goal: 128.8
-- Recommended for Today (inc. buffer): 16 services
-- Projected Monthly Total: ₹57750.0
+- Recommended for Today (inc. buffer): 18 services
+- Projected Monthly Total: ₹55000.0

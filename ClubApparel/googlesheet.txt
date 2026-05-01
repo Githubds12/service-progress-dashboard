@@ -17,4 +17,4 @@ Rate Limits: undefined
 Bot Protection: AWS Lambda Proxy + OAuth/Basic Auth
 Endpoints: /prod/club-apparel/epsilon/internal, /api/v1/authorization/profiles/tokens
 Automation Feasibility: Medium (65%)
-Description: ClubApparel uses the PeopleCloud Epsilon loyalty platform. Requests are routed through an AWS Lambda proxy. Verification requires a stateful 'verify_id' passed in a custom header.
+Description: ClubApparel uses the PeopleCloud Epsilon loyalty platform. Requests are routed through an AWS Lambda proxy. Verification requires passing the OTP directly inside the 'Source-Application' header along with the 'verify_id'.
