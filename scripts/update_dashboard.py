@@ -172,14 +172,34 @@ def update_html(header, days, stats):
     
     services_by_day = []
     for d in days:
-        services_list = "".join(f"<li>• {s}</li>" for s in d['services'])
+        services_list = ""
+        for s in d['services']:
+            # Parse format: 98. [12:45] Urban Outfitters - com.urbanoutfitters.android - 400rs
+            match = re.search(r'^\d+\.\s+\[(\d\d:\d\d)\]\s+(.*?)\s+-\s+(.*?)\s+-\s+(\d+)rs', s)
+            if match:
+                time, name, pkg, price = match.groups()
+                item_html = f"""
+                <li class="service-item-detail">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <span style="font-weight:700; color:#f8fafc; font-size:13px;">{name}</span>
+                        <span style="font-size:10px; color:var(--primary); font-weight:600;">{time}</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
+                        <span style="font-size:9px; color:#64748b; font-family:monospace;">{pkg}</span>
+                        <span style="font-size:10px; color:var(--success); font-weight:700;">₹{price}</span>
+                    </div>
+                </li>"""
+                services_list += item_html
+            else:
+                services_list += f"<li class='service-item-detail'>• {s}</li>"
+
         day_html = f"""
         <div class="service-day">
             <div class="service-header">
                 <span>{d['date']} <small style="font-weight:normal; color:#8a8d91;">({d['count']} services)</small></span>
                 <span style="color: var(--primary);">₹{d['earnings']}</span>
             </div>
-            <ul class="service-list">
+            <ul class="service-list" style="padding-left:0;">
                 {services_list}
             </ul>
         </div>
@@ -403,6 +423,13 @@ def update_html(header, days, stats):
         .service-header {{ display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; }}
         .service-list {{ list-style: none; color: #94a3b8; font-size: 11px; }}
         .service-list li {{ margin: 3px 0; }}
+        .service-item-detail {{
+            padding: 8px 10px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 8px;
+            margin-bottom: 8px !important;
+            border-left: 3px solid var(--primary);
+        }}
 
         #celebration {{ display: none; text-align: center; margin-top: 15px; }}
         .trophy {{ width: 80px; filter: drop-shadow(0 0 20px var(--success)); margin: 10px 0; }}
