@@ -139,16 +139,17 @@ Daily Summary: 1 service, 400 rs
 100. [10:50] jameda - de.jameda - 500rs
 101. [11:10] weststein - com.weststeincard.weststein - 400rs
 102. [12:00] pro1bet - org.pro1bet.client - 400rs
-Daily Summary: 4 services, 1700 rs
+103. [12:10] xtb - com.xtb.xmobile2 - 400rs
+Daily Summary: 5 services, 2100 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 102
-- Total Earnings: 40600 rs
-- Average Daily Earning (over 22 days since Apr 10): 1845.45 rs/day
-- Average Daily Services: 4.43 -> 4.64 services/day
+- Total Services: 103
+- Total Earnings: 41000 rs
+- Average Daily Earning (over 22 days since Apr 10): 1863.64 rs/day
+- Average Daily Services: 4.48 -> 4.68 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 15.4 -> 15.4 Services / day (6175.0 rs/day for 8 days)
-- Services Needed to Goal: 123.5
+- Recovery Pace: 15.3 -> 15.3 Services / day (6125.0 rs/day for 8 days)
+- Services Needed to Goal: 122.5
 - Recommended for Today (inc. buffer): 19 services
-- Projected Monthly Total: ₹55363.64
+- Projected Monthly Total: ₹55909.09
