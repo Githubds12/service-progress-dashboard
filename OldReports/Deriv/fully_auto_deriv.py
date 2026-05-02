@@ -1,7 +1,7 @@
 import requests
 import time
 import re
-from Deriv.api import DerivAPI
+from api import DerivAPI
 
 # --- Configuration ---
 IP = "62.238.2.204"
