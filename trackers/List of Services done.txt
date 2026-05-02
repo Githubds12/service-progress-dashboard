@@ -140,16 +140,17 @@ Daily Summary: 1 service, 400 rs
 101. [11:10] weststein - com.weststeincard.weststein - 400rs
 102. [12:00] pro1bet - org.pro1bet.client - 400rs
 103. [12:10] xtb - com.xtb.xmobile2 - 400rs
-Daily Summary: 5 services, 2100 rs
+104. [13:15] Flowwow - com.flowwow - 400rs
+Daily Summary: 6 services, 2500 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 103
-- Total Earnings: 41000 rs
-- Average Daily Earning (over 22 days since Apr 10): 1863.64 rs/day
-- Average Daily Services: 4.48 -> 4.68 services/day
+- Total Services: 104
+- Total Earnings: 41400 rs
+- Average Daily Earning (over 22 days since Apr 10): 1881.82 rs/day
+- Average Daily Services: 4.52 -> 4.73 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 15.3 -> 15.3 Services / day (6125.0 rs/day for 8 days)
-- Services Needed to Goal: 122.5
+- Recovery Pace: 16.5 -> 15.2 Services / day (6075.0 rs/day for 8 days)
+- Services Needed to Goal: 121.5
 - Recommended for Today (inc. buffer): 19 services
-- Projected Monthly Total: ₹55909.09
+- Projected Monthly Total: ₹56454.55
