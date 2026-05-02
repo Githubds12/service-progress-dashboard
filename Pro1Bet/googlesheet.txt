@@ -1,0 +1,21 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-02
+org.pro1bet.client pro1bet-v253.0.0
+
+Service: pro1bet
+Service ID: cc24f824-fc9a-4ada-af7c-0a39e54f9ea8
+Service SMS: رمز التحقق 15859
+
+Official Website: pro1bet.com
+Google Play Store: Pro1Bet - Online Betting
+Package Name: org.pro1bet.client
+
+Flow: GET /GetRegCaptcha -> POST /Registration -> POST /SendCode -> POST /CheckCode
+Captcha: Image Captcha
+Rate Limits: Unknown
+Encryption: None
+Endpoints: /Account/v1.1/Mb/Register/Registration, /Account/v1/CheckCode
+Bot Protection: Image Captcha
+Description: Pro1Bet is an online betting platform offering various sports betting and casino services.
+Valuation: 400rs
+Status: Analyzed registration and SMS verification flow.
