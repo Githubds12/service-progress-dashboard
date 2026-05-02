@@ -147,7 +147,7 @@ Dashboard Stats:
 - Average Daily Earning (over 22 days since Apr 10): 1827.27 rs/day
 - Average Daily Services: 4.39 -> 4.59 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 49800.0 -> 15.6 Services / day (6225.0 rs/day for 8 days)
+- Recovery Pace: 15.6 -> 15.6 Services / day (6225.0 rs/day for 8 days)
 - Services Needed to Goal: 124.5
 - Recommended for Today (inc. buffer): 19 services
 - Projected Monthly Total: ₹54818.18
