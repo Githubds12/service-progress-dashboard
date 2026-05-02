@@ -1,0 +1,21 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-02
+com.weststeincard.weststein 3.0.10
+
+Service: weststein
+Service ID: c71accc7-b2df-4527-b6d3-1b620b802163
+Service SMS: Votre code OTP pour vérifier l'achat ... est 305398
+
+Official Website: weststeincard.com
+Google Play Store: WestStein: Personal Account
+Package Name: com.weststeincard.weststein
+
+Flow: POST /api/apply/private (Apply) -> POST /api/user/confirm (Email) -> GET /api/user/phone/validate (SMS)
+Captcha: reCAPTCHA v2 (Google)
+Rate Limits: Unknown
+Encryption: None
+Endpoints: /api/apply/private, /api/user/confirm, /api/user/phone/validate
+Bot Protection: Google reCAPTCHA
+Description: WestStein is a fintech company providing prepaid Mastercard and online account services for personal and business use.
+Valuation: 400rs
+Status: Analyzed two-step verification flow.
