@@ -134,14 +134,17 @@ Daily Summary: 4 services, 1600 rs
 98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
+2nd May, Saturday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 98
 - Total Earnings: 38900 rs
-- Average Daily Earning (over 21 days since Apr 10): 1852.38 rs/day
-- Average Daily Services: 4.62 -> 4.67 services/day
+- Average Daily Earning (over 22 days since Apr 10): 1768.18 rs/day
+- Average Daily Services: 4.62 -> 4.45 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 14.3 -> 14.2 Services / day (5677.78 rs/day for 9 days)
+- Recovery Pace: 14.3 -> 16.0 Services / day (6387.5 rs/day for 8 days)
 - Services Needed to Goal: 127.8
-- Recommended for Today (inc. buffer): 18 services
-- Projected Monthly Total: ₹55571.43
+- Recommended for Today (inc. buffer): 20 services
+- Projected Monthly Total: ₹53045.45
