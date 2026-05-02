@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: May 2, 2026
+com.deriv.home 1.5.0
+
+Flow: Register -> Login -> Personal Details -> Verify Phone (SMS OTP)
+
+Captcha: undefined
+Encryption: Standard JSON/HTTPS
+Rate Limits: Unknown
+
+Service: Deriv
+Service ID: 683517d2-2707-489f-ba33-0ecda77c1d99
+Service SMS: [Deriv] 820046 is your Deriv verification code
+
+Official Website: deriv.com
+Google Play Store: Deriv: Online Trading
+Package Name: com.deriv.home
+APKPure: Deriv Search (apkpure.net)

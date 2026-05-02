@@ -1,0 +1,4 @@
+jameda [56d60b16-2f63-4025-b759-aa25f448e936]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+Geben Sie den Code ein: 5827
+[200] {"messages":[{"message":"Geben Sie den Code ein: 5976","service":"jameda","timestamp":"2026-05-02T04:42:43 +0000 UTC"}],"success":true}
