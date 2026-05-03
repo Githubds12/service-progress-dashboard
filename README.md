@@ -7,11 +7,11 @@ A premium, live-updating dashboard to track service progress and financial goals
 ## 📉 Live Stats
 - **Total Services**: 104
 - **Total Earnings**: ₹41400
-- **Average Daily Services**: 4.52 -> 4.73 services/day
-- **Average Daily Earnings**: ₹1881.82/day
-- **Recovery Pace**: 16.5 -> 15.2 services/day
-- **Monthly Projection**: ₹56454.55
-- **Last Sync**: 2026-05-02 13:24:06
+- **Average Daily Services**: 4.73 -> 4.52 services/day
+- **Average Daily Earnings**: ₹1800.00/day
+- **Recovery Pace**: 15.2 -> 17.4 services/day
+- **Monthly Projection**: ₹54000.00
+- **Last Sync**: 2026-05-03 11:59:19
 
 ## 🚀 Features
 - **Real-time Updates**: Automatically refreshes every 3 seconds with the latest data.

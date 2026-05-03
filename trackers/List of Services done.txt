@@ -142,15 +142,17 @@ Daily Summary: 1 service, 400 rs
 103. [12:10] xtb - com.xtb.xmobile2 - 400rs
 104. [13:15] Flowwow - com.flowwow - 400rs
 Daily Summary: 6 services, 2500 rs
+3rd May, Sunday
+Daily Summary: 0 services, 0 rs
 ----------
 
 Dashboard Stats:
 - Total Services: 104
 - Total Earnings: 41400 rs
-- Average Daily Earning (over 22 days since Apr 10): 1881.82 rs/day
-- Average Daily Services: 4.52 -> 4.73 services/day
+- Average Daily Earning (over 23 days since Apr 10): 1800.0 rs/day
+- Average Daily Services: 4.73 -> 4.52 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 16.5 -> 15.2 Services / day (6075.0 rs/day for 8 days)
+- Recovery Pace: 15.2 -> 17.4 Services / day (6942.86 rs/day for 7 days)
 - Services Needed to Goal: 121.5
-- Recommended for Today (inc. buffer): 19 services
-- Projected Monthly Total: ₹56454.55
+- Recommended for Today (inc. buffer): 21 services
+- Projected Monthly Total: ₹54000.0

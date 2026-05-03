@@ -439,6 +439,7 @@ def update_html(header, days, stats):
     <div class="container">
         <div class="header">
             <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
+            <p style="font-size: 14px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">{stats['today_date']}</p>
             <h1 id="today-badge">Dashboard</h1>
             <p style="color: #64748b; font-weight: 500;" id="period-header"></p>
         </div>
