@@ -439,9 +439,9 @@ def update_html(header, days, stats):
     <div class="container">
         <div class="header">
             <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
-            <p style="font-size: 14px; color: var(--primary); font-weight: 700; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px;">{stats['today_date']}</p>
-            <h1 id="today-badge">Dashboard</h1>
-            <p style="color: #64748b; font-weight: 500;" id="period-header"></p>
+            <h1 style="font-size: 48px; font-weight: 900; letter-spacing: -2px; margin: 5px 0; background: linear-gradient(to right, #6366f1, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{stats['today_date']}</h1>
+            <p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">Service Progress Dashboard</p>
+            <p style="color: #475569; font-weight: 500; margin-top: 5px;" id="period-header"></p>
         </div>
 
         <div class="banner-container">
