@@ -1,0 +1,12 @@
+Service: JoyBuy
+Service ID: com.joybuy.jdi
+Service SMS: 【JoyBuy】Your verification code is 123456. Please do not share it with anyone.
+
+Package Name: com.joybuy.jdi
+Version: 1.0.78
+Official Website: joybuy.com
+Google Play Store: JoyBuy: Global Shopping
+APKPure: https://apkpure.net/joybuy-global-shopping/com.joybuy.jdi
+joybuy [16903d60-83c0-4e35-8ecf-8b4e11bfddcc]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+[Joybuy]Dit is je inlogverificatiecode: 295123. Deze verloopt over 5 minuten. Deel deze met niemand.
