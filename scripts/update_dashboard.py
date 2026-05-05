@@ -535,16 +535,18 @@ def update_html(header, days, stats):
         let serviceData = [];
 
         const quotes = [
-            {{ text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" }},
-            {{ text: "The only way to do great work is to love what you do.", author: "Steve Jobs" }},
-            {{ text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" }},
-            {{ text: "Your limit is only your imagination.", author: "Inspiration" }},
-            {{ text: "Push yourself, because no one else is going to do it for you.", author: "Motivation" }},
-            {{ text: "Great things never come from comfort zones.", author: "Growth" }},
-            {{ text: "Dream it. Wish it. Do it.", author: "Success" }},
-            {{ text: "Stay focused. Be kind. Work hard.", author: "Vision" }},
-            {{ text: "The future depends on what you do today.", author: "Mahatma Gandhi" }},
-            {{ text: "It always seems impossible until it's done.", author: "Nelson Mandela" }}
+            {{ text: "In my presentations, I do not sing. I just sing what the Tanpura asks me to sing.", author: "Kumar Gandharva" }},
+            {{ text: "Notes sung according to grammar become raga; but even though it lies within a scale, the Raga is completely free.", author: "Kumar Gandharva" }},
+            {{ text: "I am not here to play a coolie to convention.", author: "Kumar Gandharva" }},
+            {{ text: "Mee Malkauns gaat hoto, tar mala pancham disla. Toh mhanala 'mee yeu ka', tar me bolalo, 'ye'.", author: "Kumar Gandharva" }},
+            {{ text: "He came to hear the same Hameer he has heard hundreds of times, I wanted to sing something different.", author: "Kumar Gandharva" }},
+            {{ text: "What is tarana? ... sometimes something remains to be said and that we can say through the tarana.", author: "Kumar Gandharva" }},
+            {{ text: "All ragas have folk origins and the vast reservoir of Indian folk tradition is an essential source for 'raga-ness'.", author: "Kumar Gandharva" }},
+            {{ text: "Nirbhay Nirgun Gun Re Gaunga, Mool Kamal Dridh Aasan Bandhu Ji, Ulti Pavan Chadhaunga.", author: "Kabir / Kumar Gandharva" }},
+            {{ text: "Sunta Hai Guru Gyani, Gagan Mein Awaaz Ho Rahi Jhini, Jhini, Jhini.", author: "Kabir / Kumar Gandharva" }},
+            {{ text: "Ud Jayega Hans Akela, Bhanvarpur Mein Pada Rahega Kaya Ka Ye Dera.", author: "Kabir / Kumar Gandharva" }},
+            {{ text: "Jhini Jhini Bini Chadariya, Kahe Ka Tana, Kahe Ki Bharni, Kaun Tar Se Bini Chadariya?", author: "Kabir / Kumar Gandharva" }},
+            {{ text: "Avadhoo Bhoola Bahar Khoje, Ghat Ke Bhitar Koi Na Dekhe.", author: "Kabir / Kumar Gandharva" }}
         ];
 
         function updateQuote() {{
