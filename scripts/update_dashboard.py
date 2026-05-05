@@ -270,10 +270,6 @@ def update_html(header, days, stats):
         
         body {{ 
             background: var(--bg-dark);
-            background-image: 
-                url('dashboard/bhairavi_texture_real.jpg'),
-                radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%);
             background-size: cover, auto, auto;
             background-blend-mode: overlay, normal, normal;
             color: #f8fafc; 
@@ -281,6 +277,7 @@ def update_html(header, days, stats):
             padding: 10px;
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background 1s ease;
         }}
 
         @keyframes pulse {{
@@ -585,6 +582,28 @@ def update_html(header, days, stats):
 
         function renderUI(data) {{
             try {{
+                const backgrounds = [
+                    'dashboard/bhairavi_texture_real.jpg',
+                    'dashboard/bhairavi_1.jpg',
+                    'dashboard/bhairavi_2.jpg',
+                    'dashboard/bhairavi_3.jpg',
+                    'dashboard/bhairavi_4.jpg'
+                ];
+                const banners = [
+                    'dashboard/bhairavi_banner_real.jpg',
+                    'dashboard/bhairavi_1.jpg',
+                    'dashboard/bhairavi_2.jpg',
+                    'dashboard/bhairavi_3.jpg',
+                    'dashboard/bhairavi_4.jpg'
+                ];
+
+                const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+                const randomBanner = banners[Math.floor(Math.random() * banners.length)];
+                
+                document.body.style.backgroundImage = `url('${{randomBg}}'), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)`;
+                const bannerImg = document.querySelector('.banner-img');
+                if (bannerImg) bannerImg.src = randomBanner;
+
                 const dataStr = JSON.stringify(data);
                 if (dataStr === lastDataStr) return; 
                 const isFirstLoad = lastDataStr === "";
