@@ -337,8 +337,8 @@
 
         function updateQuote() {
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('random-quote').innerText = `"${quote.text}"`;
-            document.getElementById('quote-author').innerText = `— ${quote.author}`;
+            document.getElementById('random-quote').innerText = '"' + quote.text + '"';
+            document.getElementById('quote-author').innerText = '— ' + quote.author;
             document.getElementById('quote-meaning').innerText = quote.meaning;
         }
         updateQuote();
@@ -353,8 +353,8 @@
             if (serviceData && serviceData.length > 0) {
                 document.getElementById('services-html').innerHTML = serviceData[currentPage];
                 const isLastPage = currentPage === totalPages - 1;
-                const pageLabel = isLastPage ? `PAGE ${currentPage + 1} (TODAY)` : `PAGE ${currentPage + 1}`;
-                document.getElementById('page-indicator').innerText = `${pageLabel} OF ${totalPages}`;
+                const pageLabel = isLastPage ? 'PAGE ' + (currentPage + 1) + ' (TODAY)' : 'PAGE ' + (currentPage + 1);
+                document.getElementById('page-indicator').innerText = pageLabel + ' OF ' + totalPages;
                 document.getElementById('prev-btn').disabled = currentPage === 0;
                 document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
             }
@@ -377,10 +377,13 @@
                     'dashboard/bhairavi_4.jpg'
                 ];
 
-                const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-                const randomBanner = banners[Math.floor(Math.random() * banners.length)];
+                const isSubfolder = window.location.pathname.includes('dashboard/');
+                const getPath = (p) => isSubfolder ? p.replace('dashboard/', '') : p;
+
+                const randomBg = getPath(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+                const randomBanner = getPath(banners[Math.floor(Math.random() * banners.length)]);
                 
-                document.body.style.backgroundImage = `url('${randomBg}'), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)`;
+                document.body.style.backgroundImage = 'url(' + randomBg + '), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)';
                 const bannerImg = document.querySelector('.banner-img');
                 if (bannerImg) bannerImg.src = randomBanner;
 
@@ -489,7 +492,8 @@
         }
 
         function refreshData() {
-            const dataPath = window.location.pathname.includes('dashboard') ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
+            const isSubfolder = window.location.pathname.includes('dashboard/');
+            const dataPath = isSubfolder ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
             let script = document.createElement('script');
             script.src = dataPath + '?t=' + new Date().getTime();
             script.onload = () => { 

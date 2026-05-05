@@ -557,8 +557,8 @@ def update_html(header, days, stats):
 
         function updateQuote() {{
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('random-quote').innerText = `"${{quote.text}}"`;
-            document.getElementById('quote-author').innerText = `— ${{quote.author}}`;
+            document.getElementById('random-quote').innerText = '"' + quote.text + '"';
+            document.getElementById('quote-author').innerText = '— ' + quote.author;
             document.getElementById('quote-meaning').innerText = quote.meaning;
         }}
         updateQuote();
@@ -573,8 +573,8 @@ def update_html(header, days, stats):
             if (serviceData && serviceData.length > 0) {{
                 document.getElementById('services-html').innerHTML = serviceData[currentPage];
                 const isLastPage = currentPage === totalPages - 1;
-                const pageLabel = isLastPage ? `PAGE ${{currentPage + 1}} (TODAY)` : `PAGE ${{currentPage + 1}}`;
-                document.getElementById('page-indicator').innerText = `${{pageLabel}} OF ${{totalPages}}`;
+                const pageLabel = isLastPage ? 'PAGE ' + (currentPage + 1) + ' (TODAY)' : 'PAGE ' + (currentPage + 1);
+                document.getElementById('page-indicator').innerText = pageLabel + ' OF ' + totalPages;
                 document.getElementById('prev-btn').disabled = currentPage === 0;
                 document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
             }}
@@ -597,10 +597,13 @@ def update_html(header, days, stats):
                     'dashboard/bhairavi_4.jpg'
                 ];
 
-                const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
-                const randomBanner = banners[Math.floor(Math.random() * banners.length)];
+                const isSubfolder = window.location.pathname.includes('dashboard/');
+                const getPath = (p) => isSubfolder ? p.replace('dashboard/', '') : p;
+
+                const randomBg = getPath(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
+                const randomBanner = getPath(banners[Math.floor(Math.random() * banners.length)]);
                 
-                document.body.style.backgroundImage = `url('${{randomBg}}'), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)`;
+                document.body.style.backgroundImage = 'url(' + randomBg + '), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)';
                 const bannerImg = document.querySelector('.banner-img');
                 if (bannerImg) bannerImg.src = randomBanner;
 
@@ -709,7 +712,8 @@ def update_html(header, days, stats):
         }}
 
         function refreshData() {{
-            const dataPath = window.location.pathname.includes('dashboard') ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
+            const isSubfolder = window.location.pathname.includes('dashboard/');
+            const dataPath = isSubfolder ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
             let script = document.createElement('script');
             script.src = dataPath + '?t=' + new Date().getTime();
             script.onload = () => {{ 
@@ -731,6 +735,13 @@ def update_html(header, days, stats):
         f.write(html_content)
     with open('c:/Users/Gorri/Documents/Reports/index.html', 'w', encoding='utf-8') as f:
         f.write(html_content)
+    
+    # Write data file to both locations for reliable loading
+    data_file_content = f"window.dashboardData = {json.dumps(data_dict)};"
+    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
+        f.write(data_file_content)
+    with open('c:/Users/Gorri/Documents/Reports/dashboard_data.js', 'w', encoding='utf-8') as f:
+        f.write(data_file_content)
 
 def update_readme(stats):
     readme_path = 'c:/Users/Gorri/Documents/Reports/README.md'
