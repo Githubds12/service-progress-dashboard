@@ -245,6 +245,7 @@
         <div class="glass-card quote-card">
             <div class="quote-text" id="random-quote"></div>
             <div class="quote-author" id="quote-author"></div>
+            <div id="quote-meaning" style="font-size: 11px; opacity: 0.7; margin-top: 12px; font-style: italic; color: var(--vibhuti); max-width: 80%; line-height: 1.4;"></div>
         </div>
 
         <div class="glass-card projection-card">
@@ -328,24 +329,25 @@
         let serviceData = [];
 
         const quotes = [
-            { text: "In my presentations, I do not sing. I just sing what the Tanpura asks me to sing.", author: "Kumar Gandharva" },
-            { text: "Notes sung according to grammar become raga; but even though it lies within a scale, the Raga is completely free.", author: "Kumar Gandharva" },
-            { text: "I am not here to play a coolie to convention.", author: "Kumar Gandharva" },
-            { text: "Mee Malkauns gaat hoto, tar mala pancham disla. Toh mhanala 'mee yeu ka', tar me bolalo, 'ye'.", author: "Kumar Gandharva" },
-            { text: "He came to hear the same Hameer he has heard hundreds of times, I wanted to sing something different.", author: "Kumar Gandharva" },
-            { text: "What is tarana? ... sometimes something remains to be said and that we can say through the tarana.", author: "Kumar Gandharva" },
-            { text: "All ragas have folk origins and the vast reservoir of Indian folk tradition is an essential source for 'raga-ness'.", author: "Kumar Gandharva" },
-            { text: "Nirbhay Nirgun Gun Re Gaunga, Mool Kamal Dridh Aasan Bandhu Ji, Ulti Pavan Chadhaunga.", author: "Kabir / Kumar Gandharva" },
-            { text: "Sunta Hai Guru Gyani, Gagan Mein Awaaz Ho Rahi Jhini, Jhini, Jhini.", author: "Kabir / Kumar Gandharva" },
-            { text: "Ud Jayega Hans Akela, Bhanvarpur Mein Pada Rahega Kaya Ka Ye Dera.", author: "Kabir / Kumar Gandharva" },
-            { text: "Jhini Jhini Bini Chadariya, Kahe Ka Tana, Kahe Ki Bharni, Kaun Tar Se Bini Chadariya?", author: "Kabir / Kumar Gandharva" },
-            { text: "Avadhoo Bhoola Bahar Khoje, Ghat Ke Bhitar Koi Na Dekhe.", author: "Kabir / Kumar Gandharva" }
+            { text: "In my presentations, I do not sing. I just sing what the Tanpura asks me to sing.", author: "Kumar Gandharva", meaning: "Complete surrender to the sound of the Tanpura, where the artist is but a medium." },
+            { text: "Notes sung according to grammar become raga; but even though it lies within a scale, the Raga is completely free.", author: "Kumar Gandharva", meaning: "True Raga transcends technical rules; it is a living expression of freedom." },
+            { text: "I am not here to play a coolie to convention.", author: "Kumar Gandharva", meaning: "A rebellion against rigid, mindless adherence to tradition in classical music." },
+            { text: "Mee Malkauns gaat hoto, tar mala pancham disla. Toh mhanala 'mee yeu ka', tar me bolalo, 'ye'.", author: "Kumar Gandharva", meaning: "A mystical experience of 'seeing' a prohibited note (Pa) in Raga Malkauns and embracing it." },
+            { text: "He came to hear the same Hameer he has heard hundreds of times, I wanted to sing something different.", author: "Kumar Gandharva", meaning: "Every performance must be a fresh creation, not a predictable repetition." },
+            { text: "What is tarana? ... sometimes something remains to be said and that we can say through the tarana.", author: "Kumar Gandharva", meaning: "Tarana syllables carry emotions that words cannot capture." },
+            { text: "All ragas have folk origins and the vast reservoir of Indian folk tradition is an essential source for 'raga-ness'.", author: "Kumar Gandharva", meaning: "The roots of classical music lie in the natural melodies of the common people." },
+            { text: "Nirbhay Nirgun Gun Re Gaunga, Mool Kamal Dridh Aasan Bandhu Ji, Ulti Pavan Chadhaunga.", author: "Kabir / Kumar Gandharva", meaning: "I will sing of the formless (Nirguna) without fear, ascending through spiritual breath." },
+            { text: "Sunta Hai Guru Gyani, Gagan Mein Awaaz Ho Rahi Jhini, Jhini, Jhini.", author: "Kabir / Kumar Gandharva", meaning: "The wise teacher hears the subtle, divine resonance within the inner cosmos." },
+            { text: "Ud Jayega Hans Akela, Bhanvarpur Mein Pada Rahega Kaya Ka Ye Dera.", author: "Kabir / Kumar Gandharva", meaning: "The soul (swan) will fly away alone, leaving the physical body behind." },
+            { text: "Jhini Jhini Bini Chadariya, Kahe Ka Tana, Kahe Ki Bharni, Kaun Tar Se Bini Chadariya?", author: "Kabir / Kumar Gandharva", meaning: "Life is a finely woven cloth; the poem ponders the mystery of its creation." },
+            { text: "Avadhoo Bhoola Bahar Khoje, Ghat Ke Bhitar Koi Na Dekhe.", author: "Kabir / Kumar Gandharva", meaning: "The truth is not found outside; it resides within the depths of one's own heart." }
         ];
 
         function updateQuote() {
             const quote = quotes[Math.floor(Math.random() * quotes.length)];
             document.getElementById('random-quote').innerText = `"${quote.text}"`;
             document.getElementById('quote-author').innerText = `— ${quote.author}`;
+            document.getElementById('quote-meaning').innerText = quote.meaning;
         }
         updateQuote();
         setInterval(updateQuote, 10000);
