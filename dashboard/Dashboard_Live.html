@@ -234,10 +234,7 @@
             <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">केसर दर्शिका • <span id="period-header"></span></p>
         </div>
 
-        <div class="banner-container">
-            <img src="dashboard/bhairavi_banner_real.jpg" class="banner-img" alt="Bhairavi">
-            <div class="banner-overlay"></div>
-        </div>
+        <!-- Banner Removed -->
 
         <!-- Quotes Section Removed -->
 
@@ -341,32 +338,7 @@
 
         function renderUI(data) {
             try {
-                const backgrounds = [
-                    'dashboard/bhairavi_1.jpg',
-                    'dashboard/bhairavi_2.jpg',
-                    'dashboard/bhairavi_3.jpg',
-                    'dashboard/bhairavi_4.jpg',
-                    'dashboard/bhairavi_5.jpg',
-                    'dashboard/bhairavi_6.jpg'
-                ];
-                const banners = [
-                    'dashboard/bhairavi_1.jpg',
-                    'dashboard/bhairavi_2.jpg',
-                    'dashboard/bhairavi_3.jpg',
-                    'dashboard/bhairavi_4.jpg',
-                    'dashboard/bhairavi_5.jpg',
-                    'dashboard/bhairavi_6.jpg'
-                ];
-
-                const isSubfolder = window.location.pathname.includes('dashboard/');
-                const getPath = (p) => isSubfolder ? p.replace('dashboard/', '') : p;
-
-                const randomBg = getPath(backgrounds[Math.floor(Math.random() * backgrounds.length)]);
-                const randomBanner = getPath(banners[Math.floor(Math.random() * banners.length)]);
-                
-                document.body.style.backgroundImage = 'url(' + randomBg + '), radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%), radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%)';
-                const bannerImg = document.querySelector('.banner-img');
-                if (bannerImg) bannerImg.src = randomBanner;
+                document.body.style.background = 'linear-gradient(135deg, #050505 0%, #1a0a0a 100%)';
 
                 const dataStr = JSON.stringify(data);
                 if (dataStr === lastDataStr) return; 
