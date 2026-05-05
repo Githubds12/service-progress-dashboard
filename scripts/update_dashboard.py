@@ -459,11 +459,7 @@ def update_html(header, days, stats):
             <div class="banner-overlay"></div>
         </div>
 
-        <div class="glass-card quote-card">
-            <div class="quote-text" id="random-quote" style="font-size: 14px; color: #fff; opacity: 0.6;"></div>
-            <div class="quote-author" id="quote-author" style="color: var(--primary); font-size: 11px; margin-top: 5px;"></div>
-            <div id="quote-meaning" style="font-size: 22px; opacity: 1; margin-top: 18px; font-style: italic; color: #FFF; font-weight: 900; max-width: 90%; line-height: 1.4; text-shadow: 0 0 15px #FF4500, 0 0 30px #A52A2A, 0 4px 10px rgba(0,0,0,1); border-top: 2px solid #FF4500; padding-top: 20px;"></div>
-        </div>
+        <!-- Quotes Section Removed -->
 
         <div class="glass-card projection-card">
             <div>
@@ -545,24 +541,7 @@ def update_html(header, days, stats):
         let totalPages = 0;
         let serviceData = [];
 
-        const quotes = [
-            {{ text: "A seeker is someone who is not looking for solace, but for a solution.", author: "Sadhguru", meaning: "The spiritual path is about absolute clarity and resolving the fundamental questions of existence, not just seeking comfort." }},
-            {{ text: "The path of the seeker is not about finding something new, but about losing everything that is false.", author: "Sadhguru", meaning: "Realization is a process of unlearning and shedding the illusions of the ego until only the truth remains." }},
-            {{ text: "Spiritual process is not a lifestyle. It is a fire.", author: "Sadhguru", meaning: "True seeking is an intense process that consumes one's limitations and false identities." }},
-            {{ text: "You cannot seek truth. Truth is. You can only seek to become available to it.", author: "Sadhguru", meaning: "Truth is always present; our work is to remove the barriers of ego and ignorance that prevent us from seeing it." }},
-            {{ text: "If you want to know life, you must look at it from a state of total involvement.", author: "Sadhguru", meaning: "Depth of experience comes from absolute participation in the present moment, without holding back." }},
-            {{ text: "A seeker is not interested in heaven. A seeker is only interested in reality.", author: "Sadhguru", meaning: "The goal is not a reward after death, but the realization of the ultimate truth here and now." }},
-            {{ text: "The first step of a seeker is to realize that you do not know.", author: "Sadhguru", meaning: "Humility and the admission of ignorance are the prerequisites for true learning and growth." }}
-        ];
-
-        function updateQuote() {{
-            const quote = quotes[Math.floor(Math.random() * quotes.length)];
-            document.getElementById('random-quote').innerText = '"' + quote.text + '"';
-            document.getElementById('quote-author').innerText = '— ' + quote.author;
-            document.getElementById('quote-meaning').innerText = quote.meaning;
-        }}
-        updateQuote();
-        setInterval(updateQuote, 10000);
+        // Quotes Rotation Removed
 
         function changePage(delta) {{
             currentPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
@@ -583,18 +562,20 @@ def update_html(header, days, stats):
         function renderUI(data) {{
             try {{
                 const backgrounds = [
-                    'dashboard/bhairavi_texture_real.jpg',
                     'dashboard/bhairavi_1.jpg',
                     'dashboard/bhairavi_2.jpg',
                     'dashboard/bhairavi_3.jpg',
-                    'dashboard/bhairavi_4.jpg'
+                    'dashboard/bhairavi_4.jpg',
+                    'dashboard/bhairavi_5.jpg',
+                    'dashboard/bhairavi_6.jpg'
                 ];
                 const banners = [
-                    'dashboard/bhairavi_banner_real.jpg',
                     'dashboard/bhairavi_1.jpg',
                     'dashboard/bhairavi_2.jpg',
                     'dashboard/bhairavi_3.jpg',
-                    'dashboard/bhairavi_4.jpg'
+                    'dashboard/bhairavi_4.jpg',
+                    'dashboard/bhairavi_5.jpg',
+                    'dashboard/bhairavi_6.jpg'
                 ];
 
                 const isSubfolder = window.location.pathname.includes('dashboard/');
@@ -712,8 +693,7 @@ def update_html(header, days, stats):
         }}
 
         function refreshData() {{
-            const isSubfolder = window.location.pathname.includes('dashboard/');
-            const dataPath = isSubfolder ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
+            const dataPath = 'dashboard_data.js';
             let script = document.createElement('script');
             script.src = dataPath + '?t=' + new Date().getTime();
             script.onload = () => {{ 
