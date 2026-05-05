@@ -51,7 +51,7 @@
         body { 
             background: var(--bg-dark);
             background-image: 
-                url('dashboard/bhairavi_texture.png'),
+                url('dashboard/bhairavi_texture_real.jpg'),
                 radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%),
                 radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%);
             background-size: cover, auto, auto;
@@ -128,7 +128,7 @@
         .banner-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }
 
         .quote-card {
-            background: url('dashboard/bhairavi_texture.png'); background-size: cover; background-position: center;
+            background: url('dashboard/bhairavi_texture_real.jpg'); background-size: cover; background-position: center;
             border: 1px solid rgba(165, 42, 42, 0.4); position: relative; overflow: hidden; min-height: 100px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
             padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9);
@@ -238,7 +238,7 @@
         </div>
 
         <div class="banner-container">
-            <img src="dashboard/bhairavi_banner.png" class="banner-img" alt="Bhairavi">
+            <img src="dashboard/bhairavi_banner_real.jpg" class="banner-img" alt="Bhairavi">
             <div class="banner-overlay"></div>
         </div>
 
@@ -329,18 +329,13 @@
         let serviceData = [];
 
         const quotes = [
-            { text: "In my presentations, I do not sing. I just sing what the Tanpura asks me to sing.", author: "Kumar Gandharva", meaning: "Complete surrender to the sound of the Tanpura, where the artist is but a medium." },
-            { text: "Notes sung according to grammar become raga; but even though it lies within a scale, the Raga is completely free.", author: "Kumar Gandharva", meaning: "True Raga transcends technical rules; it is a living expression of freedom." },
-            { text: "I am not here to play a coolie to convention.", author: "Kumar Gandharva", meaning: "A rebellion against rigid, mindless adherence to tradition in classical music." },
-            { text: "Mee Malkauns gaat hoto, tar mala pancham disla. Toh mhanala 'mee yeu ka', tar me bolalo, 'ye'.", author: "Kumar Gandharva", meaning: "A mystical experience of 'seeing' a prohibited note (Pa) in Raga Malkauns and embracing it." },
-            { text: "He came to hear the same Hameer he has heard hundreds of times, I wanted to sing something different.", author: "Kumar Gandharva", meaning: "Every performance must be a fresh creation, not a predictable repetition." },
-            { text: "What is tarana? ... sometimes something remains to be said and that we can say through the tarana.", author: "Kumar Gandharva", meaning: "Tarana syllables carry emotions that words cannot capture." },
-            { text: "All ragas have folk origins and the vast reservoir of Indian folk tradition is an essential source for 'raga-ness'.", author: "Kumar Gandharva", meaning: "The roots of classical music lie in the natural melodies of the common people." },
-            { text: "Nirbhay Nirgun Gun Re Gaunga, Mool Kamal Dridh Aasan Bandhu Ji, Ulti Pavan Chadhaunga.", author: "Kabir / Kumar Gandharva", meaning: "I will sing of the formless (Nirguna) without fear, ascending through spiritual breath." },
-            { text: "Sunta Hai Guru Gyani, Gagan Mein Awaaz Ho Rahi Jhini, Jhini, Jhini.", author: "Kabir / Kumar Gandharva", meaning: "The wise teacher hears the subtle, divine resonance within the inner cosmos." },
-            { text: "Ud Jayega Hans Akela, Bhanvarpur Mein Pada Rahega Kaya Ka Ye Dera.", author: "Kabir / Kumar Gandharva", meaning: "The soul (swan) will fly away alone, leaving the physical body behind." },
-            { text: "Jhini Jhini Bini Chadariya, Kahe Ka Tana, Kahe Ki Bharni, Kaun Tar Se Bini Chadariya?", author: "Kabir / Kumar Gandharva", meaning: "Life is a finely woven cloth; the poem ponders the mystery of its creation." },
-            { text: "Avadhoo Bhoola Bahar Khoje, Ghat Ke Bhitar Koi Na Dekhe.", author: "Kabir / Kumar Gandharva", meaning: "The truth is not found outside; it resides within the depths of one's own heart." }
+            { text: "A seeker is someone who is not looking for solace, but for a solution.", author: "Sadhguru", meaning: "The spiritual path is about absolute clarity and resolving the fundamental questions of existence, not just seeking comfort." },
+            { text: "The path of the seeker is not about finding something new, but about losing everything that is false.", author: "Sadhguru", meaning: "Realization is a process of unlearning and shedding the illusions of the ego until only the truth remains." },
+            { text: "Spiritual process is not a lifestyle. It is a fire.", author: "Sadhguru", meaning: "True seeking is an intense process that consumes one's limitations and false identities." },
+            { text: "You cannot seek truth. Truth is. You can only seek to become available to it.", author: "Sadhguru", meaning: "Truth is always present; our work is to remove the barriers of ego and ignorance that prevent us from seeing it." },
+            { text: "If you want to know life, you must look at it from a state of total involvement.", author: "Sadhguru", meaning: "Depth of experience comes from absolute participation in the present moment, without holding back." },
+            { text: "A seeker is not interested in heaven. A seeker is only interested in reality.", author: "Sadhguru", meaning: "The goal is not a reward after death, but the realization of the ultimate truth here and now." },
+            { text: "The first step of a seeker is to realize that you do not know.", author: "Sadhguru", meaning: "Humility and the admission of ignorance are the prerequisites for true learning and growth." }
         ];
 
         function updateQuote() {
