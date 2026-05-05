@@ -230,7 +230,7 @@
     <div class="container">
         <div class="header">
             <div class="live-indicator" style="color: var(--primary); border-color: var(--primary); background: rgba(255, 153, 51, 0.1);">
-                <span class="live-dot" style="background: var(--primary);"></span> ACTIVE
+                <span class="live-dot" style="background: var(--primary);"></span> जीवन्तम्
             </div>
             <h1 style="font-size: 48px; font-weight: 900; letter-spacing: -2px; margin: 5px 0; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">KESARA DARSHIKA</h1>
             <div class="tripundra"><span></span><span></span><span></span></div>
@@ -250,7 +250,7 @@
 
         <div class="glass-card projection-card">
             <div>
-                <h3>ESTIMATED MONTHLY END</h3>
+                <h3>मासान्त-अनुमानम् (ESTIMATED END)</h3>
                 <div id="projected-val" class="proj-val">₹0</div>
                 <p id="projection-text" style="font-size: 11px; opacity: 0.9; margin-top: 5px;"></p>
             </div>
@@ -258,7 +258,7 @@
         </div>
 
         <div class="glass-card progress-section" id="recommendation-card">
-            <h3>DAILY MISSION: <span id="target-count">0</span> SERVICES</h3>
+            <h3>दैनिक-लक्ष्यम् (DAILY MISSION): <span id="target-count">0</span></h3>
             <div style="display: flex; justify-content: center; align-items: baseline; gap: 8px; margin: 10px 0;">
                 <span id="completed-count" style="font-size: 42px; font-weight: 900;">0</span>
                 <span style="color: #64748b; font-size: 18px;">/ <span id="target-count-2">0</span></span>
@@ -270,29 +270,29 @@
             
             <div id="celebration">
                 <img src="dashboard/goal_achievement_icon_1777206977639.png" class="trophy" alt="Goal">
-                <h2 style="color: var(--success);">TARGET ACHIEVED! 🚀</h2>
+                <h2 style="color: var(--success);">लक्ष्यं सिद्धम्! (TARGET ACHIEVED) 🚀</h2>
             </div>
         </div>
 
         <div class="stats-grid">
             <div class="glass-card stat-card">
-                <h3>TOTAL EARNED</h3>
+                <h3>कुल-अर्जनम् (TOTAL EARNED)</h3>
                 <div id="total-earnings" class="value" style="color: var(--success);">₹0</div>
                 <div class="subtext">Across <span id="total-services">0</span> services</div>
             </div>
             <div class="glass-card stat-card">
-                <h3>DAILY AVERAGE</h3>
+                <h3>प्रतिदिन-औसतम् (DAILY AVG)</h3>
                 <div id="avg-daily" class="value">₹0</div>
                 <div id="avg-services" class="subtext" style="color: var(--primary); font-weight: 700; margin-bottom: 4px;">0 services/day</div>
                 <div id="avg-target" class="subtext">Target: ₹3000/d</div>
             </div>
             <div class="glass-card stat-card">
-                <h3>RECOVERY PACE</h3>
+                <h3>पुनः-प्राप्ति-गतिः (RECOVERY PACE)</h3>
                 <div id="pace-services" class="value" style="color: var(--warning);">0/d</div>
                 <div id="pace-earnings" class="subtext">Needed for ₹90k</div>
             </div>
             <div class="glass-card stat-card">
-                <h3>TO GOAL</h3>
+                <h3>लक्ष्य-सिद्धये (TO GOAL)</h3>
                 <div id="services-to-goal" class="value" style="color: var(--danger);">0</div>
                 <div class="subtext">Services remaining</div>
             </div>
@@ -304,7 +304,7 @@
 
         <div class="glass-card recent-activity">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="margin: 0;">Recent Activity</h2>
+                <h2 style="margin: 0;">अद्यतन-वृत्तान्तः (RECENT ACTIVITY)</h2>
                 <span class="page-info" id="page-indicator">Page 1 of 1</span>
             </div>
             <div id="services-html"></div>
@@ -369,92 +369,109 @@
         }
 
         function renderUI(data) {
-            const dataStr = JSON.stringify(data);
-            if (dataStr === lastDataStr) return; 
-            const isFirstLoad = lastDataStr === "";
-            lastDataStr = dataStr;
+            try {
+                const dataStr = JSON.stringify(data);
+                if (dataStr === lastDataStr) return; 
+                const isFirstLoad = lastDataStr === "";
+                lastDataStr = dataStr;
 
-            serviceData = data.services_by_day;
-            totalPages = serviceData.length;
-            if (isFirstLoad || currentPage >= totalPages) currentPage = totalPages - 1;
-            renderPage();
+                serviceData = data.services_by_day;
+                totalPages = serviceData.length;
+                if (isFirstLoad || currentPage >= totalPages) currentPage = totalPages - 1;
+                renderPage();
 
-            document.getElementById('period-header').innerText = data.header;
-            document.getElementById('total-services').innerText = data.stats.total_services;
-            document.getElementById('total-earnings').innerText = '₹' + data.stats.total_earnings;
-            document.getElementById('avg-daily').innerText = '₹' + data.stats.avg_daily;
-            document.getElementById('avg-services').innerText = data.stats.prev_avg_services + ' -> ' + data.stats.avg_daily_services + ' services/day';
-            document.getElementById('avg-target').innerText = 'Goal: ₹' + data.stats.target + '/d';
-            
-            document.getElementById('pace-services').innerText = data.stats.prev_recovery_pace + ' -> ' + data.stats.recovery_pace_services + '/d';
-            document.getElementById('pace-earnings').innerText = '₹' + data.stats.recovery_pace_earnings + '/d';
-            document.getElementById('services-to-goal').innerText = Math.ceil(data.stats.total_services_needed);
-            
-            document.getElementById('target-count').innerText = data.stats.recommended_today;
-            document.getElementById('target-count-2').innerText = data.stats.recommended_today;
-            document.getElementById('completed-count').innerText = data.stats.completed_today;
-            document.getElementById('explanation-text').innerText = data.stats.explanation;
-            
-            const now = new Date();
-            document.getElementById('last-updated').innerText = now.toLocaleTimeString();
-            document.getElementById('projected-val').innerText = '₹' + data.stats.projected_total;
-            document.getElementById('projection-text').innerText = data.stats.projection_sentence;
+                const safeSetText = (id, text) => {
+                    const el = document.getElementById(id);
+                    if (el) el.innerText = text;
+                };
 
-            const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
-            const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
-            
-            const fill = document.getElementById('progress-fill');
-            fill.style.setProperty('--p-width', progress + '%');
-            fill.style.setProperty('--n-width', nextProgress + '%');
-            fill.style.width = progress + '%';
+                safeSetText('period-header', data.header);
+                safeSetText('total-services', data.stats.total_services);
+                safeSetText('total-earnings', '₹' + data.stats.total_earnings);
+                safeSetText('avg-daily', '₹' + data.stats.avg_daily);
+                safeSetText('avg-services', data.stats.prev_avg_services + ' -> ' + data.stats.avg_daily_services + ' services/day');
+                safeSetText('avg-target', 'Goal: ₹' + data.stats.target + '/d');
+                
+                safeSetText('pace-services', data.stats.prev_recovery_pace + ' -> ' + data.stats.recovery_pace_services + '/d');
+                safeSetText('pace-earnings', '₹' + data.stats.recovery_pace_earnings + '/d');
+                safeSetText('services-to-goal', Math.ceil(data.stats.total_services_needed));
+                
+                safeSetText('target-count', data.stats.recommended_today);
+                safeSetText('target-count-2', data.stats.recommended_today);
+                safeSetText('completed-count', data.stats.completed_today);
+                safeSetText('explanation-text', data.stats.explanation);
+                
+                const now = new Date();
+                safeSetText('last-updated', now.toLocaleTimeString());
+                safeSetText('projected-val', '₹' + data.stats.projected_total);
+                safeSetText('projection-text', data.stats.projection_sentence);
 
-            if (data.stats.completed_today >= data.stats.recommended_today) {
-                document.getElementById('celebration').style.display = 'block';
-                if (!confettiTriggered) {
-                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF9933', '#FFD700', '#E5E4E2'] });
-                    confettiTriggered = true;
+                const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
+                const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
+                
+                const fill = document.getElementById('progress-fill');
+                if (fill) {
+                    fill.style.setProperty('--p-width', progress + '%');
+                    fill.style.setProperty('--n-width', nextProgress + '%');
+                    fill.style.width = progress + '%';
                 }
-            } else {
-                document.getElementById('celebration').style.display = 'none';
-                confettiTriggered = false;
-            }
 
-            // Chart
-            if (earningsChart) earningsChart.destroy();
-            const ctx = document.getElementById('earningsChart').getContext('2d');
-            earningsChart = new Chart(ctx, {
-                type: 'line',
-                data: {
-                    labels: data.labels,
-                    datasets: [{
-                        label: 'Earnings',
-                        data: data.earnings,
-                        borderColor: '#FF9933',
-                        backgroundColor: 'rgba(255, 153, 51, 0.1)',
-                        borderWidth: 3,
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#FFD700'
-                    }, {
-                        label: 'Target',
-                        data: data.labels.map(() => 3000),
-                        borderColor: 'rgba(229, 228, 226, 0.3)',
-                        borderWidth: 2,
-                        borderDash: [5, 5],
-                        pointRadius: 0
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: {
-                        y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 10 } } },
-                        x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                const celeb = document.getElementById('celebration');
+                if (celeb) {
+                    if (data.stats.completed_today >= data.stats.recommended_today) {
+                        celeb.style.display = 'block';
+                        if (!confettiTriggered) {
+                            confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 }, colors: ['#FF9933', '#FFD700', '#E5E4E2'] });
+                            confettiTriggered = true;
+                        }
+                    } else {
+                        celeb.style.display = 'none';
+                        confettiTriggered = false;
                     }
                 }
-            });
+
+                // Chart
+                if (earningsChart) earningsChart.destroy();
+                const chartEl = document.getElementById('earningsChart');
+                if (chartEl) {
+                    const ctx = chartEl.getContext('2d');
+                    earningsChart = new Chart(ctx, {
+                        type: 'line',
+                        data: {
+                            labels: data.labels,
+                            datasets: [{
+                                label: 'Earnings',
+                                data: data.earnings,
+                                borderColor: '#FF9933',
+                                backgroundColor: 'rgba(255, 153, 51, 0.1)',
+                                borderWidth: 3,
+                                tension: 0.4,
+                                fill: true,
+                                pointRadius: 4,
+                                pointBackgroundColor: '#FFD700'
+                            }, {
+                                label: 'Target',
+                                data: data.labels.map(() => 3000),
+                                borderColor: 'rgba(229, 228, 226, 0.3)',
+                                borderWidth: 2,
+                                borderDash: [5, 5],
+                                pointRadius: 0
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: { legend: { display: false } },
+                            scales: {
+                                y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b', font: { size: 10 } } },
+                                x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                            }
+                        }
+                    });
+                }
+            } catch (e) {
+                console.error("Render error:", e);
+            }
         }
 
         function refreshData() {
