@@ -124,9 +124,9 @@ def calculate_stats(days):
             completed_today = len(d['services'])
             break
 
-    explanation = f"To reach your monthly target of ₹90,000, you need an average of {round(recovery_pace_services, 1)} services/day for the next {days_remaining} days. A {int((buffer_multiplier-1)*100)}% buffer ({recommended_today} total) is recommended to build a safety net. Baseline was {ideal_daily_baseline} services/day."
+    explanation = f"मासिक-लक्ष्यं (₹90,000) प्राप्तुं अग्रिमेषु {days_remaining} दिनेषु प्रतिदिनं {round(recovery_pace_services, 1)} सेवानां आवश्यकता अस्ति। {int((buffer_multiplier-1)*100)}% सुरक्षा-कवचार्थं ({recommended_today} कुलम्) परामर्शः अस्ति।"
 
-    projection_sentence = f"At your current pace, you will reach ₹{round(projected_total, 2)} by May 10th. {'Keep it up!' if projected_total >= 90000 else 'Increase daily output to reach your ₹90,000 goal.'}"
+    projection_sentence = f"अद्यतन-गत्या भवान् {round(projected_total, 2)} राशिं प्राप्स्यति। {'उत्तमम्!' if projected_total >= 90000 else 'लक्ष्य-प्राप्तये गतिं वर्धयतु।'}"
 
     return {
         'total_services': total_services,
@@ -223,7 +223,7 @@ def update_html(header, days, stats):
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>{stats['today_date']} - Progress</title>
+    <title>केसर दर्शिका | {stats['today_date']}</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -458,7 +458,7 @@ def update_html(header, days, stats):
         </div>
 
         <div class="banner-container">
-            <img src="dashboard/saffron_banner.png" class="banner-img" alt="Productivity">
+            <img src="dashboard/saffron_banner.png" class="banner-img" alt="Kesara">
             <div class="banner-overlay"></div>
         </div>
 
@@ -695,9 +695,15 @@ def update_html(header, days, stats):
         }}
 
         function refreshData() {{
+            const dataPath = window.location.pathname.includes('dashboard') ? 'dashboard_data.js' : 'dashboard/dashboard_data.js';
             let script = document.createElement('script');
-            script.src = 'dashboard/dashboard_data.js?t=' + new Date().getTime();
-            script.onload = () => {{ if (window.dashboardData) renderUI(window.dashboardData); script.remove(); }};
+            script.src = dataPath + '?t=' + new Date().getTime();
+            script.onload = () => {{ 
+                if (window.dashboardData) {{
+                    renderUI(window.dashboardData);
+                }}
+                script.remove(); 
+            }};
             document.head.appendChild(script);
         }}
         refreshData();
