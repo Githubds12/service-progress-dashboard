@@ -229,15 +229,16 @@ def update_html(header, days, stats):
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {{
-            --primary: #6366f1;
-            --primary-glow: rgba(99, 102, 241, 0.5);
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --bg-dark: #0f172a;
-            --card-bg: rgba(30, 41, 59, 0.6);
-            --border: rgba(255, 255, 255, 0.08);
-            --accent-glow: rgba(99, 102, 241, 0.3);
+            --primary: #FF9933;
+            --primary-glow: rgba(255, 153, 51, 0.5);
+            --success: #FFD700;
+            --warning: #FF8C00;
+            --danger: #B22222;
+            --bg-dark: #0a0a0a;
+            --card-bg: rgba(25, 25, 25, 0.8);
+            --border: rgba(255, 153, 51, 0.15);
+            --accent-glow: rgba(255, 215, 0, 0.2);
+            --vibhuti: #E5E4E2;
         }}
 
         @keyframes float {{
@@ -270,8 +271,11 @@ def update_html(header, days, stats):
         body {{ 
             background: var(--bg-dark);
             background-image: 
-                radial-gradient(at 0% 0%, rgba(99, 102, 241, 0.15) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(16, 185, 129, 0.1) 0px, transparent 50%);
+                url('dashboard/vibhuti_texture.png'),
+                radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.2) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 215, 0, 0.1) 0px, transparent 50%);
+            background-size: cover, auto, auto;
+            background-blend-mode: overlay, normal, normal;
             color: #f8fafc; 
             font-family: 'Outfit', sans-serif; 
             padding: 10px;
@@ -315,18 +319,25 @@ def update_html(header, days, stats):
             inset: -1px;
             border-radius: 20px;
             padding: 1px;
-            background: linear-gradient(45deg, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
+            background: linear-gradient(45deg, #FF9933, #FFD700, #FF8C00, #E5E4E2, #FF9933);
             background-size: 300% 300%;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
-            opacity: 0.5;
+            opacity: 0.3;
             animation: rainbow 6s ease infinite;
             pointer-events: none;
         }}
 
+        .tripundra {{
+            display: flex; flex-direction: column; gap: 2px; align-items: center; margin: 10px 0;
+        }}
+        .tripundra span {{
+            width: 40px; height: 3px; background: var(--vibhuti); opacity: 0.6; border-radius: 10px;
+        }}
+
         .header {{ text-align: center; margin-bottom: 20px; }}
-        .header h1 {{ font-size: 40px; font-weight: 900; letter-spacing: -2px; margin: 10px 0; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: rainbow 3s linear infinite; filter: drop-shadow(0 0 15px rgba(255,255,255,0.2)); }}
+        .header h1 {{ font-size: 40px; font-weight: 900; letter-spacing: -2px; margin: 10px 0; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: rainbow 3s linear infinite; filter: drop-shadow(0 0 15px rgba(255, 153, 51, 0.3)); }}
 
         .banner-container {{
             width: 100%; height: 120px; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
@@ -337,12 +348,12 @@ def update_html(header, days, stats):
         .banner-overlay {{ position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }}
 
         .quote-card {{
-            background: url('quote_bg.png'); background-size: cover; background-position: center;
-            border: none; position: relative; overflow: hidden; min-height: 100px;
+            background: url('dashboard/vibhuti_texture.png'); background-size: cover; background-position: center;
+            border: 1px solid rgba(255, 153, 51, 0.2); position: relative; overflow: hidden; min-height: 100px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
         }}
-        .quote-card::before {{ content: ''; position: absolute; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(2px); }}
+        .quote-card::before {{ content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(1px); }}
         .quote-text {{ position: relative; font-size: 16px; font-weight: 600; font-style: italic; line-height: 1.5; margin-bottom: 5px; }}
         .quote-author {{ position: relative; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); }}
 
@@ -353,15 +364,15 @@ def update_html(header, days, stats):
         .stat-card .subtext {{ font-size: 10px; color: #64748b; margin-top: 4px; }}
 
         .projection-card {{ 
-            background: linear-gradient(135deg, #6366f1 0%, #4f46e5 100%);
+            background: linear-gradient(135deg, #FF9933 0%, #FF8C00 100%);
             color: white; border: none;
             display: flex; justify-content: space-between; align-items: center;
         }}
         .proj-val {{ font-size: 28px; font-weight: 900; }}
 
         .progress-section {{ text-align: center; }}
-        .progress-bar-bg {{ height: 10px; background: rgba(255,255,255,0.1); border-radius: 10px; margin: 15px 0; overflow: hidden; }}
-        .progress-bar-fill {{ height: 100%; background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--success); position: relative; transform-origin: left; }}
+        .progress-bar-bg {{ height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }}
+        .progress-bar-fill {{ height: 100%; background: linear-gradient(to right, #FF9933, #FFD700, #FF8C00); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--primary); position: relative; transform-origin: left; }}
         
         @keyframes reach {{
             0%, 100% {{ width: var(--p-width); filter: brightness(1); }}
@@ -438,14 +449,16 @@ def update_html(header, days, stats):
 <body>
     <div class="container">
         <div class="header">
-            <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
-            <h1 style="font-size: 48px; font-weight: 900; letter-spacing: -2px; margin: 5px 0; background: linear-gradient(to right, #6366f1, #10b981); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{stats['today_date']}</h1>
-            <p style="color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">Service Progress Dashboard</p>
-            <p style="color: #475569; font-weight: 500; margin-top: 5px;" id="period-header"></p>
+            <div class="live-indicator" style="color: var(--primary); border-color: var(--primary); background: rgba(255, 153, 51, 0.1);">
+                <span class="live-dot" style="background: var(--primary);"></span> ACTIVE
+            </div>
+            <h1 style="font-size: 48px; font-weight: 900; letter-spacing: -2px; margin: 5px 0; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">{stats['today_date']}</h1>
+            <div class="tripundra"><span></span><span></span><span></span></div>
+            <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">Saffron Service Dashboard</p>
         </div>
 
         <div class="banner-container">
-            <img src="dashboard/productivity_banner.png" class="banner-img" alt="Productivity">
+            <img src="dashboard/saffron_banner.png" class="banner-img" alt="Productivity">
             <div class="banner-overlay"></div>
         </div>
 
@@ -616,7 +629,7 @@ def update_html(header, days, stats):
             if (data.stats.completed_today >= data.stats.recommended_today) {{
                 document.getElementById('celebration').style.display = 'block';
                 if (!confettiTriggered) {{
-                    confetti({{ particleCount: 150, spread: 70, origin: {{ y: 0.6 }}, colors: ['#6366f1', '#10b981', '#f59e0b'] }});
+                    confetti({{ particleCount: 150, spread: 70, origin: {{ y: 0.6 }}, colors: ['#FF9933', '#FFD700', '#E5E4E2'] }});
                     confettiTriggered = true;
                 }}
             }} else {{
@@ -634,17 +647,17 @@ def update_html(header, days, stats):
                     datasets: [{{
                         label: 'Earnings',
                         data: data.earnings,
-                        borderColor: '#6366f1',
-                        backgroundColor: 'rgba(99, 102, 241, 0.1)',
+                        borderColor: '#FF9933',
+                        backgroundColor: 'rgba(255, 153, 51, 0.1)',
                         borderWidth: 3,
                         tension: 0.4,
                         fill: true,
                         pointRadius: 4,
-                        pointBackgroundColor: '#6366f1'
+                        pointBackgroundColor: '#FFD700'
                     }}, {{
                         label: 'Target',
                         data: data.labels.map(() => 3000),
-                        borderColor: 'rgba(239, 68, 68, 0.5)',
+                        borderColor: 'rgba(229, 228, 226, 0.3)',
                         borderWidth: 2,
                         borderDash: [5, 5],
                         pointRadius: 0
