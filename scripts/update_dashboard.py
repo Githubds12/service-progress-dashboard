@@ -452,7 +452,6 @@ def update_html(header, days, stats):
             <div class="live-indicator" style="color: var(--primary); border-color: var(--primary); background: rgba(255, 153, 51, 0.1);">
                 <span class="live-dot" style="background: var(--primary);"></span> जीवन्तम्
             </div>
-            <h1 style="font-size: 48px; font-weight: 900; letter-spacing: -2px; margin: 5px 0; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">KESARA DARSHIKA</h1>
             <div class="tripundra"><span></span><span></span><span></span></div>
             <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">केसर दर्शिका • <span id="period-header"></span></p>
         </div>
@@ -463,9 +462,9 @@ def update_html(header, days, stats):
         </div>
 
         <div class="glass-card quote-card">
-            <div class="quote-text" id="random-quote" style="font-size: 18px; color: #fff;"></div>
-            <div class="quote-author" id="quote-author" style="color: var(--primary); font-size: 12px;"></div>
-            <div id="quote-meaning" style="font-size: 14px; opacity: 1; margin-top: 15px; font-style: italic; color: var(--success); max-width: 85%; line-height: 1.6; text-shadow: 0 2px 8px rgba(0,0,0,0.6); border-top: 1px solid rgba(255, 153, 51, 0.2); padding-top: 10px;"></div>
+            <div class="quote-text" id="random-quote" style="font-size: 14px; color: #cbd5e1; opacity: 0.8;"></div>
+            <div class="quote-author" id="quote-author" style="color: var(--primary); font-size: 11px; margin-top: 5px;"></div>
+            <div id="quote-meaning" style="font-size: 20px; opacity: 1; margin-top: 15px; font-style: italic; color: var(--success); font-weight: 700; max-width: 90%; line-height: 1.4; text-shadow: 0 2px 10px rgba(0,0,0,0.8); border-top: 1px solid rgba(255, 153, 51, 0.3); padding-top: 15px;"></div>
         </div>
 
         <div class="glass-card projection-card">
