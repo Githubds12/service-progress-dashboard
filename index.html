@@ -9,16 +9,16 @@
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
         :root {
-            --primary: #FF9933;
-            --primary-glow: rgba(255, 153, 51, 0.5);
+            --primary: #A52A2A;
+            --primary-glow: rgba(165, 42, 42, 0.5);
             --success: #FFD700;
-            --warning: #FF8C00;
-            --danger: #B22222;
-            --bg-dark: #0a0a0a;
-            --card-bg: rgba(25, 25, 25, 0.8);
-            --border: rgba(255, 153, 51, 0.15);
-            --accent-glow: rgba(255, 215, 0, 0.2);
-            --vibhuti: #E5E4E2;
+            --warning: #FF4500;
+            --danger: #800000;
+            --bg-dark: #050505;
+            --card-bg: rgba(15, 10, 10, 0.9);
+            --border: rgba(165, 42, 42, 0.3);
+            --accent-glow: rgba(255, 69, 0, 0.2);
+            --bhairavi: #FFD700;
         }
 
         @keyframes float {
@@ -51,9 +51,9 @@
         body { 
             background: var(--bg-dark);
             background-image: 
-                url('dashboard/vibhuti_texture.png'),
-                radial-gradient(at 0% 0%, rgba(255, 153, 51, 0.2) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(255, 215, 0, 0.1) 0px, transparent 50%);
+                url('dashboard/bhairavi_texture.png'),
+                radial-gradient(at 0% 0%, rgba(165, 42, 42, 0.3) 0px, transparent 50%),
+                radial-gradient(at 100% 100%, rgba(255, 69, 0, 0.15) 0px, transparent 50%);
             background-size: cover, auto, auto;
             background-blend-mode: overlay, normal, normal;
             color: #f8fafc; 
@@ -99,12 +99,12 @@
             inset: -1px;
             border-radius: 20px;
             padding: 1px;
-            background: linear-gradient(45deg, #FF9933, #FFD700, #FF8C00, #E5E4E2, #FF9933);
+            background: linear-gradient(45deg, #A52A2A, #FF4500, #FFD700, #800000, #A52A2A);
             background-size: 300% 300%;
             -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
             -webkit-mask-composite: xor;
             mask-composite: exclude;
-            opacity: 0.3;
+            opacity: 0.4;
             animation: rainbow 6s ease infinite;
             pointer-events: none;
         }
@@ -113,7 +113,7 @@
             display: flex; flex-direction: column; gap: 2px; align-items: center; margin: 10px 0;
         }
         .tripundra span {
-            width: 40px; height: 3px; background: var(--vibhuti); opacity: 0.6; border-radius: 10px;
+            width: 40px; height: 3px; background: #FFD700; opacity: 0.8; border-radius: 10px; box-shadow: 0 0 10px #FF4500;
         }
 
         .header { text-align: center; margin-bottom: 20px; }
@@ -128,12 +128,12 @@
         .banner-overlay { position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }
 
         .quote-card {
-            background: url('dashboard/vibhuti_texture.png'); background-size: cover; background-position: center;
-            border: 1px solid rgba(255, 153, 51, 0.2); position: relative; overflow: hidden; min-height: 100px;
+            background: url('dashboard/bhairavi_texture.png'); background-size: cover; background-position: center;
+            border: 1px solid rgba(165, 42, 42, 0.4); position: relative; overflow: hidden; min-height: 100px;
             display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8);
+            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9);
         }
-        .quote-card::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(1px); }
+        .quote-card::before { content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(1px); }
         .quote-text { position: relative; font-size: 16px; font-weight: 600; font-style: italic; line-height: 1.5; margin-bottom: 5px; }
         .quote-author { position: relative; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); }
 
@@ -144,15 +144,16 @@
         .stat-card .subtext { font-size: 10px; color: #64748b; margin-top: 4px; }
 
         .projection-card { 
-            background: linear-gradient(135deg, #FF9933 0%, #FF8C00 100%);
+            background: linear-gradient(135deg, #A52A2A 0%, #800000 100%);
             color: white; border: none;
             display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 20px rgba(165, 42, 42, 0.3);
         }
         .proj-val { font-size: 28px; font-weight: 900; }
 
         .progress-section { text-align: center; }
-        .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }
-        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #FF9933, #FFD700, #FF8C00); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 15px var(--primary); position: relative; transform-origin: left; }
+        .progress-bar-bg { height: 10px; background: rgba(255,255,255,0.02); border-radius: 10px; margin: 15px 0; overflow: hidden; }
+        .progress-bar-fill { height: 100%; background: linear-gradient(to right, #A52A2A, #FF4500, #FFD700); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px var(--primary); position: relative; transform-origin: left; }
         
         @keyframes reach {
             0%, 100% { width: var(--p-width); filter: brightness(1); }
@@ -237,14 +238,14 @@
         </div>
 
         <div class="banner-container">
-            <img src="dashboard/saffron_banner.png" class="banner-img" alt="Kesara">
+            <img src="dashboard/bhairavi_banner.png" class="banner-img" alt="Bhairavi">
             <div class="banner-overlay"></div>
         </div>
 
         <div class="glass-card quote-card">
-            <div class="quote-text" id="random-quote" style="font-size: 14px; color: #cbd5e1; opacity: 0.8;"></div>
+            <div class="quote-text" id="random-quote" style="font-size: 14px; color: #fff; opacity: 0.6;"></div>
             <div class="quote-author" id="quote-author" style="color: var(--primary); font-size: 11px; margin-top: 5px;"></div>
-            <div id="quote-meaning" style="font-size: 20px; opacity: 1; margin-top: 15px; font-style: italic; color: var(--success); font-weight: 700; max-width: 90%; line-height: 1.4; text-shadow: 0 2px 10px rgba(0,0,0,0.8); border-top: 1px solid rgba(255, 153, 51, 0.3); padding-top: 15px;"></div>
+            <div id="quote-meaning" style="font-size: 22px; opacity: 1; margin-top: 18px; font-style: italic; color: #FFF; font-weight: 900; max-width: 90%; line-height: 1.4; text-shadow: 0 0 15px #FF4500, 0 0 30px #A52A2A, 0 4px 10px rgba(0,0,0,1); border-top: 2px solid #FF4500; padding-top: 20px;"></div>
         </div>
 
         <div class="glass-card projection-card">
