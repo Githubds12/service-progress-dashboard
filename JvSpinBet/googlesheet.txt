@@ -1,0 +1,28 @@
+Researcher: Gorri
+Date: 2026-05-06
+org.jvspinbet.client jvspinbet-v253.0.1
+
+Service: JvSpinBet
+Service ID: org.jvspinbet.client
+Service SMS: [JVSpinBet] Your verification code is 123456
+
+Official Website: andind2022.com
+Google Play Store: JvSpinBet
+Package Name: org.jvspinbet.client
+APKPure: JvSpinBet Search (apkpure.com)
+
+1. JvSpinBet
+JvSpinBet is an online betting and casino platform offering various sports betting options and casino games.
+
+Verification Type: SMS
+Captcha: Yes (Visual)
+Encryption: HTTPS
+Rate Limits: 300s (RAS)
+Endpoints Involved: 4
+Bot Protection: Captcha
+Automation Feasibility: Medium (40%)
+
+Proof:
+- Request OTP: https://andind2022.com/Account/v1/SendCode
+- Validate OTP: https://andind2022.com/Account/v1/CheckCode
+- Headers: X-BundleId: org.jvspinbet.client, Version: jvspinbet-v253.0.1
