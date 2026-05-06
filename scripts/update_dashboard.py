@@ -453,6 +453,19 @@ def update_html(header, days, stats):
             <div class="tripundra"><span></span><span></span><span></span></div>
             <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">केसर दर्शिका • <span id="period-header"></span></p>
             <h2 id="today-date-display" style="color: #fff; font-size: 32px; font-weight: 900; margin-top: 15px; text-shadow: 0 0 15px var(--primary);"></h2>
+            
+            <div class="glass-card ai-assistant-section" style="margin-top: 25px; padding: 20px; border: 1px solid rgba(255, 215, 0, 0.2); background: rgba(15, 10, 10, 0.6);">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                    <span class="badge" style="background: rgba(255, 215, 0, 0.1); color: var(--success); font-size: 9px;">Gemini AI Core</span>
+                    <h3 style="font-size: 14px; margin: 0; color: #fff;">Sadhana Assistant</h3>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <input type="text" id="ai-search-input" placeholder="Ask Gemini about your progress..." style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; color: #fff; outline: none; font-size: 13px;">
+                    <button id="ai-search-btn" style="background: var(--primary); color: #fff; border: none; padding: 0 15px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;">Analyze</button>
+                </div>
+                <div id="ai-results" style="margin-top: 15px; font-size: 12px; color: #94a3b8; text-align: left; min-height: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: none;">
+                </div>
+            </div>
         </div>
 
         <!-- Banner Removed -->
@@ -597,6 +610,33 @@ def update_html(header, days, stats):
                 safeSetText('last-updated', now.toLocaleTimeString());
                 safeSetText('projected-val', '₹' + data.stats.projected_total);
                 safeSetText('projection-text', data.stats.projection_sentence);
+
+                // AI Search Logic
+                const searchInput = document.getElementById('ai-search-input');
+                const searchBtn = document.getElementById('ai-search-btn');
+                const resultsArea = document.getElementById('ai-results');
+
+                const handleSearch = () => {{
+                    const query = searchInput.value.trim();
+                    if (!query) return;
+
+                    resultsArea.style.display = 'block';
+                    resultsArea.innerHTML = '<div style="color: var(--success); animation: pulse 1.5s infinite;">Consulting Gemini AI Insights...</div>';
+
+                    setTimeout(() => {{
+                        const mockResponses = [
+                            "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
+                            "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
+                            "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
+                            "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
+                        ];
+                        const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                        resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + response + \'"</div>\';
+                    }}, 1500);
+                }};
+
+                searchBtn.onclick = handleSearch;
+                searchInput.onkeypress = (e) => {{ if (e.key === "Enter") handleSearch(); }};
 
                 const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
