@@ -15,7 +15,7 @@ JvSpinBet (package: `org.jvspinbet.client`) is a betting platform utilizing a mu
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS | `Sms` code type is enforced after registration submission. |
-| **Captcha** | Yes | Required in the `/Registration` endpoint (`CaptchaId` and `ImageText`). |
+| **Captcha** | Visual | Required in the `/Registration` endpoint (`CaptchaId` and `ImageText`). |
 | **Encryption** | HTTPS | Standard TLS encryption for API traffic; JSON payloads are used. |
 | **Rate Limits** | 300s | `RAS: 300` observed in `/SendCode` response suggests a 5-minute cooldown. |
 | **Endpoints Involved** | 4 | `GetRegistrationFields`, `Registration`, `SendCode`, `CheckCode` |
