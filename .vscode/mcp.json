@@ -1,0 +1,11 @@
+{
+  "servers": {
+    "http-toolkit": {
+      "type": "stdio",
+      "command": "C:\\Users\\Gorri\\AppData\\Local\\httptoolkit-server\\client\\bin\\httptoolkit-server.cmd",
+      "args": [
+        "mcp"
+      ]
+    }
+  }
+}
