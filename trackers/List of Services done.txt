@@ -154,14 +154,17 @@ Daily Summary: 5 services, 2000 rs
 5th May, Tuesday
 Daily Summary: 0 services, 0 rs
 ----------
+6th May, Wednesday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 109
 - Total Earnings: 43400 rs
-- Average Daily Earning (over 25 days since Apr 10): 1736.0 rs/day
-- Average Daily Services: 4.5 -> 4.36 services/day
+- Average Daily Earning (over 26 days since Apr 10): 1669.23 rs/day
+- Average Daily Services: 4.5 -> 4.19 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 24.1 -> 23.3 Services / day (9320.0 rs/day for 5 days)
+- Recovery Pace: 24.1 -> 29.1 Services / day (11650.0 rs/day for 4 days)
 - Services Needed to Goal: 116.5
-- Recommended for Today (inc. buffer): 28 services
-- Projected Monthly Total: ₹52080.0
+- Recommended for Today (inc. buffer): 35 services
+- Projected Monthly Total: ₹50076.92

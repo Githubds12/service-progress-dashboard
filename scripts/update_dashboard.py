@@ -452,6 +452,7 @@ def update_html(header, days, stats):
             </div>
             <div class="tripundra"><span></span><span></span><span></span></div>
             <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">केसर दर्शिका • <span id="period-header"></span></p>
+            <h2 id="today-date-display" style="color: #fff; font-size: 32px; font-weight: 900; margin-top: 15px; text-shadow: 0 0 15px var(--primary);"></h2>
         </div>
 
         <!-- Banner Removed -->
@@ -464,7 +465,7 @@ def update_html(header, days, stats):
                 <div id="projected-val" class="proj-val">₹0</div>
                 <p id="projection-text" style="font-size: 11px; opacity: 0.9; margin-top: 5px;"></p>
             </div>
-            <img src="dashboard/financial_growth_graphic_1777206994999.png" style="width: 70px; opacity: 0.8;" alt="Growth">
+            <!-- Growth Image Removed -->
         </div>
 
         <div class="glass-card progress-section" id="recommendation-card">
@@ -479,7 +480,7 @@ def update_html(header, days, stats):
             <p id="explanation-text" style="font-size: 11px; color: #94a3b8; line-height: 1.4;"></p>
             
             <div id="celebration">
-                <img src="dashboard/goal_achievement_icon_1777206977639.png" class="trophy" alt="Goal">
+                <!-- Trophy Removed -->
                 <h2 style="color: var(--success);">लक्ष्यं सिद्धम्! (TARGET ACHIEVED) 🚀</h2>
             </div>
         </div>
@@ -592,6 +593,7 @@ def update_html(header, days, stats):
                 safeSetText('explanation-text', data.stats.explanation);
                 
                 const now = new Date();
+                safeSetText('today-date-display', data.stats.today_date);
                 safeSetText('last-updated', now.toLocaleTimeString());
                 safeSetText('projected-val', '₹' + data.stats.projected_total);
                 safeSetText('projection-text', data.stats.projection_sentence);
