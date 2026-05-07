@@ -211,13 +211,15 @@ def update_html(header, days, stats, complexity_stats=None):
             overflow-x: hidden; min-height: 100vh;
         }}
         
-        /* Animated Gradient Background */
+        /* Animated Gradient Background with Bhairavi Aura */
         .bg-glow {{
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: 
-                radial-gradient(circle at 10% 10%, rgba(128, 0, 0, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 10% 10%, rgba(139, 0, 0, 0.2) 0%, transparent 40%),
                 radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
-                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, transparent 100%);
+                url('dashboard/bhairavi_texture_real.jpg');
+            background-size: 100% 100%, 100% 100%, cover;
+            opacity: 0.4;
             animation: bgPulse 20s infinite alternate ease-in-out;
         }}
         @keyframes bgPulse {{
@@ -227,10 +229,21 @@ def update_html(header, days, stats, complexity_stats=None):
 
         .container {{ max-width: 600px; margin: auto; position: relative; z-index: 1; }}
         
-        .header {{ text-align: center; padding: 50px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); }}
-        @keyframes fadeInDown {{
-            from {{ opacity: 0; transform: translateY(-30px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
+        .header {{ text-align: center; padding: 40px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }}
+        
+        /* Linga Bhairavi Sacred Banner */
+        .bhairavi-banner {{
+            width: 100%;
+            height: 400px;
+            background: url('dashboard/bhairavi_banner_real.jpg') no-repeat center center;
+            background-size: cover;
+            position: relative;
+            margin-top: -15px;
+            margin-bottom: -120px;
+            z-index: 0;
+            mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
+            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
+            filter: brightness(0.8) contrast(1.1);
         }}
         
         .header h1 {{ 
@@ -319,6 +332,7 @@ def update_html(header, days, stats, complexity_stats=None):
     </style>
 </head>
 <body>
+    <div class="bhairavi-banner"></div>
     <div class="bg-glow"></div>
     <div class="container">
         <div class="header">
