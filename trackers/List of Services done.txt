@@ -3,7 +3,8 @@
 7th May, Thursday
 1. [12:15] JvSpinBet - org.jvspinbet.client - 400rs
 2. [12:35] Utair - ru.utair.android - 400rs
-Daily Summary: 2 services, 800 rs
+3. [13:10] Lyft - me.lyft.android - 400rs
+Daily Summary: 3 services, 1200 rs
 ----------
 
 ### Previous History (10th April to 10th May)
@@ -165,12 +166,12 @@ Daily Summary: 5 services, 2000 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 2
-- Total Earnings: 800 rs
-- Average Daily Earning (over 1 days since May 07): 800.0 rs/day
-- Average Daily Services: 2.0 -> 2.0 services/day
+- Total Services: 3
+- Total Earnings: 1200 rs
+- Average Daily Earning (over 1 days since May 07): 1200.0 rs/day
+- Average Daily Services: 2.0 -> 3.0 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 7.7 -> 7.7 Services / day (3075.86 rs/day for 29 days)
-- Services Needed to Goal: 223.0
+- Recovery Pace: 7.7 -> 7.7 Services / day (3062.07 rs/day for 29 days)
+- Services Needed to Goal: 222.0
 - Recommended for Today (inc. buffer): 10 services
-- Projected Monthly Total: ₹24000.0
+- Projected Monthly Total: ₹36000.0

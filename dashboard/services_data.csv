@@ -1,6 +1,7 @@
 Date,Time,Service Name,Package Name,Price
 "7th May, Thursday",12:15,JvSpinBet,org.jvspinbet.client,400
 "7th May, Thursday",12:35,Utair,ru.utair.android,400
+"7th May, Thursday",13:10,Lyft,me.lyft.android,400
 "6th May, Wednesday",17:15,JvSpinBet,org.jvspinbet.client,400
 "3rd May, Sunday",14:41,OpenTable,com.opentable,400
 "3rd May, Sunday",15:33,Qantas,au.com.qantas.qantas,400

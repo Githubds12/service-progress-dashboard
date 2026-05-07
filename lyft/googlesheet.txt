@@ -1,0 +1,20 @@
+me.lyft.android 2026.16.3.1777447561
+Researcher: Deepanshu Singh
+Date: 2026-05-07
+
+Service: Lyft
+Service ID: cff30feb-2ec7-4cc1-b5fb-04815c3cb497
+Service SMS: Your Lyft verification code is 258899. It expires in 5 minutes. Don't share this code with anyone.
+
+Service Description: Lyft is a leading transportation platform that provides on-demand ridesharing, bike-sharing, and scooter-sharing services.
+
+Verification Type: SMS
+Captcha: undefined
+Encryption: TLS/SSL
+Rate Limits: Partial
+Endpoints Involved: 3
+
+Flow: Get Client Token -> POST /v1/phoneauth (SMS Request) -> POST /oauth2/access_token (OTP Submit)
+Proof Captcha: No captcha observed in /v1/phoneauth or /oauth2/access_token.
+Proof Rate Limits: 429 errors observed on Sentry telemetry; main API status remained stable.
+Proof Encryption: Standard HTTPS/TLS observed.
