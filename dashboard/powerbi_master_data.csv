@@ -1,114 +1,257 @@
-Service Name,Date,Time,Earnings (RS),Package,Category,Verification Type,Captcha,Encryption,Rate Limits,Endpoints Involved,Bot Protection
-JvSpinBet,"7th May, Thursday",12:15,400,org.jvspinbet.client,Gambling/Betting,SMS,Visual,HTTPS,300s (RAS),4,Captcha
-Utair,"7th May, Thursday",12:35,400,ru.utair.android,General,Unknown,undefined,Standard HTTPS with Bearer Token and Custom Headers (timestamph),5-minute cooldown required for successful SMS delivery on second attempt.,5,Internal (Session and Device ID tracking)
-Lyft,"7th May, Thursday",13:10,400,me.lyft.android,Transport/Rideshare,SMS,undefined,TLS/SSL,Partial,3,Unknown
-JvSpinBet,"6th May, Wednesday",17:15,400,org.jvspinbet.client,Gambling/Betting,SMS,Visual,HTTPS,300s (RAS),4,Captcha
-OpenTable,"3rd May, Sunday",14:41,400,com.opentable,General,Unknown,undefined,Standard TLS with OAuth2 (bearer token),Unknown,Unknown,Unknown
-Qantas,"3rd May, Sunday",15:33,400,au.com.qantas.qantas,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-JoyBuy,"3rd May, Sunday",15:52,400,com.joybuy.jdi,General,Unknown,Xiaomi CAPTCHA (Slider),AES Encrypted identifiers + Request Signing (sign),Unknown,Unknown,Unknown
-ForDeal,"3rd May, Sunday",16:13,400,com.fordeal.android,General,SMS,undefined,Custom Signing (sign header) & Encrypted Payload (f-g header),Unknown,2,Custom API Signatures
-KwikPay,"3rd May, Sunday",16:40,400,com.kwikpay.transfers,Fintech/Crypto,Unknown,Yandex SmartCaptcha,Custom request signing using 'X-Signature' and 'X-Signature-Date' headers.,180s cooldown enforced via 'repeat_delay' in response.,Unknown,Yandex SmartCaptcha.
-Deriv,"2nd May, Saturday",10:30,400,com.deriv.home,General,Unknown,undefined,Standard JSON/HTTPS,Unknown,Unknown,Unknown
-jameda,"2nd May, Saturday",10:50,500,de.jameda,General,Unknown,reCAPTCHA v2 Invisible (Google),None,Unknown,Unknown,Google reCAPTCHA
-weststein,"2nd May, Saturday",11:10,400,com.weststeincard.weststein,General,Unknown,reCAPTCHA v2 (Google),None,Unknown,Unknown,Google reCAPTCHA
-pro1bet,"2nd May, Saturday",12:00,400,org.pro1bet.client,Gambling/Betting,Unknown,Image Captcha,None,Unknown,Unknown,Image Captcha
-xtb,"2nd May, Saturday",12:10,400,com.xtb.xmobile2,General,Unknown,None,Protobuf (Binary),Unknown,Unknown,None
-Flowwow,"2nd May, Saturday",13:15,400,com.flowwow,General,Unknown,undefined,Custom MD5 Hash,Unknown,Unknown,Custom Hash signing
-uo verify (Urban Outfitters),"1st May, Friday",12:45,400,com.urbanoutfitters.android,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Tuda,"30th April, Thursday",09:50,400,com.tuda.android,General,Unknown,undefined,Dynamic request signature (sig parameter),60 seconds (NextTryInSeconds),Unknown,Custom request signing (HMAC-like sig)
-Paybis,"30th April, Thursday",10:10,400,com.paybis,Fintech/Crypto,Unknown,reCaptcha v3,HTTPS,Variable (see expirationTime),Unknown,Cloudflare + reCaptcha
-Boxy,"30th April, Thursday",10:50,400,com.client.boxy,General,Unknown,undefined,HTTPS,undefined,Unknown,None observed
-ClubApparel,"30th April, Thursday",11:10,400,com.appemirates.clubapparel,General,Unknown,undefined,HTTPS,undefined,Unknown,AWS Lambda Proxy + OAuth/Basic Auth
-wave,"29th April, Wednesday",10:00,400,com.wave.personal,General,Unknown,reCAPTCHA Enterprise,HTTPS / GraphQL,Unknown,Unknown,Unknown
-eneba,"29th April, Wednesday",10:15,400,com.eneba.app,General,Unknown,Cloudflare Challenge Platform,HTTPS / OAuth,Strict (Cloudflare),Unknown,Unknown
-maxim,"29th April, Wednesday",10:30,400,com.taxsee.taxsee,General,Unknown,None,HTTPS,Moderate (Signature based),Unknown,Unknown
-Poppo Live,"29th April, Wednesday",10:45,400,com.baitu.qingshu,Social/Live,Unknown,Aliyun Captcha (Turnstile alternative),"Advanced (HMAC-SHA1, ShuMei)",Strict (Aliyun + ShuMei),Unknown,Unknown
-buz,"29th April, Wednesday",11:00,400,com.interfun.buz,General,Unknown,None,HTTPS,Moderate (Device/Trace based),Unknown,Unknown
-Rednote,"29th April, Wednesday",11:15,400,com.xingin.xhs,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-ColdBet,"29th April, Wednesday",11:30,400,org.coldbet.client,Gambling/Betting,Unknown,Custom Image Captcha,HTTPS,Moderate (Token/Guid based),Unknown,Unknown
-Bitget,"29th April, Wednesday",11:45,400,com.bitget.exchange,General,Unknown,Behavioral Captcha (Geetest-like),"Advanced (x-sign, dy-token)",Strict (WAF/RASP protected),Unknown,Unknown
-Klook,"29th April, Wednesday",12:00,400,com.klook,General,Unknown,DataDome Interstitial,"Advanced (x-signature, Forter)",Strict (next_timestamp_sec),Unknown,Unknown
-SoulChill,"29th April, Wednesday",12:15,400,com.live.soulchill,General,Unknown,Geetest v4 / reCAPTCHA,Advanced (Momo mzip encryption),Strict (Momo Security Stack),Unknown,Unknown
-PaySend,"29th April, Wednesday",11:10,400,com.paysend.app,Fintech/Crypto,Unknown,undefined,None,Unknown,2,Cloudflare
-AMO,"29th April, Wednesday",11:53,400,com.xiaoyu.amo,General,Unknown,undefined,None,Unknown,2,Cloudflare
-Tongcheng,"29th April, Wednesday",12:54,400,com.tongcheng.android,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Gooobet,"29th April, Wednesday",13:30,400,org.gooobet.client,Gambling/Betting,Unknown,Custom (HD-API Bot Protection),None (Standard JSON Payloads),Unknown,Unknown,HD-API implemented on registration endpoints with sensor data collection.
-Live.me,"29th April, Wednesday",13:40,400,com.cmcm.live,Social/Live,Unknown,undefined. No interactive captcha was observed during the registration flow.,Custom hash signatures `lm_s_str` generated locally.,Unknown. No rate limits were explicitly triggered during the trace.,Unknown,Tongdun device fingerprinting SDK. Observed in payloads as `tongdun_black_box=rGPU51777449570XWBOPMdUtN1`.
-E,"29th April, Wednesday",14:30,400,GetS - com.egets.takeaways,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Luno,"29th April, Wednesday",22:50,400,co.bitx.android.wallet,General,Unknown,reCAPTCHA v2 Checkbox (Google),Protobuf binary protocol (LunoSigV2 signing),Observed 60s cooldown (ErrOTPMinInterval),Unknown,Cloudflare + Custom Request Signing
-1xCasino,"29th April, Wednesday",23:20,400,org.xbet.casino,Gambling/Betting,Unknown,Slider CAPTCHA (Custom),HD-API + X-Sign header signing,Unknown,Unknown,HD-API ( Huawei/Honor Bot Protection) + Custom Signature
-LC Waikiki,"29th April, Wednesday",23:33,400,com.lcwaikiki.android,General,Unknown,undefined,standard JSON over HTTPS,Unknown,Unknown,undefined
-EZVIZ,"29th April, Wednesday",23:42,400,com.ezviz,General,Unknown,Custom (Human-Computer Identify),Encrypted Password + custom headers (featureCode),Unknown,Unknown,Custom Human-Computer Identification system
-Pegasus - com.pozitron.pegasus,"28th April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Daraz - com.daraz.android,"28th April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-ehamarkets - com.trade.trade211,"28th April, Tuesday",Unknown,500,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-BPme - com.bp.app.bpme.global.pl,"27th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Sage - com.sage.accounting,"27th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-XTransfer - com.xtapp.xtransfer,"27th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Shop Apotheke - shop.shop_apotheke.com.shopapotheke,"27th April, Monday",Unknown,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-iHerb - com.iherb,"27th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-KuCoin - com.kubi.kucoin,"27th April, Monday",Unknown,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-IBI Smart - com.ibidev.ibitrade,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-BitDeer - com.bitdeer.cloud.android,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Liki24 - com.liki24.customerapp,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Raya - com.raya_app,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Medal - tv.medal.recorder,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-YandexEats - ru.foodfox.client,"26th April, Sunday",Unknown,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-BetLabel - org.betlabel.client,"26th April, Sunday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Shell Go+ India - com.shell.sitibv.shellgoplusindia,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-HoYoLab - com.mihoyo.hoyolab,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-nextBike - de.nextbike,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-RockFlow - team.flowai.android,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-WellTrade - com.weltrade.appterminal,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-CubaMessenger - com.cubamessenger.cubamessengerapp,"26th April, Sunday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Bolt Food - com.bolt.food,"26th April, Sunday",Unknown,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-PokerBet - com.pokerbet.casino,"26th April, Sunday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-TruthSocial,"25th April, Saturday",Unknown,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Partiful,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-NiceOne,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Qmove,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-BetAndYou,"25th April, Saturday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-MarathonBet,"25th April, Saturday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Nestle Waters,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-MiTrade,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Yamaha Motor ID,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Yolla,"25th April, Saturday",Unknown,400,Unknown,General,Unknown,Google Play Integrity Standard,Request Signing (sign parameter),Unknown,Unknown,Google Play Integrity
-(Reserved/Skip),"25th April, Saturday",Unknown,0,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Healthify,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Zid,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-XPariBet,"23rd April, Thursday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Boyaa,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-WePlay,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-HepsiBurada,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Canva,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-4Fun,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Yalla,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-AlmaGo,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Catawiki,"23rd April, Thursday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-HapyLive,"22nd April, Wednesday",Unknown,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-FastPari,"22nd April, Wednesday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Planity,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Slack,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Floward,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Normal,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-BetJam,"22nd April, Wednesday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Ring,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Qunar,"22nd April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-oneplus,"21st April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-mxt - com.vantagefx.app,"21st April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Luckin Coffee - com.luckin.client.i,"21st April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-ccc - eu.ccc.mobile,"21st April, Tuesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Blink,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-DBBet,"20th April, Monday",Unknown,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-ivi.ru,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-MoonPay,"20th April, Monday",Unknown,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Palfish,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-PokaLive,"20th April, Monday",Unknown,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Wix,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Chamet,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-dolynk,"20th April, Monday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Hinge,"15th April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-Niimbot,"15th April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-VFS Global,"15th April, Wednesday",Unknown,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-yandexgo,"15th April, Wednesday",Unknown,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
-yandexpro,"15th April, Wednesday",Unknown,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown
+Service Name,Date,Time,Earnings (RS),Package,Category,Verification Type,Captcha,Encryption,Rate Limits,Endpoints Involved,Bot Protection,Complexity Index,Status
+JvSpinBet,"7th May, Thursday",12:15,400,org.jvspinbet.client,Gambling/Betting,SMS,Visual,HTTPS,300s (RAS),4,Captcha,3,Completed
+Utair,"7th May, Thursday",12:35,400,ru.utair.android,Transport/Rideshare,Unknown,undefined,Standard HTTPS with Bearer Token and Custom Headers (timestamph),5-minute cooldown required for successful SMS delivery on second attempt.,5,Internal (Session and Device ID tracking),2,Completed
+ViYa Lite,"7th May, Thursday",15:05,400,com.kinkey.vgolite,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+JvSpinBet,"6th May, Wednesday",17:15,400,org.jvspinbet.client,Gambling/Betting,SMS,Visual,HTTPS,300s (RAS),4,Captcha,3,Completed
+OpenTable,"3rd May, Sunday",14:41,400,com.opentable,General,Unknown,undefined,Standard TLS with OAuth2 (bearer token),Unknown,Unknown,Unknown,1,Completed
+Qantas,"3rd May, Sunday",15:33,400,au.com.qantas.qantas,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+JoyBuy,"3rd May, Sunday",15:52,400,com.joybuy.jdi,Delivery/E-commerce,Unknown,Xiaomi CAPTCHA (Slider),AES Encrypted identifiers + Request Signing (sign),Unknown,Unknown,Unknown,3,Completed
+ForDeal,"3rd May, Sunday",16:13,400,com.fordeal.android,General,SMS,undefined,Custom Signing (sign header) & Encrypted Payload (f-g header),Unknown,2,Custom API Signatures,3,Completed
+KwikPay,"3rd May, Sunday",16:40,400,com.kwikpay.transfers,Fintech/Crypto,Unknown,Yandex SmartCaptcha,Custom request signing using 'X-Signature' and 'X-Signature-Date' headers.,180s cooldown enforced via 'repeat_delay' in response.,Unknown,Yandex SmartCaptcha.,4,Completed
+Deriv,"2nd May, Saturday",10:30,400,com.deriv.home,Fintech/Crypto,Unknown,undefined,Standard JSON/HTTPS,Unknown,Unknown,Unknown,1,Completed
+jameda,"2nd May, Saturday",10:50,500,de.jameda,General,Unknown,reCAPTCHA v2 Invisible (Google),None,Unknown,Unknown,Google reCAPTCHA,2,Completed
+weststein,"2nd May, Saturday",11:10,400,com.weststeincard.weststein,General,Unknown,reCAPTCHA v2 (Google),None,Unknown,Unknown,Google reCAPTCHA,2,Completed
+pro1bet,"2nd May, Saturday",12:00,400,org.pro1bet.client,Gambling/Betting,Unknown,Image Captcha,None,Unknown,Unknown,Image Captcha,2,Completed
+xtb,"2nd May, Saturday",12:10,400,com.xtb.xmobile2,Fintech/Crypto,Unknown,None,Protobuf (Binary),Unknown,Unknown,None,1,Completed
+Flowwow,"2nd May, Saturday",13:15,400,com.flowwow,General,Unknown,undefined,Custom MD5 Hash,Unknown,Unknown,Custom Hash signing,2,Completed
+uo verify (Urban Outfitters),"1st May, Friday",12:45,400,com.urbanoutfitters.android,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Tuda,"30th April, Thursday",09:50,400,com.tuda.android,General,Unknown,undefined,Dynamic request signature (sig parameter),60 seconds (NextTryInSeconds),Unknown,Custom request signing (HMAC-like sig),1,Completed
+Paybis,"30th April, Thursday",10:10,400,com.paybis,Fintech/Crypto,Unknown,reCaptcha v3,HTTPS,Variable (see expirationTime),Unknown,Cloudflare + reCaptcha,4,Completed
+Boxy,"30th April, Thursday",10:50,400,com.client.boxy,General,Unknown,undefined,HTTPS,undefined,Unknown,None observed,1,Completed
+ClubApparel,"30th April, Thursday",11:10,400,com.appemirates.clubapparel,General,Unknown,undefined,HTTPS,undefined,Unknown,AWS Lambda Proxy + OAuth/Basic Auth,1,Completed
+wave,"29th April, Wednesday",10:00,400,com.wave.personal,General,Unknown,reCAPTCHA Enterprise,HTTPS / GraphQL,Unknown,Unknown,Unknown,1,Completed
+eneba,"29th April, Wednesday",10:15,400,com.eneba.app,General,Unknown,Cloudflare Challenge Platform,HTTPS / OAuth,Strict (Cloudflare),Unknown,Unknown,1,Completed
+maxim,"29th April, Wednesday",10:30,400,com.taxsee.taxsee,General,Unknown,None,HTTPS,Moderate (Signature based),Unknown,Unknown,1,Completed
+Poppo Live,"29th April, Wednesday",10:45,400,com.baitu.qingshu,Social/Live,Unknown,Aliyun Captcha (Turnstile alternative),"Advanced (HMAC-SHA1, ShuMei)",Strict (Aliyun + ShuMei),Unknown,Unknown,1,Completed
+buz,"29th April, Wednesday",11:00,400,com.interfun.buz,General,Unknown,None,HTTPS,Moderate (Device/Trace based),Unknown,Unknown,1,Completed
+Rednote,"29th April, Wednesday",11:15,400,com.xingin.xhs,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ColdBet,"29th April, Wednesday",11:30,400,org.coldbet.client,Gambling/Betting,Unknown,Custom Image Captcha,HTTPS,Moderate (Token/Guid based),Unknown,Unknown,1,Completed
+Bitget,"29th April, Wednesday",11:45,400,com.bitget.exchange,General,Unknown,Behavioral Captcha (Geetest-like),"Advanced (x-sign, dy-token)",Strict (WAF/RASP protected),Unknown,Unknown,1,Completed
+Klook,"29th April, Wednesday",12:00,400,com.klook,Delivery/E-commerce,Unknown,DataDome Interstitial,"Advanced (x-signature, Forter)",Strict (next_timestamp_sec),Unknown,Unknown,1,Completed
+SoulChill,"29th April, Wednesday",12:15,400,com.live.soulchill,Social/Live,Unknown,Geetest v4 / reCAPTCHA,Advanced (Momo mzip encryption),Strict (Momo Security Stack),Unknown,Unknown,1,Completed
+PaySend,"29th April, Wednesday",11:10,400,com.paysend.app,Fintech/Crypto,Unknown,undefined,None,Unknown,2,Cloudflare,4,Completed
+AMO,"29th April, Wednesday",11:53,400,com.xiaoyu.amo,General,Unknown,undefined,None,Unknown,2,Cloudflare,4,Completed
+Tongcheng,"29th April, Wednesday",12:54,400,com.tongcheng.android,General,Unknown,selection-set (FengKongCloud),Strong (Encrypted payloads observed in APM and Trajectory logs),Unknown,5+,FengKongCloud (Shuidi),1,Completed
+Gooobet,"29th April, Wednesday",13:30,400,org.gooobet.client,Gambling/Betting,Unknown,Custom (HD-API Bot Protection),None (Standard JSON Payloads),Unknown,Unknown,HD-API implemented on registration endpoints with sensor data collection.,1,Completed
+Live.me,"29th April, Wednesday",13:40,400,com.cmcm.live,Social/Live,Unknown,undefined. No interactive captcha was observed during the registration flow.,Custom hash signatures `lm_s_str` generated locally.,Unknown. No rate limits were explicitly triggered during the trace.,Unknown,Tongdun device fingerprinting SDK. Observed in payloads as `tongdun_black_box=rGPU51777449570XWBOPMdUtN1`.,2,Completed
+E,"29th April, Wednesday",14:30,400,GetS - com.egets.takeaways,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Luno,"29th April, Wednesday",22:50,400,co.bitx.android.wallet,Fintech/Crypto,Unknown,reCAPTCHA v2 Checkbox (Google),Protobuf binary protocol (LunoSigV2 signing),Observed 60s cooldown (ErrOTPMinInterval),Unknown,Cloudflare + Custom Request Signing,4,Completed
+1xCasino,"29th April, Wednesday",23:20,400,org.xbet.casino,Gambling/Betting,Unknown,Slider CAPTCHA (Custom),HD-API + X-Sign header signing,Unknown,Unknown,HD-API ( Huawei/Honor Bot Protection) + Custom Signature,1,Completed
+LC Waikiki,"29th April, Wednesday",23:33,400,com.lcwaikiki.android,General,Unknown,undefined,standard JSON over HTTPS,Unknown,Unknown,undefined,1,Completed
+EZVIZ,"29th April, Wednesday",23:42,400,com.ezviz,General,Unknown,Custom (Human-Computer Identify),Encrypted Password + custom headers (featureCode),Unknown,Unknown,Custom Human-Computer Identification system,2,Completed
+Pegasus - com.pozitron.pegasus,"28th April, Tuesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Daraz - com.daraz.android,"28th April, Tuesday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ehamarkets - com.trade.trade211,"28th April, Tuesday",N/A,500,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BPme - com.bp.app.bpme.global.pl,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Sage - com.sage.accounting,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+XTransfer - com.xtapp.xtransfer,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Shop Apotheke - shop.shop_apotheke.com.shopapotheke,"27th April, Monday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+iHerb - com.iherb,"27th April, Monday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+KuCoin - com.kubi.kucoin,"27th April, Monday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+IBI Smart - com.ibidev.ibitrade,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BitDeer - com.bitdeer.cloud.android,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Liki24 - com.liki24.customerapp,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Raya - com.raya_app,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Medal - tv.medal.recorder,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+YandexEats - ru.foodfox.client,"26th April, Sunday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetLabel - org.betlabel.client,"26th April, Sunday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Shell Go+ India - com.shell.sitibv.shellgoplusindia,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HoYoLab - com.mihoyo.hoyolab,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+nextBike - de.nextbike,"26th April, Sunday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+RockFlow - team.flowai.android,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+WellTrade - com.weltrade.appterminal,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+CubaMessenger - com.cubamessenger.cubamessengerapp,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Bolt Food - com.bolt.food,"26th April, Sunday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+PokerBet - com.pokerbet.casino,"26th April, Sunday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+TruthSocial,"25th April, Saturday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Partiful,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+NiceOne,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Qmove,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetAndYou,"25th April, Saturday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MarathonBet,"25th April, Saturday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Nestle Waters,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MiTrade,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yamaha Motor ID,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yolla,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Google Play Integrity Standard,Request Signing (sign parameter),Unknown,Unknown,Google Play Integrity,1,Completed
+Healthify,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Zid,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+XPariBet,"23rd April, Thursday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Boyaa,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+WePlay,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HepsiBurada,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Canva,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+4Fun,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yalla,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+AlmaGo,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Catawiki,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HapyLive,"22nd April, Wednesday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+FastPari,"22nd April, Wednesday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Planity,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Slack,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Floward,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Normal,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetJam,"22nd April, Wednesday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Ring,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Qunar,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+oneplus,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+mxt - com.vantagefx.app,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Luckin Coffee - com.luckin.client.i,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ccc - eu.ccc.mobile,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Blink,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+DBBet,"20th April, Monday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ivi.ru,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MoonPay,"20th April, Monday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Palfish,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+PokaLive,"20th April, Monday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Wix,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Chamet,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+dolynk,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Hinge,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Niimbot,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+VFS Global,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+yandexgo,"15th April, Wednesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+yandexpro,"15th April, Wednesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Hinge,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Niimbot,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+VFS Global,"15th April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+yandexgo,"15th April, Wednesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+yandexpro,"15th April, Wednesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Blink,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+DBBet,"20th April, Monday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ivi.ru,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MoonPay,"20th April, Monday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Palfish,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+PokaLive,"20th April, Monday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Wix,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Chamet,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+dolynk,"20th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+oneplus,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+mxt - com.vantagefx.app,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Luckin Coffee - com.luckin.client.i,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ccc - eu.ccc.mobile,"21st April, Tuesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HapyLive,"22nd April, Wednesday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+FastPari,"22nd April, Wednesday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Planity,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Slack,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Floward,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Normal,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetJam,"22nd April, Wednesday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Ring,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Qunar,"22nd April, Wednesday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Healthify,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Zid,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+XPariBet,"23rd April, Thursday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Boyaa,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+WePlay,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HepsiBurada,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Canva,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+4Fun,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yalla,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+AlmaGo,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Catawiki,"23rd April, Thursday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+TruthSocial,"25th April, Saturday",N/A,400,Unknown,Social/Live,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Partiful,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+NiceOne,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Qmove,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetAndYou,"25th April, Saturday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MarathonBet,"25th April, Saturday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Nestle Waters,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+MiTrade,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yamaha Motor ID,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Yolla,"25th April, Saturday",N/A,400,Unknown,General,Unknown,Google Play Integrity Standard,Request Signing (sign parameter),Unknown,Unknown,Google Play Integrity,1,Completed
+IBI Smart - com.ibidev.ibitrade,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BitDeer - com.bitdeer.cloud.android,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Liki24 - com.liki24.customerapp,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Raya - com.raya_app,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Medal - tv.medal.recorder,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+YandexEats - ru.foodfox.client,"26th April, Sunday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BetLabel - org.betlabel.client,"26th April, Sunday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Shell Go+ India - com.shell.sitibv.shellgoplusindia,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+HoYoLab - com.mihoyo.hoyolab,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+nextBike - de.nextbike,"26th April, Sunday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+RockFlow - team.flowai.android,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+WellTrade - com.weltrade.appterminal,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+CubaMessenger - com.cubamessenger.cubamessengerapp,"26th April, Sunday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Bolt Food - com.bolt.food,"26th April, Sunday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+PokerBet - com.pokerbet.casino,"26th April, Sunday",N/A,400,Unknown,Gambling/Betting,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+BPme - com.bp.app.bpme.global.pl,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Sage - com.sage.accounting,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+XTransfer - com.xtapp.xtransfer,"27th April, Monday",N/A,400,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Shop Apotheke - shop.shop_apotheke.com.shopapotheke,"27th April, Monday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+iHerb - com.iherb,"27th April, Monday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+KuCoin - com.kubi.kucoin,"27th April, Monday",N/A,400,Unknown,Fintech/Crypto,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Pegasus - com.pozitron.pegasus,"28th April, Tuesday",N/A,400,Unknown,Transport/Rideshare,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Daraz - com.daraz.android,"28th April, Tuesday",N/A,400,Unknown,Delivery/E-commerce,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ehamarkets - com.trade.trade211,"28th April, Tuesday",N/A,500,Unknown,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+wave,"29th April, Wednesday",10:00,400,com.wave.personal,General,Unknown,reCAPTCHA Enterprise,HTTPS / GraphQL,Unknown,Unknown,Unknown,1,Completed
+eneba,"29th April, Wednesday",10:15,400,com.eneba.app,General,Unknown,Cloudflare Challenge Platform,HTTPS / OAuth,Strict (Cloudflare),Unknown,Unknown,1,Completed
+maxim,"29th April, Wednesday",10:30,400,com.taxsee.taxsee,General,Unknown,None,HTTPS,Moderate (Signature based),Unknown,Unknown,1,Completed
+Poppo Live,"29th April, Wednesday",10:45,400,com.baitu.qingshu,Social/Live,Unknown,Aliyun Captcha (Turnstile alternative),"Advanced (HMAC-SHA1, ShuMei)",Strict (Aliyun + ShuMei),Unknown,Unknown,1,Completed
+buz,"29th April, Wednesday",11:00,400,com.interfun.buz,General,Unknown,None,HTTPS,Moderate (Device/Trace based),Unknown,Unknown,1,Completed
+Rednote,"29th April, Wednesday",11:15,400,com.xingin.xhs,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+ColdBet,"29th April, Wednesday",11:30,400,org.coldbet.client,Gambling/Betting,Unknown,Custom Image Captcha,HTTPS,Moderate (Token/Guid based),Unknown,Unknown,1,Completed
+Bitget,"29th April, Wednesday",11:45,400,com.bitget.exchange,General,Unknown,Behavioral Captcha (Geetest-like),"Advanced (x-sign, dy-token)",Strict (WAF/RASP protected),Unknown,Unknown,1,Completed
+Klook,"29th April, Wednesday",12:00,400,com.klook,Delivery/E-commerce,Unknown,DataDome Interstitial,"Advanced (x-signature, Forter)",Strict (next_timestamp_sec),Unknown,Unknown,1,Completed
+SoulChill,"29th April, Wednesday",12:15,400,com.live.soulchill,Social/Live,Unknown,Geetest v4 / reCAPTCHA,Advanced (Momo mzip encryption),Strict (Momo Security Stack),Unknown,Unknown,1,Completed
+PaySend,"29th April, Wednesday",11:10,400,com.paysend.app,Fintech/Crypto,Unknown,undefined,None,Unknown,2,Cloudflare,4,Completed
+AMO,"29th April, Wednesday",11:53,400,com.xiaoyu.amo,General,Unknown,undefined,None,Unknown,2,Cloudflare,4,Completed
+Tongcheng,"29th April, Wednesday",12:54,400,com.tongcheng.android,General,Unknown,selection-set (FengKongCloud),Strong (Encrypted payloads observed in APM and Trajectory logs),Unknown,5+,FengKongCloud (Shuidi),1,Completed
+Gooobet,"29th April, Wednesday",13:30,400,org.gooobet.client,Gambling/Betting,Unknown,Custom (HD-API Bot Protection),None (Standard JSON Payloads),Unknown,Unknown,HD-API implemented on registration endpoints with sensor data collection.,1,Completed
+Live.me,"29th April, Wednesday",13:40,400,com.cmcm.live,Social/Live,Unknown,undefined. No interactive captcha was observed during the registration flow.,Custom hash signatures `lm_s_str` generated locally.,Unknown. No rate limits were explicitly triggered during the trace.,Unknown,Tongdun device fingerprinting SDK. Observed in payloads as `tongdun_black_box=rGPU51777449570XWBOPMdUtN1`.,2,Completed
+E,"29th April, Wednesday",14:30,400,GetS - com.egets.takeaways,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Luno,"29th April, Wednesday",22:50,400,co.bitx.android.wallet,Fintech/Crypto,Unknown,reCAPTCHA v2 Checkbox (Google),Protobuf binary protocol (LunoSigV2 signing),Observed 60s cooldown (ErrOTPMinInterval),Unknown,Cloudflare + Custom Request Signing,4,Completed
+1xCasino,"29th April, Wednesday",23:20,400,org.xbet.casino,Gambling/Betting,Unknown,Slider CAPTCHA (Custom),HD-API + X-Sign header signing,Unknown,Unknown,HD-API ( Huawei/Honor Bot Protection) + Custom Signature,1,Completed
+LC Waikiki,"29th April, Wednesday",23:33,400,com.lcwaikiki.android,General,Unknown,undefined,standard JSON over HTTPS,Unknown,Unknown,undefined,1,Completed
+EZVIZ,"29th April, Wednesday",23:42,400,com.ezviz,General,Unknown,Custom (Human-Computer Identify),Encrypted Password + custom headers (featureCode),Unknown,Unknown,Custom Human-Computer Identification system,2,Completed
+Tuda,"30th April, Thursday",09:50,400,com.tuda.android,General,Unknown,undefined,Dynamic request signature (sig parameter),60 seconds (NextTryInSeconds),Unknown,Custom request signing (HMAC-like sig),1,Completed
+Paybis,"30th April, Thursday",10:10,400,com.paybis,Fintech/Crypto,Unknown,reCaptcha v3,HTTPS,Variable (see expirationTime),Unknown,Cloudflare + reCaptcha,4,Completed
+Boxy,"30th April, Thursday",10:50,400,com.client.boxy,General,Unknown,undefined,HTTPS,undefined,Unknown,None observed,1,Completed
+ClubApparel,"30th April, Thursday",11:10,400,com.appemirates.clubapparel,General,Unknown,undefined,HTTPS,undefined,Unknown,AWS Lambda Proxy + OAuth/Basic Auth,1,Completed
+uo verify (Urban Outfitters),"1st May, Friday",12:45,400,com.urbanoutfitters.android,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+Deriv,"2nd May, Saturday",10:30,400,com.deriv.home,Fintech/Crypto,Unknown,undefined,Standard JSON/HTTPS,Unknown,Unknown,Unknown,1,Completed
+jameda,"2nd May, Saturday",10:50,500,de.jameda,General,Unknown,reCAPTCHA v2 Invisible (Google),None,Unknown,Unknown,Google reCAPTCHA,2,Completed
+weststein,"2nd May, Saturday",11:10,400,com.weststeincard.weststein,General,Unknown,reCAPTCHA v2 (Google),None,Unknown,Unknown,Google reCAPTCHA,2,Completed
+pro1bet,"2nd May, Saturday",12:00,400,org.pro1bet.client,Gambling/Betting,Unknown,Image Captcha,None,Unknown,Unknown,Image Captcha,2,Completed
+xtb,"2nd May, Saturday",12:10,400,com.xtb.xmobile2,Fintech/Crypto,Unknown,None,Protobuf (Binary),Unknown,Unknown,None,1,Completed
+Flowwow,"2nd May, Saturday",13:15,400,com.flowwow,General,Unknown,undefined,Custom MD5 Hash,Unknown,Unknown,Custom Hash signing,2,Completed
+OpenTable,"3rd May, Sunday",14:41,400,com.opentable,General,Unknown,undefined,Standard TLS with OAuth2 (bearer token),Unknown,Unknown,Unknown,1,Completed
+Qantas,"3rd May, Sunday",15:33,400,au.com.qantas.qantas,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Completed
+JoyBuy,"3rd May, Sunday",15:52,400,com.joybuy.jdi,Delivery/E-commerce,Unknown,Xiaomi CAPTCHA (Slider),AES Encrypted identifiers + Request Signing (sign),Unknown,Unknown,Unknown,3,Completed
+ForDeal,"3rd May, Sunday",16:13,400,com.fordeal.android,General,SMS,undefined,Custom Signing (sign header) & Encrypted Payload (f-g header),Unknown,2,Custom API Signatures,3,Completed
+KwikPay,"3rd May, Sunday",16:40,400,com.kwikpay.transfers,Fintech/Crypto,Unknown,Yandex SmartCaptcha,Custom request signing using 'X-Signature' and 'X-Signature-Date' headers.,180s cooldown enforced via 'repeat_delay' in response.,Unknown,Yandex SmartCaptcha.,4,Completed
+JvSpinBet,"6th May, Wednesday",17:15,400,org.jvspinbet.client,Gambling/Betting,SMS,Visual,HTTPS,300s (RAS),4,Captcha,3,Completed
+Lyft,"7th May, Thursday",13:54,400,me.lyft.android,Transport/Rideshare,SMS,undefined,TLS/SSL,Partial,3,Unknown,1,Completed
+.venv,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+baidu (Rednote),Inventory Only,N/A,0,N/A,General,Unknown,Geetest v4,HTTPS / Umi Sonoda Fingerprinting,Strict (Geetest),Unknown,Unknown,1,Research Only
+betlabel,Inventory Only,N/A,0,N/A,General,Unknown,Image Captcha on Registration,None observed (standard TLS),300s retry timeout (RAS: 300),Unknown,Unknown,1,Research Only
+BitDeer,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+Bolt Food,Inventory Only,N/A,0,N/A,Transport/Rideshare,SMS,reCAPTCHA v2 Image Challenge (Google),None (Plaintext JSON),Unknown,3,"Cloudflare, Google reCAPTCHA",5,Research Only
+BPme (Poland),Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+CubaMessenger,Inventory Only,N/A,0,N/A,General,Unknown,undefined,Unknown,Unknown,Unknown,auth_token,1,Research Only
+daraz,Inventory Only,N/A,0,N/A,General,Unknown,Invisible device fingerprinting via Alibaba wua token,x-sign request signing and epss/wua encryption,Unknown,Unknown,Unknown,1,Research Only
+Dump_Archive_07May,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+E-GetS,Inventory Only,N/A,0,N/A,General,Unknown,undefined. No interactive captcha challenge observed.,Custom (E1) protocol for sensitive payloads.,Unknown.,Unknown,"Custom signatures (S2), payload encryption (E1), and dynamic verify tokens.",2,Research Only
+ehamarkets,Inventory Only,N/A,0,N/A,General,Unknown,None observed,auth signature parameter,Unknown,Unknown,Unknown,1,Research Only
+HoYoLab,Inventory Only,N/A,0,N/A,General,Unknown,undefined,Standard,Unknown,Unknown,Unknown,1,Research Only
+IBI SMART,Inventory Only,N/A,0,N/A,General,SMS,undefined,None,Unknown,2,Cloudflare,5,Research Only
+iHerb,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+KuCoin,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+Liki24,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+Medal,Inventory Only,N/A,0,N/A,General,Unknown,undefined,None observed (standard TLS),Unknown (No rate limits observed in HAR trace),Unknown,Unknown,1,Research Only
+Megogo,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+NestleWaters,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+nextBike,Inventory Only,N/A,0,N/A,General,Unknown,None,Standard,Unknown,Unknown,Unknown,1,Research Only
+OldReports25-04-2026,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+pegasus,Inventory Only,N/A,0,N/A,General,Unknown,Akamai Bot Manager Sensor Data required via X-acf-sensor-data header,None observed (standard TLS),Unknown,Unknown,Unknown,1,Research Only
+PokerBet,Inventory Only,N/A,0,N/A,General,SMS,Cloudflare Turnstile & DataDome,None (Plaintext JSON),Unknown,2,"DataDome, Cloudflare Turnstile",5,Research Only
+Raya,Inventory Only,N/A,0,N/A,General,Unknown,https://captcha.rayaculture.com/raya_culture_turnstile?sitekey=0x4AAAAAABkppCfyyAI73w03 (Cloudflare Turnstile Managed),None observed (standard TLS),Unknown (No rate limits observed in HAR trace),Unknown,Unknown,1,Research Only
+RockFLow,Inventory Only,N/A,0,N/A,General,Unknown,Aliyun Captcha,Unknown,Unknown,Unknown,Aliyun CloudAuth,1,Research Only
+Sage,Inventory Only,N/A,0,N/A,General,Unknown,undefined,None,Unknown,Unknown,Unknown,1,Research Only
+Shell Go+ India,Inventory Only,N/A,0,N/A,General,Unknown,undefined,Custom Hash,Unknown,Unknown,Unknown,2,Research Only
+ShopApoth,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+Tongcheng (同程旅行),Inventory Only,N/A,0,N/A,General,Unknown,selection-set (FengKongCloud),Strong (Encrypted payloads observed in APM and Trajectory logs),Unknown,5+,FengKongCloud (Shuidi),1,Research Only
+Urban Outfitters,Inventory Only,N/A,0,N/A,General,Unknown,PerimeterX (v3.3.6),HTTPS,undefined,Unknown,PerimeterX,1,Research Only
+Weltrade,Inventory Only,N/A,0,N/A,General,Unknown,reCAPTCHA v2 Image Challenge (Google),Unknown,Unknown,Unknown,JWT / Fingerprinting,1,Research Only
+Xtransfer,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+Yamaha,Inventory Only,N/A,0,N/A,General,Unknown,Unknown,Unknown,Unknown,Unknown,Unknown,1,Research Only
+yandex.eda,Inventory Only,N/A,0,N/A,Transport/Rideshare,Unknown,Yandex SmartCaptcha (standard Passport flow),None observed (standard TLS),High (Standard Yandex Passport policy),Unknown,Unknown,1,Research Only

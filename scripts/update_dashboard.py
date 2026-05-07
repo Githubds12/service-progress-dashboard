@@ -30,17 +30,13 @@ def parse_txt():
     body = parts[0].strip()
     old_stats_str = parts[1].strip() if len(parts) > 1 else ""
     
-    # Extract previous values
     prev_avg_services = 0.0
     prev_recovery_pace = 0.0
     
     m_avg = re.search(r'Average Daily Services:\s+([\d.]+)', old_stats_str)
-    if m_avg:
-        prev_avg_services = float(m_avg.group(1))
-        
+    if m_avg: prev_avg_services = float(m_avg.group(1))
     m_pace = re.search(r'Recovery Pace:\s+([\d.]+)', old_stats_str)
-    if m_pace:
-        prev_recovery_pace = float(m_pace.group(1))
+    if m_pace: prev_recovery_pace = float(m_pace.group(1))
     
     lines = body.split('\n')
     days = []
@@ -50,22 +46,12 @@ def parse_txt():
     is_history = False
     for line in lines[1:]:
         line = line.strip()
-        if not line or line == '----------':
-            continue
-        
+        if not line or line == '----------': continue
         if line.startswith('### Previous History'):
             is_history = True
             continue
-
         if re.match(r'^\d+(st|nd|rd|th)\s+[a-zA-Z]+,\s+[a-zA-Z]+$', line):
-            current_day = {
-                'date': line,
-                'services': [],
-                'summary': '',
-                'earnings': 0,
-                'count': 0,
-                'is_history': is_history
-            }
+            current_day = {'date': line, 'services': [], 'summary': '', 'earnings': 0, 'count': 0, 'is_history': is_history}
             days.append(current_day)
         elif line.startswith('Daily Summary:'):
             current_day['summary'] = line
@@ -79,33 +65,15 @@ def parse_txt():
                 
     today_dt = date.today()
     today_str = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %A')}"
-    
-    today_exists = False
-    for d in days:
-        if today_str.split(',')[0] in d['date']:
-            today_exists = True
-            break
-            
-    if not today_exists:
-        new_day_block = f"\n{today_str}\nDaily Summary: 0 services, 0 rs\n----------"
-        body += new_day_block
-        days.append({
-            'date': today_str,
-            'services': [],
-            'summary': 'Daily Summary: 0 services, 0 rs',
-            'earnings': 0,
-            'count': 0
-        })
-
+    if not any(today_str.split(',')[0] in d['date'] for d in days):
+        body += f"\n{today_str}\nDaily Summary: 0 services, 0 rs\n----------"
+        days.append({'date': today_str, 'services': [], 'summary': 'Daily Summary: 0 services, 0 rs', 'earnings': 0, 'count': 0})
     return header, days, body, prev_avg_services, prev_recovery_pace
 
 def parse_time_log():
-    if not os.path.exists(TIME_LOG_FILE):
-        return []
-    
+    if not os.path.exists(TIME_LOG_FILE): return []
     with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
         content = f.read()
-    
     days = []
     entries = re.split(r'Date:\s+', content)[1:]
     for entry in entries:
@@ -114,7 +82,6 @@ def parse_time_log():
         logs = []
         perf_note = ""
         total_h = 0.0
-        
         for line in lines[1:]:
             if line.startswith('-'):
                 match = re.search(r'-\s+(.*?):\s+(\d+\.?\d*)h', line)
@@ -124,128 +91,78 @@ def parse_time_log():
                     total_h += float(h)
             elif "Performance Note:" in line:
                 perf_note = line.split('Performance Note:')[1].strip()
-        
-        days.append({
-            'date': date_str,
-            'logs': logs,
-            'total': total_h,
-            'note': perf_note
-        })
+        days.append({'date': date_str, 'logs': logs, 'total': total_h, 'note': perf_note})
     return days
+
+def calculate_complexity_stats():
+    csv_path = os.path.join(REPORT_DIR, "dashboard", "powerbi_master_data.csv")
+    if not os.path.exists(csv_path): return None
+    comp_map = {}
+    try:
+        with open(csv_path, 'r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                try:
+                    c_idx = row.get('Complexity Index')
+                    if not c_idx or c_idx == 'Unknown': continue
+                    comp = int(c_idx)
+                    earn = float(row.get('Earnings (RS)', 0))
+                    if comp not in comp_map: comp_map[comp] = []
+                    comp_map[comp].append(earn)
+                except: continue
+    except: return None
+    if not comp_map: return None
+    sorted_comp = sorted(comp_map.keys())
+    return {
+        'labels': sorted_comp,
+        'avg_earnings': [round(sum(comp_map[c])/len(comp_map[c]), 2) for c in sorted_comp],
+        'counts': [len(comp_map[c]) for c in sorted_comp]
+    }
 
 def calculate_stats(days):
     current_days = [d for d in days if not d.get('is_history', False)]
-    
-    # Fresh start: Only count services and earnings from the current month
     total_services = sum(len(d['services']) for d in current_days)
     total_earnings = sum(d['earnings'] for d in current_days)
-    
-    # We can still keep track of the absolute total for reference in logs, but UI will show fresh start
-    absolute_total_services = sum(len(d['services']) for d in days)
-    absolute_total_earnings = sum(d['earnings'] for d in days)
-    
     start_date = date(2026, 5, 7)
     today_dt = date.today()
-    days_elapsed = (today_dt - start_date).days
-    if days_elapsed <= 0: days_elapsed = 1
-    
-    avg_daily = total_earnings / days_elapsed if days_elapsed > 0 else total_earnings
-    avg_daily_services = total_services / days_elapsed if days_elapsed > 0 else total_services
-    
-    target = 3000
-    target_total = 3000 * 30 
+    days_elapsed = max((today_dt - start_date).days, 1)
+    avg_daily = total_earnings / days_elapsed
+    avg_daily_services = total_services / days_elapsed
+    target_total = 90000
     remaining_target = target_total - total_earnings
-    days_remaining = 30 - days_elapsed
-    if days_remaining <= 0: days_remaining = 1
-    
+    days_remaining = max(30 - days_elapsed, 1)
     recovery_pace_services = remaining_target / 400 / days_remaining
-    total_services_needed = remaining_target / 400
-    
-    # Projection
     projected_total = avg_daily * 30
-    
-    # Baseline from Day 1
-    ideal_daily_baseline = 3000 / 400 # 7.5 services
-    
-    # Recommendation Logic
-    buffer_multiplier = 1.2 
-    recommended_today = math.ceil(recovery_pace_services * buffer_multiplier)
+    recommended_today = math.ceil(recovery_pace_services * 1.2)
     
     today_str_check = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B')}"
-    completed_today = 0
-    for d in days:
-        if today_str_check in d['date']:
-            completed_today = len(d['services'])
-            break
+    completed_today = next((len(d['services']) for d in days if today_str_check in d['date']), 0)
 
-    # Default explanation
-    explanation = f"मासिक-लक्ष्यं (₹90,000) प्राप्तुं अग्रिमेषु {days_remaining} दिनेषु प्रतिदिनं {round(recovery_pace_services, 1)} सेवानां आवश्यकता अस्ति। {int((buffer_multiplier-1)*100)}% सुरक्षा-कवचार्थं ({recommended_today} कुलम्) परामर्शः अस्ति।"
-
-    # Gemini dynamic insight generation
-    ai_insight = explanation
+    explanation = f"Target: ₹90,000. Pace: {round(recovery_pace_services, 1)} services/day."
     try:
         model = genai.GenerativeModel('gemini-pro-latest')
-        prompt = f"""
-        Analyze these cybersecurity service performance stats for today:
-        - Total Services: {total_services}
-        - Total Earnings: {total_earnings}
-        - Average Daily: {avg_daily}
-        - Goal: ₹90,000
-        - Remaining: {remaining_target} in {days_remaining} days
-        - Completed Today: {completed_today}
-        - Target Today: {recommended_today}
-        
-        Write a short, professional, and slightly aggressive productivity tip in 1-2 sentences. 
-        Focus on either the pace or the goal. Use Sanskrit headers if possible (e.g. 'Efficiency Note:').
-        Keep it brief as it will be shown in a small UI card.
-        """
+        prompt = f"Analyze progress: {total_earnings}/90000. Completed today: {completed_today}/{recommended_today}. Write 1-2 sentence tip with Sanskrit header."
         response = model.generate_content(prompt)
-        if response and response.text:
-            ai_insight = response.text.strip().replace('"', '')
-    except Exception as e:
-        print(f"Gemini Error: {e}")
-
-    explanation = ai_insight
-    projection_sentence = f"अद्यतन-गत्या भवान् {round(projected_total, 2)} राशिं प्राप्स्यति। {'उत्तमम्!' if projected_total >= 90000 else 'लक्ष्य-प्राप्तये गतिं वर्धयतु।'}"
+        if response and response.text: explanation = response.text.strip().replace('"', '')
+    except: pass
 
     return {
-        'total_services': total_services,
-        'total_earnings': total_earnings,
-        'avg_daily': round(avg_daily, 2),
-        'avg_daily_services': round(avg_daily_services, 2),
-        'days_elapsed': days_elapsed,
-        'target': target,
-        'recovery_pace_earnings': round(remaining_target / days_remaining, 2),
-        'recovery_pace_services': round(recovery_pace_services, 1),
-        'total_services_needed': round(total_services_needed, 1),
-        'days_remaining': days_remaining,
-        'recommended_today': int(recommended_today),
-        'completed_today': completed_today,
-        'explanation': explanation,
+        'total_services': total_services, 'total_earnings': total_earnings,
+        'avg_daily': round(avg_daily, 2), 'avg_daily_services': round(avg_daily_services, 2),
+        'days_elapsed': days_elapsed, 'recovery_pace_services': round(recovery_pace_services, 1),
+        'days_remaining': days_remaining, 'recommended_today': int(recommended_today),
+        'completed_today': completed_today, 'explanation': explanation,
         'today_date': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %Y')}",
-        'ideal_baseline': ideal_daily_baseline,
-        'ideal_daily_services': ideal_daily_baseline,
         'projected_total': round(projected_total, 2),
-        'projection_sentence': projection_sentence
+        'projection_sentence': f"Projected: ₹{round(projected_total, 2)}. {'On track!' if projected_total >= 90000 else 'Increase pace.'}"
     }
 
 def update_txt(body, stats):
-    new_stats = f"""
-Dashboard Stats:
-- Total Services: {stats['total_services']}
-- Total Earnings: {stats['total_earnings']} rs
-- Average Daily Earning (over {stats['days_elapsed']} days since May 07): {stats['avg_daily']} rs/day
-- Average Daily Services: {stats['prev_avg_services']} -> {stats['avg_daily_services']} services/day
-- Target: {stats['target']} rs / day
-- Recovery Pace: {stats['prev_recovery_pace']} -> {stats['recovery_pace_services']} Services / day ({stats['recovery_pace_earnings']} rs/day for {stats['days_remaining']} days)
-- Services Needed to Goal: {stats['total_services_needed']}
-- Recommended for Today (inc. buffer): {stats['recommended_today']} services
-- Projected Monthly Total: ₹{stats['projected_total']}
-"""
+    new_stats = f"\nDashboard Stats:\n- Total Services: {stats['total_services']}\n- Total Earnings: {stats['total_earnings']} rs\n- Average Daily Earning: {stats['avg_daily']} rs/day\n- Average Daily Services: {stats['avg_daily_services']} services/day\n- Recovery Pace: {stats['recovery_pace_services']} Services / day\n- Projected Monthly Total: ₹{stats['projected_total']}\n"
     with open(TXT_FILE, 'w', encoding='utf-8') as f:
         f.write(body + "\n\n" + new_stats.strip() + "\n")
 
-def update_html(header, days, stats):
+def update_html(header, days, stats, complexity_stats=None):
     labels = [d['date'].split(',')[0] for d in days]
     earnings = [d['earnings'] for d in days]
     services = [d['count'] for d in days]
@@ -254,854 +171,135 @@ def update_html(header, days, stats):
     for d in days:
         services_list = ""
         for s in d['services']:
-            # Parse format: 98. [12:45] Urban Outfitters - com.urbanoutfitters.android - 400rs
             match = re.search(r'^\d+\.\s+\[(\d\d:\d\d)\]\s+(.*?)\s+-\s+(.*?)\s+-\s+(\d+)rs', s)
             if match:
                 time, name, pkg, price = match.groups()
-                item_html = f"""
-                <li class="service-item-detail">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <span style="font-weight:700; color:#f8fafc; font-size:13px;">{name}</span>
-                        <span style="font-size:10px; color:var(--primary); font-weight:600;">{time}</span>
-                    </div>
-                    <div style="display:flex; justify-content:space-between; align-items:center; margin-top:2px;">
-                        <span style="font-size:9px; color:#64748b; font-family:monospace;">{pkg}</span>
-                        <span style="font-size:10px; color:var(--success); font-weight:700;">₹{price}</span>
-                    </div>
-                </li>"""
-                services_list += item_html
+                services_list += f'<li class="service-item-detail"><div style="display:flex; justify-content:space-between;"><b>{name}</b><small>{time}</small></div><div style="display:flex; justify-content:space-between; font-size:9px;"><span>{pkg}</span><b style="color:var(--success);">₹{price}</b></div></li>'
             else:
-                services_list += f"<li class='service-item-detail'>• {s}</li>"
-
-        day_html = f"""
-        <div class="service-day">
-            <div class="service-header">
-                <span>{d['date']} <small style="font-weight:normal; color:#8a8d91;">({d['count']} services)</small></span>
-                <span style="color: var(--primary);">₹{d['earnings']}</span>
-            </div>
-            <ul class="service-list" style="padding-left:0;">
-                {services_list}
-            </ul>
-        </div>
-        """
-        services_by_day.append(day_html)
+                services_list += f'<li class="service-item-detail">• {s}</li>'
+        services_by_day.append(f'<div class="service-day"><div class="service-header"><span>{d["date"]}</span><span>₹{d["earnings"]}</span></div><ul style="padding:0;">{services_list}</ul></div>')
 
     time_logs = parse_time_log()
-    
     data_dict = {
-        'header': header,
-        'stats': stats,
-        'labels': labels,
-        'earnings': earnings,
-        'services': services,
-        'services_by_day': services_by_day,
-        'raw_days': days,
-        'time_logs': time_logs # Added for productivity tracking
+        'header': header, 'stats': stats, 'labels': labels, 'earnings': earnings, 'services': services,
+        'services_by_day': services_by_day, 'raw_days': days, 'time_logs': time_logs, 'complexity_stats': complexity_stats
     }
     
-    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
-        f.write(f"window.dashboardData = {json.dumps(data_dict)};")
-
-    # [NEW] Export as clean JSON for external tools
-    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.json', 'w', encoding='utf-8') as f:
-        json.dump(data_dict, f, indent=4)
-
-    # [NEW] Export as CSV for Power BI / Excel
-    csv_path = 'c:/Users/Gorri/Documents/Reports/dashboard/services_data.csv'
-    with open(csv_path, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(['Date', 'Time', 'Service Name', 'Package Name', 'Price'])
-        for d in days:
-            date_str = d['date']
-            for s in d['services']:
-                # Parse format: 98. [12:45] Urban Outfitters - com.urbanoutfitters.android - 400rs
-                match = re.search(r'^\d+\.\s+\[(\d\d:\d\d)\]\s+(.*?)\s+-\s+(.*?)\s+-\s+(\d+)rs', s)
-                if match:
-                    time, name, pkg, price = match.groups()
-                    writer.writerow([date_str, time, name, pkg, price])
-                else:
-                    # Handle simpler formats or "Daily Summary" lines if they accidentally get in
-                    if '-' in s:
-                        parts = [p.strip() for p in s.split('-')]
-                        name = parts[0]
-                        pkg = parts[1] if len(parts) > 1 else "Unknown"
-                        price = re.search(r'\d+', parts[2]).group() if len(parts) > 2 else "0"
-                        writer.writerow([date_str, 'Unknown', name, pkg, price])
-                    else:
-                        writer.writerow([date_str, 'Unknown', s, 'Unknown', '0'])
-    
-    print(f"[+] Data exported to CSV and JSON in /dashboard/")
-
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>केसर दर्शिका | {stats['today_date']}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="dashboard_data.js"></script>
     <style>
-        :root {{
-            --primary: #A52A2A;
-            --primary-glow: rgba(165, 42, 42, 0.5);
-            --success: #FFD700;
-            --warning: #FF4500;
-            --danger: #800000;
-            --bg-dark: #050505;
-            --card-bg: rgba(15, 10, 10, 0.9);
-            --border: rgba(165, 42, 42, 0.3);
-            --accent-glow: rgba(255, 69, 0, 0.2);
-            --bhairavi: #FFD700;
-        }}
-
-        @keyframes float {{
-            0% {{ transform: translateY(0px); }}
-            50% {{ transform: translateY(-10px); }}
-            100% {{ transform: translateY(0px); }}
-        }}
-
-        @keyframes shimmer {{
-            0% {{ background-position: -200% 0; }}
-            100% {{ background-position: 200% 0; }}
-        }}
-
-        @keyframes rainbow {{
-            0% {{ background-position: 0% 50%; }}
-            50% {{ background-position: 100% 50%; }}
-            100% {{ background-position: 0% 50%; }}
-        }}
-
-        .rainbow-text {{
-            background: linear-gradient(to right, #ff0000, #ff7f00, #ffff00, #00ff00, #0000ff, #4b0082, #8f00ff);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: rainbow 3s linear infinite;
-        }}
-
-        * {{ box-sizing: border-box; margin: 0; padding: 0; outline: none; }}
-        
-        body {{ 
-            background: var(--bg-dark);
-            background-size: cover, auto, auto;
-            background-blend-mode: overlay, normal, normal;
-            color: #f8fafc; 
-            font-family: 'Outfit', sans-serif; 
-            padding: 10px;
-            min-height: 100vh;
-            overflow-x: hidden;
-            transition: background 1s ease;
-        }}
-
-        @keyframes pulse {{
-            0% {{ transform: scale(1); opacity: 1; }}
-            50% {{ transform: scale(1.1); opacity: 0.7; }}
-            100% {{ transform: scale(1); opacity: 1; }}
-        }}
-
-        .live-indicator {{
-            display: inline-flex; align-items: center; gap: 6px;
-            background: rgba(239, 68, 68, 0.1);
-            color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2);
-            padding: 4px 10px; border-radius: 20px; font-size: 10px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 1px;
-            margin-bottom: 10px;
-        }}
-        .live-dot {{ width: 6px; height: 6px; background: #ef4444; border-radius: 50%; animation: pulse 1.5s infinite; }}
-
+        :root {{ --primary: #A52A2A; --success: #FFD700; --bg: #050505; --card: rgba(15, 10, 10, 0.9); --border: rgba(165, 42, 42, 0.3); --bhairavi: #FFD700; }}
+        body {{ background: var(--bg); color: #f8fafc; font-family: 'Outfit', sans-serif; padding: 15px; }}
         .container {{ max-width: 600px; margin: auto; }}
-        
-        .glass-card {{
-            background: var(--card-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            position: relative;
-        }}
-
-        .glass-card::after {{
-            content: '';
-            position: absolute;
-            inset: -1px;
-            border-radius: 20px;
-            padding: 1px;
-            background: linear-gradient(45deg, #A52A2A, #FF4500, #FFD700, #800000, #A52A2A);
-            background-size: 300% 300%;
-            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-            -webkit-mask-composite: xor;
-            mask-composite: exclude;
-            opacity: 0.4;
-            animation: rainbow 6s ease infinite;
-            pointer-events: none;
-        }}
-
-        .tripundra {{
-            display: flex; flex-direction: column; gap: 2px; align-items: center; margin: 10px 0;
-        }}
-        .tripundra span {{
-            width: 40px; height: 3px; background: #FFD700; opacity: 0.8; border-radius: 10px; box-shadow: 0 0 10px #FF4500;
-        }}
-
-        .header {{ text-align: center; margin-bottom: 20px; }}
-        .header h1 {{ font-size: 40px; font-weight: 900; letter-spacing: -2px; margin: 10px 0; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-size: 200% auto; animation: rainbow 3s linear infinite; filter: drop-shadow(0 0 15px rgba(255, 153, 51, 0.3)); }}
-
-        .banner-container {{
-            width: 100%; height: 120px; border-radius: 20px; overflow: hidden; margin-bottom: 20px;
-            position: relative; box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-            animation: float 6s ease-in-out infinite;
-        }}
-        .banner-img {{ width: 100%; height: 100%; object-fit: cover; opacity: 0.8; filter: brightness(0.8) contrast(1.2); }}
-        .banner-overlay {{ position: absolute; inset: 0; background: linear-gradient(to top, var(--bg-dark), transparent); }}
-
-        .quote-card {{
-            background: url('dashboard/bhairavi_texture_real.jpg'); background-size: cover; background-position: center;
-            border: 1px solid rgba(165, 42, 42, 0.4); position: relative; overflow: hidden; min-height: 100px;
-            display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;
-            padding: 25px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.9);
-        }}
-        .quote-card::before {{ content: ''; position: absolute; inset: 0; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(1px); }}
-        .quote-text {{ position: relative; font-size: 16px; font-weight: 600; font-style: italic; line-height: 1.5; margin-bottom: 5px; }}
-        .quote-author {{ position: relative; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px; color: var(--primary); }}
-
-        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 15px; }}
-        .stat-card {{ padding: 15px; position: relative; overflow: hidden; }}
-        .stat-card h3 {{ font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
-        .stat-card .value {{ font-size: 24px; font-weight: 700; color: #fff; }}
-        .stat-card .subtext {{ font-size: 10px; color: #64748b; margin-top: 4px; }}
-
-        .projection-card {{ 
-            background: linear-gradient(135deg, #A52A2A 0%, #800000 100%);
-            color: white; border: none;
-            display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 20px rgba(165, 42, 42, 0.3);
-        }}
-        .proj-val {{ font-size: 28px; font-weight: 900; }}
-
-        .progress-section {{ text-align: center; }}
-        .progress-bar-bg {{ height: 10px; background: rgba(255,255,255,0.02); border-radius: 10px; margin: 15px 0; overflow: hidden; }}
-        .progress-bar-fill {{ height: 100%; background: linear-gradient(to right, #A52A2A, #FF4500, #FFD700); background-size: 200% auto; animation: rainbow 2s linear infinite, reach 3s ease-in-out infinite; width: var(--p-width, 0%); transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 0 20px var(--primary); position: relative; transform-origin: left; }}
-        
-        @keyframes reach {{
-            0%, 100% {{ width: var(--p-width); filter: brightness(1); }}
-            50% {{ width: var(--n-width); filter: brightness(1.3); box-shadow: 0 0 25px var(--success); }}
-        }}
-
-        .chart-container {{ height: 180px; }}
-        
-        .recent-activity h2 {{ font-size: 18px; margin-bottom: 15px; font-weight: 700; position: sticky; top: 0; background: var(--card-bg); z-index: 10; padding-bottom: 10px; }}
-        .recent-activity {{ 
-            max-height: 500px; 
-            overflow-y: auto; 
-            padding-right: 10px;
-        }}
-        
-        /* Custom Scrollbar for Recent Activity */
-        .recent-activity::-webkit-scrollbar {{ width: 6px; }}
-        .recent-activity::-webkit-scrollbar-track {{ background: rgba(255,255,255,0.05); border-radius: 10px; }}
-        .recent-activity::-webkit-scrollbar-thumb {{ background: linear-gradient(to bottom, var(--primary), #10b981); border-radius: 10px; }}
-        
-        .service-item {{ padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); }}
-        
-        .pagination-controls {{
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-top: 15px;
-            gap: 10px;
-        }}
-        .pager-btn {{
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 8px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            flex: 1;
-        }}
-        .pager-btn:hover:not(:disabled) {{
-            background: var(--primary);
-            box-shadow: 0 0 15px var(--primary-glow);
-            transform: translateY(-2px);
-        }}
-        .pager-btn:disabled {{
-            opacity: 0.3;
-            cursor: not-allowed;
-        }}
-        .page-info {{
-            font-size: 11px;
-            color: #94a3b8;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }}
-        .service-item:last-child {{ border-bottom: none; }}
-        .service-header {{ display: flex; justify-content: space-between; font-weight: 600; margin-bottom: 5px; }}
-        .service-list {{ list-style: none; color: #94a3b8; font-size: 11px; }}
-        .service-list li {{ margin: 3px 0; }}
-        .service-item-detail {{
-            padding: 8px 10px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 8px;
-            margin-bottom: 8px !important;
-            border-left: 3px solid var(--primary);
-        }}
-
-        #celebration {{ display: none; text-align: center; margin-top: 15px; }}
-        .trophy {{ width: 80px; filter: drop-shadow(0 0 20px var(--success)); margin: 10px 0; }}
-
-        /* Toolbar Styles */
-        .activity-toolbar {{
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-            align-items: center;
-        }}
-        .tool-btn {{
-            background: rgba(165, 42, 42, 0.2);
-            border: 1px solid var(--border);
-            color: var(--bhairavi);
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 10px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.3s;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }}
-        .tool-btn:hover {{
-            background: var(--primary);
-            color: #fff;
-            box-shadow: 0 0 15px var(--primary-glow);
-        }}
-        .search-box {{
-            flex: 1;
-            position: relative;
-        }}
-        .search-box input {{
-            width: 100%;
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--border);
-            padding: 8px 12px;
-            border-radius: 10px;
-            color: #fff;
-            font-size: 11px;
-            transition: 0.3s;
-        }}
-        .search-box input:focus {{
-            border-color: var(--bhairavi);
-            background: rgba(255,255,255,0.1);
-        }}
+        .glass-card {{ background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; }}
+        h1 {{ text-align: center; font-size: 36px; font-weight: 900; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }}
+        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
+        .value {{ font-size: 24px; font-weight: 700; }}
+        .progress-bar {{ height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; overflow: hidden; }}
+        .progress-fill {{ height: 100%; background: linear-gradient(to right, #A52A2A, #FFD700); transition: 1s; }}
+        .service-item-detail {{ padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; border-left: 3px solid var(--primary); list-style: none; }}
+        .service-header {{ display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <div class="live-indicator" style="color: var(--primary); border-color: var(--primary); background: rgba(255, 153, 51, 0.1);">
-                <span class="live-dot" style="background: var(--primary);"></span> जीवन्तम्
-            </div>
-            <div class="tripundra"><span></span><span></span><span></span></div>
-            <p style="color: #94a3b8; font-weight: 600; text-transform: uppercase; letter-spacing: 3px; font-size: 12px;" id="today-badge">केसर दर्शिका • <span id="period-header"></span></p>
-            <h2 id="today-date-display" style="color: #fff; font-size: 32px; font-weight: 900; margin-top: 15px; text-shadow: 0 0 15px var(--primary);"></h2>
-            
-            <div class="glass-card ai-assistant-section" style="margin-top: 25px; padding: 20px; border: 1px solid rgba(255, 215, 0, 0.2); background: rgba(15, 10, 10, 0.6);">
-                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
-                    <span class="badge" style="background: rgba(255, 215, 0, 0.1); color: var(--success); font-size: 9px;">Gemini AI Core</span>
-                    <h3 style="font-size: 14px; margin: 0; color: #fff;">Sadhana Assistant</h3>
-                </div>
-                <div style="display: flex; gap: 8px;">
-                    <input type="text" id="ai-search-input" placeholder="Ask Gemini about your progress..." style="flex: 1; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1); padding: 10px 15px; border-radius: 12px; color: #fff; outline: none; font-size: 13px;">
-                    <button id="ai-search-btn" style="background: var(--primary); color: #fff; border: none; padding: 0 15px; border-radius: 12px; font-weight: 700; cursor: pointer; transition: 0.3s;">Analyze</button>
-                </div>
-                <div id="ai-results" style="margin-top: 15px; font-size: 12px; color: #94a3b8; text-align: left; min-height: 20px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; display: none;">
-                </div>
-            </div>
+        <h1>केसर दर्शिका</h1>
+        <p style="text-align:center; color:#94a3b8;">{stats['today_date']}</p>
+        
+        <div class="glass-card" style="background:linear-gradient(135deg, #A52A2A 0%, #800000 100%);">
+            <h3>ESTIMATED END</h3>
+            <div class="value">₹{stats['projected_total']}</div>
+            <p style="font-size:11px; opacity:0.8;">{stats['projection_sentence']}</p>
         </div>
 
-        <!-- Banner Removed -->
-
-        <!-- Quotes Section Removed -->
-
-        <div class="glass-card projection-card">
-            <div>
-                <h3>मासान्त-अनुमानम् (ESTIMATED END)</h3>
-                <div id="projected-val" class="proj-val">₹0</div>
-                <p id="projection-text" style="font-size: 11px; opacity: 0.9; margin-top: 5px;"></p>
-            </div>
-            <!-- Growth Image Removed -->
-        </div>
-
-        <div class="glass-card progress-section" id="recommendation-card">
-            <h3>दैनिक-लक्ष्यम् (DAILY MISSION): <span id="target-count">0</span></h3>
-            <div style="display: flex; justify-content: center; align-items: baseline; gap: 8px; margin: 10px 0;">
-                <span id="completed-count" style="font-size: 42px; font-weight: 900;">0</span>
-                <span style="color: #64748b; font-size: 18px;">/ <span id="target-count-2">0</span></span>
-            </div>
-            <div class="progress-bar-bg" style="position: relative;">
-                <div id="progress-fill" class="progress-bar-fill"></div>
-            </div>
-            <p id="explanation-text" style="font-size: 11px; color: #94a3b8; line-height: 1.4;"></p>
-            
-            <div id="celebration">
-                <!-- Trophy Removed -->
-                <h2 style="color: var(--success);">लक्ष्यं सिद्धम्! (TARGET ACHIEVED) 🚀</h2>
-            </div>
+        <div class="glass-card">
+            <h3>DAILY MISSION: {stats['recommended_today']}</h3>
+            <div class="value">{stats['completed_today']} / {stats['recommended_today']}</div>
+            <div class="progress-bar"><div class="progress-fill" style="width:{min(stats['completed_today']/stats['recommended_today']*100, 100)}%"></div></div>
+            <p style="font-size:12px; color:#94a3b8;">{stats['explanation']}</p>
         </div>
 
         <div class="stats-grid">
-            <div class="glass-card stat-card">
-                <h3>कुल-अर्जनम् (TOTAL EARNED)</h3>
-                <div id="total-earnings" class="value" style="color: var(--success);">₹0</div>
-                <div class="subtext">Across <span id="total-services">0</span> services</div>
-            </div>
-            <div class="glass-card stat-card">
-                <h3>प्रतिदिन-औसतम् (DAILY AVG)</h3>
-                <div id="avg-daily" class="value">₹0</div>
-                <div id="avg-services" class="subtext" style="color: var(--primary); font-weight: 700; margin-bottom: 4px;">0 services/day</div>
-                <div id="avg-target" class="subtext">Target: ₹3000/d</div>
-            </div>
-            <div class="glass-card stat-card">
-                <h3>पुनः-प्राप्ति-गतिः (RECOVERY PACE)</h3>
-                <div id="pace-services" class="value" style="color: var(--warning);">0/d</div>
-                <div id="pace-earnings" class="subtext">Needed for ₹90k</div>
-            </div>
-            <div class="glass-card stat-card">
-                <h3>लक्ष्य-सिद्धये (TO GOAL)</h3>
-                <div id="services-to-goal" class="value" style="color: var(--danger);">0</div>
-                <div class="subtext">Services remaining</div>
-            </div>
+            <div class="glass-card"><h3>TOTAL EARNED</h3><div class="value" style="color:var(--success);">₹{stats['total_earnings']}</div></div>
+            <div class="glass-card"><h3>DAILY AVG</h3><div class="value">₹{stats['avg_daily']}</div></div>
         </div>
 
-        <div class="glass-card chart-container">
-            <canvas id="earningsChart"></canvas>
+        <div class="glass-card" style="height:250px;"><canvas id="earningsChart"></canvas></div>
+        <div class="glass-card" style="height:300px;"><h3>⏳ TIME ALLOCATION</h3><canvas id="timeChart"></canvas><p id="perf-insight" style="font-size:11px; font-style:italic; margin-top:5px; color:#10b981;"></p></div>
+        <div class="glass-card" style="height:300px;"><h3>🧠 COMPLEXITY VS ROI</h3><canvas id="complexityChart"></canvas></div>
+
+        <div class="glass-card" style="max-height:500px; overflow-y:auto;">
+            <h3>RECENT ACTIVITY</h3>
+            <div id="services-html">{''.join(services_by_day)}</div>
         </div>
-
-        <!-- New Productivity Section -->
-        <div class="glass-card" style="padding: 20px;">
-            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--bhairavi);">⏳ TIME ALLOCATION (TODAY)</h3>
-            <div style="display: flex; gap: 20px; align-items: center;">
-                <div style="width: 120px; height: 120px;">
-                    <canvas id="timeChart"></canvas>
-                </div>
-                <div id="time-breakdown" style="flex: 1; font-size: 11px; color: #94a3b8;"></div>
-            </div>
-            <div id="perf-insight" style="margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.05); border-radius: 10px; border-left: 3px solid #10b981; font-size: 12px; color: #f8fafc; font-style: italic;">
-                "Waiting for time log data..."
-            </div>
-        </div>
-
-        <div class="glass-card recent-activity">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h2 style="margin: 0;">अद्यतन-वृत्तान्तः (RECENT ACTIVITY)</h2>
-                <span class="page-info" id="page-indicator">Page 1 of 1</span>
-            </div>
-
-            <!-- New Activity Toolbar -->
-            <div class="activity-toolbar">
-                <button class="tool-btn" onclick="jumpToToday()">📅 TODAY</button>
-                <div class="search-box">
-                    <input type="text" id="activity-search" placeholder="Search service or app..." oninput="searchActivity()">
-                </div>
-                <button class="tool-btn" onclick="document.getElementById('date-picker').showPicker()">🔍 FILTER</button>
-                <input type="date" id="date-picker" style="position:absolute; visibility:hidden; width:0; height:0;" onchange="filterByDate(this.value)">
-            </div>
-
-            <div id="services-html"></div>
-            
-            <div class="pagination-controls">
-                <button class="pager-btn" id="prev-btn" onclick="changePage(-1)">← PREVIOUS</button>
-                <button class="pager-btn" id="next-btn" onclick="changePage(1)">NEXT →</button>
-            </div>
-        </div>
-
-        <p style="text-align: center; color: #475569; font-size: 10px; margin-bottom: 20px;">
-            Last update: <span id="last-updated"></span>
-        </p>
     </div>
 
     <script>
-        let earningsChart = null;
-        let lastDataStr = "";
-        let confettiTriggered = false;
-        let currentPage = 0;
-        let totalPages = 0;
-        let serviceData = [];
-
-        // Quotes Rotation Removed
-
-        function changePage(delta) {{
-            currentPage = Math.max(0, Math.min(currentPage + delta, totalPages - 1));
-            renderPage();
+        const data = {json.dumps(data_dict)};
+        new Chart(document.getElementById('earningsChart'), {{ type: 'line', data: {{ labels: data.labels, datasets: [{{ data: data.earnings, borderColor: '#FF9933', backgroundColor: 'rgba(255, 153, 51, 0.1)', fill: true }}] }}, options: {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }} }} }});
+        
+        if (data.time_logs && data.time_logs.length > 0) {{
+            const log = data.time_logs[data.time_logs.length-1];
+            document.getElementById('perf-insight').innerText = log.note;
+            new Chart(document.getElementById('timeChart'), {{ type: 'bar', data: {{ labels: log.logs.map(l=>l.activity), datasets: [{{ data: log.logs.map(l=>l.hours), backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#FF9933'] }}] }}, options: {{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }} }} }});
         }}
 
-        function renderPage() {{
-            if (serviceData && serviceData.length > 0) {{
-                document.getElementById('services-html').innerHTML = serviceData[currentPage];
-                const isToday = currentPage === 0;
-                const pageLabel = isToday ? 'PAGE ' + (currentPage + 1) + ' (TODAY)' : 'PAGE ' + (currentPage + 1);
-                document.getElementById('page-indicator').innerText = pageLabel + ' OF ' + totalPages;
-                document.getElementById('prev-btn').disabled = currentPage === totalPages - 1;
-                document.getElementById('next-btn').disabled = currentPage === 0;
-            }} else {{
-                document.getElementById('services-html').innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; font-size:12px;">No activities found matching your criteria.</div>';
-                document.getElementById('page-indicator').innerText = '0 OF 0';
-                document.getElementById('prev-btn').disabled = true;
-                document.getElementById('next-btn').disabled = true;
-            }}
+        if (data.complexity_stats) {{
+            new Chart(document.getElementById('complexityChart'), {{ type: 'bar', data: {{ labels: data.complexity_stats.labels.map(l=>'Lvl '+l), datasets: [{{ label: 'Avg Earnings', data: data.complexity_stats.avg_earnings, backgroundColor: 'rgba(255, 215, 0, 0.4)', yAxisID: 'y' }}, {{ label: 'Count', data: data.complexity_stats.counts, type: 'line', borderColor: '#FF4500', yAxisID: 'y1' }}] }}, options: {{ responsive: true, maintainAspectRatio: false, scales: {{ y: {{ position: 'left' }}, y1: {{ position: 'right', grid: {{ display: false }} }} }} }} }});
         }}
-
-        function jumpToToday() {{
-            if (window.dashboardData && window.dashboardData.services_by_day) {{
-                serviceData = window.dashboardData.services_by_day;
-                totalPages = serviceData.length;
-                currentPage = 0; // Jump to index 0 (newest)
-                document.getElementById('activity-search').value = '';
-                renderPage();
-                document.querySelector('.recent-activity').scrollTop = 0;
-            }}
-        }}
-
-        function searchActivity() {{
-            const term = document.getElementById('activity-search').value.toLowerCase();
-            if (!term) {{
-                serviceData = window.dashboardData.services_by_day;
-                totalPages = serviceData.length;
-                renderPage();
-                return;
-            }}
-
-            // Search in raw data and regenerate temporary serviceData
-            const filteredDays = [];
-            window.dashboardData.raw_days.forEach((day, index) => {{
-                const matchingServices = day.services.filter(s => s.toLowerCase().includes(term));
-                if (matchingServices.length > 0 || day.date.toLowerCase().includes(term)) {{
-                    // For display, we use the pre-rendered HTML if the day matches
-                    // Or we could highlight. For now, we'll just show the whole day if it matches.
-                    filteredDays.push(window.dashboardData.services_by_day[index]);
-                }}
-            }});
-
-            serviceData = filteredDays;
-            totalPages = serviceData.length;
-            currentPage = 0;
-            renderPage();
-        }}
-
-        function filterByDate(val) {{
-            if (!val) return;
-            // Date comes in as YYYY-MM-DD, our dates are like "Thursday, 07-05-2026"
-            const parts = val.split('-');
-            const searchDate = parts[2] + '-' + parts[1] + '-' + parts[0]; // DD-MM-YYYY
-            
-            const index = window.dashboardData.raw_days.findIndex(d => d.date.includes(searchDate));
-            if (index !== -1) {{
-                serviceData = window.dashboardData.services_by_day;
-                totalPages = serviceData.length;
-                currentPage = index;
-                renderPage();
-                document.querySelector('.recent-activity').scrollTop = 0;
-            }} else {{
-                alert("No data found for " + searchDate);
-            }}
-        }}
-
-        function renderUI(data) {{
-            try {{
-                document.body.style.background = 'linear-gradient(135deg, #050505 0%, #1a0a0a 100%)';
-
-                const dataStr = JSON.stringify(data);
-                if (dataStr === lastDataStr) return; 
-                const isFirstLoad = lastDataStr === "";
-                lastDataStr = dataStr;
-
-                serviceData = data.services_by_day;
-                totalPages = serviceData.length;
-                if (isFirstLoad || currentPage >= totalPages) currentPage = 0; // Today is at index 0 (newest)
-                renderPage();
-
-                const safeSetText = (id, text) => {{
-                    const el = document.getElementById(id);
-                    if (el) el.innerText = text;
-                }};
-
-                safeSetText('period-header', data.header);
-                safeSetText('total-services', data.stats.total_services);
-                safeSetText('total-earnings', '₹' + data.stats.total_earnings);
-                safeSetText('avg-daily', '₹' + data.stats.avg_daily);
-                safeSetText('avg-services', data.stats.prev_avg_services + ' -> ' + data.stats.avg_daily_services + ' services/day');
-                safeSetText('avg-target', 'Goal: ₹' + data.stats.target + '/d');
-                
-                safeSetText('pace-services', data.stats.prev_recovery_pace + ' -> ' + data.stats.recovery_pace_services + '/d');
-                safeSetText('pace-earnings', '₹' + data.stats.recovery_pace_earnings + '/d');
-                safeSetText('services-to-goal', Math.ceil(data.stats.total_services_needed));
-                
-                safeSetText('target-count', data.stats.recommended_today);
-                safeSetText('target-count-2', data.stats.recommended_today);
-                safeSetText('completed-count', data.stats.completed_today);
-                safeSetText('explanation-text', data.stats.explanation);
-                
-                const now = new Date();
-                safeSetText('today-date-display', data.stats.today_date);
-                safeSetText('last-updated', now.toLocaleTimeString());
-                safeSetText('projected-val', '₹' + data.stats.projected_total);
-                safeSetText('projection-text', data.stats.projection_sentence);
-
-                // AI Search Logic
-                const searchInput = document.getElementById('ai-search-input');
-                const searchBtn = document.getElementById('ai-search-btn');
-                const resultsArea = document.getElementById('ai-results');
-
-                const handleSearch = () => {{
-                    const query = searchInput.value.trim();
-                    if (!query) return;
-
-                    resultsArea.style.display = 'block';
-                    resultsArea.innerHTML = '<div style="color: var(--success); animation: pulse 1.5s infinite;">Consulting Gemini AI Insights...</div>';
-
-                    setTimeout(() => {{
-                        if (window.dashboardData && window.dashboardData.stats && window.dashboardData.stats.explanation) {{
-                            resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + window.dashboardData.stats.explanation + \'"</div>\';
-                        }} else {{
-                            const mockResponses = [
-                                "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
-                                "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
-                                "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
-                                "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
-                            ];
-                            const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-                            resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + response + \'"</div>\';
-                        }}
-                    }}, 1500);
-                }};
-
-                searchBtn.onclick = handleSearch;
-                searchInput.onkeypress = (e) => {{ if (e.key === "Enter") handleSearch(); }};
-
-                const progress = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
-                const nextProgress = Math.min(((data.stats.completed_today + 0.8) / data.stats.recommended_today) * 100, 100);
-                
-                const fill = document.getElementById('progress-fill');
-                if (fill) {{
-                    fill.style.setProperty('--p-width', progress + '%');
-                    fill.style.setProperty('--n-width', nextProgress + '%');
-                    fill.style.width = progress + '%';
-                }}
-
-                const celeb = document.getElementById('celebration');
-                if (celeb) {{
-                    if (data.stats.completed_today >= data.stats.recommended_today) {{
-                        celeb.style.display = 'block';
-                        if (!confettiTriggered) {{
-                            confetti({{ particleCount: 150, spread: 70, origin: {{ y: 0.6 }}, colors: ['#FF9933', '#FFD700', '#E5E4E2'] }});
-                            confettiTriggered = true;
-                        }}
-                    }} else {{
-                        celeb.style.display = 'none';
-                        confettiTriggered = false;
-                    }}
-                }}
-
-                // Chart
-                if (earningsChart) earningsChart.destroy();
-                const chartEl = document.getElementById('earningsChart');
-                if (chartEl) {{
-                    const ctx = chartEl.getContext('2d');
-                    earningsChart = new Chart(ctx, {{
-                        type: 'line',
-                        data: {{
-                            labels: data.labels,
-                            datasets: [{{
-                                label: 'Earnings',
-                                data: data.earnings,
-                                borderColor: '#FF9933',
-                                backgroundColor: 'rgba(255, 153, 51, 0.1)',
-                                borderWidth: 3,
-                                tension: 0.4,
-                                fill: true,
-                                pointRadius: 4,
-                                pointBackgroundColor: '#FFD700'
-                            }}, {{
-                                label: 'Target',
-                                data: data.labels.map(() => 3000),
-                                borderColor: 'rgba(229, 228, 226, 0.3)',
-                                borderWidth: 2,
-                                borderDash: [5, 5],
-                                pointRadius: 0
-                            }}]
-                        }},
-                        options: {{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {{ legend: {{ display: false }} }},
-                            scales: {{
-                                y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }},
-                                x: {{ grid: {{ display: false }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }}
-                            }}
-                        }}
-                    }});
-                }}
-
-                // Time Allocation Chart
-                if (data.time_logs && data.time_logs.length > 0) {{
-                    const todayLog = data.time_logs[data.time_logs.length - 1];
-                    const timeLabels = todayLog.logs.map(l => l.activity);
-                    const timeValues = todayLog.logs.map(l => l.hours);
-                    
-                    document.getElementById('perf-insight').innerHTML = '<strong>Efficiency Note:</strong> "' + todayLog.note + '"';
-                    
-                    let breakdownHtml = '<ul style="list-style:none; padding:0;">';
-                    todayLog.logs.forEach(l => {{
-                        breakdownHtml += `<li style="margin-bottom:5px; display:flex; justify-content:space-between;">
-                            <span>${{l.activity}}</span>
-                            <span style="color:var(--bhairavi); font-weight:700;">${{l.hours}}h</span>
-                        </li>`;
-                    }});
-                    breakdownHtml += `<li style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.05); padding-top:8px; display:flex; justify-content:space-between; font-weight:700; color:#fff;">
-                        <span>TOTAL SPENT</span>
-                        <span>${{todayLog.total}}h</span>
-                    </li></ul>`;
-                    document.getElementById('time-breakdown').innerHTML = breakdownHtml;
-
-                    const tCtx = document.getElementById('timeChart').getContext('2d');
-                    new Chart(tCtx, {{
-                        type: 'doughnut',
-                        data: {{
-                            labels: timeLabels,
-                            datasets: [{{
-                                data: timeValues,
-                                backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#64748b'],
-                                borderWidth: 0,
-                                hoverOffset: 4
-                            }}]
-                        }},
-                        options: {{
-                            responsive: true,
-                            maintainAspectRatio: false,
-                            plugins: {{ legend: {{ display: false }} }},
-                            cutout: '70%'
-                        }}
-                    }});
-                }}
-            }} catch (e) {{
-                console.error("Render error:", e);
-            }}
-        }}
-
-        function refreshData() {{
-            const script = document.createElement(\'script\');
-            script.src = \'dashboard_data.js?t=\' + new Date().getTime();
-            script.onload = () => {{
-                if (window.dashboardData) {{
-                    renderUI(window.dashboardData);
-                }}
-                script.remove();
-            }};
-            document.head.appendChild(script);
-        }}
-
-                refreshData();
-        setInterval(refreshData, 3000);
     </script>
 </body>
 </html>"""
-    with open('c:/Users/Gorri/Documents/Reports/dashboard/Dashboard_Live.html', 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    with open('c:/Users/Gorri/Documents/Reports/dashboard/Dashboard.html', 'w', encoding='utf-8') as f:
-        f.write(html_content)
-    with open('c:/Users/Gorri/Documents/Reports/index.html', 'w', encoding='utf-8') as f:
-        f.write(html_content)
     
-    # Write data file to both locations for reliable loading
-    data_file_content = f"window.dashboardData = {json.dumps(data_dict)};"
-    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
-        f.write(data_file_content)
-    with open('c:/Users/Gorri/Documents/Reports/dashboard_data.js', 'w', encoding='utf-8') as f:
-        f.write(data_file_content)
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
 
 def update_readme(stats, time_logs):
-    readme_path = os.path.join(REPORT_DIR, 'README.md')
-    if not os.path.exists(readme_path):
-        return
-        
-    with open(readme_path, 'r', encoding='utf-8') as f:
-        content = f.read()
-    
-    # Live Stats Section
-    stats_section = f"## 📉 Live Stats\n" \
-                    f"- **Total Services**: {stats['total_services']}\n" \
-                    f"- **Total Earnings**: ₹{stats['total_earnings']}\n" \
-                    f"- **Average Daily Services**: {stats['prev_avg_services']:.2f} -> {stats['avg_daily_services']:.2f} services/day\n" \
-                    f"- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day\n" \
-                    f"- **Recovery Pace**: {stats['prev_recovery_pace']:.1f} -> {stats['recovery_pace_services']:.1f} services/day\n" \
-                    f"- **Monthly Projection**: ₹{stats['projected_total']:.2f}\n"
-    
-    # Time Log Section
-    time_section = ""
+    path = os.path.join(REPORT_DIR, 'README.md')
+    if not os.path.exists(path): return
+    with open(path, 'r', encoding='utf-8') as f: content = f.read()
+    sec = f"## 📉 Live Stats\n- **Total Earnings**: ₹{stats['total_earnings']}\n- **Average Daily**: ₹{stats['avg_daily']}/day\n- **Monthly Projection**: ₹{stats['projected_total']}\n"
     if time_logs:
-        today_log = time_logs[-1]
-        time_section = f"\n## ⏳ Productivity Today ({today_log['date']})\n"
-        for entry in today_log['logs']:
-            time_section += f"- **{entry['activity']}**: {entry['hours']}h\n"
-        time_section += f"- **Total**: {today_log['total']}h\n"
-        time_section += f"- **Note**: *{today_log['note']}*\n"
-    
-    stats_section += time_section
-    stats_section += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
-    
+        log = time_logs[-1]
+        sec += f"\n## ⏳ Productivity Today ({log['date']})\n"
+        for e in log['logs']: sec += f"- **{e['activity']}**: {e['hours']}h\n"
+        sec += f"- **Note**: *{log['note']}*\n"
+    sec += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     if "## 📉 Live Stats" in content:
-        # Match from "Live Stats" through "Productivity Today" (if exists) up to the next section or end of file
-        new_content = re.sub(r'## 📉 Live Stats\n.*?(?=\n## (?!⏳ Productivity Today)|$)', stats_section.strip() + "\n\n", content, flags=re.DOTALL)
-    else:
-        new_content = content.replace("## 📊 Tech Stack", stats_section + "\n\n## 📊 Tech Stack")
-        
-    with open(readme_path, 'w', encoding='utf-8') as f:
-        f.write(new_content)
+        new = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', sec.strip() + "\n\n", content, flags=re.DOTALL)
+    else: new = content.replace("## 📊 Tech Stack", sec + "\n\n## 📊 Tech Stack")
+    with open(path, 'w', encoding='utf-8') as f: f.write(new)
 
 def update_github():
-    print("Updating GitHub...")
     try:
-        # Add all changed files
-        subprocess.run(["git", "add", "."], check=True, capture_output=True)
-        
-        # Check if there are changes to commit
+        subprocess.run(["git", "add", "."], check=True)
         status = subprocess.run(["git", "status", "--porcelain"], capture_output=True, text=True).stdout.strip()
-        if not status:
-            print("No changes to commit to GitHub.")
-            return
-
-        # Commit changes
-        commit_msg = f"Auto-update dashboard: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        subprocess.run(["git", "commit", "-m", commit_msg], check=True, capture_output=True)
-        
-        # Push changes
-        subprocess.run(["git", "push"], check=True, capture_output=True)
-        print("GitHub updated successfully!")
-    except subprocess.CalledProcessError as e:
-        print(f"Git command failed: {e.stderr.decode() if e.stderr else str(e)}")
-    except Exception as e:
-        print(f"An error occurred while updating GitHub: {e}")
+        if status:
+            subprocess.run(["git", "commit", "-m", f"Auto-update: {datetime.now()}"], check=True)
+            subprocess.run(["git", "push"], check=True)
+    except: pass
 
 def main():
-    header, days, body, prev_avg_services, prev_recovery_pace = parse_txt()
+    header, days, body, prev_avg, prev_pace = parse_txt()
     stats = calculate_stats(days)
-    stats['prev_avg_services'] = prev_avg_services
-    stats['prev_recovery_pace'] = prev_recovery_pace
+    stats['prev_avg_services'] = prev_avg
+    stats['prev_recovery_pace'] = prev_pace
     time_logs = parse_time_log()
+    c_stats = calculate_complexity_stats()
     update_txt(body, stats)
-    update_html(header, days, stats)
+    update_html(header, days, stats, c_stats)
     update_readme(stats, time_logs)
-    print("Dashboard and README updated with Avg Daily Services!")
     update_github()
 
 if __name__ == "__main__":
