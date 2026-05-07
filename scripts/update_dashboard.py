@@ -525,13 +525,23 @@ def update_html(header, days, stats, complexity_stats=None):
                                 ${{(query ? d.services.filter(s => s.toLowerCase().includes(query)) : d.services).map(s => {{
                                     const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
                                     if (m) {{
+                                        const name = m[2].trim();
                                         const pkg = m[3].trim();
-                                        const link = pkg.includes('.') ? `https://play.google.com/store/apps/details?id=${{pkg.toLowerCase()}}` : '#';
+                                        const uuidMap = {{
+                                            'utair': '7fd31965-0477-48fc-82ee-ecf87e4b825e',
+                                            'lyft': 'cff30feb-2ec7-4cc1-b5fb-04815c3cb497',
+                                            'viya lite': '51b1efb3-13a1-4bdd-82dc-103c69b93ea2',
+                                            'jvspinbet': '31742461-826a-4934-89c0-681585257982',
+                                            'opentable': 'c34dfb4d-3d83-4176-ba7d-3919b5f07e73'
+                                        }};
+                                        const uuid = uuidMap[name.toLowerCase()];
+                                        const link = uuid ? `http://51.195.24.179:3000/services/${{uuid}}` : `http://51.195.24.179:3000/services?search=${{encodeURIComponent(name)}}`;
+                                        
                                         return `
                                         <a href="${{link}}" target="_blank" class="service-link" style="text-decoration: none;">
                                             <div class="service-entry">
                                                 <div class="service-info">
-                                                    <span class="service-name">${{m[2]}}</span>
+                                                    <span class="service-name">${{name}}</span>
                                                     <span class="service-pkg">${{pkg}}</span>
                                                 </div>
                                                 <div class="service-price">₹${{m[4]}}</div>
