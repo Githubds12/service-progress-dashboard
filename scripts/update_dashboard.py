@@ -482,24 +482,37 @@ def update_html(header, days, stats, complexity_stats=None):
             }}
 
             // 4. Operational Log Rendering Engine
+            let currentPage = 1;
+            const pageSize = 5;
+
             function renderLog(filter = '') {{
                 const query = filter.toLowerCase();
-                const logHtml = data.raw_days.map((d, dayIdx) => {{
-                    const filteredServices = d.services.filter(s => s.toLowerCase().includes(query));
-                    if (query && filteredServices.length === 0) return '';
+                const allDays = data.raw_days;
+                const filteredDays = allDays.filter(d => {{
+                    if (!query) return true;
+                    return d.date.toLowerCase().includes(query) || d.services.some(s => s.toLowerCase().includes(query));
+                }});
 
-                    const isExpanded = !query; // Auto-expand if searching
+                const totalPages = Math.ceil(filteredDays.length / pageSize);
+                if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
+
+                const start = (currentPage - 1) * pageSize;
+                const pagedDays = filteredDays.slice(start, start + pageSize);
+
+                const logHtml = pagedDays.map((d, idx) => {{
+                    const actualIdx = start + idx;
+                    const isExpanded = !!query; 
                     return `
-                        <div class="day-group" id="day-${{dayIdx}}">
-                            <div class="day-header" onclick="toggleDay(${{dayIdx}})" style="cursor: pointer; user-select: none;">
+                        <div class="day-group" id="day-${{actualIdx}}">
+                            <div class="day-header" onclick="toggleDay(${{actualIdx}})" style="cursor: pointer; user-select: none;">
                                 <div style="display: flex; align-items: center; gap: 15px;">
-                                    <span class="toggle-icon" id="icon-${{dayIdx}}" style="font-size: 14px; color: var(--accent); transition: 0.3s;">${{isExpanded ? '▼' : '▶'}}</span>
+                                    <span class="toggle-icon" id="icon-${{actualIdx}}" style="font-size: 14px; color: var(--accent); transition: 0.3s;">${{isExpanded ? '▼' : '▶'}}</span>
                                     <span>${{d.date}}</span>
                                 </div>
                                 <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
                             </div>
-                            <div class="service-log" id="log-${{dayIdx}}" style="display: ${{isExpanded ? 'block' : 'none'}}">
-                                ${{ (query ? filteredServices : d.services).map(s => {{
+                            <div class="service-log" id="log-${{actualIdx}}" style="display: ${{isExpanded ? 'block' : 'none'}}">
+                                ${{(query ? d.services.filter(s => s.toLowerCase().includes(query)) : d.services).map(s => {{
                                     const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
                                     if (m) return `
                                         <div class="service-entry">
@@ -515,7 +528,18 @@ def update_html(header, days, stats, complexity_stats=None):
                         </div>
                     `;
                 }}).join('');
-                document.getElementById('log-html').innerHTML = logHtml || '<div style="text-align:center; padding: 40px; color: var(--text-dim); font-weight: 700;">[ NO_RECORDS_FOUND ]</div>';
+
+                const paginationHtml = totalPages > 1 ? `
+                    <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 30px; padding: 20px; border-top: 1px solid var(--border);">
+                        <button onclick="changePage(-1)" ${{currentPage === 1 ? 'disabled' : ''}} 
+                            style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ${{currentPage === 1 ? '0.3' : '1'}}">PREV</button>
+                        <span style="font-weight: 800; letter-spacing: 2px; color: var(--text-dim); font-size: 14px;">BLOCK ${{currentPage}} / ${{totalPages}}</span>
+                        <button onclick="changePage(1)" ${{currentPage === totalPages ? 'disabled' : ''}} 
+                            style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ${{currentPage === totalPages ? '0.3' : '1'}}">NEXT</button>
+                    </div>
+                ` : '';
+
+                document.getElementById('log-html').innerHTML = logHtml + paginationHtml || '<div style="text-align:center; padding: 40px; color: var(--text-dim); font-weight: 700;">[ NO_RECORDS_FOUND ]</div>';
             }}
 
             window.toggleDay = (idx) => {{
@@ -526,7 +550,16 @@ def update_html(header, days, stats, complexity_stats=None):
                 icon.innerText = isVisible ? '▶' : '▼';
             }};
 
-            document.getElementById('logSearch').addEventListener('input', (e) => renderLog(e.target.value));
+            window.changePage = (dir) => {{
+                currentPage += dir;
+                renderLog(document.getElementById('logSearch').value);
+                document.getElementById('logSearch').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+            }};
+
+            document.getElementById('logSearch').addEventListener('input', (e) => {{
+                currentPage = 1;
+                renderLog(e.target.value);
+            }});
             
             // Initial render
             renderLog();
