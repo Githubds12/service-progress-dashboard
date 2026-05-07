@@ -278,6 +278,7 @@ def update_html(header, days, stats, complexity_stats=None):
             animation: progressFlow 2s infinite linear;
         }}
         @keyframes progressFlow {{ 0% {{ transform: translateX(-100%); }} 100% {{ transform: translateX(100%); }} }}
+        @keyframes blink {{ 0%, 100% {{ opacity: 1; filter: brightness(1.2); }} 50% {{ opacity: 0.4; filter: brightness(0.8); }} }}
         
         .section-title {{ 
             font-size: 15px; font-weight: 950; color: #FFF; text-transform: uppercase; 
@@ -312,6 +313,10 @@ def update_html(header, days, stats, complexity_stats=None):
             <h1>केसर दर्शिका</h1>
             <div style="font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 2px; margin-top: 8px; text-shadow: 0 0 15px var(--glow);">
                 {stats['today_date']}
+            </div>
+            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
+                <div style="width: 8px; height: 8px; background: #00FF00; border-radius: 50%; box-shadow: 0 0 10px #00FF00; animation: blink 1.5s infinite;"></div>
+                <span style="font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #00FF00; text-transform: uppercase;">System Operational</span>
             </div>
         </div>
 
