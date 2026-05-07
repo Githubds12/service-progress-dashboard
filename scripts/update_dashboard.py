@@ -4,6 +4,11 @@ from datetime import datetime, date
 import json
 import math
 import subprocess
+import google.generativeai as genai
+from dotenv import load_dotenv
+
+load_dotenv()
+genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
 
 REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
 TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
@@ -172,8 +177,34 @@ def calculate_stats(days):
             completed_today = len(d['services'])
             break
 
+    # Default explanation
     explanation = f"मासिक-लक्ष्यं (₹90,000) प्राप्तुं अग्रिमेषु {days_remaining} दिनेषु प्रतिदिनं {round(recovery_pace_services, 1)} सेवानां आवश्यकता अस्ति। {int((buffer_multiplier-1)*100)}% सुरक्षा-कवचार्थं ({recommended_today} कुलम्) परामर्शः अस्ति।"
 
+    # Gemini dynamic insight generation
+    ai_insight = explanation
+    try:
+        model = genai.GenerativeModel('gemini-1.5-flash')
+        prompt = f"""
+        Analyze these cybersecurity service performance stats for today:
+        - Total Services: {total_services}
+        - Total Earnings: {total_earnings}
+        - Average Daily: {avg_daily}
+        - Goal: ₹90,000
+        - Remaining: {remaining_target} in {days_remaining} days
+        - Completed Today: {completed_today}
+        - Target Today: {recommended_today}
+        
+        Write a short, professional, and slightly aggressive productivity tip in 1-2 sentences. 
+        Focus on either the pace or the goal. Use Sanskrit headers if possible (e.g. 'Efficiency Note:').
+        Keep it brief as it will be shown in a small UI card.
+        """
+        response = model.generate_content(prompt)
+        if response and response.text:
+            ai_insight = response.text.strip().replace('"', '')
+    except Exception as e:
+        print(f"Gemini Error: {e}")
+
+    explanation = ai_insight
     projection_sentence = f"अद्यतन-गत्या भवान् {round(projected_total, 2)} राशिं प्राप्स्यति। {'उत्तमम्!' if projected_total >= 90000 else 'लक्ष्य-प्राप्तये गतिं वर्धयतु।'}"
 
     return {
@@ -279,6 +310,7 @@ def update_html(header, days, stats):
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="dashboard_data.js"></script>
     <style>
         :root {{
             --primary: #A52A2A;
@@ -807,14 +839,18 @@ def update_html(header, days, stats):
                     resultsArea.innerHTML = '<div style="color: var(--success); animation: pulse 1.5s infinite;">Consulting Gemini AI Insights...</div>';
 
                     setTimeout(() => {{
-                        const mockResponses = [
-                            "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
-                            "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
-                            "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
-                            "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
-                        ];
-                        const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-                        resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + response + \'"</div>\';
+                        if (window.dashboardData && window.dashboardData.stats && window.dashboardData.stats.explanation) {{
+                            resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + window.dashboardData.stats.explanation + \'"</div>\';
+                        }} else {{
+                            const mockResponses = [
+                                "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
+                                "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
+                                "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
+                                "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
+                            ];
+                            const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                            resultsArea.innerHTML = \'<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"\' + response + \'"</div>\';
+                        }}
                     }}, 1500);
                 }};
 
@@ -931,6 +967,18 @@ def update_html(header, days, stats):
                     }});
                 }}
 
+        function refreshData() {{
+            const script = document.createElement(\'script\');
+            script.src = \'dashboard_data.js?t=\' + new Date().getTime();
+            script.onload = () => {{
+                if (window.dashboardData) {{
+                    renderUI(window.dashboardData);
+                }}
+                script.remove();
+            }};
+            document.head.appendChild(script);
+        }}
+
                 refreshData();
         setInterval(refreshData, 3000);
     </script>
@@ -981,9 +1029,10 @@ def update_readme(stats, time_logs):
     stats_section += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
     if "## 📉 Live Stats" in content:
-        new_content = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', stats_section.strip() + "\n", content, flags=re.DOTALL)
+        # Match from "Live Stats" through "Productivity Today" (if exists) up to the next section or end of file
+        new_content = re.sub(r'## 📉 Live Stats\n.*?(?=\n## (?!⏳ Productivity Today)|$)', stats_section.strip() + "\n\n", content, flags=re.DOTALL)
     else:
-        new_content = content.replace("## 📊 Tech Stack", stats_section + "\n## 📊 Tech Stack")
+        new_content = content.replace("## 📊 Tech Stack", stats_section + "\n\n## 📊 Tech Stack")
         
     with open(readme_path, 'w', encoding='utf-8') as f:
         f.write(new_content)

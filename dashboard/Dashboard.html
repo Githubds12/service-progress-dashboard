@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="dashboard_data.js"></script>
     <style>
         :root {
             --primary: #A52A2A;
@@ -535,14 +536,18 @@
                     resultsArea.innerHTML = '<div style="color: var(--success); animation: pulse 1.5s infinite;">Consulting Gemini AI Insights...</div>';
 
                     setTimeout(() => {
-                        const mockResponses = [
-                            "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
-                            "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
-                            "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
-                            "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
-                        ];
-                        const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
-                        resultsArea.innerHTML = '<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"' + response + '"</div>';
+                        if (window.dashboardData && window.dashboardData.stats && window.dashboardData.stats.explanation) {
+                            resultsArea.innerHTML = '<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"' + window.dashboardData.stats.explanation + '"</div>';
+                        } else {
+                            const mockResponses = [
+                                "Your current pace is exceptional. Gemini predicts you will reach your monthly goal 3 days early if you maintain this intensity.",
+                                "Focus on consistency. A slight increase in daily average (just 2 more services) will push your projected earnings past ₹50,000.",
+                                "Spiritual growth and professional excellence are two sides of the same coin. Your dedication is reflected in these numbers.",
+                                "Gemini analysis suggests you are most productive between 10 AM and 2 PM. Optimizing this window could boost efficiency by 15%."
+                            ];
+                            const response = mockResponses[Math.floor(Math.random() * mockResponses.length)];
+                            resultsArea.innerHTML = '<div style="color: #fff; line-height: 1.5; font-style: italic; border-left: 2px solid var(--primary); padding-left: 10px;">"' + response + '"</div>';
+                        }
                     }, 1500);
                 };
 
@@ -658,6 +663,18 @@
                         }
                     });
                 }
+
+        function refreshData() {
+            const script = document.createElement('script');
+            script.src = 'dashboard_data.js?t=' + new Date().getTime();
+            script.onload = () => {
+                if (window.dashboardData) {
+                    renderUI(window.dashboardData);
+                }
+                script.remove();
+            };
+            document.head.appendChild(script);
+        }
 
                 refreshData();
         setInterval(refreshData, 3000);

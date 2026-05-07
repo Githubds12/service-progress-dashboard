@@ -2,6 +2,8 @@ import os
 import re
 import logging
 import asyncio
+import datetime
+import subprocess
 import google.generativeai as genai
 from telegram import Update
 from telegram.ext import ApplicationBuilder, ContextTypes, MessageHandler, filters, CommandHandler
