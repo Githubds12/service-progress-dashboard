@@ -147,7 +147,7 @@ def calculate_stats(days):
     explanation = f"Target: ₹90,000. Pace: {round(recovery_pace_services, 1)} services/day."
     try:
         prompt = f"Analyze progress: {total_earnings}/90000. Completed today: {completed_today}/{recommended_today}. Write 1-2 sentence tip with Sanskrit header."
-        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
+        response = client.models.generate_content(model='gemini-flash-latest', contents=prompt)
         if response and response.text: explanation = response.text.strip().replace('"', '')
     except: pass
 
