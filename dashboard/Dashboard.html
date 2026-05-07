@@ -222,6 +222,52 @@
 
         #celebration { display: none; text-align: center; margin-top: 15px; }
         .trophy { width: 80px; filter: drop-shadow(0 0 20px var(--success)); margin: 10px 0; }
+
+        /* Toolbar Styles */
+        .activity-toolbar {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+        .tool-btn {
+            background: rgba(165, 42, 42, 0.2);
+            border: 1px solid var(--border);
+            color: var(--bhairavi);
+            padding: 8px 12px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.3s;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .tool-btn:hover {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 0 15px var(--primary-glow);
+        }
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+        .search-box input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--border);
+            padding: 8px 12px;
+            border-radius: 10px;
+            color: #fff;
+            font-size: 11px;
+            transition: 0.3s;
+        }
+        .search-box input:focus {
+            border-color: var(--bhairavi);
+            background: rgba(255,255,255,0.1);
+        }
     </style>
 </head>
 <body>
@@ -311,6 +357,17 @@
                 <h2 style="margin: 0;">अद्यतन-वृत्तान्तः (RECENT ACTIVITY)</h2>
                 <span class="page-info" id="page-indicator">Page 1 of 1</span>
             </div>
+
+            <!-- New Activity Toolbar -->
+            <div class="activity-toolbar">
+                <button class="tool-btn" onclick="jumpToToday()">📅 TODAY</button>
+                <div class="search-box">
+                    <input type="text" id="activity-search" placeholder="Search service or app..." oninput="searchActivity()">
+                </div>
+                <button class="tool-btn" onclick="document.getElementById('date-picker').showPicker()">🔍 FILTER</button>
+                <input type="date" id="date-picker" style="position:absolute; visibility:hidden; width:0; height:0;" onchange="filterByDate(this.value)">
+            </div>
+
             <div id="services-html"></div>
             
             <div class="pagination-controls">
@@ -347,6 +404,66 @@
                 document.getElementById('page-indicator').innerText = pageLabel + ' OF ' + totalPages;
                 document.getElementById('prev-btn').disabled = currentPage === 0;
                 document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
+            } else {
+                document.getElementById('services-html').innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; font-size:12px;">No activities found matching your criteria.</div>';
+                document.getElementById('page-indicator').innerText = '0 OF 0';
+                document.getElementById('prev-btn').disabled = true;
+                document.getElementById('next-btn').disabled = true;
+            }
+        }
+
+        function jumpToToday() {
+            if (window.dashboardData && window.dashboardData.services_by_day) {
+                serviceData = window.dashboardData.services_by_day;
+                totalPages = serviceData.length;
+                currentPage = totalPages - 1;
+                document.getElementById('activity-search').value = '';
+                renderPage();
+                document.querySelector('.recent-activity').scrollTop = 0;
+            }
+        }
+
+        function searchActivity() {
+            const term = document.getElementById('activity-search').value.toLowerCase();
+            if (!term) {
+                serviceData = window.dashboardData.services_by_day;
+                totalPages = serviceData.length;
+                renderPage();
+                return;
+            }
+
+            // Search in raw data and regenerate temporary serviceData
+            const filteredDays = [];
+            window.dashboardData.raw_days.forEach((day, index) => {
+                const matchingServices = day.services.filter(s => s.toLowerCase().includes(term));
+                if (matchingServices.length > 0 || day.date.toLowerCase().includes(term)) {
+                    // For display, we use the pre-rendered HTML if the day matches
+                    // Or we could highlight. For now, we'll just show the whole day if it matches.
+                    filteredDays.push(window.dashboardData.services_by_day[index]);
+                }
+            });
+
+            serviceData = filteredDays;
+            totalPages = serviceData.length;
+            currentPage = 0;
+            renderPage();
+        }
+
+        function filterByDate(val) {
+            if (!val) return;
+            // Date comes in as YYYY-MM-DD, our dates are like "Thursday, 07-05-2026"
+            const parts = val.split('-');
+            const searchDate = parts[2] + '-' + parts[1] + '-' + parts[0]; // DD-MM-YYYY
+            
+            const index = window.dashboardData.raw_days.findIndex(d => d.date.includes(searchDate));
+            if (index !== -1) {
+                serviceData = window.dashboardData.services_by_day;
+                totalPages = serviceData.length;
+                currentPage = index;
+                renderPage();
+                document.querySelector('.recent-activity').scrollTop = 0;
+            } else {
+                alert("No data found for " + searchDate);
             }
         }
 

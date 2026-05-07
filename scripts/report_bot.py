@@ -24,7 +24,7 @@ logging.basicConfig(
 # Initialize Gemini
 if GEMINI_KEY:
     genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('models/gemini-pro-latest') # Switching to Pro for better quota pool
+    model = genai.GenerativeModel('models/gemini-2.0-flash') # Back to Flash with fresh key
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -70,6 +70,7 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
                     analysis_text = response.text
                     break
                 except Exception as e:
+                    logging.error(f"Gemini Error (Attempt {attempt+1}): {e}")
                     if "429" in str(e) and attempt < max_retries - 1:
                         wait_time = 10 * (attempt + 1)
                         logging.warning(f"Quota hit, retrying in {wait_time}s...")
