@@ -483,7 +483,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
             // 4. Operational Log Rendering Engine
             let currentPage = 1;
-            const pageSize = 5;
+            const pageSize = 1;
 
             function renderLog(filter = '') {{
                 const query = filter.toLowerCase();
@@ -501,7 +501,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
                 const logHtml = pagedDays.map((d, idx) => {{
                     const actualIdx = start + idx;
-                    const isExpanded = !!query; 
+                    const isExpanded = true; // Always expand in single-day view
                     return `
                         <div class="day-group" id="day-${{actualIdx}}">
                             <div class="day-header" onclick="toggleDay(${{actualIdx}})" style="cursor: pointer; user-select: none;">
@@ -533,7 +533,7 @@ def update_html(header, days, stats, complexity_stats=None):
                     <div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 30px; padding: 20px; border-top: 1px solid var(--border);">
                         <button onclick="changePage(-1)" ${{currentPage === 1 ? 'disabled' : ''}} 
                             style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ${{currentPage === 1 ? '0.3' : '1'}}">PREV</button>
-                        <span style="font-weight: 800; letter-spacing: 2px; color: var(--text-dim); font-size: 14px;">BLOCK ${{currentPage}} / ${{totalPages}}</span>
+                        <span style="font-weight: 800; letter-spacing: 2px; color: var(--text-dim); font-size: 14px;">DAY ${{currentPage}} / ${{totalPages}}</span>
                         <button onclick="changePage(1)" ${{currentPage === totalPages ? 'disabled' : ''}} 
                             style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ${{currentPage === totalPages ? '0.3' : '1'}}">NEXT</button>
                     </div>
