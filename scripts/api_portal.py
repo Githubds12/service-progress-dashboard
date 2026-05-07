@@ -128,12 +128,12 @@ def parse_report(folder_path, source_val):
                 "Status": "New",
                 "HAR Files": None
             },
-            "Executive Summary": None,
-            "Quick Analysis": None,
+            "Executive Summary": exec_summary,
+            "Quick Analysis": qa,
             "Flow Details": [],
             "Security Notes": None,
-            "Conclusion & Feasibility": None,
-            "Flow Details Raw": None,
+            "Conclusion & Feasibility": { "feasibility": feasibility, "text": conc_text },
+            "Flow Details Raw": raw_text,
             "Identified Steps": [],
             "executive_summary": exec_summary,
             "metadata": {
@@ -169,7 +169,7 @@ def main():
         print("[-] Could not find UUID in inf.txt")
         return
 
-    payload_claim = {"platform": "android", "source": source, "phone_flow": "yes"}
+    payload_claim = {"platform": "android", "source": source, "phone_flow": "Sms"}
     payload_project = {"platform": "android", "source": source}
     engineering_payload = parse_report(args.folder_path, source)
 
