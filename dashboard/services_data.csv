@@ -1,0 +1,113 @@
+Date,Time,Service Name,Package Name,Price
+"7th May, Thursday",12:15,JvSpinBet,org.jvspinbet.client,400
+"7th May, Thursday",12:35,Utair,ru.utair.android,400
+"6th May, Wednesday",17:15,JvSpinBet,org.jvspinbet.client,400
+"3rd May, Sunday",14:41,OpenTable,com.opentable,400
+"3rd May, Sunday",15:33,Qantas,au.com.qantas.qantas,400
+"3rd May, Sunday",15:52,JoyBuy,com.joybuy.jdi,400
+"3rd May, Sunday",16:13,ForDeal,com.fordeal.android,400
+"3rd May, Sunday",16:40,KwikPay,com.kwikpay.transfers,400
+"2nd May, Saturday",10:30,Deriv,com.deriv.home,400
+"2nd May, Saturday",10:50,jameda,de.jameda,500
+"2nd May, Saturday",11:10,weststein,com.weststeincard.weststein,400
+"2nd May, Saturday",12:00,pro1bet,org.pro1bet.client,400
+"2nd May, Saturday",12:10,xtb,com.xtb.xmobile2,400
+"2nd May, Saturday",13:15,Flowwow,com.flowwow,400
+"1st May, Friday",12:45,uo verify (Urban Outfitters),com.urbanoutfitters.android,400
+"30th April, Thursday",09:50,Tuda,com.tuda.android,400
+"30th April, Thursday",10:10,Paybis,com.paybis,400
+"30th April, Thursday",10:50,Boxy,com.client.boxy,400
+"30th April, Thursday",11:10,ClubApparel,com.appemirates.clubapparel,400
+"29th April, Wednesday",10:00,wave,com.wave.personal,400
+"29th April, Wednesday",10:15,eneba,com.eneba.app,400
+"29th April, Wednesday",10:30,maxim,com.taxsee.taxsee,400
+"29th April, Wednesday",10:45,Poppo Live,com.baitu.qingshu,400
+"29th April, Wednesday",11:00,buz,com.interfun.buz,400
+"29th April, Wednesday",11:15,Rednote,com.xingin.xhs,400
+"29th April, Wednesday",11:30,ColdBet,org.coldbet.client,400
+"29th April, Wednesday",11:45,Bitget,com.bitget.exchange,400
+"29th April, Wednesday",12:00,Klook,com.klook,400
+"29th April, Wednesday",12:15,SoulChill,com.live.soulchill,400
+"29th April, Wednesday",11:10,PaySend,com.paysend.app,400
+"29th April, Wednesday",11:53,AMO,com.xiaoyu.amo,400
+"29th April, Wednesday",12:54,Tongcheng,com.tongcheng.android,400
+"29th April, Wednesday",13:30,Gooobet,org.gooobet.client,400
+"29th April, Wednesday",13:40,Live.me,com.cmcm.live,400
+"29th April, Wednesday",14:30,E-GetS,com.egets.takeaways,400
+"29th April, Wednesday",22:50,Luno,co.bitx.android.wallet,400
+"29th April, Wednesday",23:20,1xCasino,org.xbet.casino,400
+"29th April, Wednesday",23:33,LC Waikiki,com.lcwaikiki.android,400
+"29th April, Wednesday",23:42,EZVIZ,com.ezviz,400
+"28th April, Tuesday",Unknown,71. Pegasus,com.pozitron.pegasus,400
+"28th April, Tuesday",Unknown,72. Daraz,com.daraz.android,400
+"28th April, Tuesday",Unknown,73. ehamarkets,com.trade.trade211,500
+"27th April, Monday",Unknown,65. BPme,com.bp.app.bpme.global.pl,400
+"27th April, Monday",Unknown,66. Sage,com.sage.accounting,400
+"27th April, Monday",Unknown,67. XTransfer,com.xtapp.xtransfer,400
+"27th April, Monday",Unknown,68. Shop Apotheke,shop.shop_apotheke.com.shopapotheke,400
+"27th April, Monday",Unknown,69. iHerb,com.iherb,400
+"27th April, Monday",Unknown,70. KuCoin,com.kubi.kucoin,400
+"26th April, Sunday",Unknown,50. IBI Smart,com.ibidev.ibitrade,400
+"26th April, Sunday",Unknown,51. BitDeer,com.bitdeer.cloud.android,400
+"26th April, Sunday",Unknown,52. Liki24,com.liki24.customerapp,400
+"26th April, Sunday",Unknown,53. Raya,com.raya_app,400
+"26th April, Sunday",Unknown,54. Medal,tv.medal.recorder,400
+"26th April, Sunday",Unknown,55. YandexEats,ru.foodfox.client,400
+"26th April, Sunday",Unknown,56. BetLabel,org.betlabel.client,400
+"26th April, Sunday",Unknown,57. Shell Go+ India,com.shell.sitibv.shellgoplusindia,400
+"26th April, Sunday",Unknown,58. HoYoLab,com.mihoyo.hoyolab,400
+"26th April, Sunday",Unknown,59. nextBike,de.nextbike,400
+"26th April, Sunday",Unknown,60. RockFlow,team.flowai.android,400
+"26th April, Sunday",Unknown,61. WellTrade,com.weltrade.appterminal,400
+"26th April, Sunday",Unknown,62. CubaMessenger,com.cubamessenger.cubamessengerapp,400
+"26th April, Sunday",Unknown,63. Bolt Food,com.bolt.food,400
+"26th April, Sunday",Unknown,64. PokerBet,com.pokerbet.casino,400
+"25th April, Saturday",Unknown,39. TruthSocial,400rs,0
+"25th April, Saturday",Unknown,40. Partiful,400rs,0
+"25th April, Saturday",Unknown,41. NiceOne,400rs,0
+"25th April, Saturday",Unknown,42. Qmove,400rs,0
+"25th April, Saturday",Unknown,43. BetAndYou,400rs,0
+"25th April, Saturday",Unknown,44. MarathonBet,400rs,0
+"25th April, Saturday",Unknown,45. Nestle Waters,400rs,0
+"25th April, Saturday",Unknown,46. MiTrade,400rs,0
+"25th April, Saturday",Unknown,47. Yamaha Motor ID,400rs,0
+"25th April, Saturday",Unknown,48. Yolla,400rs,0
+"25th April, Saturday",Unknown,49. (Reserved/Skip),0rs,0
+"23rd April, Thursday",Unknown,28. Healthify,400rs,0
+"23rd April, Thursday",Unknown,29. Zid,400rs,0
+"23rd April, Thursday",Unknown,30. XPariBet,400rs,0
+"23rd April, Thursday",Unknown,31. Boyaa,400rs,0
+"23rd April, Thursday",Unknown,32. WePlay,400rs,0
+"23rd April, Thursday",Unknown,33. HepsiBurada,400rs,0
+"23rd April, Thursday",Unknown,34. Canva,400rs,0
+"23rd April, Thursday",Unknown,35. 4Fun,400rs,0
+"23rd April, Thursday",Unknown,36. Yalla,400rs,0
+"23rd April, Thursday",Unknown,37. AlmaGo,400rs,0
+"23rd April, Thursday",Unknown,38. Catawiki,400rs,0
+"22nd April, Wednesday",Unknown,19. HapyLive,400rs,0
+"22nd April, Wednesday",Unknown,20. FastPari,400rs,0
+"22nd April, Wednesday",Unknown,21. Planity,400rs,0
+"22nd April, Wednesday",Unknown,22. Slack,400rs,0
+"22nd April, Wednesday",Unknown,23. Floward,400rs,0
+"22nd April, Wednesday",Unknown,24. Normal,400rs,0
+"22nd April, Wednesday",Unknown,25. BetJam,400rs,0
+"22nd April, Wednesday",Unknown,26. Ring,400rs,0
+"22nd April, Wednesday",Unknown,27. Qunar,400rs,0
+"21st April, Tuesday",Unknown,15. oneplus,400rs,0
+"21st April, Tuesday",Unknown,16. mxt,com.vantagefx.app,400
+"21st April, Tuesday",Unknown,17. Luckin Coffee,com.luckin.client.i,400
+"21st April, Tuesday",Unknown,18. ccc,eu.ccc.mobile,400
+"20th April, Monday",Unknown,6. Blink,400rs,0
+"20th April, Monday",Unknown,7. DBBet,400rs,0
+"20th April, Monday",Unknown,8. ivi.ru,400rs,0
+"20th April, Monday",Unknown,9. MoonPay,400rs,0
+"20th April, Monday",Unknown,10. Palfish,400rs,0
+"20th April, Monday",Unknown,11. PokaLive,400rs,0
+"20th April, Monday",Unknown,12. Wix,400rs,0
+"20th April, Monday",Unknown,13. Chamet,400rs,0
+"20th April, Monday",Unknown,14. dolynk,400rs,0
+"15th April, Wednesday",Unknown,1. Hinge,400rs,0
+"15th April, Wednesday",Unknown,2. Niimbot,400rs,0
+"15th April, Wednesday",Unknown,3. VFS Global,400rs,0
+"15th April, Wednesday",Unknown,4. yandexgo,400rs,0
+"15th April, Wednesday",Unknown,5. yandexpro,400rs,0

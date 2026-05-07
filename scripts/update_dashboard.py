@@ -5,6 +5,7 @@ import json
 import math
 import subprocess
 import google.generativeai as genai
+import csv
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -300,6 +301,36 @@ def update_html(header, days, stats):
     
     with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
         f.write(f"window.dashboardData = {json.dumps(data_dict)};")
+
+    # [NEW] Export as clean JSON for external tools
+    with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.json', 'w', encoding='utf-8') as f:
+        json.dump(data_dict, f, indent=4)
+
+    # [NEW] Export as CSV for Power BI / Excel
+    csv_path = 'c:/Users/Gorri/Documents/Reports/dashboard/services_data.csv'
+    with open(csv_path, 'w', encoding='utf-8', newline='') as f:
+        writer = csv.writer(f)
+        writer.writerow(['Date', 'Time', 'Service Name', 'Package Name', 'Price'])
+        for d in days:
+            date_str = d['date']
+            for s in d['services']:
+                # Parse format: 98. [12:45] Urban Outfitters - com.urbanoutfitters.android - 400rs
+                match = re.search(r'^\d+\.\s+\[(\d\d:\d\d)\]\s+(.*?)\s+-\s+(.*?)\s+-\s+(\d+)rs', s)
+                if match:
+                    time, name, pkg, price = match.groups()
+                    writer.writerow([date_str, time, name, pkg, price])
+                else:
+                    # Handle simpler formats or "Daily Summary" lines if they accidentally get in
+                    if '-' in s:
+                        parts = [p.strip() for p in s.split('-')]
+                        name = parts[0]
+                        pkg = parts[1] if len(parts) > 1 else "Unknown"
+                        price = re.search(r'\d+', parts[2]).group() if len(parts) > 2 else "0"
+                        writer.writerow([date_str, 'Unknown', name, pkg, price])
+                    else:
+                        writer.writerow([date_str, 'Unknown', s, 'Unknown', '0'])
+    
+    print(f"[+] Data exported to CSV and JSON in /dashboard/")
 
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
