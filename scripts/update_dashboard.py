@@ -295,7 +295,12 @@ def update_html(header, days, stats, complexity_stats=None):
             border-radius: 24px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
             transition: all 0.3s ease; cursor: default;
         }}
-        .service-entry:hover {{ background: rgba(212, 175, 55, 0.15); border-color: var(--accent); transform: translateX(8px); }}
+        .service-entry:hover {{ 
+            background: rgba(212, 175, 55, 0.12); 
+            border-color: var(--accent); 
+            transform: translateX(8px) scale(1.01);
+            box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+        }}
         .service-info {{ display: flex; flex-direction: column; gap: 6px; }}
         .service-name {{ font-weight: 800; font-size: 17px; color: #FFF; }}
         .service-pkg {{ font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }}
@@ -364,7 +369,13 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.7s;">
-            <div class="section-title" style="margin-bottom: 35px;">Operational Intelligence Log</div>
+            <div class="section-title" style="margin-bottom: 25px;">
+                <span>Operational Intelligence Log</span>
+            </div>
+            <div style="margin-bottom: 25px; position: relative;">
+                <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
+                    style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; letter-spacing: 1px; outline: none; transition: all 0.3s ease;">
+            </div>
             <div id="log-html"></div>
         </div>
     </div>
@@ -457,30 +468,55 @@ def update_html(header, days, stats, complexity_stats=None):
                 document.getElementById('pieChart').parentElement.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:700;">[ DATA_ERROR: TIME_LOG_NOT_FOUND ]</div>';
             }}
 
-            // 4. Operational Log
-            const logHtml = data.raw_days.map(d => `
-                <div class="day-group">
-                    <div class="day-header">
-                        <span>${{d.date}}</span>
-                        <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
-                    </div>
-                    <div class="service-log">
-                        ${{d.services.map(s => {{
-                            const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
-                            if (m) return `
-                                <div class="service-entry">
-                                    <div class="service-info">
-                                        <span class="service-name">${{m[2]}}</span>
-                                        <span class="service-pkg">${{m[3]}}</span>
-                                    </div>
-                                    <div class="service-price">₹${{m[4]}}</div>
-                                </div>`;
-                            return `<div class="service-entry"><span class="service-name">${{s}}</span></div>`;
-                        }}).join('')}}
-                    </div>
-                </div>
-            `).join('');
-            document.getElementById('log-html').innerHTML = logHtml;
+            // 4. Operational Log Rendering Engine
+            function renderLog(filter = '') {{
+                const query = filter.toLowerCase();
+                const logHtml = data.raw_days.map((d, dayIdx) => {{
+                    const filteredServices = d.services.filter(s => s.toLowerCase().includes(query));
+                    if (query && filteredServices.length === 0) return '';
+
+                    const isExpanded = !query; // Auto-expand if searching
+                    return `
+                        <div class="day-group" id="day-${{dayIdx}}">
+                            <div class="day-header" onclick="toggleDay(${{dayIdx}})" style="cursor: pointer; user-select: none;">
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="toggle-icon" id="icon-${{dayIdx}}" style="font-size: 14px; color: var(--accent); transition: 0.3s;">${{isExpanded ? '▼' : '▶'}}</span>
+                                    <span>${{d.date}}</span>
+                                </div>
+                                <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
+                            </div>
+                            <div class="service-log" id="log-${{dayIdx}}" style="display: ${{isExpanded ? 'block' : 'none'}}">
+                                ${{ (query ? filteredServices : d.services).map(s => {{
+                                    const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
+                                    if (m) return `
+                                        <div class="service-entry">
+                                            <div class="service-info">
+                                                <span class="service-name">${{m[2]}}</span>
+                                                <span class="service-pkg">${{m[3]}}</span>
+                                            </div>
+                                            <div class="service-price">₹${{m[4]}}</div>
+                                        </div>`;
+                                    return `<div class="service-entry"><span class="service-name">${{s}}</span></div>`;
+                                }}).join('') }}
+                            </div>
+                        </div>
+                    `;
+                }}).join('');
+                document.getElementById('log-html').innerHTML = logHtml || '<div style="text-align:center; padding: 40px; color: var(--text-dim); font-weight: 700;">[ NO_RECORDS_FOUND ]</div>';
+            }}
+
+            window.toggleDay = (idx) => {{
+                const el = document.getElementById('log-' + idx);
+                const icon = document.getElementById('icon-' + idx);
+                const isVisible = el.style.display !== 'none';
+                el.style.display = isVisible ? 'none' : 'block';
+                icon.innerText = isVisible ? '▶' : '▼';
+            }};
+
+            document.getElementById('logSearch').addEventListener('input', (e) => renderLog(e.target.value));
+            
+            // Initial render
+            renderLog();
         }}
 
         initDashboard(data);
