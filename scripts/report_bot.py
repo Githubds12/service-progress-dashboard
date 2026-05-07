@@ -24,7 +24,7 @@ logging.basicConfig(
 # Initialize Gemini
 if GEMINI_KEY:
     genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('gemini-flash-latest') # Using the latest stable flash model
+    model = genai.GenerativeModel('models/gemini-pro-latest') # Switching to Pro for better quota pool
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -61,9 +61,22 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
             4. Return the data in a clear format.
             """
             
-            # Generate content
-            response = model.generate_content([prompt, img])
-            analysis_text = response.text
+            # Retry logic for 429
+            max_retries = 3
+            analysis_text = ""
+            for attempt in range(max_retries):
+                try:
+                    response = model.generate_content([prompt, img])
+                    analysis_text = response.text
+                    break
+                except Exception as e:
+                    if "429" in str(e) and attempt < max_retries - 1:
+                        wait_time = 10 * (attempt + 1)
+                        logging.warning(f"Quota hit, retrying in {wait_time}s...")
+                        await update.message.reply_text(f"⏳ Quota reached, retrying in {wait_time}s...")
+                        await asyncio.sleep(wait_time)
+                    else:
+                        raise e
             
             logging.info(f"Gemini Analysis Result: {analysis_text}")
         

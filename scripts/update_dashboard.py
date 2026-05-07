@@ -95,19 +95,21 @@ def parse_txt():
 def calculate_stats(days):
     current_days = [d for d in days if not d.get('is_history', False)]
     
-    total_services = sum(len(d['services']) for d in days)
-    total_earnings = sum(d['earnings'] for d in days)
+    # Fresh start: Only count services and earnings from the current month
+    total_services = sum(len(d['services']) for d in current_days)
+    total_earnings = sum(d['earnings'] for d in current_days)
     
-    current_services = sum(len(d['services']) for d in current_days)
-    current_earnings = sum(d['earnings'] for d in current_days)
+    # We can still keep track of the absolute total for reference in logs, but UI will show fresh start
+    absolute_total_services = sum(len(d['services']) for d in days)
+    absolute_total_earnings = sum(d['earnings'] for d in days)
     
-    start_date = date(2026, 4, 10)
+    start_date = date(2026, 5, 7)
     today_dt = date.today()
     days_elapsed = (today_dt - start_date).days
     if days_elapsed <= 0: days_elapsed = 1
     
-    avg_daily = current_earnings / days_elapsed if days_elapsed > 0 else current_earnings
-    avg_daily_services = current_services / days_elapsed if days_elapsed > 0 else current_services
+    avg_daily = total_earnings / days_elapsed if days_elapsed > 0 else total_earnings
+    avg_daily_services = total_services / days_elapsed if days_elapsed > 0 else total_services
     
     target = 3000
     target_total = 3000 * 30 
