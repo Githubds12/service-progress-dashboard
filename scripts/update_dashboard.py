@@ -395,7 +395,8 @@ def update_html(header, days, stats, complexity_stats=None):
             Chart.defaults.font.weight = '600';
 
             const commonOptions = {{
-                responsive: true, maintainAspectRatio: false,
+                responsive: true,
+                maintainAspectRatio: false,
                 animation: {{ duration: 2500, easing: 'easeOutQuart' }},
                 plugins: {{ 
                     legend: {{ display: false }},
@@ -405,10 +406,6 @@ def update_html(header, days, stats, complexity_stats=None):
                         padding: 15, cornerRadius: 16, displayColors: false,
                         titleFont: {{ size: 16, weight: 800 }}, bodyFont: {{ size: 14 }}
                     }}
-                }},
-                scales: {{ 
-                    y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ padding: 10 }} }},
-                    x: {{ grid: {{ display: false }}, ticks: {{ padding: 10 }} }}
                 }}
             }};
 
@@ -431,7 +428,23 @@ def update_html(header, days, stats, complexity_stats=None):
                         pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37', pointBorderWidth: 4
                     }}]
                 }},
-                options: commonOptions
+                options: {{
+                    ...commonOptions,
+                    scales: {{ 
+                        y: {{ 
+                            grid: {{ color: 'rgba(255,255,255,0.05)' }}, 
+                            ticks: {{ padding: 10, color: '#94A3B8', font: {{ weight: 600 }} }} 
+                        }},
+                        x: {{ 
+                            grid: {{ display: false }}, 
+                            ticks: {{ 
+                                padding: 10, color: '#94A3B8', font: {{ weight: 600 }},
+                                maxRotation: 45, minRotation: 45,
+                                autoSkip: true, maxTicksLimit: 10
+                            }} 
+                        }}
+                    }}
+                }}
             }});
 
             // 2. Pie Chart (Task Distribution)
