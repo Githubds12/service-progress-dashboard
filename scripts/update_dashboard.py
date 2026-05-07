@@ -685,11 +685,11 @@ def update_html(header, days, stats):
         function renderPage() {{
             if (serviceData && serviceData.length > 0) {{
                 document.getElementById('services-html').innerHTML = serviceData[currentPage];
-                const isLastPage = currentPage === totalPages - 1;
-                const pageLabel = isLastPage ? 'PAGE ' + (currentPage + 1) + ' (TODAY)' : 'PAGE ' + (currentPage + 1);
+                const isToday = currentPage === 0;
+                const pageLabel = isToday ? 'PAGE ' + (currentPage + 1) + ' (TODAY)' : 'PAGE ' + (currentPage + 1);
                 document.getElementById('page-indicator').innerText = pageLabel + ' OF ' + totalPages;
-                document.getElementById('prev-btn').disabled = currentPage === 0;
-                document.getElementById('next-btn').disabled = currentPage === totalPages - 1;
+                document.getElementById('prev-btn').disabled = currentPage === totalPages - 1;
+                document.getElementById('next-btn').disabled = currentPage === 0;
             }} else {{
                 document.getElementById('services-html').innerHTML = '<div style="text-align:center; padding:40px; color:#64748b; font-size:12px;">No activities found matching your criteria.</div>';
                 document.getElementById('page-indicator').innerText = '0 OF 0';
@@ -702,7 +702,7 @@ def update_html(header, days, stats):
             if (window.dashboardData && window.dashboardData.services_by_day) {{
                 serviceData = window.dashboardData.services_by_day;
                 totalPages = serviceData.length;
-                currentPage = totalPages - 1;
+                currentPage = 0; // Jump to index 0 (newest)
                 document.getElementById('activity-search').value = '';
                 renderPage();
                 document.querySelector('.recent-activity').scrollTop = 0;
@@ -764,7 +764,7 @@ def update_html(header, days, stats):
 
                 serviceData = data.services_by_day;
                 totalPages = serviceData.length;
-                if (isFirstLoad || currentPage >= totalPages) currentPage = totalPages - 1;
+                if (isFirstLoad || currentPage >= totalPages) currentPage = 0; // Today is at index 0 (newest)
                 renderPage();
 
                 const safeSetText = (id, text) => {{
@@ -950,25 +950,37 @@ def update_html(header, days, stats):
     with open('c:/Users/Gorri/Documents/Reports/dashboard_data.js', 'w', encoding='utf-8') as f:
         f.write(data_file_content)
 
-def update_readme(stats):
-    readme_path = 'c:/Users/Gorri/Documents/Reports/README.md'
+def update_readme(stats, time_logs):
+    readme_path = os.path.join(REPORT_DIR, 'README.md')
     if not os.path.exists(readme_path):
         return
         
     with open(readme_path, 'r', encoding='utf-8') as f:
         content = f.read()
     
+    # Live Stats Section
     stats_section = f"## 📉 Live Stats\n" \
                     f"- **Total Services**: {stats['total_services']}\n" \
                     f"- **Total Earnings**: ₹{stats['total_earnings']}\n" \
                     f"- **Average Daily Services**: {stats['prev_avg_services']:.2f} -> {stats['avg_daily_services']:.2f} services/day\n" \
                     f"- **Average Daily Earnings**: ₹{stats['avg_daily']:.2f}/day\n" \
                     f"- **Recovery Pace**: {stats['prev_recovery_pace']:.1f} -> {stats['recovery_pace_services']:.1f} services/day\n" \
-                    f"- **Monthly Projection**: ₹{stats['projected_total']:.2f}\n" \
-                    f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
+                    f"- **Monthly Projection**: ₹{stats['projected_total']:.2f}\n"
+    
+    # Time Log Section
+    time_section = ""
+    if time_logs:
+        today_log = time_logs[-1]
+        time_section = f"\n## ⏳ Productivity Today ({today_log['date']})\n"
+        for entry in today_log['logs']:
+            time_section += f"- **{entry['activity']}**: {entry['hours']}h\n"
+        time_section += f"- **Total**: {today_log['total']}h\n"
+        time_section += f"- **Note**: *{today_log['note']}*\n"
+    
+    stats_section += time_section
+    stats_section += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     
     if "## 📉 Live Stats" in content:
-        # Improved regex to handle the section replacement more reliably
         new_content = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', stats_section.strip() + "\n", content, flags=re.DOTALL)
     else:
         new_content = content.replace("## 📊 Tech Stack", stats_section + "\n## 📊 Tech Stack")
@@ -1005,9 +1017,10 @@ def main():
     stats = calculate_stats(days)
     stats['prev_avg_services'] = prev_avg_services
     stats['prev_recovery_pace'] = prev_recovery_pace
+    time_logs = parse_time_log()
     update_txt(body, stats)
     update_html(header, days, stats)
-    update_readme(stats)
+    update_readme(stats, time_logs)
     print("Dashboard and README updated with Avg Daily Services!")
     update_github()
 
