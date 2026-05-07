@@ -7,6 +7,7 @@ import subprocess
 
 REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
 TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
+TIME_LOG_FILE = os.path.join(REPORT_DIR, "trackers", "Time Log.txt")
 HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
 
 def get_ordinal(n):
@@ -91,6 +92,40 @@ def parse_txt():
         })
 
     return header, days, body, prev_avg_services, prev_recovery_pace
+
+def parse_time_log():
+    if not os.path.exists(TIME_LOG_FILE):
+        return []
+    
+    with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
+        content = f.read()
+    
+    days = []
+    entries = re.split(r'Date:\s+', content)[1:]
+    for entry in entries:
+        lines = entry.strip().split('\n')
+        date_str = lines[0]
+        logs = []
+        perf_note = ""
+        total_h = 0.0
+        
+        for line in lines[1:]:
+            if line.startswith('-'):
+                match = re.search(r'-\s+(.*?):\s+(\d+\.?\d*)h', line)
+                if match:
+                    act, h = match.groups()
+                    logs.append({'activity': act, 'hours': float(h)})
+                    total_h += float(h)
+            elif "Performance Note:" in line:
+                perf_note = line.split('Performance Note:')[1].strip()
+        
+        days.append({
+            'date': date_str,
+            'logs': logs,
+            'total': total_h,
+            'note': perf_note
+        })
+    return days
 
 def calculate_stats(days):
     current_days = [d for d in days if not d.get('is_history', False)]
@@ -219,6 +254,8 @@ def update_html(header, days, stats):
         """
         services_by_day.append(day_html)
 
+    time_logs = parse_time_log()
+    
     data_dict = {
         'header': header,
         'stats': stats,
@@ -226,7 +263,8 @@ def update_html(header, days, stats):
         'earnings': earnings,
         'services': services,
         'services_by_day': services_by_day,
-        'raw_days': days # Added for easier client-side searching
+        'raw_days': days,
+        'time_logs': time_logs # Added for productivity tracking
     }
     
     with open('c:/Users/Gorri/Documents/Reports/dashboard/dashboard_data.js', 'w', encoding='utf-8') as f:
@@ -586,6 +624,20 @@ def update_html(header, days, stats):
             <canvas id="earningsChart"></canvas>
         </div>
 
+        <!-- New Productivity Section -->
+        <div class="glass-card" style="padding: 20px;">
+            <h3 style="font-size: 14px; margin-bottom: 15px; color: var(--bhairavi);">⏳ TIME ALLOCATION (TODAY)</h3>
+            <div style="display: flex; gap: 20px; align-items: center;">
+                <div style="width: 120px; height: 120px;">
+                    <canvas id="timeChart"></canvas>
+                </div>
+                <div id="time-breakdown" style="flex: 1; font-size: 11px; color: #94a3b8;"></div>
+            </div>
+            <div id="perf-insight" style="margin-top: 15px; padding: 10px; background: rgba(16, 185, 129, 0.05); border-radius: 10px; border-left: 3px solid #10b981; font-size: 12px; color: #f8fafc; font-style: italic;">
+                "Waiting for time log data..."
+            </div>
+        </div>
+
         <div class="glass-card recent-activity">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
                 <h2 style="margin: 0;">अद्यतन-वृत्तान्तः (RECENT ACTIVITY)</h2>
@@ -837,19 +889,49 @@ def update_html(header, days, stats):
             }}
         }}
 
-        function refreshData() {{
-            const dataPath = 'dashboard_data.js';
-            let script = document.createElement('script');
-            script.src = dataPath + '?t=' + new Date().getTime();
-            script.onload = () => {{ 
-                if (window.dashboardData) {{
-                    renderUI(window.dashboardData);
+                // Time Allocation Chart
+                if (data.time_logs && data.time_logs.length > 0) {{
+                    const todayLog = data.time_logs[data.time_logs.length - 1];
+                    const timeLabels = todayLog.logs.map(l => l.activity);
+                    const timeValues = todayLog.logs.map(l => l.hours);
+                    
+                    document.getElementById('perf-insight').innerHTML = '<strong>Efficiency Note:</strong> "' + todayLog.note + '"';
+                    
+                    let breakdownHtml = '<ul style="list-style:none; padding:0;">';
+                    todayLog.logs.forEach(l => {{
+                        breakdownHtml += `<li style="margin-bottom:5px; display:flex; justify-content:space-between;">
+                            <span>${{l.activity}}</span>
+                            <span style="color:var(--bhairavi); font-weight:700;">${{l.hours}}h</span>
+                        </li>`;
+                    }});
+                    breakdownHtml += `<li style="margin-top:8px; border-top:1px solid rgba(255,255,255,0.05); padding-top:8px; display:flex; justify-content:space-between; font-weight:700; color:#fff;">
+                        <span>TOTAL SPENT</span>
+                        <span>${{todayLog.total}}h</span>
+                    </li></ul>`;
+                    document.getElementById('time-breakdown').innerHTML = breakdownHtml;
+
+                    const tCtx = document.getElementById('timeChart').getContext('2d');
+                    new Chart(tCtx, {{
+                        type: 'doughnut',
+                        data: {{
+                            labels: timeLabels,
+                            datasets: [{{
+                                data: timeValues,
+                                backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#64748b'],
+                                borderWidth: 0,
+                                hoverOffset: 4
+                            }}]
+                        }},
+                        options: {{
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {{ legend: {{ display: false }} }},
+                            cutout: '70%'
+                        }}
+                    }});
                 }}
-                script.remove(); 
-            }};
-            document.head.appendChild(script);
-        }}
-        refreshData();
+
+                refreshData();
         setInterval(refreshData, 3000);
     </script>
 </body>
