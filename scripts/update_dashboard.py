@@ -179,133 +179,134 @@ def update_html(header, days, stats, complexity_stats=None):
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>केसर दर्शिका | {stats['today_date']}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dashboard_data.js"></script>
     <style>
         :root {{
-            --primary: #A52A2A;
-            --primary-glow: rgba(165, 42, 42, 0.5);
-            --success: #FFD700;
-            --warning: #FF4500;
-            --danger: #800000;
-            --bg-dark: #050505;
-            --card-bg: rgba(15, 10, 10, 0.9);
-            --border: rgba(165, 42, 42, 0.3);
-            --bhairavi: #FFD700;
-            --accent-glow: rgba(255, 69, 0, 0.2);
+            --primary: #800000;
+            --accent: #D4AF37;
+            --bg-dark: #0A0A0A;
+            --card-bg: rgba(20, 20, 20, 0.8);
+            --border: rgba(212, 175, 55, 0.2);
+            --text-main: #E2E8F0;
+            --text-dim: #94A3B8;
         }}
-        @keyframes float {{ 0% {{ transform: translateY(0px); }} 50% {{ transform: translateY(-10px); }} 100% {{ transform: translateY(0px); }} }}
-        @keyframes rainbow {{ 0% {{ background-position: 0% 50%; }} 50% {{ background-position: 100% 50%; }} 100% {{ background-position: 0% 50%; }} }}
         
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{ 
-            background: var(--bg-dark); color: #f8fafc; font-family: 'Outfit', sans-serif; padding: 10px; 
-            background-image: radial-gradient(circle at 50% 50%, #1a0a0a 0%, #050505 100%);
+            background: var(--bg-dark); color: var(--text-main); font-family: 'Outfit', sans-serif; padding: 15px; 
+            background-image: 
+                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.15) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+            min-height: 100vh;
         }}
         .container {{ max-width: 600px; margin: auto; }}
         
-        .tripundra {{ display: flex; flex-direction: column; gap: 4px; align-items: center; margin: 20px 0; }}
-        .tripundra span {{ width: 50px; height: 4px; background: #FFD700; opacity: 0.8; border-radius: 10px; box-shadow: 0 0 15px #FF4500; }}
-        
-        .header {{ text-align: center; margin-bottom: 30px; }}
+        .header {{ text-align: center; padding: 40px 0; }}
         .header h1 {{ 
-            font-size: 42px; font-weight: 900; 
-            background: linear-gradient(to right, #FF9933, #FFD700, #FF4500); 
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
-            background-size: 200% auto; animation: rainbow 3s linear infinite;
+            font-size: 48px; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg, #D4AF37 0%, #F1D382 50%, #B8860B 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }}
+        .header .subtitle {{ color: var(--text-dim); font-size: 14px; text-transform: uppercase; letter-spacing: 4px; font-weight: 500; }}
         
         .glass-card {{
-            background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--border);
-            border-radius: 24px; padding: 20px; margin-bottom: 15px; position: relative;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease;
-        }}
-        .glass-card:hover {{ transform: scale(1.01); border-color: var(--primary); }}
-        
-        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-        .stat-card h3 {{ font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
-        .stat-card .value {{ font-size: 28px; font-weight: 800; }}
-        
-        .mission-card {{ border-left: 5px solid var(--primary); }}
-        .progress-bar {{ height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }}
-        .progress-fill {{ height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); transition: 1s; }}
-        
-        .chart-section h3 {{ font-size: 14px; margin-bottom: 15px; color: var(--bhairavi); display: flex; align-items: center; gap: 8px; }}
-        .chart-container {{ height: 250px; position: relative; }}
-        
-        .service-day {{ margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }}
-        .service-header {{ display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; color: #fff; }}
-        .service-item-detail {{ 
-            padding: 10px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; 
-            margin-bottom: 8px; border-left: 3px solid var(--primary); list-style: none;
+            background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--border);
+            border-radius: 20px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
         }}
         
-        .toolbar {{ display: flex; gap: 10px; margin-bottom: 15px; }}
-        .btn {{ 
-            flex: 1; background: var(--card-bg); border: 1px solid var(--border); color: #fff; 
-            padding: 10px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;
+        .stats-hero {{ border-top: 4px solid var(--accent); }}
+        .hero-label {{ font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }}
+        .hero-value {{ font-size: 48px; font-weight: 800; color: #FFF; line-height: 1; }}
+        
+        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }}
+        .stat-box {{ padding: 15px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }}
+        .stat-box h4 {{ font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }}
+        .stat-box .value {{ font-size: 22px; font-weight: 700; color: var(--accent); }}
+        
+        .progress-container {{ margin-top: 20px; }}
+        .progress-header {{ display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; font-weight: 600; }}
+        .progress-bar {{ height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }}
+        .progress-fill {{ height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }}
+        
+        .section-title {{ 
+            font-size: 13px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
         }}
-        .btn:hover {{ background: var(--primary); }}
+        .section-title::after {{ content: ""; flex: 1; height: 1px; background: var(--border); }}
+        
+        .chart-container {{ height: 260px; }}
+        
+        .service-log {{ list-style: none; }}
+        .day-group {{ margin-bottom: 25px; }}
+        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-size: 14px; border-left: 3px solid var(--accent); padding-left: 10px; }}
+        .service-entry {{ 
+            padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
+            border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+        }}
+        .service-entry:hover {{ background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.2); }}
+        .service-info {{ display: flex; flex-direction: column; }}
+        .service-name {{ font-weight: 600; font-size: 14px; color: #FFF; }}
+        .service-pkg {{ font-size: 10px; color: var(--text-dim); }}
+        .service-price {{ font-weight: 800; color: var(--accent); font-size: 14px; }}
+        
+        ::-webkit-scrollbar {{ width: 6px; }}
+        ::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 10px; }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="tripundra"><span></span><span></span><span></span></div>
+            <div class="subtitle">Personal Analytics</div>
             <h1>केसर दर्शिका</h1>
-            <p style="color: #94a3b8; font-size: 13px; font-weight: 500;">{data_dict['header']}</p>
-            <h2 style="font-size: 32px; margin-top: 10px;">{stats['today_date']}</h2>
+            <div style="font-size: 14px; color: var(--accent); font-weight: 600; letter-spacing: 1px;">{stats['today_date']}</div>
         </div>
 
-        <div class="glass-card" style="background: linear-gradient(135deg, #421010 0%, #050505 100%);">
-            <h3>PROJECTED MONTH END</h3>
-            <div class="value" style="font-size: 42px;">₹{stats['projected_total']}</div>
-            <p style="color: var(--success); font-weight: 600;">{stats['projection_sentence']}</p>
-        </div>
-
-        <div class="glass-card mission-card">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <h3>DAILY MISSION</h3>
-                <span style="font-size: 11px; background: var(--primary); padding: 2px 8px; border-radius: 20px;">{stats['recommended_today']} TARGET</span>
+        <div class="glass-card stats-hero">
+            <div class="hero-label">Projected Month End</div>
+            <div class="hero-value">₹{stats['projected_total']}</div>
+            <p style="margin-top: 10px; color: var(--text-dim); font-size: 12px;">{stats['projection_sentence']}</p>
+            
+            <div class="progress-container">
+                <div class="progress-header">
+                    <span>Mission Progress</span>
+                    <span>{stats['completed_today']} / {stats['recommended_today']} Services</span>
+                </div>
+                <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
             </div>
-            <div class="value" style="margin: 10px 0;">{stats['completed_today']} <small style="color: #64748b; font-size: 18px;">/ {stats['recommended_today']}</small></div>
-            <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
-            <p style="font-size: 12px; color: #94a3b8; font-style: italic;">{stats['explanation']}</p>
         </div>
 
         <div class="stats-grid">
-            <div class="glass-card stat-card">
-                <h3>TOTAL EARNED</h3>
-                <div class="value" style="color: var(--success);">₹{stats['total_earnings']}</div>
+            <div class="glass-card stat-box" style="margin-bottom: 0;">
+                <h4>Total Revenue</h4>
+                <div class="value">₹{stats['total_earnings']}</div>
             </div>
-            <div class="glass-card stat-card">
-                <h3>DAILY AVG</h3>
+            <div class="glass-card stat-box" style="margin-bottom: 0;">
+                <h4>Daily Average</h4>
                 <div class="value">₹{stats['avg_daily']}</div>
             </div>
         </div>
 
-        <div class="glass-card chart-section">
-            <h3>📈 PERFORMANCE TREND</h3>
+        <div class="glass-card">
+            <div class="section-title">Performance Insights</div>
             <div class="chart-container"><canvas id="earningsChart"></canvas></div>
         </div>
 
-        <div class="glass-card chart-section">
-            <h3>⏳ TIME ALLOCATION (TODAY)</h3>
+        <div class="glass-card">
+            <div class="section-title">Time Allocation</div>
             <div class="chart-container" style="height: 300px;"><canvas id="timeChart"></canvas></div>
-            <div id="perf-insight" style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.05); border-radius: 12px; border-left: 3px solid #10b981; font-size: 12px; color: #f8fafc; font-style: italic;"></div>
         </div>
 
-        <div class="glass-card chart-section">
-            <h3>🧠 COMPLEXITY VS ROI</h3>
+        <div class="glass-card">
+            <div class="section-title">ROI Analysis</div>
             <div class="chart-container" style="height: 300px;"><canvas id="complexityChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3>RECENT ACTIVITY</h3>
-                <input type="text" id="search" placeholder="Search..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; padding: 5px 10px; font-size: 12px;">
-            </div>
+            <div class="section-title" style="margin-bottom: 20px;">Execution History</div>
             <div id="services-html"></div>
         </div>
     </div>
@@ -314,111 +315,97 @@ def update_html(header, days, stats, complexity_stats=None):
         const data = {json.dumps(data_dict)};
         
         function renderUI(data) {{
-            // Progress Bar
+            // Animate Progress
             setTimeout(() => {{
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 document.getElementById('mission-fill').style.width = pct + '%';
-            }}, 500);
+            }}, 300);
 
-            // Earnings Chart
+            // Chart Configuration
+            const chartOptions = {{
+                responsive: true, maintainAspectRatio: false,
+                plugins: {{ legend: {{ display: false }} }},
+                scales: {{ 
+                    y: {{ grid: {{ color: 'rgba(255,255,255,0.03)' }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }},
+                    x: {{ grid: {{ display: false }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }}
+                }}
+            }};
+
+            // Revenue Trend
             new Chart(document.getElementById('earningsChart'), {{
                 type: 'line',
                 data: {{
                     labels: data.labels,
                     datasets: [{{
                         data: data.earnings,
-                        borderColor: '#FF9933',
-                        backgroundColor: 'rgba(255, 153, 51, 0.1)',
+                        borderColor: '#D4AF37',
+                        borderWidth: 2,
+                        backgroundColor: 'rgba(212, 175, 55, 0.05)',
                         tension: 0.4,
                         fill: true,
-                        pointRadius: 4,
-                        pointBackgroundColor: '#FF9933'
+                        pointRadius: 3,
+                        pointBackgroundColor: '#D4AF37'
                     }}]
                 }},
-                options: {{ 
-                    responsive: true, maintainAspectRatio: false, 
-                    plugins: {{ legend: {{ display: false }} }},
-                    scales: {{ y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }} }}, x: {{ grid: {{ display: false }} }} }}
-                }}
+                options: chartOptions
             }});
 
-            // Time Chart (Horizontal Bar)
+            // Time Breakdown
             if (data.time_logs && data.time_logs.length > 0) {{
                 const log = data.time_logs[data.time_logs.length-1];
-                document.getElementById('perf-insight').innerText = "Insight: " + log.note;
                 new Chart(document.getElementById('timeChart'), {{
                     type: 'bar',
                     data: {{
                         labels: log.logs.map(l => l.activity),
                         datasets: [{{
                             data: log.logs.map(l => l.hours),
-                            backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#FF9933', '#64748b'],
-                            borderRadius: 8
+                            backgroundColor: '#800000',
+                            borderRadius: 4
                         }}]
                     }},
                     options: {{ 
-                        indexAxis: 'y', responsive: true, maintainAspectRatio: false, 
-                        plugins: {{ legend: {{ display: false }} }},
-                        scales: {{ x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }} }}, y: {{ grid: {{ display: false }} }} }}
+                        ...chartOptions, indexAxis: 'y'
                     }}
                 }});
             }}
 
-            // Complexity Chart
+            // ROI Chart
             if (data.complexity_stats) {{
                 new Chart(document.getElementById('complexityChart'), {{
                     type: 'bar',
                     data: {{
-                        labels: data.complexity_stats.labels.map(l => 'Lvl ' + l),
+                        labels: data.complexity_stats.labels.map(l => 'LVL ' + l),
                         datasets: [{{
-                            label: 'Avg ROI (₹)',
                             data: data.complexity_stats.avg_earnings,
-                            backgroundColor: 'rgba(255, 215, 0, 0.6)',
-                            borderRadius: 6,
-                            yAxisID: 'y'
-                        }}, {{
-                            label: 'Volume',
-                            data: data.complexity_stats.counts,
-                            type: 'line',
-                            borderColor: '#FF4500',
-                            borderWidth: 3,
-                            yAxisID: 'y1'
+                            backgroundColor: 'rgba(212, 175, 55, 0.7)',
+                            borderRadius: 4
                         }}]
                     }},
-                    options: {{
-                        responsive: true, maintainAspectRatio: false,
-                        scales: {{
-                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-                            y1: {{ position: 'right', grid: {{ display: false }} }}
-                        }}
-                    }}
+                    options: chartOptions
                 }});
             }}
 
-            // Activity List
+            // Render Log
             const html = data.raw_days.map(d => `
-                <div class="service-day">
-                    <div class="service-header">
+                <div class="day-group">
+                    <div class="day-header">
                         <span>${{d.date}}</span>
-                        <span style="color: var(--success);">₹${{d.earnings}}</span>
+                        <span style="color: var(--accent);">₹${{d.earnings}}</span>
                     </div>
-                    <ul style="padding:0;">
+                    <div class="service-log">
                         ${{d.services.map(s => {{
                             const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
                             if (m) return `
-                                <li class="service-item-detail">
-                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                                        <b style="font-size:14px;">${{m[2]}}</b>
-                                        <small style="color:var(--bhairavi);">${{m[1]}}</small>
+                                <div class="service-entry">
+                                    <div class="service-info">
+                                        <span class="service-name">${{m[2]}}</span>
+                                        <span class="service-pkg">${{m[3]}}</span>
                                     </div>
-                                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8;">
-                                        <span>${{m[3]}}</span>
-                                        <b style="color:var(--success);">₹${{m[4]}}</b>
-                                    </div>
-                                </li>`;
-                            return `<li class="service-item-detail">• ${{s}}</li>`;
+                                    <div class="service-price">₹${{m[4]}}</div>
+                                </div>`;
+                            return `<div class="service-entry"><span class="service-name">${{s}}</span></div>`;
                         }}).join('')}}
-                    </ul>
+                    </div>
                 </div>
             `).join('');
             document.getElementById('services-html').innerHTML = html;
@@ -428,6 +415,13 @@ def update_html(header, days, stats, complexity_stats=None):
     </script>
 </body>
 </html>"""
+    
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
     
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
