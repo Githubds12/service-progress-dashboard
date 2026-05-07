@@ -338,6 +338,14 @@ def update_html(header, days, stats, complexity_stats=None):
                 <h4>EFFICIENCY</h4>
                 <div class="value">₹{stats['avg_daily']}</div>
             </div>
+            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.4s;">
+                <h4>AVG SERVICES</h4>
+                <div class="value">{stats['avg_daily_services']}</div>
+            </div>
+            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.5s;">
+                <h4>TOTAL UNITS</h4>
+                <div class="value">{stats['total_services']}</div>
+            </div>
         </div>
 
         <div class="glass-card" style="animation-delay: 0.4s;">
