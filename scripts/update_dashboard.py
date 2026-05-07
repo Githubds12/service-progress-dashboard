@@ -90,7 +90,7 @@ def calculate_stats(days):
     total_services = sum(len(d['services']) for d in days)
     total_earnings = sum(d['earnings'] for d in days)
     
-    start_date = date(2026, 4, 10)
+    start_date = date(2026, 5, 7)
     today_dt = date.today()
     days_elapsed = (today_dt - start_date).days
     if days_elapsed <= 0: days_elapsed = 1
@@ -154,7 +154,7 @@ def update_txt(body, stats):
 Dashboard Stats:
 - Total Services: {stats['total_services']}
 - Total Earnings: {stats['total_earnings']} rs
-- Average Daily Earning (over {stats['days_elapsed']} days since Apr 10): {stats['avg_daily']} rs/day
+- Average Daily Earning (over {stats['days_elapsed']} days since May 07): {stats['avg_daily']} rs/day
 - Average Daily Services: {stats['prev_avg_services']} -> {stats['avg_daily_services']} services/day
 - Target: {stats['target']} rs / day
 - Recovery Pace: {stats['prev_recovery_pace']} -> {stats['recovery_pace_services']} Services / day ({stats['recovery_pace_earnings']} rs/day for {stats['days_remaining']} days)
