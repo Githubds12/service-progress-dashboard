@@ -51,7 +51,14 @@ def parse_txt():
             is_history = True
             continue
         if re.match(r'^\d+(st|nd|rd|th)\s+[a-zA-Z]+,\s+[a-zA-Z]+$', line):
-            current_day = {'date': line, 'services': [], 'summary': '', 'earnings': 0, 'count': 0, 'is_history': is_history}
+            m_date = re.match(r'^(\d+)(?:st|nd|rd|th)\s+([a-zA-Z]+)', line)
+            day_num = int(m_date.group(1))
+            month_name = m_date.group(2)
+            # Support mapping month name to month number (assuming 2026)
+            try: month_num = datetime.strptime(month_name, '%B').month
+            except: month_num = 5
+            iso_date = f"2026-{month_num:02d}-{day_num:02d}"
+            current_day = {'date': line, 'iso_date': iso_date, 'services': [], 'summary': '', 'earnings': 0, 'count': 0, 'is_history': is_history}
             days.append(current_day)
         elif line.startswith('Daily Summary:'):
             current_day['summary'] = line
@@ -67,7 +74,7 @@ def parse_txt():
     today_str = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %A')}"
     if not any(today_str.split(',')[0] in d['date'] for d in days):
         body += f"\n{today_str}\nDaily Summary: 0 services, 0 rs\n----------"
-        days.append({'date': today_str, 'services': [], 'summary': 'Daily Summary: 0 services, 0 rs', 'earnings': 0, 'count': 0})
+        days.append({'date': today_str, 'iso_date': today_dt.strftime('%Y-%m-%d'), 'services': [], 'summary': 'Daily Summary: 0 services, 0 rs', 'earnings': 0, 'count': 0})
     return header, days, body, prev_avg_services, prev_recovery_pace
 
 def parse_time_log():
@@ -372,9 +379,11 @@ def update_html(header, days, stats, complexity_stats=None):
             <div class="section-title" style="margin-bottom: 25px;">
                 <span>Operational Intelligence Log</span>
             </div>
-            <div style="margin-bottom: 25px; position: relative;">
+            <div style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
                 <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
-                    style="width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; letter-spacing: 1px; outline: none; transition: all 0.3s ease;">
+                    style="flex: 1; min-width: 250px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; letter-spacing: 1px; outline: none; transition: all 0.3s ease;">
+                <input type="date" id="dateJump" 
+                    style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
             </div>
             <div id="log-html"></div>
         </div>
@@ -559,6 +568,16 @@ def update_html(header, days, stats, complexity_stats=None):
             document.getElementById('logSearch').addEventListener('input', (e) => {{
                 currentPage = 1;
                 renderLog(e.target.value);
+            }});
+
+            document.getElementById('dateJump').addEventListener('change', (e) => {{
+                const selectedDate = e.target.value;
+                const foundIdx = data.raw_days.findIndex(d => d.iso_date === selectedDate);
+                if (foundIdx !== -1) {{
+                    currentPage = Math.floor(foundIdx / pageSize) + 1;
+                    renderLog();
+                    document.getElementById('logSearch').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
+                }}
             }});
             
             // Initial render
