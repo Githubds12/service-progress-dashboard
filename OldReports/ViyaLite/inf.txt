@@ -1,0 +1,7 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-07
+com.kinkey.vgolite 1.2.6
+
+viya [d592a5d4-c688-4d74-9979-b9e882a048cb]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+[ViYa] Verification Code: 478302. Please DO NOT send to anyone
