@@ -12,8 +12,9 @@ import json
 # Load environment variables
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
-GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 REPORTS_DIR = os.getenv("REPORTS_DIR", r"c:\Users\Gorri\Documents\Reports")
+TIME_LOG_FILE = os.path.join(REPORTS_DIR, "trackers", "Time Log.txt")
+GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
 # Logging setup
 logging.basicConfig(
@@ -91,10 +92,47 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logging.error(f"Error processing image: {e}")
         await update.message.reply_text(f"❌ Error processing image: {str(e)}")
 
-async def debug_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    text = update.message.text
-    logging.info(f"Received text message: {text}")
-    await update.message.reply_text(f"I received your message: {text}. Send a Photo for OCR analysis.")
+async def log_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    if not context.args:
+        await update.message.reply_text("❌ Usage: `/log [Activity] [Hours]h [Note]`\nExample: `/log Coding 2h Fixed chart bug`", parse_mode='Markdown')
+        return
+
+    raw_args = " ".join(context.args)
+    match = re.search(r'^(.*?)\s+(\d+\.?\d*)h(?:\s+(.*))?$', raw_args)
+    
+    if not match:
+        await update.message.reply_text("❌ Invalid format. Use `[Activity] [Hours]h [Note]`", parse_mode='Markdown')
+        return
+
+    activity, hours, note = match.groups()
+    today_str = datetime.now().strftime("%A, %d-%m-%Y")
+    entry = f"- {activity.strip()}: {hours}h"
+    if note: entry += f" ({note.strip()})"
+    
+    try:
+        content = ""
+        if os.path.exists(TIME_LOG_FILE):
+            with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
+                content = f.read()
+        
+        date_header = f"Date: {today_str}"
+        if date_header in content:
+            parts = content.split(date_header)
+            subparts = parts[1].split('Date:', 1)
+            new_section = subparts[0].strip() + "\n" + entry
+            content = parts[0] + date_header + "\n" + new_section + ("\nDate:" + subparts[1] if len(subparts) > 1 else "")
+        else:
+            header_end = content.find('\n\n') + 2 if '\n\n' in content else 0
+            new_section = f"\nDate: {today_str}\n{entry}\nPerformance Note: First entry for today.\n"
+            content = content[:header_end] + new_section + content[header_end:]
+
+        with open(TIME_LOG_FILE, 'w', encoding='utf-8') as f:
+            f.write(content)
+            
+        await update.message.reply_text(f"✅ **Time Logged!**\nActivity: {activity}\nHours: {hours}h\n\nDashboard is updating...", parse_mode='Markdown')
+        subprocess.Popen([r".venv\Scripts\python", "scripts/update_dashboard.py"])
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error logging time: {str(e)}")
 
 if __name__ == '__main__':
     if not TOKEN:
@@ -105,8 +143,8 @@ if __name__ == '__main__':
     
     # Handlers
     application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("log", log_time))
     application.add_handler(MessageHandler(filters.PHOTO | filters.Document.IMAGE, handle_photo))
-    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), debug_msg))
     
     print("Bot is starting...")
     application.run_polling()
