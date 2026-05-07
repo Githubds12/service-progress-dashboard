@@ -359,13 +359,8 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.5s;">
-            <div class="section-title">Time Allocation Analysis</div>
-            <div class="chart-container" style="height: 400px;"><canvas id="pieChart"></canvas></div>
-        </div>
-
-        <div class="glass-card" style="animation-delay: 0.6s;">
-            <div class="section-title">Operational Value Matrix</div>
-            <div class="chart-container" style="height: 380px;"><canvas id="matrixChart"></canvas></div>
+            <div class="section-title">Daily Focus Distribution</div>
+            <div class="chart-container" style="height: 480px;"><canvas id="pieChart"></canvas></div>
         </div>
 
         <div class="glass-card" style="animation-delay: 0.7s;">
@@ -431,52 +426,35 @@ def update_html(header, days, stats, complexity_stats=None):
             // 2. Pie Chart (Task Distribution)
             if (data.time_logs && data.time_logs.length > 0) {{
                 const latestLog = data.time_logs[data.time_logs.length - 1];
+                const sortedLogs = [...latestLog.logs].sort((a, b) => b.hours - a.hours);
+                
                 new Chart(document.getElementById('pieChart'), {{
-                    type: 'doughnut',
+                    type: 'pie',
                     data: {{
-                        labels: latestLog.logs.map(l => l.activity),
+                        labels: sortedLogs.map(l => l.activity),
                         datasets: [{{
-                            data: latestLog.logs.map(l => l.hours),
-                            backgroundColor: ['#800000', '#D4AF37', '#B8860B', '#5C0000', '#A52A2A', '#F1D382', '#4A0404'],
-                            borderWidth: 0, hoverOffset: 25, borderRadius: 10
-                        }}]
-                    }},
-                    options: {{
-                        ...commonOptions, cutout: '75%',
-                        plugins: {{ ...commonOptions.plugins, legend: {{ display: true, position: 'bottom', labels: {{ padding: 25, color: '#94A3B8', font: {{ size: 13 }} }} }} }}
-                    }}
-                }});
-            }} else {{
-                document.getElementById('pieChart').parentElement.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:700;">[ DATA_ERROR: TIME_LOG_NOT_FOUND ]</div>';
-            }}
-
-            // 3. Matrix Chart (ROI)
-            if (data.complexity_stats) {{
-                new Chart(document.getElementById('matrixChart'), {{
-                    type: 'bar',
-                    data: {{
-                        labels: data.complexity_stats.labels.map(l => 'VALUE_LEVEL ' + l),
-                        datasets: [{{
-                            label: 'Avg Revenue (₹)',
-                            data: data.complexity_stats.avg_earnings,
-                            backgroundColor: '#D4AF37', borderRadius: 15,
-                        }}, {{
-                            label: 'Unit Volume',
-                            data: data.complexity_stats.counts,
-                            type: 'line', borderColor: '#800000', borderWidth: 5,
-                            tension: 0.4, pointRadius: 6, yAxisID: 'y1',
-                            pointBackgroundColor: '#800000'
+                            data: sortedLogs.map(l => l.hours),
+                            backgroundColor: ['#D4AF37', '#800000', '#B8860B', '#5C0000', '#A52A2A', '#F1D382', '#4A0404'],
+                            borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
+                            hoverOffset: 30
                         }}]
                     }},
                     options: {{
                         ...commonOptions,
-                        scales: {{
-                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
-                            y1: {{ position: 'right', grid: {{ display: false }}, ticks: {{ color: '#800000' }} }},
-                            x: {{ grid: {{ display: false }} }}
+                        plugins: {{ 
+                            ...commonOptions.plugins, 
+                            legend: {{ 
+                                display: true, 
+                                position: 'bottom', 
+                                labels: {{ 
+                                    padding: 25, color: '#FFF', font: {{ size: 14, weight: 600 }} 
+                                }} 
+                            }} 
                         }}
                     }}
                 }});
+            }} else {{
+                document.getElementById('pieChart').parentElement.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:700;">[ DATA_ERROR: TIME_LOG_NOT_FOUND ]</div>';
             }}
 
             // 4. Operational Log
