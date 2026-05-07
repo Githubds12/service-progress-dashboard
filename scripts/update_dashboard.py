@@ -101,7 +101,7 @@ def calculate_stats(days):
     current_services = sum(len(d['services']) for d in current_days)
     current_earnings = sum(d['earnings'] for d in current_days)
     
-    start_date = date(2026, 5, 7)
+    start_date = date(2026, 4, 10)
     today_dt = date.today()
     days_elapsed = (today_dt - start_date).days
     if days_elapsed <= 0: days_elapsed = 1

@@ -42,28 +42,30 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
     photo = update.message.photo[-1]
     file = await context.bot.get_file(photo.file_id)
     
-    # Save file temporarily
-    temp_path = "temp_screenshot.jpg"
+    # Save file temporarily with unique ID
+    msg_id = update.message.message_id
+    temp_path = f"temp_ss_{msg_id}.jpg"
     await file.download_to_drive(temp_path)
     
     await update.message.reply_text("🔍 Analyzing image with Gemini AI... please wait.")
     
     try:
-        # Load image for Gemini
-        img = Image.open(temp_path)
-        
-        # Define the prompt
-        prompt = """
-        Analyze this screenshot. It is either an Android App Info page or an SMS message.
-        1. Extract all visible text.
-        2. Identify the App Name, Package Name, and Version if present.
-        3. Identify any OTP (One-Time Password) if this is an SMS.
-        4. Return the data in a clear format.
-        """
-        
-        # Generate content
-        response = model.generate_content([prompt, img])
-        analysis_text = response.text
+        # Load image for Gemini (using context manager to ensure it closes)
+        with Image.open(temp_path) as img:
+            # Define the prompt
+            prompt = """
+            Analyze this screenshot. It is either an Android App Info page or an SMS message.
+            1. Extract all visible text.
+            2. Identify the App Name, Package Name, and Version if present.
+            3. Identify any OTP (One-Time Password) if this is an SMS.
+            4. Return the data in a clear format.
+            """
+            
+            # Generate content
+            response = model.generate_content([prompt, img])
+            analysis_text = response.text
+            
+            logging.info(f"Gemini Analysis Result: {analysis_text}")
         
         # Clean up temp file
         if os.path.exists(temp_path):
