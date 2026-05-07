@@ -183,7 +183,7 @@ def calculate_stats(days):
     # Gemini dynamic insight generation
     ai_insight = explanation
     try:
-        model = genai.GenerativeModel('gemini-1.5-flash')
+        model = genai.GenerativeModel('gemini-2.0-flash')
         prompt = f"""
         Analyze these cybersecurity service performance stats for today:
         - Total Services: {total_services}
