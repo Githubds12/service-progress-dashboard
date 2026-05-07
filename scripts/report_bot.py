@@ -75,6 +75,11 @@ async def handle_photo(update: Update, context: ContextTypes.DEFAULT_TYPE):
         logging.error(f"Error processing image: {e}")
         await update.message.reply_text(f"❌ Error processing image: {str(e)}")
 
+async def debug_msg(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    text = update.message.text
+    logging.info(f"Received text message: {text}")
+    await update.message.reply_text(f"I received your message: {text}. Send a Photo for OCR analysis.")
+
 if __name__ == '__main__':
     if not TOKEN:
         print("Error: TELEGRAM_BOT_TOKEN not found in .env file.")
@@ -84,7 +89,8 @@ if __name__ == '__main__':
     
     # Handlers
     application.add_handler(CommandHandler("start", start))
-    application.add_handler(MessageHandler(filters.PHOTO, handle_photo))
+    application.add_handler(MessageHandler(filters.PHOTO | filters.Document.IMAGE, handle_photo))
+    application.add_handler(MessageHandler(filters.TEXT & (~filters.COMMAND), debug_msg))
     
     print("Bot is starting...")
     application.run_polling()

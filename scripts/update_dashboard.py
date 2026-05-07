@@ -40,18 +40,24 @@ def parse_txt():
     current_day = None
     header = lines[0].strip() 
     
+    is_history = False
     for line in lines[1:]:
         line = line.strip()
         if not line or line == '----------':
             continue
         
+        if line.startswith('### Previous History'):
+            is_history = True
+            continue
+
         if re.match(r'^\d+(st|nd|rd|th)\s+[a-zA-Z]+,\s+[a-zA-Z]+$', line):
             current_day = {
                 'date': line,
                 'services': [],
                 'summary': '',
                 'earnings': 0,
-                'count': 0
+                'count': 0,
+                'is_history': is_history
             }
             days.append(current_day)
         elif line.startswith('Daily Summary:'):
@@ -87,16 +93,21 @@ def parse_txt():
     return header, days, body, prev_avg_services, prev_recovery_pace
 
 def calculate_stats(days):
+    current_days = [d for d in days if not d.get('is_history', False)]
+    
     total_services = sum(len(d['services']) for d in days)
     total_earnings = sum(d['earnings'] for d in days)
+    
+    current_services = sum(len(d['services']) for d in current_days)
+    current_earnings = sum(d['earnings'] for d in current_days)
     
     start_date = date(2026, 5, 7)
     today_dt = date.today()
     days_elapsed = (today_dt - start_date).days
     if days_elapsed <= 0: days_elapsed = 1
     
-    avg_daily = total_earnings / days_elapsed if days_elapsed > 0 else total_earnings
-    avg_daily_services = total_services / days_elapsed if days_elapsed > 0 else total_services
+    avg_daily = current_earnings / days_elapsed if days_elapsed > 0 else current_earnings
+    avg_daily_services = current_services / days_elapsed if days_elapsed > 0 else current_services
     
     target = 3000
     target_total = 3000 * 30 
