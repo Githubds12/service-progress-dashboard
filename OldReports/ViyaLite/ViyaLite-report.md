@@ -14,7 +14,7 @@ ViYa Lite implements a standard OTP-based authentication flow with integrated bo
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS | Primary channel for account authentication |
-| **Captcha** | fallback / Alibaba AWSC | Utilizes Alibaba Bot Manager and a fallback captcha system |
+| **Captcha** | Alibaba Slide CAPTCHA | Utilizes Alibaba Bot Manager (AWSC) with a silent fallback mechanism |
 | **Encryption** | Base64 Telemetry | Telemetry data (cola, mouse, signal) is base64 encoded |
 | **Rate Limits** | Unknown | No explicit rate limiting behavior was observed during capture |
 | **Endpoints Involved** | 5 | `/auth/account/checkAccount`, `/auth/security/getWebToken`, `/auth/account/getAuthSms`, `/auth/account/login` |

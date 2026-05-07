@@ -10,6 +10,6 @@ Google Play Store: ViYa Lite
 Service Description: ViYa Lite is a social networking app designed for lightweight use on Android devices.
 
 Flow: checkAccount -> getCaptchaSetting -> getAuthSms -> login
-Captcha Proof: https://web.kinkey.tech/h5-api/auth/account/getCaptchaSetting returns provider: fallback
+Captcha Proof: https://web.kinkey.tech/h5-api/auth/account/getCaptchaSetting returns provider: fallback (Alibaba Slide CAPTCHA)
 Rate Limit Proof: Unknown
 Encryption Proof: Request body contains base64 encoded telemetry fields (cola, mouse, signal) in the userEnv object.
