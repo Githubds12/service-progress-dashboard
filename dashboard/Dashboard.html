@@ -12,7 +12,7 @@
             --primary: #800000;
             --accent: #D4AF37;
             --bg-dark: #0A0A0A;
-            --card-bg: rgba(20, 20, 20, 0.8);
+            --card-bg: rgba(20, 20, 20, 0.9);
             --border: rgba(212, 175, 55, 0.2);
             --text-main: #E2E8F0;
             --text-dim: #94A3B8;
@@ -22,83 +22,79 @@
         body { 
             background: var(--bg-dark); color: var(--text-main); font-family: 'Outfit', sans-serif; padding: 15px; 
             background-image: 
-                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
             min-height: 100vh;
         }
         .container { max-width: 600px; margin: auto; }
         
-        .header { text-align: center; padding: 40px 0; }
+        .header { text-align: center; padding: 30px 0; }
         .header h1 { 
-            font-size: 48px; font-weight: 900; letter-spacing: -1px;
-            background: linear-gradient(135deg, #D4AF37 0%, #F1D382 50%, #B8860B 100%);
+            font-size: 44px; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFF 50%, #B8860B 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
         }
-        .header .subtitle { color: var(--text-dim); font-size: 14px; text-transform: uppercase; letter-spacing: 4px; font-weight: 500; }
+        .header .subtitle { color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 5px; font-weight: 600; margin-bottom: 5px; }
         
         .glass-card {
-            background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--border);
-            border-radius: 20px; padding: 25px; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: 24px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }
         
-        .stats-hero { border-top: 4px solid var(--accent); }
+        .stats-hero { border-top: 5px solid var(--accent); }
         .hero-label { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }
-        .hero-value { font-size: 48px; font-weight: 800; color: #FFF; line-height: 1; }
+        .hero-value { font-size: 44px; font-weight: 900; color: #FFF; line-height: 1; }
         
         .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .stat-box { padding: 15px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
-        .stat-box h4 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
-        .stat-box .value { font-size: 22px; font-weight: 700; color: var(--accent); }
+        .stat-box { padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }
+        .stat-box h4 { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        .stat-box .value { font-size: 24px; font-weight: 800; color: var(--accent); }
         
-        .progress-container { margin-top: 20px; }
-        .progress-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; font-weight: 600; }
-        .progress-bar { height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
-        .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }
+        .progress-container { margin-top: 25px; }
+        .progress-header { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; font-weight: 700; }
+        .progress-bar { height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }
+        .progress-fill { height: 100%; background: linear-gradient(90deg, #800000, #D4AF37); transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }
         
         .section-title { 
-            font-size: 13px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; 
-            letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+            font-size: 14px; font-weight: 800; color: #FFF; text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
         }
         .section-title::after { content: ""; flex: 1; height: 1px; background: var(--border); }
         
-        .chart-container { height: 260px; }
+        .chart-container { height: 280px; position: relative; }
         
-        .service-log { list-style: none; }
-        .day-group { margin-bottom: 25px; }
-        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-size: 14px; border-left: 3px solid var(--accent); padding-left: 10px; }
+        .day-group { margin-bottom: 30px; }
+        .day-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; font-size: 16px; border-left: 4px solid var(--accent); padding-left: 12px; }
         .service-entry { 
-            padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease;
         }
-        .service-entry:hover { background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.2); }
-        .service-info { display: flex; flex-direction: column; }
-        .service-name { font-weight: 600; font-size: 14px; color: #FFF; }
-        .service-pkg { font-size: 10px; color: var(--text-dim); }
-        .service-price { font-weight: 800; color: var(--accent); font-size: 14px; }
-        
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .service-entry:hover { background: rgba(212, 175, 55, 0.08); border-color: rgba(212, 175, 55, 0.3); transform: translateX(5px); }
+        .service-info { display: flex; flex-direction: column; gap: 4px; }
+        .service-name { font-weight: 700; font-size: 15px; color: #FFF; }
+        .service-pkg { font-size: 11px; color: var(--text-dim); }
+        .service-price { font-weight: 900; color: var(--accent); font-size: 16px; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="subtitle">Personal Analytics</div>
+            <div class="subtitle">Mission Intelligence</div>
             <h1>केसर दर्शिका</h1>
-            <div style="font-size: 14px; color: var(--accent); font-weight: 600; letter-spacing: 1px;">7th May, 2026</div>
+            <div style="font-size: 15px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-top: 5px;">7th May, 2026</div>
         </div>
 
         <div class="glass-card stats-hero">
             <div class="hero-label">Projected Month End</div>
             <div class="hero-value">₹36000.0</div>
-            <p style="margin-top: 10px; color: var(--text-dim); font-size: 12px;">Projected: ₹36000.0. Increase pace.</p>
+            <p style="margin-top: 12px; color: var(--text-dim); font-size: 13px; line-height: 1.5;">Projected: ₹36000.0. Increase pace.</p>
             
             <div class="progress-container">
                 <div class="progress-header">
-                    <span>Mission Progress</span>
-                    <span>3 / 10 Services</span>
+                    <span>Target Fulfillment</span>
+                    <span style="color: var(--accent);">3 / 10 Services</span>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
             </div>
@@ -106,57 +102,61 @@
 
         <div class="stats-grid">
             <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Total Revenue</h4>
+                <h4>Net Revenue</h4>
                 <div class="value">₹1200</div>
             </div>
             <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Daily Average</h4>
+                <h4>Performance Index</h4>
                 <div class="value">₹1200.0</div>
             </div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">Performance Insights</div>
+            <div class="section-title">Revenue Velocity</div>
             <div class="chart-container"><canvas id="earningsChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">Time Allocation</div>
-            <div class="chart-container" style="height: 300px;"><canvas id="timeChart"></canvas></div>
+            <div class="section-title">Focus Distribution</div>
+            <div class="chart-container" style="height: 320px;"><canvas id="timeChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">ROI Analysis</div>
-            <div class="chart-container" style="height: 300px;"><canvas id="complexityChart"></canvas></div>
+            <div class="section-title">Profitability Analysis</div>
+            <div class="chart-container" style="height: 320px;"><canvas id="complexityChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title" style="margin-bottom: 20px;">Execution History</div>
+            <div class="section-title" style="margin-bottom: 25px;">Mission Records</div>
             <div id="services-html"></div>
         </div>
     </div>
 
     <script>
-        const data = {"header": "7th May to 7th June", "stats": {"total_services": 3, "total_earnings": 1200, "avg_daily": 1200.0, "avg_daily_services": 3.0, "days_elapsed": 1, "recovery_pace_services": 7.7, "days_remaining": 29, "recommended_today": 10, "completed_today": 3, "explanation": "Target: \u20b990,000. Pace: 7.7 services/day.", "today_date": "7th May, 2026", "projected_total": 36000.0, "projection_sentence": "Projected: \u20b936000.0. Increase pace.", "prev_avg_services": 4.0, "prev_recovery_pace": 7.6}, "labels": ["7th May", "6th May", "3rd May", "2nd May", "1st May", "30th April", "29th April", "28th April", "27th April", "26th April", "25th April", "23rd April", "22nd April", "21st April", "20th April", "15th April"], "earnings": [1200, 400, 2000, 2500, 400, 1600, 8000, 1300, 2400, 6000, 4000, 4400, 3600, 1600, 3600, 2000], "services": [3, 1, 5, 6, 1, 4, 20, 3, 6, 15, 10, 11, 9, 4, 9, 5], "raw_days": [{"date": "7th May, Thursday", "services": ["1. [12:35] Utair - ru.utair.android - 400rs", "2. [14:15] Lyft - me.lyft.android - 400rs", "3. [15:05] ViYa Lite - com.kinkey.vgolite - 400rs"], "summary": "Daily Summary: 3 services, 1200 rs", "earnings": 1200, "count": 3, "is_history": false}, {"date": "6th May, Wednesday", "services": ["110. [17:15] JvSpinBet - org.jvspinbet.client - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "3rd May, Sunday", "services": ["105. [14:41] OpenTable - com.opentable - 400rs", "106. [15:33] Qantas - au.com.qantas.qantas - 400rs", "107. [15:52] JoyBuy - com.joybuy.jdi - 400rs", "108. [16:13] ForDeal - com.fordeal.android - 400rs", "109. [16:40] KwikPay - com.kwikpay.transfers - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "2nd May, Saturday", "services": ["99. [10:30] Deriv - com.deriv.home - 400rs", "100. [10:50] jameda - de.jameda - 500rs", "101. [11:10] weststein - com.weststeincard.weststein - 400rs", "102. [12:00] pro1bet - org.pro1bet.client - 400rs", "103. [12:10] xtb - com.xtb.xmobile2 - 400rs", "104. [13:15] Flowwow - com.flowwow - 400rs"], "summary": "Daily Summary: 6 services, 2500 rs", "earnings": 2500, "count": 6, "is_history": true}, {"date": "1st May, Friday", "services": ["98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "30th April, Thursday", "services": ["94. [09:50] Tuda - com.tuda.android - 400rs", "95. [10:10] Paybis - com.paybis - 400rs", "96. [10:50] Boxy - com.client.boxy - 400rs", "97. [11:10] ClubApparel - com.appemirates.clubapparel - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "29th April, Wednesday", "services": ["74. [10:00] wave - com.wave.personal - 400rs", "75. [10:15] eneba - com.eneba.app - 400rs", "76. [10:30] maxim - com.taxsee.taxsee - 400rs", "77. [10:45] Poppo Live - com.baitu.qingshu - 400rs", "78. [11:00] buz - com.interfun.buz - 400rs", "79. [11:15] Rednote - com.xingin.xhs - 400rs", "80. [11:30] ColdBet - org.coldbet.client - 400rs", "81. [11:45] Bitget - com.bitget.exchange - 400rs", "82. [12:00] Klook - com.klook - 400rs", "83. [12:15] SoulChill - com.live.soulchill - 400rs", "84. [11:10] PaySend - com.paysend.app - 400rs", "85. [11:53] AMO - com.xiaoyu.amo - 400rs", "86. [12:54] Tongcheng - com.tongcheng.android - 400rs", "87. [13:30] Gooobet - org.gooobet.client - 400rs", "88. [13:40] Live.me - com.cmcm.live - 400rs", "89. [14:30] E-GetS - com.egets.takeaways - 400rs", "90. [22:50] Luno - co.bitx.android.wallet - 400rs", "91. [23:20] 1xCasino - org.xbet.casino - 400rs", "92. [23:33] LC Waikiki - com.lcwaikiki.android - 400rs", "93. [23:42] EZVIZ - com.ezviz - 400rs"], "summary": "Daily Summary: 20 services, 8000 rs", "earnings": 8000, "count": 20, "is_history": true}, {"date": "28th April, Tuesday", "services": ["71. Pegasus - com.pozitron.pegasus - 400rs", "72. Daraz - com.daraz.android - 400rs", "73. ehamarkets - com.trade.trade211 - 500rs"], "summary": "Daily Summary: 3 services, 1300 rs", "earnings": 1300, "count": 3, "is_history": true}, {"date": "27th April, Monday", "services": ["65. BPme - com.bp.app.bpme.global.pl - 400rs", "66. Sage - com.sage.accounting - 400rs", "67. XTransfer - com.xtapp.xtransfer - 400rs", "68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke - 400rs", "69. iHerb - com.iherb - 400rs", "70. KuCoin - com.kubi.kucoin - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": true}, {"date": "26th April, Sunday", "services": ["50. IBI Smart - com.ibidev.ibitrade - 400rs", "51. BitDeer - com.bitdeer.cloud.android - 400rs", "52. Liki24 - com.liki24.customerapp - 400rs", "53. Raya - com.raya_app - 400rs", "54. Medal - tv.medal.recorder - 400rs", "55. YandexEats - ru.foodfox.client - 400rs", "56. BetLabel - org.betlabel.client - 400rs", "57. Shell Go+ India - com.shell.sitibv.shellgoplusindia - 400rs", "58. HoYoLab - com.mihoyo.hoyolab - 400rs", "59. nextBike - de.nextbike - 400rs", "60. RockFlow - team.flowai.android - 400rs", "61. WellTrade - com.weltrade.appterminal - 400rs", "62. CubaMessenger - com.cubamessenger.cubamessengerapp - 400rs", "63. Bolt Food - com.bolt.food - 400rs", "64. PokerBet - com.pokerbet.casino - 400rs"], "summary": "Daily Summary: 15 services, 6000 rs", "earnings": 6000, "count": 15, "is_history": true}, {"date": "25th April, Saturday", "services": ["39. TruthSocial - 400rs", "40. Partiful - 400rs", "41. NiceOne - 400rs", "42. Qmove - 400rs", "43. BetAndYou - 400rs", "44. MarathonBet - 400rs", "45. Nestle Waters - 400rs", "46. MiTrade - 400rs", "47. Yamaha Motor ID - 400rs", "48. Yolla - 400rs", "49. (Reserved/Skip) - 0rs"], "summary": "Daily Summary: 10 services, 4000 rs", "earnings": 4000, "count": 10, "is_history": true}, {"date": "23rd April, Thursday", "services": ["28. Healthify - 400rs", "29. Zid - 400rs", "30. XPariBet - 400rs", "31. Boyaa - 400rs", "32. WePlay - 400rs", "33. HepsiBurada - 400rs", "34. Canva - 400rs", "35. 4Fun - 400rs", "36. Yalla - 400rs", "37. AlmaGo - 400rs", "38. Catawiki - 400rs"], "summary": "Daily Summary: 11 services, 4400 rs", "earnings": 4400, "count": 11, "is_history": true}, {"date": "22nd April, Wednesday", "services": ["19. HapyLive - 400rs", "20. FastPari - 400rs", "21. Planity - 400rs", "22. Slack - 400rs", "23. Floward - 400rs", "24. Normal - 400rs", "25. BetJam - 400rs", "26. Ring - 400rs", "27. Qunar - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "21st April, Tuesday", "services": ["15. oneplus - 400rs", "16. mxt - com.vantagefx.app - 400rs", "17. Luckin Coffee - com.luckin.client.i - 400rs", "18. ccc - eu.ccc.mobile - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "20th April, Monday", "services": ["6. Blink - 400rs", "7. DBBet - 400rs", "8. ivi.ru - 400rs", "9. MoonPay - 400rs", "10. Palfish - 400rs", "11. PokaLive - 400rs", "12. Wix - 400rs", "13. Chamet - 400rs", "14. dolynk - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "15th April, Wednesday", "services": ["1. Hinge - 400rs", "2. Niimbot - 400rs", "3. VFS Global - 400rs", "4. yandexgo - 400rs", "5. yandexpro - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}], "time_logs": [{"date": "Thursday, 07-05-2026", "logs": [{"activity": "Dashboard Development", "hours": 2.0}, {"activity": "Bot Optimization", "hours": 1.5}, {"activity": "Data Management", "hours": 1.0}, {"activity": "Performance Monitoring", "hours": 0.5}, {"activity": "AI Automation & UI Upgrades", "hours": 1.5}, {"activity": "Security Research: ViYa Lite", "hours": 3.0}], "total": 9.5, "note": "Successfully automated the daily reporting pipeline and enhanced dashboard interactivity."}], "complexity_stats": {"labels": [1, 2, 3, 4, 5], "avg_earnings": [348.42, 360.0, 400.0, 400.0, 0.0], "counts": [221, 15, 7, 10, 3]}};
+        const data = {"header": "7th May to 7th June", "stats": {"total_services": 3, "total_earnings": 1200, "avg_daily": 1200.0, "avg_daily_services": 3.0, "days_elapsed": 1, "recovery_pace_services": 7.7, "days_remaining": 29, "recommended_today": 10, "completed_today": 3, "explanation": "Target: \u20b990,000. Pace: 7.7 services/day.", "today_date": "7th May, 2026", "projected_total": 36000.0, "projection_sentence": "Projected: \u20b936000.0. Increase pace.", "prev_avg_services": 3.0, "prev_recovery_pace": 7.7}, "labels": ["7th May", "6th May", "3rd May", "2nd May", "1st May", "30th April", "29th April", "28th April", "27th April", "26th April", "25th April", "23rd April", "22nd April", "21st April", "20th April", "15th April"], "earnings": [1200, 400, 2000, 2500, 400, 1600, 8000, 1300, 2400, 6000, 4000, 4400, 3600, 1600, 3600, 2000], "services": [3, 1, 5, 6, 1, 4, 20, 3, 6, 15, 10, 11, 9, 4, 9, 5], "raw_days": [{"date": "7th May, Thursday", "services": ["1. [12:35] Utair - ru.utair.android - 400rs", "2. [14:15] Lyft - me.lyft.android - 400rs", "3. [15:05] ViYa Lite - com.kinkey.vgolite - 400rs"], "summary": "Daily Summary: 3 services, 1200 rs", "earnings": 1200, "count": 3, "is_history": false}, {"date": "6th May, Wednesday", "services": ["110. [17:15] JvSpinBet - org.jvspinbet.client - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "3rd May, Sunday", "services": ["105. [14:41] OpenTable - com.opentable - 400rs", "106. [15:33] Qantas - au.com.qantas.qantas - 400rs", "107. [15:52] JoyBuy - com.joybuy.jdi - 400rs", "108. [16:13] ForDeal - com.fordeal.android - 400rs", "109. [16:40] KwikPay - com.kwikpay.transfers - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "2nd May, Saturday", "services": ["99. [10:30] Deriv - com.deriv.home - 400rs", "100. [10:50] jameda - de.jameda - 500rs", "101. [11:10] weststein - com.weststeincard.weststein - 400rs", "102. [12:00] pro1bet - org.pro1bet.client - 400rs", "103. [12:10] xtb - com.xtb.xmobile2 - 400rs", "104. [13:15] Flowwow - com.flowwow - 400rs"], "summary": "Daily Summary: 6 services, 2500 rs", "earnings": 2500, "count": 6, "is_history": true}, {"date": "1st May, Friday", "services": ["98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "30th April, Thursday", "services": ["94. [09:50] Tuda - com.tuda.android - 400rs", "95. [10:10] Paybis - com.paybis - 400rs", "96. [10:50] Boxy - com.client.boxy - 400rs", "97. [11:10] ClubApparel - com.appemirates.clubapparel - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "29th April, Wednesday", "services": ["74. [10:00] wave - com.wave.personal - 400rs", "75. [10:15] eneba - com.eneba.app - 400rs", "76. [10:30] maxim - com.taxsee.taxsee - 400rs", "77. [10:45] Poppo Live - com.baitu.qingshu - 400rs", "78. [11:00] buz - com.interfun.buz - 400rs", "79. [11:15] Rednote - com.xingin.xhs - 400rs", "80. [11:30] ColdBet - org.coldbet.client - 400rs", "81. [11:45] Bitget - com.bitget.exchange - 400rs", "82. [12:00] Klook - com.klook - 400rs", "83. [12:15] SoulChill - com.live.soulchill - 400rs", "84. [11:10] PaySend - com.paysend.app - 400rs", "85. [11:53] AMO - com.xiaoyu.amo - 400rs", "86. [12:54] Tongcheng - com.tongcheng.android - 400rs", "87. [13:30] Gooobet - org.gooobet.client - 400rs", "88. [13:40] Live.me - com.cmcm.live - 400rs", "89. [14:30] E-GetS - com.egets.takeaways - 400rs", "90. [22:50] Luno - co.bitx.android.wallet - 400rs", "91. [23:20] 1xCasino - org.xbet.casino - 400rs", "92. [23:33] LC Waikiki - com.lcwaikiki.android - 400rs", "93. [23:42] EZVIZ - com.ezviz - 400rs"], "summary": "Daily Summary: 20 services, 8000 rs", "earnings": 8000, "count": 20, "is_history": true}, {"date": "28th April, Tuesday", "services": ["71. Pegasus - com.pozitron.pegasus - 400rs", "72. Daraz - com.daraz.android - 400rs", "73. ehamarkets - com.trade.trade211 - 500rs"], "summary": "Daily Summary: 3 services, 1300 rs", "earnings": 1300, "count": 3, "is_history": true}, {"date": "27th April, Monday", "services": ["65. BPme - com.bp.app.bpme.global.pl - 400rs", "66. Sage - com.sage.accounting - 400rs", "67. XTransfer - com.xtapp.xtransfer - 400rs", "68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke - 400rs", "69. iHerb - com.iherb - 400rs", "70. KuCoin - com.kubi.kucoin - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": true}, {"date": "26th April, Sunday", "services": ["50. IBI Smart - com.ibidev.ibitrade - 400rs", "51. BitDeer - com.bitdeer.cloud.android - 400rs", "52. Liki24 - com.liki24.customerapp - 400rs", "53. Raya - com.raya_app - 400rs", "54. Medal - tv.medal.recorder - 400rs", "55. YandexEats - ru.foodfox.client - 400rs", "56. BetLabel - org.betlabel.client - 400rs", "57. Shell Go+ India - com.shell.sitibv.shellgoplusindia - 400rs", "58. HoYoLab - com.mihoyo.hoyolab - 400rs", "59. nextBike - de.nextbike - 400rs", "60. RockFlow - team.flowai.android - 400rs", "61. WellTrade - com.weltrade.appterminal - 400rs", "62. CubaMessenger - com.cubamessenger.cubamessengerapp - 400rs", "63. Bolt Food - com.bolt.food - 400rs", "64. PokerBet - com.pokerbet.casino - 400rs"], "summary": "Daily Summary: 15 services, 6000 rs", "earnings": 6000, "count": 15, "is_history": true}, {"date": "25th April, Saturday", "services": ["39. TruthSocial - 400rs", "40. Partiful - 400rs", "41. NiceOne - 400rs", "42. Qmove - 400rs", "43. BetAndYou - 400rs", "44. MarathonBet - 400rs", "45. Nestle Waters - 400rs", "46. MiTrade - 400rs", "47. Yamaha Motor ID - 400rs", "48. Yolla - 400rs", "49. (Reserved/Skip) - 0rs"], "summary": "Daily Summary: 10 services, 4000 rs", "earnings": 4000, "count": 10, "is_history": true}, {"date": "23rd April, Thursday", "services": ["28. Healthify - 400rs", "29. Zid - 400rs", "30. XPariBet - 400rs", "31. Boyaa - 400rs", "32. WePlay - 400rs", "33. HepsiBurada - 400rs", "34. Canva - 400rs", "35. 4Fun - 400rs", "36. Yalla - 400rs", "37. AlmaGo - 400rs", "38. Catawiki - 400rs"], "summary": "Daily Summary: 11 services, 4400 rs", "earnings": 4400, "count": 11, "is_history": true}, {"date": "22nd April, Wednesday", "services": ["19. HapyLive - 400rs", "20. FastPari - 400rs", "21. Planity - 400rs", "22. Slack - 400rs", "23. Floward - 400rs", "24. Normal - 400rs", "25. BetJam - 400rs", "26. Ring - 400rs", "27. Qunar - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "21st April, Tuesday", "services": ["15. oneplus - 400rs", "16. mxt - com.vantagefx.app - 400rs", "17. Luckin Coffee - com.luckin.client.i - 400rs", "18. ccc - eu.ccc.mobile - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "20th April, Monday", "services": ["6. Blink - 400rs", "7. DBBet - 400rs", "8. ivi.ru - 400rs", "9. MoonPay - 400rs", "10. Palfish - 400rs", "11. PokaLive - 400rs", "12. Wix - 400rs", "13. Chamet - 400rs", "14. dolynk - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "15th April, Wednesday", "services": ["1. Hinge - 400rs", "2. Niimbot - 400rs", "3. VFS Global - 400rs", "4. yandexgo - 400rs", "5. yandexpro - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}], "time_logs": [{"date": "Thursday, 07-05-2026", "logs": [{"activity": "Dashboard Development", "hours": 2.0}, {"activity": "Bot Optimization", "hours": 1.5}, {"activity": "Data Management", "hours": 1.0}, {"activity": "Performance Monitoring", "hours": 0.5}, {"activity": "AI Automation & UI Upgrades", "hours": 1.5}, {"activity": "Security Research: ViYa Lite", "hours": 3.0}], "total": 9.5, "note": "Successfully automated the daily reporting pipeline and enhanced dashboard interactivity."}], "complexity_stats": {"labels": [1, 2, 3, 4, 5], "avg_earnings": [348.42, 360.0, 400.0, 400.0, 0.0], "counts": [221, 15, 7, 10, 3]}};
         
         function renderUI(data) {
-            // Animate Progress
             setTimeout(() => {
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 document.getElementById('mission-fill').style.width = pct + '%';
             }, 300);
 
-            // Chart Configuration
-            const chartOptions = {
+            const commonOptions = {
                 responsive: true, maintainAspectRatio: false,
-                plugins: { legend: { display: false } },
+                plugins: { 
+                    legend: { display: false },
+                    tooltip: { 
+                        backgroundColor: 'rgba(10,10,10,0.9)', titleFont: { size: 14 },
+                        bodyFont: { size: 12 }, borderColor: 'rgba(212,175,55,0.3)', borderWidth: 1
+                    }
+                },
                 scales: { 
-                    y: { grid: { color: 'rgba(255,255,255,0.03)' }, ticks: { color: '#64748b', font: { size: 10 } } },
-                    x: { grid: { display: false }, ticks: { color: '#64748b', font: { size: 10 } } }
+                    y: { grid: { color: 'rgba(255,255,255,0.08)' }, ticks: { color: '#94A3B8', font: { size: 11 } } },
+                    x: { grid: { display: false }, ticks: { color: '#94A3B8', font: { size: 11 } } }
                 }
             };
 
-            // Revenue Trend
+            // Trend Chart
             new Chart(document.getElementById('earningsChart'), {
                 type: 'line',
                 data: {
@@ -164,18 +164,16 @@
                     datasets: [{
                         data: data.earnings,
                         borderColor: '#D4AF37',
-                        borderWidth: 2,
-                        backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#D4AF37'
+                        borderWidth: 3,
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.4, fill: true, pointRadius: 4, pointHoverRadius: 6,
+                        pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37'
                     }]
                 },
-                options: chartOptions
+                options: commonOptions
             });
 
-            // Time Breakdown
+            // Time Chart (Horizontal + Multi-color)
             if (data.time_logs && data.time_logs.length > 0) {
                 const log = data.time_logs[data.time_logs.length-1];
                 new Chart(document.getElementById('timeChart'), {
@@ -184,29 +182,45 @@
                         labels: log.logs.map(l => l.activity),
                         datasets: [{
                             data: log.logs.map(l => l.hours),
-                            backgroundColor: '#800000',
-                            borderRadius: 4
+                            backgroundColor: ['#800000', '#B8860B', '#D4AF37', '#A52A2A', '#5C0000', '#F1D382'],
+                            borderRadius: 6
                         }]
                     },
-                    options: { 
-                        ...chartOptions, indexAxis: 'y'
-                    }
+                    options: { ...commonOptions, indexAxis: 'y' }
                 });
             }
 
-            // ROI Chart
+            // Complexity Chart (Dual Axis)
             if (data.complexity_stats) {
                 new Chart(document.getElementById('complexityChart'), {
                     type: 'bar',
                     data: {
-                        labels: data.complexity_stats.labels.map(l => 'LVL ' + l),
+                        labels: data.complexity_stats.labels.map(l => 'Lvl ' + l),
                         datasets: [{
+                            label: 'Avg ROI (₹)',
                             data: data.complexity_stats.avg_earnings,
-                            backgroundColor: 'rgba(212, 175, 55, 0.7)',
-                            borderRadius: 4
+                            backgroundColor: 'rgba(212, 175, 55, 0.6)',
+                            borderRadius: 6,
+                            yAxisID: 'y'
+                        }, {
+                            label: 'Volume',
+                            data: data.complexity_stats.counts,
+                            type: 'line',
+                            borderColor: '#800000',
+                            borderWidth: 3,
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                            pointRadius: 4
                         }]
                     },
-                    options: chartOptions
+                    options: {
+                        ...commonOptions,
+                        scales: {
+                            y: { position: 'left', grid: { color: 'rgba(255,255,255,0.08)' } },
+                            y1: { position: 'right', grid: { display: false }, ticks: { color: '#800000' } },
+                            x: { grid: { display: false } }
+                        }
+                    }
                 });
             }
 

@@ -187,7 +187,7 @@ def update_html(header, days, stats, complexity_stats=None):
             --primary: #800000;
             --accent: #D4AF37;
             --bg-dark: #0A0A0A;
-            --card-bg: rgba(20, 20, 20, 0.8);
+            --card-bg: rgba(20, 20, 20, 0.9);
             --border: rgba(212, 175, 55, 0.2);
             --text-main: #E2E8F0;
             --text-dim: #94A3B8;
@@ -197,83 +197,79 @@ def update_html(header, days, stats, complexity_stats=None):
         body {{ 
             background: var(--bg-dark); color: var(--text-main); font-family: 'Outfit', sans-serif; padding: 15px; 
             background-image: 
-                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.15) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.05) 0%, transparent 50%);
+                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
             min-height: 100vh;
         }}
         .container {{ max-width: 600px; margin: auto; }}
         
-        .header {{ text-align: center; padding: 40px 0; }}
+        .header {{ text-align: center; padding: 30px 0; }}
         .header h1 {{ 
-            font-size: 48px; font-weight: 900; letter-spacing: -1px;
-            background: linear-gradient(135deg, #D4AF37 0%, #F1D382 50%, #B8860B 100%);
+            font-size: 44px; font-weight: 900; letter-spacing: -1px;
+            background: linear-gradient(135deg, #D4AF37 0%, #FFF 50%, #B8860B 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            margin-bottom: 5px;
         }}
-        .header .subtitle {{ color: var(--text-dim); font-size: 14px; text-transform: uppercase; letter-spacing: 4px; font-weight: 500; }}
+        .header .subtitle {{ color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 5px; font-weight: 600; margin-bottom: 5px; }}
         
         .glass-card {{
-            background: var(--card-bg); backdrop-filter: blur(20px); border: 1px solid var(--border);
-            border-radius: 20px; padding: 25px; margin-bottom: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+            background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--border);
+            border-radius: 24px; padding: 25px; margin-bottom: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
         }}
         
-        .stats-hero {{ border-top: 4px solid var(--accent); }}
+        .stats-hero {{ border-top: 5px solid var(--accent); }}
         .hero-label {{ font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }}
-        .hero-value {{ font-size: 48px; font-weight: 800; color: #FFF; line-height: 1; }}
+        .hero-value {{ font-size: 44px; font-weight: 900; color: #FFF; line-height: 1; }}
         
         .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }}
-        .stat-box {{ padding: 15px; border-radius: 16px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }}
-        .stat-box h4 {{ font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }}
-        .stat-box .value {{ font-size: 22px; font-weight: 700; color: var(--accent); }}
+        .stat-box {{ padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }}
+        .stat-box h4 {{ font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+        .stat-box .value {{ font-size: 24px; font-weight: 800; color: var(--accent); }}
         
-        .progress-container {{ margin-top: 20px; }}
-        .progress-header {{ display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 8px; font-weight: 600; }}
-        .progress-bar {{ height: 6px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }}
-        .progress-fill {{ height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent)); transition: 1.5s cubic-bezier(0.4, 0, 0.2, 1); }}
+        .progress-container {{ margin-top: 25px; }}
+        .progress-header {{ display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; font-weight: 700; }}
+        .progress-bar {{ height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }}
+        .progress-fill {{ height: 100%; background: linear-gradient(90deg, #800000, #D4AF37); transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }}
         
         .section-title {{ 
-            font-size: 13px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; 
-            letter-spacing: 2px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px;
+            font-size: 14px; font-weight: 800; color: #FFF; text-transform: uppercase; 
+            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
         }}
         .section-title::after {{ content: ""; flex: 1; height: 1px; background: var(--border); }}
         
-        .chart-container {{ height: 260px; }}
+        .chart-container {{ height: 280px; position: relative; }}
         
-        .service-log {{ list-style: none; }}
-        .day-group {{ margin-bottom: 25px; }}
-        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; font-weight: 700; font-size: 14px; border-left: 3px solid var(--accent); padding-left: 10px; }}
+        .day-group {{ margin-bottom: 30px; }}
+        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; font-size: 16px; border-left: 4px solid var(--accent); padding-left: 12px; }}
         .service-entry {{ 
-            padding: 12px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.03);
-            border-radius: 12px; margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;
+            padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease;
         }}
-        .service-entry:hover {{ background: rgba(212, 175, 55, 0.05); border-color: rgba(212, 175, 55, 0.2); }}
-        .service-info {{ display: flex; flex-direction: column; }}
-        .service-name {{ font-weight: 600; font-size: 14px; color: #FFF; }}
-        .service-pkg {{ font-size: 10px; color: var(--text-dim); }}
-        .service-price {{ font-weight: 800; color: var(--accent); font-size: 14px; }}
-        
-        ::-webkit-scrollbar {{ width: 6px; }}
-        ::-webkit-scrollbar-thumb {{ background: var(--border); border-radius: 10px; }}
+        .service-entry:hover {{ background: rgba(212, 175, 55, 0.08); border-color: rgba(212, 175, 55, 0.3); transform: translateX(5px); }}
+        .service-info {{ display: flex; flex-direction: column; gap: 4px; }}
+        .service-name {{ font-weight: 700; font-size: 15px; color: #FFF; }}
+        .service-pkg {{ font-size: 11px; color: var(--text-dim); }}
+        .service-price {{ font-weight: 900; color: var(--accent); font-size: 16px; }}
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <div class="subtitle">Personal Analytics</div>
+            <div class="subtitle">Mission Intelligence</div>
             <h1>केसर दर्शिका</h1>
-            <div style="font-size: 14px; color: var(--accent); font-weight: 600; letter-spacing: 1px;">{stats['today_date']}</div>
+            <div style="font-size: 15px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-top: 5px;">{stats['today_date']}</div>
         </div>
 
         <div class="glass-card stats-hero">
             <div class="hero-label">Projected Month End</div>
             <div class="hero-value">₹{stats['projected_total']}</div>
-            <p style="margin-top: 10px; color: var(--text-dim); font-size: 12px;">{stats['projection_sentence']}</p>
+            <p style="margin-top: 12px; color: var(--text-dim); font-size: 13px; line-height: 1.5;">{stats['projection_sentence']}</p>
             
             <div class="progress-container">
                 <div class="progress-header">
-                    <span>Mission Progress</span>
-                    <span>{stats['completed_today']} / {stats['recommended_today']} Services</span>
+                    <span>Target Fulfillment</span>
+                    <span style="color: var(--accent);">{stats['completed_today']} / {stats['recommended_today']} Services</span>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
             </div>
@@ -281,32 +277,32 @@ def update_html(header, days, stats, complexity_stats=None):
 
         <div class="stats-grid">
             <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Total Revenue</h4>
+                <h4>Net Revenue</h4>
                 <div class="value">₹{stats['total_earnings']}</div>
             </div>
             <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Daily Average</h4>
+                <h4>Performance Index</h4>
                 <div class="value">₹{stats['avg_daily']}</div>
             </div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">Performance Insights</div>
+            <div class="section-title">Revenue Velocity</div>
             <div class="chart-container"><canvas id="earningsChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">Time Allocation</div>
-            <div class="chart-container" style="height: 300px;"><canvas id="timeChart"></canvas></div>
+            <div class="section-title">Focus Distribution</div>
+            <div class="chart-container" style="height: 320px;"><canvas id="timeChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title">ROI Analysis</div>
-            <div class="chart-container" style="height: 300px;"><canvas id="complexityChart"></canvas></div>
+            <div class="section-title">Profitability Analysis</div>
+            <div class="chart-container" style="height: 320px;"><canvas id="complexityChart"></canvas></div>
         </div>
 
         <div class="glass-card">
-            <div class="section-title" style="margin-bottom: 20px;">Execution History</div>
+            <div class="section-title" style="margin-bottom: 25px;">Mission Records</div>
             <div id="services-html"></div>
         </div>
     </div>
@@ -315,23 +311,27 @@ def update_html(header, days, stats, complexity_stats=None):
         const data = {json.dumps(data_dict)};
         
         function renderUI(data) {{
-            // Animate Progress
             setTimeout(() => {{
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 document.getElementById('mission-fill').style.width = pct + '%';
             }}, 300);
 
-            // Chart Configuration
-            const chartOptions = {{
+            const commonOptions = {{
                 responsive: true, maintainAspectRatio: false,
-                plugins: {{ legend: {{ display: false }} }},
+                plugins: {{ 
+                    legend: {{ display: false }},
+                    tooltip: {{ 
+                        backgroundColor: 'rgba(10,10,10,0.9)', titleFont: {{ size: 14 }},
+                        bodyFont: {{ size: 12 }}, borderColor: 'rgba(212,175,55,0.3)', borderWidth: 1
+                    }}
+                }},
                 scales: {{ 
-                    y: {{ grid: {{ color: 'rgba(255,255,255,0.03)' }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }},
-                    x: {{ grid: {{ display: false }}, ticks: {{ color: '#64748b', font: {{ size: 10 }} }} }}
+                    y: {{ grid: {{ color: 'rgba(255,255,255,0.08)' }}, ticks: {{ color: '#94A3B8', font: {{ size: 11 }} }} }},
+                    x: {{ grid: {{ display: false }}, ticks: {{ color: '#94A3B8', font: {{ size: 11 }} }} }}
                 }}
             }};
 
-            // Revenue Trend
+            // Trend Chart
             new Chart(document.getElementById('earningsChart'), {{
                 type: 'line',
                 data: {{
@@ -339,18 +339,16 @@ def update_html(header, days, stats, complexity_stats=None):
                     datasets: [{{
                         data: data.earnings,
                         borderColor: '#D4AF37',
-                        borderWidth: 2,
-                        backgroundColor: 'rgba(212, 175, 55, 0.05)',
-                        tension: 0.4,
-                        fill: true,
-                        pointRadius: 3,
-                        pointBackgroundColor: '#D4AF37'
+                        borderWidth: 3,
+                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
+                        tension: 0.4, fill: true, pointRadius: 4, pointHoverRadius: 6,
+                        pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37'
                     }}]
                 }},
-                options: chartOptions
+                options: commonOptions
             }});
 
-            // Time Breakdown
+            // Time Chart (Horizontal + Multi-color)
             if (data.time_logs && data.time_logs.length > 0) {{
                 const log = data.time_logs[data.time_logs.length-1];
                 new Chart(document.getElementById('timeChart'), {{
@@ -359,29 +357,45 @@ def update_html(header, days, stats, complexity_stats=None):
                         labels: log.logs.map(l => l.activity),
                         datasets: [{{
                             data: log.logs.map(l => l.hours),
-                            backgroundColor: '#800000',
-                            borderRadius: 4
+                            backgroundColor: ['#800000', '#B8860B', '#D4AF37', '#A52A2A', '#5C0000', '#F1D382'],
+                            borderRadius: 6
                         }}]
                     }},
-                    options: {{ 
-                        ...chartOptions, indexAxis: 'y'
-                    }}
+                    options: {{ ...commonOptions, indexAxis: 'y' }}
                 }});
             }}
 
-            // ROI Chart
+            // Complexity Chart (Dual Axis)
             if (data.complexity_stats) {{
                 new Chart(document.getElementById('complexityChart'), {{
                     type: 'bar',
                     data: {{
-                        labels: data.complexity_stats.labels.map(l => 'LVL ' + l),
+                        labels: data.complexity_stats.labels.map(l => 'Lvl ' + l),
                         datasets: [{{
+                            label: 'Avg ROI (₹)',
                             data: data.complexity_stats.avg_earnings,
-                            backgroundColor: 'rgba(212, 175, 55, 0.7)',
-                            borderRadius: 4
+                            backgroundColor: 'rgba(212, 175, 55, 0.6)',
+                            borderRadius: 6,
+                            yAxisID: 'y'
+                        }}, {{
+                            label: 'Volume',
+                            data: data.complexity_stats.counts,
+                            type: 'line',
+                            borderColor: '#800000',
+                            borderWidth: 3,
+                            yAxisID: 'y1',
+                            tension: 0.3,
+                            pointRadius: 4
                         }}]
                     }},
-                    options: chartOptions
+                    options: {{
+                        ...commonOptions,
+                        scales: {{
+                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.08)' }} }},
+                            y1: {{ position: 'right', grid: {{ display: false }}, ticks: {{ color: '#800000' }} }},
+                            x: {{ grid: {{ display: false }} }}
+                        }}
+                    }}
                 }});
             }}
 
@@ -415,6 +429,13 @@ def update_html(header, days, stats, complexity_stats=None):
     </script>
 </body>
 </html>"""
+    
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
     
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
