@@ -4,12 +4,12 @@ from datetime import datetime, date
 import json
 import math
 import subprocess
-import google.generativeai as genai
 import csv
+from google import genai
 from dotenv import load_dotenv
 
 load_dotenv()
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
 TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
@@ -146,9 +146,8 @@ def calculate_stats(days):
 
     explanation = f"Target: ₹90,000. Pace: {round(recovery_pace_services, 1)} services/day."
     try:
-        model = genai.GenerativeModel('gemini-pro-latest')
         prompt = f"Analyze progress: {total_earnings}/90000. Completed today: {completed_today}/{recommended_today}. Write 1-2 sentence tip with Sanskrit header."
-        response = model.generate_content(prompt)
+        response = client.models.generate_content(model='gemini-2.0-flash', contents=prompt)
         if response and response.text: explanation = response.text.strip().replace('"', '')
     except: pass
 
@@ -499,37 +498,6 @@ def update_html(header, days, stats, complexity_stats=None):
 </html>"""
     
     # Save files
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
-    
-    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
-
-def update_readme(stats, time_logs):
-    path = os.path.join(REPORT_DIR, 'README.md')
-    
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
-    
-    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
-    
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
-    
-    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
-    
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
-    
-    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
-    
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
     
