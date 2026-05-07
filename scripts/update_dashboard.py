@@ -483,7 +483,15 @@ def update_html(header, days, stats, complexity_stats=None):
                         labels: sortedLogs.map(l => l.activity),
                         datasets: [{{
                             data: sortedLogs.map(l => l.hours),
-                            backgroundColor: ['#D4AF37', '#800000', '#B8860B', '#5C0000', '#A52A2A', '#F1D382', '#4A0404'],
+                            backgroundColor: [
+                                'rgba(212, 175, 55, 0.25)', // Kesar Gold
+                                'rgba(139, 0, 0, 0.25)',   // Bhairavi Red
+                                'rgba(184, 134, 11, 0.25)', // Dark Gold
+                                'rgba(92, 0, 0, 0.25)',     // Deep Red
+                                'rgba(165, 42, 42, 0.25)',  // Brown
+                                'rgba(241, 211, 130, 0.25)', // Light Gold
+                                'rgba(74, 4, 4, 0.25)'      // Darker Red
+                            ],
                             borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
                             hoverOffset: 30
                         }}]
