@@ -920,10 +920,6 @@ def update_html(header, days, stats):
                         }}
                     }});
                 }}
-            }} catch (e) {{
-                console.error("Render error:", e);
-            }}
-        }}
 
                 // Time Allocation Chart
                 if (data.time_logs && data.time_logs.length > 0) {{
@@ -966,6 +962,10 @@ def update_html(header, days, stats):
                         }}
                     }});
                 }}
+            }} catch (e) {{
+                console.error("Render error:", e);
+            }}
+        }}
 
         function refreshData() {{
             const script = document.createElement(\'script\');

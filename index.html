@@ -617,10 +617,6 @@
                         }
                     });
                 }
-            } catch (e) {
-                console.error("Render error:", e);
-            }
-        }
 
                 // Time Allocation Chart
                 if (data.time_logs && data.time_logs.length > 0) {
@@ -663,6 +659,10 @@
                         }
                     });
                 }
+            } catch (e) {
+                console.error("Render error:", e);
+            }
+        }
 
         function refreshData() {
             const script = document.createElement('script');
