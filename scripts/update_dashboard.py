@@ -72,27 +72,33 @@ def parse_txt():
 
 def parse_time_log():
     if not os.path.exists(TIME_LOG_FILE): return []
-    with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
-        content = f.read()
-    days = []
-    entries = re.split(r'Date:\s+', content)[1:]
-    for entry in entries:
-        lines = entry.strip().split('\n')
-        date_str = lines[0]
-        logs = []
-        perf_note = ""
-        total_h = 0.0
-        for line in lines[1:]:
-            if line.startswith('-'):
-                match = re.search(r'-\s+(.*?):\s+(\d+\.?\d*)h', line)
-                if match:
-                    act, h = match.groups()
-                    logs.append({'activity': act, 'hours': float(h)})
-                    total_h += float(h)
-            elif "Performance Note:" in line:
-                perf_note = line.split('Performance Note:')[1].strip()
-        days.append({'date': date_str, 'logs': logs, 'total': total_h, 'note': perf_note})
-    return days
+    try:
+        with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
+            content = f.read()
+        days = []
+        # Support both 'Date:' and 'Date: ' formats
+        entries = re.split(r'Date:\s*', content)
+        for entry in entries:
+            if not entry.strip() or '###' in entry[:10]: continue
+            lines = entry.strip().split('\n')
+            date_str = lines[0].strip()
+            logs = []
+            total_h = 0.0
+            for line in lines:
+                line = line.strip()
+                if line.startswith('-'):
+                    # Match activity and hours (supports 2h, 1.5h, etc.)
+                    match = re.search(r'-\s*(.*?):\s*(\d+\.?\d*)\s*h', line, re.IGNORECASE)
+                    if match:
+                        act, h = match.groups()
+                        logs.append({'activity': act.strip(), 'hours': float(h)})
+                        total_h += float(h)
+            if logs:
+                days.append({'date': date_str, 'logs': logs, 'total': total_h})
+        return days
+    except Exception as e:
+        print(f"Error parsing time log: {e}")
+        return []
 
 def calculate_complexity_stats():
     csv_path = os.path.join(REPORT_DIR, "dashboard", "powerbi_master_data.csv")
@@ -181,217 +187,279 @@ def update_html(header, days, stats, complexity_stats=None):
     <title>केसर दर्शिका | {stats['today_date']}</title>
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="dashboard_data.js"></script>
     <style>
         :root {{
             --primary: #800000;
             --accent: #D4AF37;
-            --bg-dark: #0A0A0A;
-            --card-bg: rgba(20, 20, 20, 0.9);
-            --border: rgba(212, 175, 55, 0.2);
-            --text-main: #E2E8F0;
+            --bg-dark: #070707;
+            --card-bg: rgba(15, 15, 15, 0.85);
+            --border: rgba(212, 175, 55, 0.3);
+            --text-main: #FFFFFF;
             --text-dim: #94A3B8;
+            --glow: rgba(212, 175, 55, 0.4);
         }}
         
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
         body {{ 
             background: var(--bg-dark); color: var(--text-main); font-family: 'Outfit', sans-serif; padding: 15px; 
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(128, 0, 0, 0.2) 0%, transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(212, 175, 55, 0.1) 0%, transparent 50%);
-            min-height: 100vh;
+            overflow-x: hidden; min-height: 100vh;
         }}
-        .container {{ max-width: 600px; margin: auto; }}
         
-        .header {{ text-align: center; padding: 30px 0; }}
+        /* Animated Gradient Background */
+        .bg-glow {{
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background: 
+                radial-gradient(circle at 10% 10%, rgba(128, 0, 0, 0.15) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0%, transparent 100%);
+            animation: bgPulse 20s infinite alternate ease-in-out;
+        }}
+        @keyframes bgPulse {{
+            0% {{ transform: scale(1); opacity: 0.8; }}
+            100% {{ transform: scale(1.1); opacity: 1; }}
+        }}
+
+        .container {{ max-width: 600px; margin: auto; position: relative; z-index: 1; }}
+        
+        .header {{ text-align: center; padding: 50px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); }}
+        @keyframes fadeInDown {{
+            from {{ opacity: 0; transform: translateY(-30px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
+        
         .header h1 {{ 
-            font-size: 44px; font-weight: 900; letter-spacing: -1px;
+            font-size: 56px; font-weight: 900; letter-spacing: -3px;
             background: linear-gradient(135deg, #D4AF37 0%, #FFF 50%, #B8860B 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 20px var(--glow));
+            margin-bottom: 5px;
         }}
-        .header .subtitle {{ color: var(--text-dim); font-size: 12px; text-transform: uppercase; letter-spacing: 5px; font-weight: 600; margin-bottom: 5px; }}
+        .header .subtitle {{ color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 7px; font-weight: 800; opacity: 0.9; }}
         
         .glass-card {{
-            background: var(--card-bg); backdrop-filter: blur(25px); border: 1px solid var(--border);
-            border-radius: 24px; padding: 25px; margin-bottom: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+            background: var(--card-bg); backdrop-filter: blur(40px); border: 1px solid var(--border);
+            border-radius: 32px; padding: 30px; margin-bottom: 25px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeInUp 1s ease-out backwards;
+            position: relative; overflow: hidden;
+        }}
+        .glass-card:hover {{ 
+            transform: translateY(-10px) scale(1.02); 
+            border-color: var(--accent); 
+            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2); 
         }}
         
-        .stats-hero {{ border-top: 5px solid var(--accent); }}
-        .hero-label {{ font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 700; margin-bottom: 5px; }}
-        .hero-value {{ font-size: 44px; font-weight: 900; color: #FFF; line-height: 1; }}
+        @keyframes fadeInUp {{
+            from {{ opacity: 0; transform: translateY(40px); }}
+            to {{ opacity: 1; transform: translateY(0); }}
+        }}
         
-        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }}
-        .stat-box {{ padding: 20px; border-radius: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); }}
-        .stat-box h4 {{ font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
-        .stat-box .value {{ font-size: 24px; font-weight: 800; color: var(--accent); }}
+        .stats-hero {{ border-top: 8px solid var(--accent); }}
+        .hero-label {{ font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px; }}
+        .hero-value {{ font-size: 52px; font-weight: 900; color: #FFF; line-height: 1; text-shadow: 0 0 30px rgba(212, 175, 55, 0.2); }}
         
-        .progress-container {{ margin-top: 25px; }}
-        .progress-header {{ display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 10px; font-weight: 700; }}
-        .progress-bar {{ height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; }}
-        .progress-fill {{ height: 100%; background: linear-gradient(90deg, #800000, #D4AF37); transition: 2s cubic-bezier(0.4, 0, 0.2, 1); }}
+        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }}
+        .stat-box {{ padding: 25px; border-radius: 28px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); text-align: center; }}
+        .stat-box h4 {{ font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }}
+        .stat-box .value {{ font-size: 28px; font-weight: 950; color: var(--accent); text-shadow: 0 0 15px var(--glow); }}
+        
+        .progress-container {{ margin-top: 35px; }}
+        .progress-header {{ display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 15px; font-weight: 900; color: #FFF; }}
+        .progress-bar {{ height: 12px; background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }}
+        .progress-fill {{ 
+            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent), #FFF); 
+            transition: 3s cubic-bezier(0.34, 1.56, 0.64, 1); 
+            box-shadow: 0 0 20px var(--accent);
+            position: relative;
+        }}
+        .progress-fill::after {{
+            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+            animation: progressFlow 2s infinite linear;
+        }}
+        @keyframes progressFlow {{ 0% {{ transform: translateX(-100%); }} 100% {{ transform: translateX(100%); }} }}
         
         .section-title {{ 
-            font-size: 14px; font-weight: 800; color: #FFF; text-transform: uppercase; 
-            letter-spacing: 2px; margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+            font-size: 15px; font-weight: 950; color: #FFF; text-transform: uppercase; 
+            letter-spacing: 3px; margin-bottom: 25px; display: flex; align-items: center; gap: 18px;
         }}
-        .section-title::after {{ content: ""; flex: 1; height: 1px; background: var(--border); }}
+        .section-title::after {{ content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0.4; }}
         
-        .chart-container {{ height: 280px; position: relative; }}
+        .chart-container {{ height: 320px; position: relative; padding: 10px; }}
         
-        .day-group {{ margin-bottom: 30px; }}
-        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; font-weight: 800; font-size: 16px; border-left: 4px solid var(--accent); padding-left: 12px; }}
+        .day-group {{ margin-bottom: 40px; }}
+        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 900; font-size: 18px; color: #FFF; border-left: 6px solid var(--accent); padding-left: 18px; }}
         .service-entry {{ 
-            padding: 15px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 16px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease;
+            padding: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
+            border-radius: 24px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s ease; cursor: default;
         }}
-        .service-entry:hover {{ background: rgba(212, 175, 55, 0.08); border-color: rgba(212, 175, 55, 0.3); transform: translateX(5px); }}
-        .service-info {{ display: flex; flex-direction: column; gap: 4px; }}
-        .service-name {{ font-weight: 700; font-size: 15px; color: #FFF; }}
-        .service-pkg {{ font-size: 11px; color: var(--text-dim); }}
-        .service-price {{ font-weight: 900; color: var(--accent); font-size: 16px; }}
+        .service-entry:hover {{ background: rgba(212, 175, 55, 0.15); border-color: var(--accent); transform: translateX(8px); }}
+        .service-info {{ display: flex; flex-direction: column; gap: 6px; }}
+        .service-name {{ font-weight: 800; font-size: 17px; color: #FFF; }}
+        .service-pkg {{ font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }}
+        .service-price {{ font-weight: 1000; color: var(--accent); font-size: 20px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }}
+        
+        ::-webkit-scrollbar {{ width: 8px; }}
+        ::-webkit-scrollbar-thumb {{ background: var(--accent); border-radius: 10px; }}
     </style>
 </head>
 <body>
+    <div class="bg-glow"></div>
     <div class="container">
         <div class="header">
-            <div class="subtitle">Mission Intelligence</div>
+            <div class="subtitle">Neural Operations Hub</div>
             <h1>केसर दर्शिका</h1>
-            <div style="font-size: 15px; color: var(--accent); font-weight: 700; letter-spacing: 1px; margin-top: 5px;">{stats['today_date']}</div>
+            <div style="font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 2px; margin-top: 8px; text-shadow: 0 0 15px var(--glow);">
+                {stats['today_date']}
+            </div>
         </div>
 
-        <div class="glass-card stats-hero">
-            <div class="hero-label">Projected Month End</div>
+        <div class="glass-card stats-hero" style="animation-delay: 0.1s;">
+            <div class="hero-label">Terminal Revenue Prediction</div>
             <div class="hero-value">₹{stats['projected_total']}</div>
-            <p style="margin-top: 12px; color: var(--text-dim); font-size: 13px; line-height: 1.5;">{stats['projection_sentence']}</p>
+            <p style="margin-top: 18px; color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;">{stats['projection_sentence']}</p>
             
             <div class="progress-container">
                 <div class="progress-header">
-                    <span>Target Fulfillment</span>
-                    <span style="color: var(--accent);">{stats['completed_today']} / {stats['recommended_today']} Services</span>
+                    <span>MISSION LOAD</span>
+                    <span style="color: var(--accent); text-shadow: 0 0 15px var(--glow); font-weight: 1000;">{stats['completed_today']} / {stats['recommended_today']} UNITS</span>
                 </div>
                 <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
             </div>
         </div>
 
         <div class="stats-grid">
-            <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Net Revenue</h4>
+            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.2s;">
+                <h4>TOTAL HARVEST</h4>
                 <div class="value">₹{stats['total_earnings']}</div>
             </div>
-            <div class="glass-card stat-box" style="margin-bottom: 0;">
-                <h4>Performance Index</h4>
+            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.3s;">
+                <h4>EFFICIENCY</h4>
                 <div class="value">₹{stats['avg_daily']}</div>
             </div>
         </div>
 
-        <div class="glass-card">
-            <div class="section-title">Revenue Velocity</div>
-            <div class="chart-container"><canvas id="earningsChart"></canvas></div>
+        <div class="glass-card" style="animation-delay: 0.4s;">
+            <div class="section-title">Revenue Trajectory</div>
+            <div class="chart-container"><canvas id="trendChart"></canvas></div>
         </div>
 
-        <div class="glass-card">
-            <div class="section-title">Focus Distribution</div>
-            <div class="chart-container" style="height: 320px;"><canvas id="timeChart"></canvas></div>
+        <div class="glass-card" style="animation-delay: 0.5s;">
+            <div class="section-title">Time Allocation Analysis</div>
+            <div class="chart-container" style="height: 400px;"><canvas id="pieChart"></canvas></div>
         </div>
 
-        <div class="glass-card">
-            <div class="section-title">Profitability Analysis</div>
-            <div class="chart-container" style="height: 320px;"><canvas id="complexityChart"></canvas></div>
+        <div class="glass-card" style="animation-delay: 0.6s;">
+            <div class="section-title">Operational Value Matrix</div>
+            <div class="chart-container" style="height: 380px;"><canvas id="matrixChart"></canvas></div>
         </div>
 
-        <div class="glass-card">
-            <div class="section-title" style="margin-bottom: 25px;">Mission Records</div>
-            <div id="services-html"></div>
+        <div class="glass-card" style="animation-delay: 0.7s;">
+            <div class="section-title" style="margin-bottom: 35px;">Operational Intelligence Log</div>
+            <div id="log-html"></div>
         </div>
     </div>
 
     <script>
         const data = {json.dumps(data_dict)};
         
-        function renderUI(data) {{
+        function initDashboard(data) {{
+            // Animate Units
             setTimeout(() => {{
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 document.getElementById('mission-fill').style.width = pct + '%';
-            }}, 300);
+            }}, 600);
+
+            Chart.defaults.color = 'rgba(255,255,255,0.7)';
+            Chart.defaults.font.family = "'Outfit', sans-serif";
+            Chart.defaults.font.weight = '600';
 
             const commonOptions = {{
                 responsive: true, maintainAspectRatio: false,
+                animation: {{ duration: 2500, easing: 'easeOutQuart' }},
                 plugins: {{ 
                     legend: {{ display: false }},
                     tooltip: {{ 
-                        backgroundColor: 'rgba(10,10,10,0.9)', titleFont: {{ size: 14 }},
-                        bodyFont: {{ size: 12 }}, borderColor: 'rgba(212,175,55,0.3)', borderWidth: 1
+                        backgroundColor: 'rgba(5, 5, 5, 0.98)', titleColor: '#D4AF37',
+                        bodyColor: '#FFF', borderColor: '#D4AF37', borderWidth: 1,
+                        padding: 15, cornerRadius: 16, displayColors: false,
+                        titleFont: {{ size: 16, weight: 800 }}, bodyFont: {{ size: 14 }}
                     }}
                 }},
                 scales: {{ 
-                    y: {{ grid: {{ color: 'rgba(255,255,255,0.08)' }}, ticks: {{ color: '#94A3B8', font: {{ size: 11 }} }} }},
-                    x: {{ grid: {{ display: false }}, ticks: {{ color: '#94A3B8', font: {{ size: 11 }} }} }}
+                    y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ padding: 10 }} }},
+                    x: {{ grid: {{ display: false }}, ticks: {{ padding: 10 }} }}
                 }}
             }};
 
-            // Trend Chart
-            new Chart(document.getElementById('earningsChart'), {{
+            // 1. Line Chart
+            new Chart(document.getElementById('trendChart'), {{
                 type: 'line',
                 data: {{
                     labels: data.labels,
                     datasets: [{{
                         data: data.earnings,
                         borderColor: '#D4AF37',
-                        borderWidth: 3,
-                        backgroundColor: 'rgba(212, 175, 55, 0.1)',
-                        tension: 0.4, fill: true, pointRadius: 4, pointHoverRadius: 6,
-                        pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37'
+                        borderWidth: 5,
+                        backgroundColor: (ctx) => {{
+                            const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 350);
+                            gradient.addColorStop(0, 'rgba(212, 175, 55, 0.3)');
+                            gradient.addColorStop(1, 'transparent');
+                            return gradient;
+                        }},
+                        tension: 0.45, fill: true, pointRadius: 7, pointHoverRadius: 10,
+                        pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37', pointBorderWidth: 4
                     }}]
                 }},
                 options: commonOptions
             }});
 
-            // Time Chart (Horizontal + Multi-color)
+            // 2. Pie Chart (Task Distribution)
             if (data.time_logs && data.time_logs.length > 0) {{
-                const log = data.time_logs[data.time_logs.length-1];
-                new Chart(document.getElementById('timeChart'), {{
-                    type: 'bar',
+                const latestLog = data.time_logs[data.time_logs.length - 1];
+                new Chart(document.getElementById('pieChart'), {{
+                    type: 'doughnut',
                     data: {{
-                        labels: log.logs.map(l => l.activity),
+                        labels: latestLog.logs.map(l => l.activity),
                         datasets: [{{
-                            data: log.logs.map(l => l.hours),
-                            backgroundColor: ['#800000', '#B8860B', '#D4AF37', '#A52A2A', '#5C0000', '#F1D382'],
-                            borderRadius: 6
+                            data: latestLog.logs.map(l => l.hours),
+                            backgroundColor: ['#800000', '#D4AF37', '#B8860B', '#5C0000', '#A52A2A', '#F1D382', '#4A0404'],
+                            borderWidth: 0, hoverOffset: 25, borderRadius: 10
                         }}]
                     }},
-                    options: {{ ...commonOptions, indexAxis: 'y' }}
+                    options: {{
+                        ...commonOptions, cutout: '75%',
+                        plugins: {{ ...commonOptions.plugins, legend: {{ display: true, position: 'bottom', labels: {{ padding: 25, color: '#94A3B8', font: {{ size: 13 }} }} }} }}
+                    }}
                 }});
+            }} else {{
+                document.getElementById('pieChart').parentElement.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:700;">[ DATA_ERROR: TIME_LOG_NOT_FOUND ]</div>';
             }}
 
-            // Complexity Chart (Dual Axis)
+            // 3. Matrix Chart (ROI)
             if (data.complexity_stats) {{
-                new Chart(document.getElementById('complexityChart'), {{
+                new Chart(document.getElementById('matrixChart'), {{
                     type: 'bar',
                     data: {{
-                        labels: data.complexity_stats.labels.map(l => 'Lvl ' + l),
+                        labels: data.complexity_stats.labels.map(l => 'VALUE_LEVEL ' + l),
                         datasets: [{{
-                            label: 'Avg ROI (₹)',
+                            label: 'Avg Revenue (₹)',
                             data: data.complexity_stats.avg_earnings,
-                            backgroundColor: 'rgba(212, 175, 55, 0.6)',
-                            borderRadius: 6,
-                            yAxisID: 'y'
+                            backgroundColor: '#D4AF37', borderRadius: 15,
                         }}, {{
-                            label: 'Volume',
+                            label: 'Unit Volume',
                             data: data.complexity_stats.counts,
-                            type: 'line',
-                            borderColor: '#800000',
-                            borderWidth: 3,
-                            yAxisID: 'y1',
-                            tension: 0.3,
-                            pointRadius: 4
+                            type: 'line', borderColor: '#800000', borderWidth: 5,
+                            tension: 0.4, pointRadius: 6, yAxisID: 'y1',
+                            pointBackgroundColor: '#800000'
                         }}]
                     }},
                     options: {{
                         ...commonOptions,
                         scales: {{
-                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.08)' }} }},
+                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
                             y1: {{ position: 'right', grid: {{ display: false }}, ticks: {{ color: '#800000' }} }},
                             x: {{ grid: {{ display: false }} }}
                         }}
@@ -399,12 +467,12 @@ def update_html(header, days, stats, complexity_stats=None):
                 }});
             }}
 
-            // Render Log
-            const html = data.raw_days.map(d => `
+            // 4. Operational Log
+            const logHtml = data.raw_days.map(d => `
                 <div class="day-group">
                     <div class="day-header">
                         <span>${{d.date}}</span>
-                        <span style="color: var(--accent);">₹${{d.earnings}}</span>
+                        <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
                     </div>
                     <div class="service-log">
                         ${{d.services.map(s => {{
@@ -422,13 +490,24 @@ def update_html(header, days, stats, complexity_stats=None):
                     </div>
                 </div>
             `).join('');
-            document.getElementById('services-html').innerHTML = html;
+            document.getElementById('log-html').innerHTML = logHtml;
         }}
 
-        renderUI(data);
+        initDashboard(data);
     </script>
 </body>
 </html>"""
+    
+    # Save files
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
+
+def update_readme(stats, time_logs):
+    path = os.path.join(REPORT_DIR, 'README.md')
     
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
@@ -467,7 +546,8 @@ def update_readme(stats, time_logs):
         log = time_logs[-1]
         sec += f"\n## ⏳ Productivity Today ({log['date']})\n"
         for e in log['logs']: sec += f"- **{e['activity']}**: {e['hours']}h\n"
-        sec += f"- **Note**: *{log['note']}*\n"
+        if 'note' in log and log['note']:
+            sec += f"- **Note**: *{log['note']}*\n"
     sec += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     if "## 📉 Live Stats" in content:
         new = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', sec.strip() + "\n\n", content, flags=re.DOTALL)
