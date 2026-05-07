@@ -27,7 +27,7 @@ logging.basicConfig(
 # Initialize Gemini
 if GEMINI_KEY:
     genai.configure(api_key=GEMINI_KEY)
-    model = genai.GenerativeModel('models/gemini-2.0-flash') # Back to Flash with fresh key
+    model = genai.GenerativeModel('gemini-flash-latest') # Fallback to flash-latest
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text(
@@ -136,6 +136,50 @@ async def log_time(update: Update, context: ContextTypes.DEFAULT_TYPE):
     except Exception as e:
         await update.message.reply_text(f"❌ Error logging time: {str(e)}")
 
+async def get_stats(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    data_path = os.path.join(REPORTS_DIR, "dashboard_data.js")
+    if not os.path.exists(data_path):
+        await update.message.reply_text("❌ Dashboard data not found. Run /sync first.")
+        return
+
+    try:
+        with open(data_path, 'r', encoding='utf-8') as f:
+            content = f.read()
+            # Extract JSON from "window.dashboardData = {...};"
+            json_str = content.split('window.dashboardData = ', 1)[1].rsplit(';', 1)[0]
+            data = json.loads(json_str)
+            stats = data['stats']
+            
+            msg = (
+                f"📊 **CyberCore Dashboard Stats**\n"
+                f"━━━━━━━━━━━━━━━━━━\n"
+                f"💰 **Total Earned:** ₹{stats['total_earnings']}\n"
+                f"🛠 **Total Services:** {stats['total_services']}\n"
+                f"📈 **Daily Average:** ₹{stats['avg_daily']}/day\n"
+                f"🎯 **Today's Goal:** {stats['completed_today']}/{stats['recommended_today']}\n"
+                f"⏳ **Recovery Pace:** {stats['recovery_pace_services']} services/day\n"
+                f"🔮 **Monthly Proj:** ₹{stats['projected_total']}\n"
+                f"━━━━━━━━━━━━━━━━━━\n"
+                f"📝 *{stats['explanation']}*"
+            )
+            await update.message.reply_text(msg, parse_mode='Markdown')
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error fetching stats: {str(e)}")
+
+async def sync_dashboard(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("🔄 Syncing dashboard and GitHub... please wait.")
+    try:
+        # Run the update script and wait for it
+        process = subprocess.run([r".venv\Scripts\python", "scripts/update_dashboard.py"], capture_output=True, text=True)
+        if process.returncode == 0:
+            await update.message.reply_text("✅ **Sync Complete!** GitHub and Dashboard are now up to date.", parse_mode='Markdown')
+            # Follow up with stats
+            await get_stats(update, context)
+        else:
+            await update.message.reply_text(f"❌ **Sync Failed!**\nError: {process.stderr[:200]}", parse_mode='Markdown')
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error triggering sync: {str(e)}")
+
 if __name__ == '__main__':
     if not TOKEN:
         print("Error: TELEGRAM_BOT_TOKEN not found in .env file.")
@@ -146,6 +190,8 @@ if __name__ == '__main__':
     # Handlers
     application.add_handler(CommandHandler("start", start))
     application.add_handler(CommandHandler("log", log_time))
+    application.add_handler(CommandHandler("stats", get_stats))
+    application.add_handler(CommandHandler("sync", sync_dashboard))
     application.add_handler(MessageHandler(filters.PHOTO | filters.Document.IMAGE, handle_photo))
     
     print("Bot is starting...")

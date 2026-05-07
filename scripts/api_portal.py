@@ -169,7 +169,7 @@ def main():
         print("[-] Could not find UUID in inf.txt")
         return
 
-    payload_claim = {"platform": "android", "source": source, "phone_flow": "Sms"}
+    payload_claim = {"platform": "android", "source": source, "phone_flow": "yes"}
     payload_project = {"platform": "android", "source": source}
     engineering_payload = parse_report(args.folder_path, source)
 
@@ -202,6 +202,15 @@ def main():
         print("[+] Claim Success!")
     else:
         print("[-] Claim Output:", res_claim.text)
+
+    # 1.5 UPDATE PHONE FLOW
+    print("[*] 1.5. Updating phone flow status...")
+    res_phone = requests.put(f"{API_BASE}/services/{uuid}/claims/phone-flow", headers=headers, json=payload_claim)
+    print(f"Phone Flow Status Code: {res_phone.status_code}")
+    if res_phone.status_code == 200:
+        print("[+] Phone Flow Updated Successfully!")
+    else:
+        print("[-] Phone Flow Update Failed:", res_phone.text)
 
     # 2. CREATE PROJECT
     print("\n[*] 2. Creating project via API...")
