@@ -297,16 +297,17 @@ def update_html(header, days, stats, complexity_stats=None):
         
         .day-group {{ margin-bottom: 40px; }}
         .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 900; font-size: 18px; color: #FFF; border-left: 6px solid var(--accent); padding-left: 18px; }}
+        .service-link {{ display: block; margin-bottom: 15px; outline: none; }}
         .service-entry {{ 
-            padding: 20px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05);
-            border-radius: 24px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s ease; cursor: default;
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 22px 28px; 
+            border-radius: 24px; display: flex; justify-content: space-between; align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
         }}
         .service-entry:hover {{ 
             background: rgba(212, 175, 55, 0.12); 
             border-color: var(--accent); 
-            transform: translateX(8px) scale(1.01);
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.2);
+            transform: translateX(10px) scale(1.02);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.2);
         }}
         .service-info {{ display: flex; flex-direction: column; gap: 6px; }}
         .service-name {{ font-weight: 800; font-size: 17px; color: #FFF; }}
@@ -523,14 +524,20 @@ def update_html(header, days, stats, complexity_stats=None):
                             <div class="service-log" id="log-${{actualIdx}}" style="display: ${{isExpanded ? 'block' : 'none'}}">
                                 ${{(query ? d.services.filter(s => s.toLowerCase().includes(query)) : d.services).map(s => {{
                                     const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
-                                    if (m) return `
-                                        <div class="service-entry">
-                                            <div class="service-info">
-                                                <span class="service-name">${{m[2]}}</span>
-                                                <span class="service-pkg">${{m[3]}}</span>
+                                    if (m) {{
+                                        const pkg = m[3].trim();
+                                        const link = pkg.includes('.') ? `https://play.google.com/store/apps/details?id=${{pkg.toLowerCase()}}` : '#';
+                                        return `
+                                        <a href="${{link}}" target="_blank" class="service-link" style="text-decoration: none;">
+                                            <div class="service-entry">
+                                                <div class="service-info">
+                                                    <span class="service-name">${{m[2]}}</span>
+                                                    <span class="service-pkg">${{pkg}}</span>
+                                                </div>
+                                                <div class="service-price">₹${{m[4]}}</div>
                                             </div>
-                                            <div class="service-price">₹${{m[4]}}</div>
-                                        </div>`;
+                                        </a>`;
+                                    }}
                                     return `<div class="service-entry"><span class="service-name">${{s}}</span></div>`;
                                 }}).join('') }}
                             </div>
