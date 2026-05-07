@@ -198,11 +198,11 @@ def update_html(header, days, stats, complexity_stats=None):
             --primary: #800000;
             --accent: #D4AF37;
             --bg-dark: #070707;
-            --card-bg: rgba(15, 15, 15, 0.85);
-            --border: rgba(212, 175, 55, 0.3);
+            --card-bg: rgba(10, 10, 10, 0.45); /* Increased Transparency */
+            --border: rgba(212, 175, 55, 0.25);
             --text-main: #FFFFFF;
             --text-dim: #94A3B8;
-            --glow: rgba(212, 175, 55, 0.4);
+            --glow: rgba(212, 175, 55, 0.35);
         }}
         
         * {{ box-sizing: border-box; margin: 0; padding: 0; }}
@@ -215,11 +215,11 @@ def update_html(header, days, stats, complexity_stats=None):
         .bg-glow {{
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background: 
-                radial-gradient(circle at 10% 10%, rgba(139, 0, 0, 0.2) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.1) 0%, transparent 40%),
+                radial-gradient(circle at 10% 10%, rgba(139, 0, 0, 0.25) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
                 url('dashboard/bhairavi_texture_real.jpg');
             background-size: 100% 100%, 100% 100%, cover;
-            opacity: 0.4;
+            opacity: 0.6; /* Increased for visibility */
             animation: bgPulse 20s infinite alternate ease-in-out;
         }}
         @keyframes bgPulse {{
@@ -256,9 +256,10 @@ def update_html(header, days, stats, complexity_stats=None):
         .header .subtitle {{ color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 7px; font-weight: 800; opacity: 0.9; }}
         
         .glass-card {{
-            background: var(--card-bg); backdrop-filter: blur(40px); border: 1px solid var(--border);
+            background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
+            border: 1px solid var(--border);
             border-radius: 32px; padding: 30px; margin-bottom: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
             transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             animation: fadeInUp 1s ease-out backwards;
             position: relative; overflow: hidden;
