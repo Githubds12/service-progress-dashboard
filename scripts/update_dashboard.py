@@ -167,96 +167,274 @@ def update_html(header, days, stats, complexity_stats=None):
     earnings = [d['earnings'] for d in days]
     services = [d['count'] for d in days]
     
-    services_by_day = []
-    for d in days:
-        services_list = ""
-        for s in d['services']:
-            match = re.search(r'^\d+\.\s+\[(\d\d:\d\d)\]\s+(.*?)\s+-\s+(.*?)\s+-\s+(\d+)rs', s)
-            if match:
-                time, name, pkg, price = match.groups()
-                services_list += f'<li class="service-item-detail"><div style="display:flex; justify-content:space-between;"><b>{name}</b><small>{time}</small></div><div style="display:flex; justify-content:space-between; font-size:9px;"><span>{pkg}</span><b style="color:var(--success);">₹{price}</b></div></li>'
-            else:
-                services_list += f'<li class="service-item-detail">• {s}</li>'
-        services_by_day.append(f'<div class="service-day"><div class="service-header"><span>{d["date"]}</span><span>₹{d["earnings"]}</span></div><ul style="padding:0;">{services_list}</ul></div>')
-
     time_logs = parse_time_log()
     data_dict = {
         'header': header, 'stats': stats, 'labels': labels, 'earnings': earnings, 'services': services,
-        'services_by_day': services_by_day, 'raw_days': days, 'time_logs': time_logs, 'complexity_stats': complexity_stats
+        'raw_days': days, 'time_logs': time_logs, 'complexity_stats': complexity_stats
     }
     
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>केसर दर्शिका | {stats['today_date']}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="dashboard_data.js"></script>
     <style>
-        :root {{ --primary: #A52A2A; --success: #FFD700; --bg: #050505; --card: rgba(15, 10, 10, 0.9); --border: rgba(165, 42, 42, 0.3); --bhairavi: #FFD700; }}
-        body {{ background: var(--bg); color: #f8fafc; font-family: 'Outfit', sans-serif; padding: 15px; }}
+        :root {{
+            --primary: #A52A2A;
+            --primary-glow: rgba(165, 42, 42, 0.5);
+            --success: #FFD700;
+            --warning: #FF4500;
+            --danger: #800000;
+            --bg-dark: #050505;
+            --card-bg: rgba(15, 10, 10, 0.9);
+            --border: rgba(165, 42, 42, 0.3);
+            --bhairavi: #FFD700;
+            --accent-glow: rgba(255, 69, 0, 0.2);
+        }}
+        @keyframes float {{ 0% {{ transform: translateY(0px); }} 50% {{ transform: translateY(-10px); }} 100% {{ transform: translateY(0px); }} }}
+        @keyframes rainbow {{ 0% {{ background-position: 0% 50%; }} 50% {{ background-position: 100% 50%; }} 100% {{ background-position: 0% 50%; }} }}
+        
+        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
+        body {{ 
+            background: var(--bg-dark); color: #f8fafc; font-family: 'Outfit', sans-serif; padding: 10px; 
+            background-image: radial-gradient(circle at 50% 50%, #1a0a0a 0%, #050505 100%);
+        }}
         .container {{ max-width: 600px; margin: auto; }}
-        .glass-card {{ background: var(--card); backdrop-filter: blur(10px); border: 1px solid var(--border); border-radius: 20px; padding: 20px; margin-bottom: 15px; }}
-        h1 {{ text-align: center; font-size: 36px; font-weight: 900; background: linear-gradient(to right, #FF9933, #FFD700); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin: 10px 0; }}
+        
+        .tripundra {{ display: flex; flex-direction: column; gap: 4px; align-items: center; margin: 20px 0; }}
+        .tripundra span {{ width: 50px; height: 4px; background: #FFD700; opacity: 0.8; border-radius: 10px; box-shadow: 0 0 15px #FF4500; }}
+        
+        .header {{ text-align: center; margin-bottom: 30px; }}
+        .header h1 {{ 
+            font-size: 42px; font-weight: 900; 
+            background: linear-gradient(to right, #FF9933, #FFD700, #FF4500); 
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; 
+            background-size: 200% auto; animation: rainbow 3s linear infinite;
+        }}
+        
+        .glass-card {{
+            background: var(--card-bg); backdrop-filter: blur(16px); border: 1px solid var(--border);
+            border-radius: 24px; padding: 20px; margin-bottom: 15px; position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: transform 0.3s ease;
+        }}
+        .glass-card:hover {{ transform: scale(1.01); border-color: var(--primary); }}
+        
         .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }}
-        .value {{ font-size: 24px; font-weight: 700; }}
-        .progress-bar {{ height: 8px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 10px 0; overflow: hidden; }}
-        .progress-fill {{ height: 100%; background: linear-gradient(to right, #A52A2A, #FFD700); transition: 1s; }}
-        .service-item-detail {{ padding: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; border-left: 3px solid var(--primary); list-style: none; }}
-        .service-header {{ display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 5px; }}
+        .stat-card h3 {{ font-size: 10px; color: #94a3b8; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }}
+        .stat-card .value {{ font-size: 28px; font-weight: 800; }}
+        
+        .mission-card {{ border-left: 5px solid var(--primary); }}
+        .progress-bar {{ height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px; margin: 15px 0; overflow: hidden; }}
+        .progress-fill {{ height: 100%; background: linear-gradient(90deg, var(--primary), var(--success)); transition: 1s; }}
+        
+        .chart-section h3 {{ font-size: 14px; margin-bottom: 15px; color: var(--bhairavi); display: flex; align-items: center; gap: 8px; }}
+        .chart-container {{ height: 250px; position: relative; }}
+        
+        .service-day {{ margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid rgba(255,255,255,0.05); }}
+        .service-header {{ display: flex; justify-content: space-between; font-weight: 700; margin-bottom: 10px; color: #fff; }}
+        .service-item-detail {{ 
+            padding: 10px; background: rgba(255, 255, 255, 0.02); border-radius: 12px; 
+            margin-bottom: 8px; border-left: 3px solid var(--primary); list-style: none;
+        }}
+        
+        .toolbar {{ display: flex; gap: 10px; margin-bottom: 15px; }}
+        .btn {{ 
+            flex: 1; background: var(--card-bg); border: 1px solid var(--border); color: #fff; 
+            padding: 10px; border-radius: 12px; font-size: 11px; font-weight: 700; cursor: pointer;
+        }}
+        .btn:hover {{ background: var(--primary); }}
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>केसर दर्शिका</h1>
-        <p style="text-align:center; color:#94a3b8;">{stats['today_date']}</p>
-        
-        <div class="glass-card" style="background:linear-gradient(135deg, #A52A2A 0%, #800000 100%);">
-            <h3>ESTIMATED END</h3>
-            <div class="value">₹{stats['projected_total']}</div>
-            <p style="font-size:11px; opacity:0.8;">{stats['projection_sentence']}</p>
+        <div class="header">
+            <div class="tripundra"><span></span><span></span><span></span></div>
+            <h1>केसर दर्शिका</h1>
+            <p style="color: #94a3b8; font-size: 13px; font-weight: 500;">{data_dict['header']}</p>
+            <h2 style="font-size: 32px; margin-top: 10px;">{stats['today_date']}</h2>
         </div>
 
-        <div class="glass-card">
-            <h3>DAILY MISSION: {stats['recommended_today']}</h3>
-            <div class="value">{stats['completed_today']} / {stats['recommended_today']}</div>
-            <div class="progress-bar"><div class="progress-fill" style="width:{min(stats['completed_today']/stats['recommended_today']*100, 100)}%"></div></div>
-            <p style="font-size:12px; color:#94a3b8;">{stats['explanation']}</p>
+        <div class="glass-card" style="background: linear-gradient(135deg, #421010 0%, #050505 100%);">
+            <h3>PROJECTED MONTH END</h3>
+            <div class="value" style="font-size: 42px;">₹{stats['projected_total']}</div>
+            <p style="color: var(--success); font-weight: 600;">{stats['projection_sentence']}</p>
+        </div>
+
+        <div class="glass-card mission-card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <h3>DAILY MISSION</h3>
+                <span style="font-size: 11px; background: var(--primary); padding: 2px 8px; border-radius: 20px;">{stats['recommended_today']} TARGET</span>
+            </div>
+            <div class="value" style="margin: 10px 0;">{stats['completed_today']} <small style="color: #64748b; font-size: 18px;">/ {stats['recommended_today']}</small></div>
+            <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
+            <p style="font-size: 12px; color: #94a3b8; font-style: italic;">{stats['explanation']}</p>
         </div>
 
         <div class="stats-grid">
-            <div class="glass-card"><h3>TOTAL EARNED</h3><div class="value" style="color:var(--success);">₹{stats['total_earnings']}</div></div>
-            <div class="glass-card"><h3>DAILY AVG</h3><div class="value">₹{stats['avg_daily']}</div></div>
+            <div class="glass-card stat-card">
+                <h3>TOTAL EARNED</h3>
+                <div class="value" style="color: var(--success);">₹{stats['total_earnings']}</div>
+            </div>
+            <div class="glass-card stat-card">
+                <h3>DAILY AVG</h3>
+                <div class="value">₹{stats['avg_daily']}</div>
+            </div>
         </div>
 
-        <div class="glass-card" style="height:250px;"><canvas id="earningsChart"></canvas></div>
-        <div class="glass-card" style="height:300px;"><h3>⏳ TIME ALLOCATION</h3><canvas id="timeChart"></canvas><p id="perf-insight" style="font-size:11px; font-style:italic; margin-top:5px; color:#10b981;"></p></div>
-        <div class="glass-card" style="height:300px;"><h3>🧠 COMPLEXITY VS ROI</h3><canvas id="complexityChart"></canvas></div>
+        <div class="glass-card chart-section">
+            <h3>📈 PERFORMANCE TREND</h3>
+            <div class="chart-container"><canvas id="earningsChart"></canvas></div>
+        </div>
 
-        <div class="glass-card" style="max-height:500px; overflow-y:auto;">
-            <h3>RECENT ACTIVITY</h3>
-            <div id="services-html">{''.join(services_by_day)}</div>
+        <div class="glass-card chart-section">
+            <h3>⏳ TIME ALLOCATION (TODAY)</h3>
+            <div class="chart-container" style="height: 300px;"><canvas id="timeChart"></canvas></div>
+            <div id="perf-insight" style="margin-top: 15px; padding: 12px; background: rgba(16, 185, 129, 0.05); border-radius: 12px; border-left: 3px solid #10b981; font-size: 12px; color: #f8fafc; font-style: italic;"></div>
+        </div>
+
+        <div class="glass-card chart-section">
+            <h3>🧠 COMPLEXITY VS ROI</h3>
+            <div class="chart-container" style="height: 300px;"><canvas id="complexityChart"></canvas></div>
+        </div>
+
+        <div class="glass-card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3>RECENT ACTIVITY</h3>
+                <input type="text" id="search" placeholder="Search..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 8px; color: #fff; padding: 5px 10px; font-size: 12px;">
+            </div>
+            <div id="services-html"></div>
         </div>
     </div>
 
     <script>
         const data = {json.dumps(data_dict)};
-        new Chart(document.getElementById('earningsChart'), {{ type: 'line', data: {{ labels: data.labels, datasets: [{{ data: data.earnings, borderColor: '#FF9933', backgroundColor: 'rgba(255, 153, 51, 0.1)', fill: true }}] }}, options: {{ responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }} }} }});
         
-        if (data.time_logs && data.time_logs.length > 0) {{
-            const log = data.time_logs[data.time_logs.length-1];
-            document.getElementById('perf-insight').innerText = log.note;
-            new Chart(document.getElementById('timeChart'), {{ type: 'bar', data: {{ labels: log.logs.map(l=>l.activity), datasets: [{{ data: log.logs.map(l=>l.hours), backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#FF9933'] }}] }}, options: {{ indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: {{ legend: {{ display: false }} }} }} }});
+        function renderUI(data) {{
+            // Progress Bar
+            setTimeout(() => {{
+                const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
+                document.getElementById('mission-fill').style.width = pct + '%';
+            }}, 500);
+
+            // Earnings Chart
+            new Chart(document.getElementById('earningsChart'), {{
+                type: 'line',
+                data: {{
+                    labels: data.labels,
+                    datasets: [{{
+                        data: data.earnings,
+                        borderColor: '#FF9933',
+                        backgroundColor: 'rgba(255, 153, 51, 0.1)',
+                        tension: 0.4,
+                        fill: true,
+                        pointRadius: 4,
+                        pointBackgroundColor: '#FF9933'
+                    }}]
+                }},
+                options: {{ 
+                    responsive: true, maintainAspectRatio: false, 
+                    plugins: {{ legend: {{ display: false }} }},
+                    scales: {{ y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }} }}, x: {{ grid: {{ display: false }} }} }}
+                }}
+            }});
+
+            // Time Chart (Horizontal Bar)
+            if (data.time_logs && data.time_logs.length > 0) {{
+                const log = data.time_logs[data.time_logs.length-1];
+                document.getElementById('perf-insight').innerText = "Insight: " + log.note;
+                new Chart(document.getElementById('timeChart'), {{
+                    type: 'bar',
+                    data: {{
+                        labels: log.logs.map(l => l.activity),
+                        datasets: [{{
+                            data: log.logs.map(l => l.hours),
+                            backgroundColor: ['#A52A2A', '#FF4500', '#FFD700', '#800000', '#FF9933', '#64748b'],
+                            borderRadius: 8
+                        }}]
+                    }},
+                    options: {{ 
+                        indexAxis: 'y', responsive: true, maintainAspectRatio: false, 
+                        plugins: {{ legend: {{ display: false }} }},
+                        scales: {{ x: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }} }}, y: {{ grid: {{ display: false }} }} }}
+                    }}
+                }});
+            }}
+
+            // Complexity Chart
+            if (data.complexity_stats) {{
+                new Chart(document.getElementById('complexityChart'), {{
+                    type: 'bar',
+                    data: {{
+                        labels: data.complexity_stats.labels.map(l => 'Lvl ' + l),
+                        datasets: [{{
+                            label: 'Avg ROI (₹)',
+                            data: data.complexity_stats.avg_earnings,
+                            backgroundColor: 'rgba(255, 215, 0, 0.6)',
+                            borderRadius: 6,
+                            yAxisID: 'y'
+                        }}, {{
+                            label: 'Volume',
+                            data: data.complexity_stats.counts,
+                            type: 'line',
+                            borderColor: '#FF4500',
+                            borderWidth: 3,
+                            yAxisID: 'y1'
+                        }}]
+                    }},
+                    options: {{
+                        responsive: true, maintainAspectRatio: false,
+                        scales: {{
+                            y: {{ position: 'left', grid: {{ color: 'rgba(255,255,255,0.05)' }} }},
+                            y1: {{ position: 'right', grid: {{ display: false }} }}
+                        }}
+                    }}
+                }});
+            }}
+
+            // Activity List
+            const html = data.raw_days.map(d => `
+                <div class="service-day">
+                    <div class="service-header">
+                        <span>${{d.date}}</span>
+                        <span style="color: var(--success);">₹${{d.earnings}}</span>
+                    </div>
+                    <ul style="padding:0;">
+                        ${{d.services.map(s => {{
+                            const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
+                            if (m) return `
+                                <li class="service-item-detail">
+                                    <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
+                                        <b style="font-size:14px;">${{m[2]}}</b>
+                                        <small style="color:var(--bhairavi);">${{m[1]}}</small>
+                                    </div>
+                                    <div style="display:flex; justify-content:space-between; font-size:10px; color:#94a3b8;">
+                                        <span>${{m[3]}}</span>
+                                        <b style="color:var(--success);">₹${{m[4]}}</b>
+                                    </div>
+                                </li>`;
+                            return `<li class="service-item-detail">• ${{s}}</li>`;
+                        }}).join('')}}
+                    </ul>
+                </div>
+            `).join('');
+            document.getElementById('services-html').innerHTML = html;
         }}
 
-        if (data.complexity_stats) {{
-            new Chart(document.getElementById('complexityChart'), {{ type: 'bar', data: {{ labels: data.complexity_stats.labels.map(l=>'Lvl '+l), datasets: [{{ label: 'Avg Earnings', data: data.complexity_stats.avg_earnings, backgroundColor: 'rgba(255, 215, 0, 0.4)', yAxisID: 'y' }}, {{ label: 'Count', data: data.complexity_stats.counts, type: 'line', borderColor: '#FF4500', yAxisID: 'y1' }}] }}, options: {{ responsive: true, maintainAspectRatio: false, scales: {{ y: {{ position: 'left' }}, y1: {{ position: 'right', grid: {{ display: false }} }} }} }} }});
-        }}
+        renderUI(data);
     </script>
 </body>
 </html>"""
+    
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
+        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
     
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
