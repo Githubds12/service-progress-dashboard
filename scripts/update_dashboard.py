@@ -175,6 +175,9 @@ def update_txt(body, stats):
         f.write(body + "\n\n" + new_stats.strip() + "\n")
 
 def update_html(header, days, stats, complexity_stats=None):
+    # Sort days chronologically for charts
+    days.sort(key=lambda x: x['iso_date'])
+    
     labels = [d['date'].split(',')[0] for d in days]
     earnings = [d['earnings'] for d in days]
     services = [d['count'] for d in days]
@@ -528,7 +531,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
             function renderLog(filter = '') {{
                 const query = filter.toLowerCase();
-                const allDays = data.raw_days;
+                const allDays = [...data.raw_days].reverse(); // Show latest first
                 const filteredDays = allDays.filter(d => {{
                     if (!query) return true;
                     return d.date.toLowerCase().includes(query) || d.services.some(s => s.toLowerCase().includes(query));
