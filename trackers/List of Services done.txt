@@ -3,7 +3,8 @@
 8th May, Friday
 1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
 2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs
-Daily Summary: 2 services, 800 rs
+3. [09:35] Soul - com.soul.android.international - 400rs
+Daily Summary: 3 services, 1200 rs
 ----------
 
 7th May, Thursday
@@ -172,9 +173,9 @@ Daily Summary: 5 services, 2000 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 5
-- Total Earnings: 2000 rs
-- Average Daily Earning: 2000.0 rs/day
-- Average Daily Services: 5.0 services/day
+- Total Services: 6
+- Total Earnings: 2400 rs
+- Average Daily Earning: 2400.0 rs/day
+- Average Daily Services: 6.0 services/day
 - Recovery Pace: 7.6 Services / day
-- Projected Monthly Total: ₹60000.0
+- Projected Monthly Total: ₹72000.0
