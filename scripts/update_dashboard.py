@@ -164,9 +164,10 @@ def calculate_stats(days):
         'days_elapsed': days_elapsed, 'recovery_pace_services': round(recovery_pace_services, 1),
         'days_remaining': days_remaining, 'recommended_today': int(recommended_today),
         'completed_today': completed_today, 'explanation': explanation,
-        'today_date': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %Y')}",
         'projected_total': round(projected_total, 2),
-        'projection_sentence': f"Projected: ₹{round(projected_total, 2)}. {'On track!' if projected_total >= 90000 else 'Increase pace.'}"
+        'today_date': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %Y')}",
+        'today_date_raw': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B')}",
+        'projection_sentence': explanation
     }
 
 def update_txt(body, stats):
@@ -390,7 +391,11 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.5s;">
-            <div class="section-title">Daily Focus Distribution</div>
+            <div class="section-title">
+                <span>Daily Focus Distribution</span>
+                <input type="date" id="pieDateJump" 
+                    style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
+            </div>
             <div class="chart-container" style="height: 480px;"><canvas id="pieChart"></canvas></div>
         </div>
 
@@ -484,24 +489,24 @@ def update_html(header, days, stats, complexity_stats=None):
             }});
 
             // 2. Pie Chart (Task Distribution)
-            if (data.time_logs && data.time_logs.length > 0) {{
-                const latestLog = data.time_logs[data.time_logs.length - 1];
-                const sortedLogs = [...latestLog.logs].sort((a, b) => b.hours - a.hours);
+            let pieChart;
+            function renderPieChart(dateStr) {{
+                const log = data.time_logs.find(l => l.date === dateStr) || data.time_logs[data.time_logs.length - 1];
+                if (!log) return;
                 
-                new Chart(document.getElementById('pieChart'), {{
+                const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
+                if (pieChart) pieChart.destroy();
+                
+                pieChart = new Chart(document.getElementById('pieChart'), {{
                     type: 'pie',
                     data: {{
                         labels: sortedLogs.map(l => l.activity),
                         datasets: [{{
                             data: sortedLogs.map(l => l.hours),
                             backgroundColor: [
-                                'rgba(102, 255, 204, 0.6)', // Neon Mint
-                                'rgba(255, 0, 127, 0.6)',   // Cyber Rose
-                                'rgba(75, 0, 130, 0.6)',    // Deep Indigo
-                                'rgba(255, 191, 0, 0.6)',   // Amber Blaze
-                                'rgba(0, 122, 255, 0.6)',   // Azure Void
-                                'rgba(46, 204, 113, 0.6)',  // Emerald Pulse
-                                'rgba(255, 69, 0, 0.6)'     // Sunset Orange
+                                'rgba(102, 255, 204, 0.6)', 'rgba(255, 0, 127, 0.6)',
+                                'rgba(75, 0, 130, 0.6)', 'rgba(255, 191, 0, 0.6)',
+                                'rgba(0, 122, 255, 0.6)', 'rgba(46, 204, 113, 0.6)', 'rgba(255, 69, 0, 0.6)'
                             ],
                             borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
                             hoverOffset: 30
@@ -512,18 +517,39 @@ def update_html(header, days, stats, complexity_stats=None):
                         plugins: {{ 
                             ...commonOptions.plugins, 
                             legend: {{ 
-                                display: true, 
-                                position: 'bottom', 
+                                display: true, position: 'bottom', 
                                 labels: {{ 
-                                    padding: 25, color: '#FFF', font: {{ size: 14, weight: 600 }} 
+                                    padding: 25, color: '#FFF', font: {{ size: 14, weight: 600 }},
+                                    generateLabels: (chart) => {{
+                                        const original = Chart.overrides.pie.plugins.legend.labels.generateLabels(chart);
+                                        return original.map(label => {{
+                                            const val = chart.data.datasets[0].data[label.index];
+                                            label.text = `${{label.text}} (${{val}} HR)`;
+                                            return label;
+                                        }});
+                                    }}
                                 }} 
-                            }} 
+                            }},
+                            tooltip: {{
+                                ...commonOptions.plugins.tooltip,
+                                callbacks: {{ label: (item) => ` ${{item.label}}: ${{item.raw}} HR` }}
+                            }}
                         }}
                     }}
                 }});
-            }} else {{
-                document.getElementById('pieChart').parentElement.innerHTML = '<div style="height:100%; display:flex; align-items:center; justify-content:center; color:var(--text-dim); font-weight:700;">[ DATA_ERROR: TIME_LOG_NOT_FOUND ]</div>';
             }}
+
+            const todayStr = data.stats.today_date_raw;
+            renderPieChart(todayStr);
+
+            document.getElementById('pieDateJump').addEventListener('change', (e) => {{
+                const d = new Date(e.target.value);
+                const day = d.getDate();
+                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                const month = monthNames[d.getMonth()];
+                const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
+                if (targetLog) renderPieChart(targetLog.date);
+            }});
 
             // 4. Operational Log Rendering Engine
             let currentPage = 1;
