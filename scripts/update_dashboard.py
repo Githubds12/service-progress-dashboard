@@ -552,6 +552,7 @@ def update_html(header, days, stats, complexity_stats=None):
                                 <div style="display: flex; align-items: center; gap: 15px;">
                                     <span class="toggle-icon" id="icon-${{actualIdx}}" style="font-size: 14px; color: var(--accent); transition: 0.3s;">${{isExpanded ? '▼' : '▶'}}</span>
                                     <span>${{d.date}}</span>
+                                    <span style="font-size: 11px; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px;">[ ${{d.count}} UNITS ]</span>
                                 </div>
                                 <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
                             </div>
