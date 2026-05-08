@@ -1,5 +1,11 @@
 7th May to 7th June
 
+8th May, Friday
+1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
+2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs
+Daily Summary: 2 services, 800 rs
+----------
+
 7th May, Thursday
 1. [12:35] Utair - ru.utair.android - 400rs
 2. [14:15] Lyft - me.lyft.android - 400rs
@@ -164,16 +170,11 @@ Daily Summary: 9 services, 3600 rs
 5. yandexpro - 400rs
 Daily Summary: 5 services, 2000 rs
 ----------
-8th May, Friday
-1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
-2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs
-Daily Summary: 2 services, 800 rs
-----------
 
 Dashboard Stats:
-- Total Services: 3
-- Total Earnings: 1200 rs
-- Average Daily Earning: 1200.0 rs/day
-- Average Daily Services: 3.0 services/day
-- Recovery Pace: 7.7 Services / day
-- Projected Monthly Total: ₹36000.0
+- Total Services: 5
+- Total Earnings: 2000 rs
+- Average Daily Earning: 2000.0 rs/day
+- Average Daily Services: 5.0 services/day
+- Recovery Pace: 7.6 Services / day
+- Projected Monthly Total: ₹60000.0
