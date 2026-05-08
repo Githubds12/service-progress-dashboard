@@ -339,7 +339,7 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="header">
             <div class="subtitle">Neural Operations Hub</div>
             <h1>केसर दर्शिका</h1>
-            <div style="font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 2px; margin-top: 8px; text-shadow: 0 0 15px var(--glow);">
+            <div id="header-date" style="font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 2px; margin-top: 8px; text-shadow: 0 0 15px var(--glow);">
                 {stats['today_date']}
             </div>
             <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
@@ -394,6 +394,7 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="glass-card" style="animation-delay: 0.7s;">
             <div class="section-title" style="margin-bottom: 25px;">
                 <span>Operational Intelligence Log</span>
+                <span id="log-header-date" style="font-size: 13px; color: var(--accent); margin-left: auto; letter-spacing: 2px; font-weight: 900;">[ {{stats['today_date']}} ]</span>
             </div>
             <div style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
                 <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
@@ -413,6 +414,13 @@ def update_html(header, days, stats, complexity_stats=None):
             setTimeout(() => {{
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
                 document.getElementById('mission-fill').style.width = pct + '%';
+                
+                // Update dates dynamically
+                if (data.stats.today_date) {{
+                    document.getElementById('header-date').innerText = data.stats.today_date;
+                    document.getElementById('log-header-date').innerText = `[ ${{data.stats.today_date}} ]`;
+                    document.title = `केसर दर्शिका | ${{data.stats.today_date}}`;
+                }}
             }}, 600);
 
             Chart.defaults.color = 'rgba(255,255,255,0.7)';
