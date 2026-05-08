@@ -1,0 +1,19 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-08
+com.galarmapp 10.5.0
+
+Service: Galarm
+Service ID: 82332a4f-c265-4831-ae49-632b68cffc67
+Service SMS: <#> 1942 is your Galarm verification code A+74wDt10nC
+Official Website: galarmapp.com
+Google Play Store: Galarm: Alarms & Reminders
+Package Name: com.galarmapp
+
+One-liner flow: Solve reCAPTCHA -> Request OTP (Firebase) -> Verify Code
+Proofs: reCAPTCHA v2 token used in /sendVerificationCodeHttps, cipher field encryption verified.
+Rate Limits: Unknown
+Encryption: AES-256-CBC (Salted__ prefix)
+Bot Protection: Google reCAPTCHA v2 + Encrypted payloads (cipher).
+Service Description: Galarm is a social alarm clock and reminder app.
+Automation Feasibility: Low (15%)
+Detailed Conclusion: The authentication flow is heavily protected by Google reCAPTCHA v2 and AES encryption on all critical payloads. Automated code requests are not feasible without valid captcha tokens and the correct encryption key for the cipher data.

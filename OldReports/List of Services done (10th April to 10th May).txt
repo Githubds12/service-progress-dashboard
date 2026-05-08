@@ -162,14 +162,19 @@ Daily Summary: 1 service, 400 rs
 111. [13:54] Lyft - me.lyft.android - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
+8th May, Friday
+112. [16:05] Fairpari - org.fairpari.client - 400rs
+113. [21:40] Galarm - com.galarmapp - 400rs
+Daily Summary: 2 services, 800 rs
+----------
 
 Dashboard Stats:
-- Total Services: 111
-- Total Earnings: 44200 rs
-- Average Daily Earning (over 27 days since Apr 10): 1637.04 rs/day
-- Average Daily Services: 4.11 services/day
+- Total Services: 113
+- Total Earnings: 45000 rs
+- Average Daily Earning (over 28 days since Apr 10): 1607.14 rs/day
+- Average Daily Services: 4.04 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 24.1 -> 38.5 Services / day (15400.0 rs/day for 3 days)
-- Services Needed to Goal: 115.5
-- Recommended for Today (inc. buffer): 47 services
-- Projected Monthly Total: ₹48666.67
+- Recovery Pace: 35.5 -> 53.2 Services / day (21285.7 rs/day for 2 days)
+- Services Needed to Goal: 106.4
+- Recommended for Today (inc. buffer): 53 services
+- Projected Monthly Total: ₹48431.03
