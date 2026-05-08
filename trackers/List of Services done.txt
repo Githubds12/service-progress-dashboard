@@ -165,7 +165,8 @@ Daily Summary: 9 services, 3600 rs
 Daily Summary: 5 services, 2000 rs
 ----------
 8th May, Friday
-Daily Summary: 0 services, 0 rs
+1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
+Daily Summary: 1 service, 400 rs
 ----------
 
 Dashboard Stats:

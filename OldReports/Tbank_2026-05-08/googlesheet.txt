@@ -1,0 +1,22 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-08
+ru.tinkoff.sme 3.23
+Service: T-Business (T-Bank)
+Service ID: ed103d16-daa6-4b30-9561-3d1b3142c6a4
+Service SMS: [T-Bank] Your code is 2522
+Service Description: T-Bank Business (mbsme) is a comprehensive financial and operational platform for SMEs in Russia.
+Flow: Authorize -> Phone Submission -> OTP Verification
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: TLS + Fingerprinting
+Endpoints Involved: 3
+Bot Protection: Fingerprinting
+Automation Feasibility: High (85%)
+Official Website: business.tbank.ru
+Google Play Store: T-Business: for business
+Package Name: ru.tinkoff.sme
+APKPure: T-Business (apkpure.net)
+Proof Captcha: undefined
+Proof Rate Limit: No 429 errors observed in Tbank.har
+Proof Encryption: TLS encryption with custom fingerprinting in POST payloads
+One-liner: Secured by session tokens and device fingerprinting, the T-Bank Business login flow involves a sequence of OIDC-style authorization and multi-step verification.
