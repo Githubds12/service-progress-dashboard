@@ -166,7 +166,8 @@ Daily Summary: 5 services, 2000 rs
 ----------
 8th May, Friday
 1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
-Daily Summary: 1 service, 400 rs
+2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs
+Daily Summary: 2 services, 800 rs
 ----------
 
 Dashboard Stats:
