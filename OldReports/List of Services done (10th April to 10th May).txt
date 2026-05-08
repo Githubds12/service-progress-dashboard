@@ -165,12 +165,13 @@ Daily Summary: 1 service, 400 rs
 8th May, Friday
 112. [16:05] Fairpari - org.fairpari.client - 400rs
 113. [21:40] Galarm - com.galarmapp - 400rs
-Daily Summary: 2 services, 800 rs
+114. [22:20] Coinstore - com.io.coinstore - 400rs
+Daily Summary: 3 services, 1200 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 113
-- Total Earnings: 45000 rs
+- Total Services: 114
+- Total Earnings: 45400 rs
 - Average Daily Earning (over 28 days since Apr 10): 1607.14 rs/day
 - Average Daily Services: 4.04 services/day
 - Target: 3000 rs / day
