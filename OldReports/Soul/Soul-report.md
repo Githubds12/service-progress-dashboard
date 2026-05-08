@@ -8,7 +8,7 @@
 - **HAR Files**: `Soul.har`
 
 ## 1. Executive Summary
-Soul (com.soul.android.international) is a social networking platform that implements standard security measures for its authentication flow. The application utilizes a custom request signing mechanism (`api-sign` version `v7`), request nonces, and device fingerprinting (`device-id`, `sdi`) to secure its API communications. The registration flow primarily relies on SMS-based OTP verification. During testing, the platform returned messages suggesting a preference for email-based registration in certain regions or under specific conditions. No advanced bot protection like Captcha was observed in the captured traffic, though the robust signing and device tracking provide a layer of anti-automation.
+Soul (com.soul.android.international) is a social networking platform that implements standard security measures for its authentication flow. The application utilizes a custom request signing mechanism (`api-sign` version `v7`), request nonces, and device fingerprinting (`device-id`, `sdi`) to secure its API communications. The registration flow primarily relies on SMS-based OTP verification, which was successfully captured during testing. No advanced bot protection like Captcha was observed in the captured traffic, though the robust signing and device tracking provide a layer of anti-automation.
 
 ## 2. Quick Analysis
 | Feature | Status | Details |
@@ -30,27 +30,29 @@ Soul (com.soul.android.international) is a social networking platform that imple
 - **Request Headers**:
     ```json
     {
-      "api-sign": "CBC460B97B885B28EA4275121245D20C1C82463C",
+      "api-sign": "2232501925AE15C654F6EB62DD4C557247D4E11C",
       "os": "android",
       "api-sign-version": "v7",
       "device-id": "UGl4ZWwgNzdEW3WeeVn2BQ__a4997475a26662c643ac76acd3544177",
-      "request-nonce": "7cf8b5fff34e4a39913c6663e40e0baa",
+      "request-nonce": "72b4ae5e99ac40a2b414c90f5a80adf4",
       "app-id": "20000010",
       "app-version": "2.73.1",
-      "Content-Type": "application/x-www-form-urlencoded"
+      "app-time": "1778212132713",
+      "cs": "028f9cd98c2d3656144f009731f7140100ac",
+      "Content-Type": "application/json; charset=UTF-8"
     }
     ```
 - **Request Body**:
     ```
     <!-- Phone: 3720517396 -->
-    (Binary or URL encoded parameters)
+    (JSON payload containing device fingerprint and account intent)
     ```
 - **Response**:
     ```json
     {
-      "code": 10005,
-      "message": "Please use email or other methods to sign up.",
-      "data": null
+      "code": 10001,
+      "message": "success",
+      "data": false
     }
     ```
 
@@ -128,7 +130,7 @@ Soul (com.soul.android.international) is a social networking platform that imple
 - `cs` header likely serves as an additional checksum for data integrity.
 
 ### Bot Detection
-- Soul implements server-side logic to redirect registration attempts towards email verification (`code 10005`), which might be triggered by suspicious IPs or certain regional constraints.
+- Soul implements server-side logic to binding requests to specific hardware signatures and session nonces. While some requests may trigger redirection to email verification (`code 10005`), the primary registration flow is secured via custom signing.
 
 ## 5. Conclusion
 

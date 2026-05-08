@@ -16,11 +16,11 @@ def parse_har(file_path):
         url = entry['request']['url']
         method = entry['request']['method']
         
-        # Check if it's the deliver endpoint AND successful
-        if 'account/smsCode/deliver' in url:
+        # Check if it's the deliver or register endpoint AND successful
+        if 'account/smsCode/deliver' in url or 'account/validate/register' in url:
             resp_text = entry['response']['content'].get('text', '')
             if '"code":10001' in resp_text:
-                print("--- SUCCESSFUL OTP REQUEST ---")
+                print(f"--- SUCCESSFUL {url.split('?')[0].split('/')[-1].upper()} REQUEST ---")
                 print(f"URL: {url}")
                 print(f"Method: {method}")
                 print("Request Headers:")
