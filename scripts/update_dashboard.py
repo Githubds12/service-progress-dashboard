@@ -568,7 +568,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 <textarea id="newReflectionText" placeholder="Type your reflections for today here..." 
                     style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: #FFF; font-family: 'Outfit'; font-size: 15px; min-height: 120px; outline: none; resize: vertical; padding: 15px; border-radius: 16px; line-height: 1.6;"></textarea>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button onclick="copyReflection()" style="background: var(--accent); border: none; color: #000; padding: 10px 25px; border-radius: 12px; font-weight: 950; cursor: pointer; font-size: 12px; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">SAVE TO DATABASE</button>
+                    <button onclick="copyReflection()" style="background: var(--accent); border: none; color: #000; padding: 10px 25px; border-radius: 12px; font-weight: 950; cursor: pointer; font-size: 12px; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">SAVE</button>
                 </div>
             </div>
 
