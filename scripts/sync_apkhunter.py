@@ -134,12 +134,21 @@ def sync():
                 "name": name,
                 "sms": row.get("Sample_Message", ""),
                 "claimed": claimed,
+                "root_detected": claims.get(tid, {}).get("root_detected", False),
                 "notes": note,
                 "difficulty": diff,
                 "category": cat,
                 "tier": tier,
                 "reason": reason,
-                "triggers": triggers
+                "triggers": triggers,
+                "last_updated": row.get("Last_Updated", "2024-05-09"),
+                "urls": {
+                    "play": f"https://play.google.com/store/apps/details?id={tid}",
+                    "pure": f"https://apkpure.com/search?q={tid}",
+                    "mirror": f"https://www.apkmirror.com/?post_type=app_release&searchtype=apk&s={tid}",
+                    "uptodown": f"https://en.uptodown.com/android/search/{tid}",
+                    "aptoide": f"https://{tid}.en.aptoide.com/app"
+                }
             })
 
     # Sort final data (Unclaimed first, then by Difficulty)
