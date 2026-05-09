@@ -227,9 +227,28 @@
         };
 
         function init() {
+            const params = new URLSearchParams(window.location.search);
+            const p = parseInt(params.get('page'));
+            if (p) state.page = p;
+
             state.filteredData = window.apkhunterData;
             applyFilters();
             render();
+        }
+
+        window.onpopstate = () => {
+            const params = new URLSearchParams(window.location.search);
+            const p = parseInt(params.get('page')) || 1;
+            if (state.page !== p) {
+                state.page = p;
+                render();
+            }
+        };
+
+        function updateUrl() {
+            const url = new URL(window.location);
+            url.searchParams.set('page', state.page);
+            window.history.pushState({}, '', url);
         }
 
         function setFilter(f, el) {
@@ -237,6 +256,7 @@
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
             state.page = 1;
+            updateUrl();
             applyFilters();
             render();
         }
@@ -244,6 +264,7 @@
         function handleSearch() {
             state.search = $('searchInput').value.toLowerCase();
             state.page = 1;
+            updateUrl();
             applyFilters();
             render();
         }
@@ -266,6 +287,7 @@
 
         function changePage(delta) {
             state.page += delta;
+            updateUrl();
             render();
             window.scrollTo(0, 0);
         }
