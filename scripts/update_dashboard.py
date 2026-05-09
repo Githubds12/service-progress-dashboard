@@ -422,10 +422,9 @@ def update_html(header, days, stats, complexity_stats=None):
                     <span id=\"pieViewedDate\" style=\"font-size: 12px; color: var(--accent); font-weight: 800; min-width: 120px; text-align: center;\"></span>
                     <button onclick=\"navigatePie(1)\" style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;\">&gt;</button>
                 </div>
-                <span id="pieTotalHours" style="font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; margin-left: 20px;"></span>
-                <span id="pieViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; margin-left: 10px;"></span>
-                <input type="date" id="pieDateJump" 
-                    style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
+                <span id=\"pieTotalHours\" style=\"font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; margin-left: 10px;\"></span>
+                <input type=\"date\" id=\"pieDateJump\" 
+                    style=\"background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;\">
             </div>
             <div class="pie-section-content" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 10px;">
                 <div class="chart-container" style="flex: 0 0 450px; height: 450px;">
