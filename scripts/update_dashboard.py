@@ -121,6 +121,10 @@ def process_remote_reflections():
                         lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
                     else:
                         lines.insert(target_idx + 1, f"Reflections: 1. {text}\n")
+                else:
+                    # If no date header at all, create one (fallback)
+                    lines.append(f"\nDate: {target_date if target_date else datetime.now().strftime('%d-%m-%Y')}\n")
+                    lines.append(f"Reflections: 1. {text}\n")
 
         with open(log_path, 'w', encoding='utf-8') as f:
             f.writelines(lines)
@@ -167,7 +171,6 @@ def parse_txt():
             m_date = re.match(r'^(\d+)(?:st|nd|rd|th)\s+([a-zA-Z]+)', line)
             day_num = int(m_date.group(1))
             month_name = m_date.group(2)
-            # Support mapping month name to month number (assuming 2026)
             try: month_num = datetime.strptime(month_name, '%B').month
             except: month_num = 5
             iso_date = f"2026-{month_num:02d}-{day_num:02d}"
@@ -196,7 +199,6 @@ def parse_time_log():
         with open(TIME_LOG_FILE, 'r', encoding='utf-8') as f:
             content = f.read()
         days = []
-        # Support both 'Date:' and 'Date: ' formats
         entries = re.split(r'Date:\s*', content)
         for entry in entries:
             if not entry.strip() or '###' in entry[:10]: continue
@@ -207,23 +209,23 @@ def parse_time_log():
             for line in lines:
                 line = line.strip()
                 if line.startswith('-'):
-                    # Match activity and hours (supports 2h, 1.5h, etc.)
                     match = re.search(r'-\s*(.*?):\s*(\d+\.?\d*)\s*h', line, re.IGNORECASE)
                     if match:
                         act, h = match.groups()
                         logs.append({'activity': act.strip(), 'hours': float(h)})
                         total_h += float(h)
             
-            # Extract Reflections
             ref_match = re.search(r'Reflections:\s*(.*?)(?=\nDate:|$)', entry, re.DOTALL | re.IGNORECASE)
             ref_raw = ref_match.group(1).strip() if ref_match else ""
             
-            # Parse numbered list: "1. A 2. B" -> ["A", "B"]
             ref_items = re.split(r'\s*\d+\.\s*', ref_raw)
             ref_items = [it.strip() for it in ref_items if it.strip()]
 
             if logs or ref_items:
-                days.append({'date': date_str, 'logs': logs, 'total': total_h, 'reflections': ref_items})
+                iso_date = ""
+                m_iso = re.search(r'(\d{2})-(\d{2})-(\d{4})', date_str)
+                if m_iso: iso_date = f"{m_iso.group(3)}-{m_iso.group(2)}-{m_iso.group(1)}"
+                days.append({'date': date_str, 'iso_date': iso_date, 'logs': logs, 'total': total_h, 'reflections': ref_items})
         return days
     except Exception as e:
         print(f"Error parsing time log: {e}")
@@ -288,7 +290,7 @@ def calculate_stats(days):
         'completed_today': completed_today, 'explanation': explanation,
         'projected_total': round(projected_total, 2),
         'today_date': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %Y')}",
-        'today_date_raw': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B')}",
+        'today_date_raw': today_dt.strftime('%Y-%m-%d'),
         'projection_sentence': explanation
     }
 
@@ -298,920 +300,511 @@ def update_txt(body, stats):
         f.write(body + "\n\n" + new_stats.strip() + "\n")
 
 def update_html(header, days, stats, complexity_stats=None):
-    # Sort days chronologically for charts
-    days.sort(key=lambda x: x['iso_date'])
-    
-    labels = [d['date'].split(',')[0] for d in days]
-    earnings = [d['earnings'] for d in days]
-    services = [d['count'] for d in days]
-    
     time_logs = parse_time_log()
-    data_dict = {
-        'header': header, 'stats': stats, 'labels': labels, 'earnings': earnings, 'services': services,
-        'raw_days': days, 'time_logs': time_logs, 'complexity_stats': complexity_stats
-    }
     
+    # Sort days by date for charts
+    chart_days = sorted([d for d in days if d['iso_date']], key=lambda x: x['iso_date'])
+    trend_labels = [d['date'].split(',')[0] for d in chart_days]
+    trend_earnings = [d['earnings'] for d in chart_days]
+    trend_counts = [d['count'] for d in chart_days]
+    
+    data_dict = {
+        'services': days,
+        'logs': time_logs,
+        'today': stats['today_date_raw'],
+        'stats': stats,
+        'complexity': complexity_stats
+    }
+
     html_content = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>केसर दर्शिका | {stats['today_date']}</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operational Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --primary: #800000;
-            --accent: #D4AF37;
-            --bg-dark: #070707;
-            --card-bg: rgba(10, 10, 10, 0.45); /* Increased Transparency */
-            --border: rgba(212, 175, 55, 0.25);
-            --text-main: #FFFFFF;
-            --text-dim: #94A3B8;
-            --glow: rgba(212, 175, 55, 0.35);
+            --bg-color: #05070a;
+            --card-bg: #0d1117;
+            --accent-primary: #00f2ff;
+            --accent-secondary: #7000ff;
+            --text-main: #e6edf3;
+            --text-dim: #8b949e;
+            --border-color: #30363d;
+            --success: #238636;
+            --danger: #da3633;
         }}
+        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        body {{
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }}
+        .container {{ max-width: 1400px; margin: 0 auto; padding: 20px; }}
+        header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            border-bottom: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }}
+        .logo {{ font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 2px; }}
+        .header-meta {{ text-align: right; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--text-dim); }}
         
-        * {{ box-sizing: border-box; margin: 0; padding: 0; }}
-        body {{ 
-            background: var(--bg-dark); color: var(--text-main); font-family: 'Outfit', sans-serif; padding: 15px; 
-            overflow-x: hidden; min-height: 100vh;
+        /* Dashboard Grid */
+        .dashboard-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }}
+        .stat-card {{
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            transition: transform 0.2s;
         }}
+        .stat-card:hover {{ transform: translateY(-5px); border-color: var(--accent-primary); }}
+        .stat-label {{ color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }}
+        .stat-value {{ font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 10px 0; color: var(--accent-primary); }}
+        .stat-sub {{ font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }}
+        .up {{ color: #3fb950; }}
+        .down {{ color: #f85149; }}
+
+        /* Main Content Layout */
+        .main-layout {{ display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }}
+        .chart-card {{
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 12px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 20px;
+        }}
+        .card-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }}
+        .card-title {{ font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--accent-primary); }}
         
-        /* Animated Gradient Background with Bhairavi Aura */
-        .bg-glow {{
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background: 
-                radial-gradient(circle at 10% 10%, rgba(139, 0, 0, 0.25) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(212, 175, 55, 0.15) 0%, transparent 40%),
-                url('dashboard/bhairavi_texture_real.jpg');
-            background-size: 100% 100%, 100% 100%, cover;
-            opacity: 0.6; /* Increased for visibility */
-            animation: bgPulse 20s infinite alternate ease-in-out;
+        /* Interactive Elements */
+        .controls {{ display: flex; gap: 10px; }}
+        .btn {{
+            background: #21262d;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: 0.2s;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }}
-        @keyframes bgPulse {{
-            0% {{ transform: scale(1); opacity: 0.8; }}
-            100% {{ transform: scale(1.1); opacity: 1; }}
+        .btn:hover:not(:disabled) {{ background: #30363d; border-color: var(--accent-primary); }}
+        .btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
+        .btn-primary {{ background: var(--accent-primary); color: #000; border: none; font-weight: 600; }}
+        .btn-primary:hover:not(:disabled) {{ background: #00d8e6; }}
+        
+        .date-picker {{
+            background: #0d1117;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 5px 10px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
         }}
 
-        .container {{ max-width: 1100px; margin: auto; position: relative; z-index: 1; padding: 0 10px; }}
+        /* Activity Log Table */
+        .log-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
+        .log-table th {{ text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-dim); font-size: 0.85rem; }}
+        .log-table td {{ padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }}
+        .log-table tr:hover {{ background: #161b22; }}
         
-        @media (max-width: 1000px) {{
-            .pie-section-content {{ flex-direction: column !important; align-items: center !important; }}
-            .chart-container {{ flex: 0 0 auto !important; width: 100% !important; max-width: 450px !important; }}
-            #pieLegend {{ width: 100% !important; margin-top: 20px; }}
+        /* Reflections Section */
+        .ref-input-group {{ display: flex; gap: 10px; margin-top: 20px; }}
+        .ref-input {{
+            flex: 1;
+            background: #0d1117;
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 10px;
+            border-radius: 6px;
+            font-family: 'Inter', sans-serif;
         }}
-        
-        .header {{ text-align: center; padding: 40px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }}
-        
-        /* Linga Bhairavi Sacred Banner */
-        .bhairavi-banner {{
-            width: 100%;
-            height: 400px;
-            background: url('dashboard/bhairavi_banner_real.jpg') no-repeat center center;
-            background-size: cover;
-            position: relative;
-            margin-top: -15px;
-            margin-bottom: -120px;
-            z-index: 0;
-            mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
-            -webkit-mask-image: linear-gradient(to bottom, black 60%, transparent 95%);
-            filter: brightness(0.8) contrast(1.1);
+        .ref-list {{ margin-top: 20px; list-style: none; }}
+        .ref-item {{
+            background: #161b22;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-left: 3px solid var(--accent-secondary);
         }}
-        
-        .header h1 {{ 
-            font-size: 56px; font-weight: 900; letter-spacing: -3px;
-            background: linear-gradient(135deg, #D4AF37 0%, #FFF 50%, #B8860B 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 20px var(--glow));
-            margin-bottom: 5px;
+        .ref-delete {{ color: var(--danger); cursor: pointer; opacity: 0.7; font-size: 0.8rem; }}
+        .ref-delete:hover {{ opacity: 1; }}
+
+        /* Tip of the day */
+        .tip-banner {{
+            background: linear-gradient(90deg, #0d1117, #161b22);
+            border: 1px solid var(--border-color);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            border-left: 4px solid var(--accent-primary);
         }}
-        .header .subtitle {{ color: var(--text-dim); font-size: 11px; text-transform: uppercase; letter-spacing: 7px; font-weight: 800; opacity: 0.9; }}
+        .tip-header {{ font-family: 'Orbitron', sans-serif; color: var(--accent-primary); margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }}
         
-        .glass-card {{
-            background: var(--card-bg); backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px); 
-            border: 1px solid var(--border);
-            border-radius: 32px; padding: 30px; margin-bottom: 25px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.4);
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            animation: fadeInUp 1s ease-out backwards;
-            position: relative; overflow: hidden;
-        }}
-        .glass-card:hover {{ 
-            transform: translateY(-10px) scale(1.02); 
-            border-color: var(--accent); 
-            box-shadow: 0 30px 60px rgba(212, 175, 55, 0.2); 
-        }}
-        
-        @keyframes fadeInUp {{
-            from {{ opacity: 0; transform: translateY(40px); }}
-            to {{ opacity: 1; transform: translateY(0); }}
-        }}
-        
-        .stats-hero {{ border-top: 8px solid var(--accent); }}
-        .hero-label {{ font-size: 12px; color: var(--accent); text-transform: uppercase; letter-spacing: 3px; font-weight: 900; margin-bottom: 10px; }}
-        .hero-value {{ font-size: 52px; font-weight: 900; color: #FFF; line-height: 1; text-shadow: 0 0 30px rgba(212, 175, 55, 0.2); }}
-        
-        .stats-grid {{ display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 25px; }}
-        .stat-box {{ padding: 25px; border-radius: 28px; background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); text-align: center; }}
-        .stat-box h4 {{ font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 12px; }}
-        .stat-box .value {{ font-size: 28px; font-weight: 950; color: var(--accent); text-shadow: 0 0 15px var(--glow); }}
-        
-        .progress-container {{ margin-top: 35px; }}
-        .progress-header {{ display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 15px; font-weight: 900; color: #FFF; }}
-        .progress-bar {{ height: 12px; background: rgba(255,255,255,0.05); border-radius: 20px; overflow: hidden; border: 1px solid rgba(255,255,255,0.08); }}
-        .progress-fill {{ 
-            height: 100%; background: linear-gradient(90deg, var(--primary), var(--accent), #FFF); 
-            transition: 3s cubic-bezier(0.34, 1.56, 0.64, 1); 
-            box-shadow: 0 0 20px var(--accent);
-            position: relative;
-        }}
-        .progress-fill::after {{
-            content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: progressFlow 2s infinite linear;
-        }}
-        @keyframes progressFlow {{ 0% {{ transform: translateX(-100%); }} 100% {{ transform: translateX(100%); }} }}
-        @keyframes blink {{ 0%, 100% {{ opacity: 1; filter: brightness(1.2); }} 50% {{ opacity: 0.4; filter: brightness(0.8); }} }}
-        
-        .section-title {{ 
-            font-size: 15px; font-weight: 950; color: #FFF; text-transform: uppercase; 
-            letter-spacing: 3px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
-            flex-wrap: wrap;
-        }}
-        .section-title::after {{ content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0.4; min-width: 50px; }}
-        
-        .chart-container {{ height: 320px; position: relative; padding: 10px; }}
-        
-        .legend-item {{
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px 18px; background: rgba(255,255,255,0.03);
-            border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px;
-            transition: all 0.3s ease;
-        }}
-        .legend-item:hover {{ background: rgba(255,255,255,0.07); transform: translateX(5px); }}
-        .legend-color {{ width: 12px; height: 12px; border-radius: 4px; margin-right: 12px; }}
-        
-        #pieLegend::-webkit-scrollbar {{ width: 4px; }}
-        #pieLegend::-webkit-scrollbar-thumb {{ background: var(--accent); border-radius: 10px; }}
-        
-        .day-group {{ margin-bottom: 40px; }}
-        .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 900; font-size: 18px; color: #FFF; border-left: 6px solid var(--accent); padding-left: 18px; }}
-        .service-link {{ display: block; margin-bottom: 15px; outline: none; }}
-        .service-entry {{ 
-            background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 22px 28px; 
-            border-radius: 24px; display: flex; justify-content: space-between; align-items: center;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer;
-        }}
-        .service-entry:hover {{ 
-            background: rgba(212, 175, 55, 0.12); 
-            border-color: var(--accent); 
-            transform: translateX(10px) scale(1.02);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(212, 175, 55, 0.2);
-        }}
-        .service-info {{ display: flex; flex-direction: column; gap: 6px; }}
-        .service-name {{ font-weight: 800; font-size: 17px; color: #FFF; }}
-        .service-pkg {{ font-size: 12px; color: var(--text-dim); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }}
-        .service-price {{ font-weight: 1000; color: var(--accent); font-size: 20px; text-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }}
-        
-        ::-webkit-scrollbar {{ width: 8px; }}
-        ::-webkit-scrollbar-thumb {{ background: var(--accent); border-radius: 10px; }}
+        #syncStatus {{ font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; }}
+        .status-ready {{ background: var(--success); color: #fff; }}
+        .status-syncing {{ background: var(--accent-secondary); color: #fff; }}
+        .status-error {{ background: var(--danger); color: #fff; }}
     </style>
 </head>
 <body>
-    <div class="bhairavi-banner"></div>
-    <div class="bg-glow"></div>
     <div class="container">
-        <div class="header">
-            <div class="subtitle">Neural Operations Hub</div>
-            <h1>केसर दर्शिका</h1>
-            <div id="header-date" style="font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 2px; margin-top: 8px; text-shadow: 0 0 15px var(--glow);">
-                {stats['today_date']}
+        <header>
+            <div class="logo">Operational Intelligence</div>
+            <div class="header-meta">
+                <div>DATE: <span id="currentHeaderDate">{stats['today_date']}</span></div>
+                <div style="margin-top: 5px;"><span id="syncStatus" class="status-ready">READY</span></div>
             </div>
-            <div style="margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px;">
-                <div style="width: 8px; height: 8px; background: #00FF00; border-radius: 50%; box-shadow: 0 0 10px #00FF00; animation: blink 1.5s infinite;"></div>
-                <span style="font-size: 10px; font-weight: 800; letter-spacing: 2px; color: #00FF00; text-transform: uppercase;">System Operational</span>
+        </header>
+
+        <div class="tip-banner">
+            <div class="tip-header">✨ {stats['explanation'].split(' ')[0] if ' ' in stats['explanation'] else 'ADVICE'}</div>
+            <p id="projectionText">{stats['explanation']}</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="stat-label">Total Services</div>
+                <div class="stat-value">{stats['total_services']}</div>
+                <div class="stat-sub up">↑ {stats['total_services'] - 12} vs last sync</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Total Earnings</div>
+                <div class="stat-value">₹{stats['total_earnings']:,}</div>
+                <div class="stat-sub up">↑ Current: ₹{stats['total_earnings']}</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Pace Required</div>
+                <div class="stat-value">{stats['recovery_pace_services']}</div>
+                <div class="stat-sub">Monthly Target: ₹90,000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Recommendation</div>
+                <div class="stat-value">{stats['recommended_today']}</div>
+                <div class="stat-sub">Services to complete today</div>
             </div>
         </div>
 
-        <div class="glass-card stats-hero" style="animation-delay: 0.1s;">
-            <div class="hero-label">Terminal Revenue Prediction</div>
-            <div class="hero-value">₹{stats['projected_total']}</div>
-            <p style="margin-top: 18px; color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;">{stats['projection_sentence']}</p>
-            
-            <div class="progress-container">
-                <div class="progress-header">
-                    <span>MISSION LOAD</span>
-                    <span style="color: var(--accent); text-shadow: 0 0 15px var(--glow); font-weight: 1000;">{stats['completed_today']} / {stats['recommended_today']} UNITS</span>
+        <div class="main-layout">
+            <div class="content-left">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">REVENUE TRAJECTORY</div>
+                        <div class="controls">
+                            <input type="date" id="dateJump" class="date-picker">
+                            <button class="btn" onclick="window.navTrajectory('prev')">PREVIOUS TRAJECTORY</button>
+                        </div>
+                    </div>
+                    <canvas id="revenueChart" height="150"></canvas>
                 </div>
-                <div class="progress-bar"><div class="progress-fill" id="mission-fill" style="width: 0%"></div></div>
-            </div>
-        </div>
 
-        <div class="stats-grid">
-            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.2s;">
-                <h4>TOTAL HARVEST</h4>
-                <div class="value">₹{stats['total_earnings']}</div>
-            </div>
-            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.3s;">
-                <h4>EFFICIENCY</h4>
-                <div class="value">₹{stats['avg_daily']}</div>
-            </div>
-            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.4s;">
-                <h4>AVG SERVICES</h4>
-                <div class="value">{stats['avg_daily_services']}</div>
-            </div>
-            <div class="glass-card stat-box" style="margin-bottom: 0; animation-delay: 0.5s;">
-                <h4>TOTAL UNITS</h4>
-                <div class="value">{stats['total_services']}</div>
-            </div>
-        </div>
-
-        <div class="glass-card" style="animation-delay: 0.4s;">
-            <div class="section-title" style="display: flex; align-items: center; gap: 15px;">
-                <span>Revenue Trajectory</span>
-                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-                    <button onclick="navigateTrend(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
-                    <span id="trendViewedRange" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;">LAST 30 DAYS</span>
-                    <button onclick="navigateTrend(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
-                </div>
-            </div>
-            <div class="chart-container"><canvas id="trendChart"></canvas></div>
-        </div>
-
-        <div class="glass-card" style="animation-delay: 0.5s;">
-            <div class="section-title" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
-                <span>Daily Focus Distribution</span>
-                <span id="pieTotalHours" style="font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);"></span>
-                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
-                    <button onclick="navigatePie(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900; display: inline-block !important;">&lt;</button>
-                    <span id="pieViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
-                    <button onclick="navigatePie(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900; display: inline-block !important;">&gt;</button>
-                    <input type="date" id="pieDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
-                </div>
-            </div>
-            <div class="pie-section-content" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 10px;">
-                <div class="chart-container" style="flex: 0 0 450px; height: 450px;">
-                    <canvas id="pieChart"></canvas>
-                </div>
-                <div id="pieLegend" style="flex: 1; max-height: 450px; overflow-y: auto; padding-right: 15px;">
-                    <!-- Legend dynamic content -->
-                </div>
-            </div>
-        </div>
-
-        <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s;">
-            <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <div style=\"display: flex; align-items: center; gap: 10px;\">
-                    <span>Daily Reflections</span>
-                    <span id=\"cloudSyncBtn\" onclick=\"window.syncRemoteReflections()\" title=\"Real-time Cloud Sync\" style=\"cursor: pointer; font-size: 14px; opacity: 0.5; transition: all 0.3s;\">☁</span>
-                </div>
-                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
-                    <button onclick="navigateRef(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
-                    <span id="refViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
-                    <button onclick="navigateRef(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
-                    <input type="date" id="refDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
-                </div>
-            </div>
-            
-            <div id="reflectionInputArea" style="margin-bottom: 30px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 28px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,0.2);">
-                <label id="refInputLabel" style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight for Today</label>
-                <textarea id="newReflectionText" placeholder="Type your reflections for today here..." 
-                    style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: #FFF; font-family: 'Outfit'; font-size: 15px; min-height: 120px; outline: none; resize: vertical; padding: 15px; border-radius: 16px; line-height: 1.6;"></textarea>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
-                    <button onclick="copyReflection()" style="background: var(--accent); border: none; color: #000; padding: 10px 25px; border-radius: 12px; font-weight: 950; cursor: pointer; font-size: 12px; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">SAVE</button>
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">OPERATIONAL INTELLIGENCE LOG</div>
+                        <div class="controls">
+                            <input type="date" id="logDateJump" class="date-picker">
+                        </div>
+                    </div>
+                    <div id="serviceLogContainer">
+                        <table class="log-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Activity / Task</th>
+                                </tr>
+                            </thead>
+                            <tbody id="serviceLogBody">
+                                <!-- Dynamic -->
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
 
-            <div style="padding: 0 10px;">
-                <label style="display: block; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">Logged Reflections</label>
-                <div id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></div>
-            </div>
-        </div>
+            <div class="content-right">
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">EFFORT DISTRIBUTION</div>
+                        <div class="controls">
+                            <input type="date" id="pieDateJump" class="date-picker">
+                        </div>
+                    </div>
+                    <canvas id="effortPieChart" height="250"></canvas>
+                    <div id="noDataMessage" style="display:none; text-align:center; padding: 20px; color: var(--text-dim);">No time logs for this date</div>
+                </div>
 
-        <div class="glass-card" style="animation-delay: 0.7s;">
-            <div class="section-title" style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
-                <span>Operational Intelligence Log</span>
-                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
-                    <button onclick="navigateLog(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
-                    <span id="log-header-date" style="font-size: 13px; color: var(--accent); letter-spacing: 2px; font-weight: 900;">[ {stats['today_date']} ]</span>
-                    <button onclick="navigateLog(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                <div class="chart-card">
+                    <div class="card-header">
+                        <div class="card-title">STRATEGIC REFLECTIONS</div>
+                    </div>
+                    <div class="ref-input-group">
+                        <input type="text" id="reflectionInput" class="ref-input" placeholder="Add observation...">
+                        <button id="saveBtn" class="btn btn-primary" onclick="window.saveReflection()">SAVE</button>
+                    </div>
+                    <ul id="reflectionList" class="ref-list">
+                        <!-- Dynamic -->
+                    </ul>
                 </div>
             </div>
-            <div style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
-                <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
-                    style="flex: 1; min-width: 250px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; letter-spacing: 1px; outline: none; transition: all 0.3s ease;">
-                <input type="date" id="dateJump" 
-                    style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 16px; padding: 15px 20px; color: #FFF; font-family: 'Outfit'; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
-            </div>
-            <div id="log-html"></div>
         </div>
     </div>
 
     <script>
-        const data = {json.dumps(data_dict)};
-        
-        function initDashboard(data) {{
-            // Real-time Cloud Sync Engine
-            window.syncRemoteReflections = async function() {{
-                const token = localStorage.getItem('gh_token');
-                if (!token) return;
+        // --- GLOBAL DATA & STATE ---
+        window.dashboardData = {json.dumps(data_dict)};
+        window.state = {{
+            currentDate: window.dashboardData.today,
+            isSyncing: false
+        }};
 
-                const syncBtn = document.getElementById('cloudSyncBtn');
-                if (syncBtn) syncBtn.style.color = 'var(--accent)';
+        // --- UTILS ---
+        const $ = id => document.getElementById(id);
+        const formatLongDate = iso => {{
+            const d = new Date(iso);
+            return d.toLocaleDateString('en-GB', {{ day:'numeric', month:'long', year:'numeric', weekday:'long' }});
+        }};
 
-                const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
-                try {{
-                    const res = await fetch(url, {{
-                        headers: {{ 'Authorization': `token ${{token}}`, 'Accept': 'application/vnd.github.v3+json' }}
-                    }});
-                    if (!res.ok) throw new Error('Sync failed');
-                    const comments = await res.json();
-                    
-                    // Reset remote layers
-                    window.remoteAdds = [];
-                    window.remoteDeletes = [];
-
-                    comments.forEach(c => {{
-                        const body = c.body;
-                        if (body.startsWith('ADD_REF:')) {{
-                            const dateMatch = body.match(/Date: (.*?), Text:/);
-                            const textMatch = body.match(/Text: (.*)$/);
-                            if (dateMatch && textMatch) {{
-                                window.remoteAdds.push({{ date: dateMatch[1], text: textMatch[1] }});
-                            }}
-                        }} else if (body.startsWith('DELETE_REF:')) {{
-                            const dateMatch = body.match(/Date: (.*?), Index:/);
-                            const idxMatch = body.match(/Index: (\\d+)$/);
-                            if (dateMatch && idxMatch) {{
-                                window.remoteDeletes.push({{ date: dateMatch[1], index: parseInt(idxMatch[1]) }});
-                            }}
-                        }}
-                    }});
-
-                    if (window.currentSyncDate) renderReflections(window.currentSyncDate);
-                    if (syncBtn) syncBtn.style.color = '';
-                }} catch (e) {{
-                    console.error('Cloud Sync Error:', e);
-                    if (syncBtn) syncBtn.style.color = '#FF4444';
-                }}
-            }};
-
-            // Auto-sync every 30 seconds
-            setInterval(window.syncRemoteReflections, 30000);
-            window.syncRemoteReflections();
-
-            // Animate Units
-            setTimeout(() => {{
-                const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
-                document.getElementById('mission-fill').style.width = pct + '%';
-                
-                // Update dates dynamically
-                if (data.stats.today_date) {{
-                    document.getElementById('header-date').innerText = data.stats.today_date;
-                    document.getElementById('log-header-date').innerText = `[ ${{data.stats.today_date}} ]`;
-                    document.title = `केसर दर्शिका | ${{data.stats.today_date}}`;
-                }}
-            }}, 600);
-
-            Chart.defaults.color = 'rgba(255,255,255,0.7)';
-            Chart.defaults.font.family = "'Outfit', sans-serif";
-            Chart.defaults.font.weight = '600';
-
-            const commonOptions = {{
-                responsive: true,
-                maintainAspectRatio: false,
-                animation: {{ duration: 2500, easing: 'easeOutQuart' }},
-                plugins: {{ 
-                    legend: {{ display: false }},
-                    tooltip: {{ 
-                        backgroundColor: 'rgba(5, 5, 5, 0.98)', titleColor: '#D4AF37',
-                        bodyColor: '#FFF', borderColor: '#D4AF37', borderWidth: 1,
-                        padding: 15, cornerRadius: 16, displayColors: false,
-                        titleFont: {{ size: 16, weight: 800 }}, bodyFont: {{ size: 14 }}
+        // --- UI RENDERERS ---
+        window.renderCharts = () => {{
+            const targetDate = window.state.currentDate;
+            
+            // 1. Revenue Trend Chart (Full History)
+            const trendCtx = $('revenueChart').getContext('2d');
+            if (window.revenueChartInst) window.revenueChartInst.destroy();
+            
+            const trendDays = window.dashboardData.services.filter(d => d.iso_date).sort((a,b) => a.iso_date.localeCompare(b.iso_date));
+            window.revenueChartInst = new Chart(trendCtx, {{
+                type: 'line',
+                data: {{
+                    labels: trendDays.map(d => d.date.split(',')[0]),
+                    datasets: [{{
+                        label: 'Earnings (RS)',
+                        data: trendDays.map(d => d.earnings),
+                        borderColor: '#00f2ff',
+                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                        fill: true,
+                        tension: 0.4
+                    }}]
+                }},
+                options: {{
+                    responsive: true,
+                    plugins: {{ legend: {{ display: false }} }},
+                    scales: {{
+                        y: {{ grid: {{ color: '#30363d' }}, ticks: {{ color: '#8b949e' }} }},
+                        x: {{ grid: {{ display: false }}, ticks: {{ color: '#8b949e' }} }}
                     }}
                 }}
-            }};
+            }});
 
-            // 1. Line Chart
-            let trendChart;
-            const renderTrendChart = (range = 30) => {{
-                const ctx = document.getElementById('trendChart');
-                if (!ctx) return;
-                if (trendChart) trendChart.destroy();
+            // 2. Effort Pie Chart (Selected Date)
+            const pieCtx = $('effortPieChart').getContext('2d');
+            if (window.pieChartInst) window.pieChartInst.destroy();
+            
+            const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
+            if (!logEntry || !logEntry.logs.length) {{
+                $('effortPieChart').style.display = 'none';
+                $('noDataMessage').style.display = 'block';
+            }} else {{
+                $('effortPieChart').style.display = 'block';
+                $('noDataMessage').style.display = 'none';
                 
-                const labels = data.labels.slice(-range);
-                const earnings = data.earnings.slice(-range);
-
-                trendChart = new Chart(ctx, {{
-                    type: 'line',
-                    data: {{
-                        labels: labels,
-                        datasets: [{{
-                            data: earnings,
-                            borderColor: '#D4AF37',
-                            borderWidth: 5,
-                            backgroundColor: (ctx) => {{
-                                const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 350);
-                                gradient.addColorStop(0, 'rgba(212, 175, 55, 0.3)');
-                                gradient.addColorStop(1, 'transparent');
-                                return gradient;
-                            }},
-                            tension: 0.45, fill: true, pointRadius: 7, pointHoverRadius: 10,
-                            pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37', pointBorderWidth: 4
-                        }}]
-                    }},
-                    options: {{
-                        ...commonOptions,
-                        scales: {{ 
-                            y: {{ 
-                                grid: {{ color: 'rgba(255,255,255,0.05)' }}, 
-                                ticks: {{ padding: 10, color: '#94A3B8', font: {{ weight: 600 }} }} 
-                            }},
-                            x: {{ 
-                                grid: {{ display: false }}, 
-                                ticks: {{ 
-                                    padding: 10, color: '#94A3B8', font: {{ weight: 600 }},
-                                    maxRotation: 45, minRotation: 45,
-                                    autoSkip: true, maxTicksLimit: 10
-                                }} 
-                            }}
-                        }}
-                    }}
-                }});
-                document.getElementById('trendViewedRange').innerText = `LAST ${{range}} DAYS`;
-            }};
-            renderTrendChart(30);
-
-            let currentTrendRange = 30;
-            window.navigateTrend = (dir) => {{
-                const options = [7, 15, 30, 60, 90];
-                let idx = options.indexOf(currentTrendRange);
-                idx = Math.max(0, Math.min(options.length - 1, idx + dir));
-                currentTrendRange = options[idx];
-                renderTrendChart(currentTrendRange);
-            }};
-
-            // 2. Pie Chart (Task Distribution)
-            // 3. Task Distribution & Reflections Engine (Synchronized)
-            let currentPage = 1;
-            const pageSize = 1;
-            window.currentSyncDate = data.stats.today_date_raw;
-            let pieChart;
-
-            window.updateDashboardDate = (targetDate) => {{
-                if (!targetDate) return;
-                window.currentSyncDate = targetDate;
-                renderPieChart(targetDate);
-                renderReflections(targetDate);
-                
-                // Update all date pickers
-                const parts = targetDate.split('-');
-                if (parts.length === 3) {{
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    const monthIdx = monthNames.indexOf(parts[1]);
-                    if (monthIdx !== -1) {{
-                        const isoDate = `${{parts[2]}}-${{(monthIdx + 1).toString().padStart(2, '0')}}-${{parts[0].padStart(2, '0')}}`;
-                        if (document.getElementById('pieDateJump')) document.getElementById('pieDateJump').value = isoDate;
-                        if (document.getElementById('refDateJump')) document.getElementById('refDateJump').value = isoDate;
-                        if (document.getElementById('dateJump')) document.getElementById('dateJump').value = isoDate;
-                    }}
-                }}
-
-                // Sync the Log Section
-                const allDays = [...data.raw_days].reverse();
-                const dayIdx = allDays.findIndex(d => {{
-                    const dObj = new Date(d.iso_date);
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    const dStr = `${{dObj.getDate().toString().padStart(2, '0')}}-${{monthNames[dObj.getMonth()]}}-${{dObj.getFullYear()}}`;
-                    return dStr === targetDate;
-                }});
-                if (dayIdx !== -1) {{
-                    currentPage = dayIdx + 1;
-                    renderLog();
-                }}
-            }}
-
-            window.navigatePie = (dir) => {{
-                const allDatesInLogs = data.time_logs.map(l => l.date);
-                if (!allDatesInLogs.includes(data.stats.today_date_raw)) allDatesInLogs.push(data.stats.today_date_raw);
-                
-                allDatesInLogs.sort((a,b) => {{
-                    const parse = (s) => {{
-                        const p = s.split('-');
-                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                        return new Date(p[2], monthNames.indexOf(p[1]), p[0]);
-                    }};
-                    return parse(a) - parse(b);
-                }});
-
-                let idx = allDatesInLogs.indexOf(window.currentSyncDate);
-                if (idx === -1) idx = allDatesInLogs.length - 1;
-                const newIdx = Math.max(0, Math.min(allDatesInLogs.length - 1, idx + dir));
-                updateDashboardDate(allDatesInLogs[newIdx]);
-            }};
-
-            window.navigateRef = window.navigatePie;
-            window.navigateLog = (dir) => window.changePage(-dir);
-
-            window.renderReflections = (targetDate) => {{
-                const dateEl = document.getElementById('refViewedDate');
-                if (dateEl) dateEl.innerText = targetDate;
-                
-                let log = data.time_logs.find(l => l.date === targetDate);
-                const area = document.getElementById('reflectionsText');
-                if (!area) return;
-                
-                let reflections = log ? [...log.reflections] : [];
-                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
-                let html = '';
-
-                // 1. Permanent Reflections (from file)
-                reflections.forEach((ref, idx) => {{
-                    const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
-                    html += `
-                        <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.3; text-decoration: line-through;' : ''}}\">
-                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                <span style=\"flex: 1;\">${{ref}} ${{isBeingDeleted ? '<small>(Deleting...)</small>' : ''}}</span>
-                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                    title=\"Delete Reflection\"
-                                    style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
-                            </div>
-                        </li>
-                    `;
-                }});
-
-                // 2. Syncing Reflections (Cloud but not in file yet)
-                if (window.remoteAdds) {{
-                    window.remoteAdds.forEach(add => {{
-                        if (add.date === targetDate && !reflections.includes(add.text)) {{
-                            html += `
-                                <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.8;\">
-                                    <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                        <span style=\"flex: 1;\">${{add.text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
-                                        <button onclick=\"deletePendingReflection('${{targetDate}}', '${{add.text.replace(/'/g, "\\'")}}')\"
-                                            title=\"Cancel Sync\"
-                                            style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                                    </div>
-                                </li>
-                            `;
-                        }}
-                    }});
-                }}
-
-                // 3. Local Pending
-                pending.forEach((ref) => {{
-                    if (window.remoteAdds && window.remoteAdds.some(a => a.date === targetDate && a.text === ref)) return;
-                    html += `
-                        <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
-                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Local Syncing...)</small></span>
-                                <button onclick=\"deletePendingReflection('${{targetDate}}', '${{ref.replace(/'/g, "\\'")}}')\"
-                                    title=\"Cancel Sync\"
-                                    style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                            </div>
-                        </li>
-                    `;
-                }});
-
-                if (html === '') {{
-                    area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
-                }} else {{
-                    area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + html + '</ol>';
-                }}
-                
-                const label = document.getElementById('refInputLabel');
-                label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
-            }}
-
-            window.renderPieChart = (targetDate) => {{
-                const viewedDateEl = document.getElementById('pieViewedDate');
-                if (viewedDateEl) viewedDateEl.innerText = targetDate;
-                
-                const log = data.time_logs.find(l => l.date === targetDate);
-                const ctx = document.getElementById('pieChart');
-                if (!ctx) return;
-                const legend = document.getElementById('pieLegend');
-                
-                if (pieChart) pieChart.destroy();
-                
-                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
-
-                if (!log || !log.logs || log.logs.length === 0) {{
-                    const totalHoursEl = document.getElementById('pieTotalHours');
-                    if (totalHoursEl) totalHoursEl.innerText = 'NO DATA FOR THIS DATE';
-                    if (legend) legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px; opacity: 0.5;\">[ NO_LOG_ENTRIES ]</div>';
-                    
-                    // Render "Empty" Gray Chart
-                    pieChart = new Chart(ctx.getContext('2d'), {{
-                        type: 'doughnut',
-                        data: {{
-                            labels: ['Empty'],
-                            datasets: [{{
-                                data: [1],
-                                backgroundColor: ['rgba(255,255,255,0.05)'],
-                                borderWidth: 0
-                            }}]
-                        }},
-                        options: {{
-                            ...commonOptions,
-                            cutout: '80%',
-                            plugins: {{ tooltip: {{ enabled: false }} }}
-                        }}
-                    }});
-                    return;
-                }}
-                
-                document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
-                
-                pieChart = new Chart(ctx, {{
+                window.pieChartInst = new Chart(pieCtx, {{
                     type: 'doughnut',
                     data: {{
-                        labels: log.logs.map(l => l.activity),
+                        labels: logEntry.logs.map(l => l.activity),
                         datasets: [{{
-                            data: log.logs.map(l => l.hours),
-                            backgroundColor: colors.map(c => c + '99'),
-                            borderWidth: 2,
-                            borderColor: 'rgba(5,5,5,0.5)'
+                            data: logEntry.logs.map(l => l.hours),
+                            backgroundColor: ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'],
+                            borderWidth: 0,
+                            hoverOffset: 15
                         }}]
                     }},
                     options: {{
-                        ...commonOptions,
-                        cutout: '75%',
-                        plugins: {{
-                            ...commonOptions.plugins,
-                            legend: {{ display: false }}
-                        }}
+                        responsive: true,
+                        plugins: {{ legend: {{ position: 'bottom', labels: {{ color: '#e6edf3', padding: 20 }} }} }},
+                        cutout: '70%'
                     }}
                 }});
-
-                legend.innerHTML = log.logs.map((l, i) => `
-                    <div class="legend-item">
-                        <div style="display: flex; align-items: center;">
-                            <div class="legend-color" style="background: ${{colors[i % colors.length]}}"></div>
-                            <span style="font-weight: 800; font-size: 13px;">${{l.activity}}</span>
-                        </div>
-                        <span style="font-weight: 1000; color: var(--accent);">${{l.hours.toFixed(1)}}h</span>
-                    </div>
-                `).join('');
             }}
+        }};
 
-            // Date Jump Handlers
-            const dateJumpHandler = (e) => {{
-                const d = new Date(e.target.value);
-                const day = d.getDate();
-                const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                const month = monthNames[d.getMonth()];
-                const dateStr = `${{day.toString().padStart(2, '0')}}-${{month}}-${{d.getFullYear()}}`;
-                window.updateDashboardDate(dateStr);
-            }};
-
-            document.getElementById('pieDateJump').addEventListener('change', dateJumpHandler);
-            document.getElementById('refDateJump').addEventListener('change', dateJumpHandler);
-
-            // Initial render
-            updateDashboardDate(currentSyncDate);
-
-
-
-            // 4. Operational Log Rendering Engine
-
-            function renderLog(filter = '') {{
-                const query = filter.toLowerCase();
-                const allDays = [...data.raw_days].reverse(); // Show latest first
-                const filteredDays = allDays.filter(d => {{
-                    if (!query) return true;
-                    return d.date.toLowerCase().includes(query) || d.services.some(s => s.toLowerCase().includes(query));
-                }});
-
-                const totalPages = Math.ceil(filteredDays.length / pageSize);
-                if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
-
-                const start = (currentPage - 1) * pageSize;
-                const pagedDays = filteredDays.slice(start, start + pageSize);
-
-                const logHtml = pagedDays.map((d, idx) => {{
-                    const actualIdx = start + idx;
-                    const isExpanded = true; // Always expand in single-day view
-                    return `
-                        <div class="day-group" id="day-${{actualIdx}}">
-                            <div class="day-header" onclick="toggleDay(${{actualIdx}})" style="cursor: pointer; user-select: none;">
-                                <div style="display: flex; align-items: center; gap: 15px;">
-                                    <span class="toggle-icon" id="icon-${{actualIdx}}" style="font-size: 14px; color: var(--accent); transition: 0.3s;">${{isExpanded ? '▼' : '▶'}}</span>
-                                    <span>${{d.date}}</span>
-                                    <span style="font-size: 11px; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px;">[ ${{d.count}} UNITS ]</span>
-                                </div>
-                                <span style="color: var(--accent); text-shadow: 0 0 10px var(--glow);">₹${{d.earnings}}</span>
-                            </div>
-                            <div class="service-log" id="log-${{actualIdx}}" style="display: ${{isExpanded ? 'block' : 'none'}}">
-                                ${{(query ? d.services.filter(s => s.toLowerCase().includes(query)) : d.services).map(s => {{
-                                    const m = s.match(/^\\d+\\.\\s+\\[(\\d\\d:\\d\\d)\\]\\s+(.*?)\\s+-\\s+(.*?)\\s+-\\s+(\\d+)rs/);
-                                    if (m) {{
-                                        const name = m[2].trim();
-                                        const pkg = m[3].trim();
-                                        const uuidMap = {{
-                                            'utair': '7fd31965-0477-48fc-82ee-ecf87e4b825e',
-                                            'lyft': 'cff30feb-2ec7-4cc1-b5fb-04815c3cb497',
-                                            'viya lite': '51b1efb3-13a1-4bdd-82dc-103c69b93ea2',
-                                            'jvspinbet': '31742461-826a-4934-89c0-681585257982',
-                                            'opentable': 'c34dfb4d-3d83-4176-ba7d-3919b5f07e73'
-                                        }};
-                                        const uuid = uuidMap[name.toLowerCase()];
-                                        const link = uuid ? `http://51.195.24.179:3000/services/${{uuid}}` : `http://51.195.24.179:3000/services?search=${{encodeURIComponent(name)}}`;
-                                        
-                                        return `
-                                        <a href="${{link}}" target="_blank" class="service-link" style="text-decoration: none;">
-                                            <div class="service-entry">
-                                                <div class="service-info">
-                                                    <span class="service-name">${{name}}</span>
-                                                    <span class="service-pkg">${{pkg}}</span>
-                                                </div>
-                                                <div class="service-price">₹${{m[4]}}</div>
-                                            </div>
-                                        </a>`;
-                                    }}
-                                    return `<div class="service-entry"><span class="service-name">${{s}}</span></div>`;
-                                }}).join('') }}
-                            </div>
-                        </div>
-                    `;
-                }}).join('');
-
-                const paginationHtml = totalPages > 1 ? 
-                    '<div style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 30px; padding: 20px; border-top: 1px solid var(--border);">' +
-                        '<button onclick="changePage(1)" ' + (currentPage === totalPages ? 'disabled' : '') + ' ' +
-                            'style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ' + (currentPage === totalPages ? '0.3' : '1') + '">PREV</button>' +
-                        '<span style="font-weight: 800; letter-spacing: 2px; color: var(--text-dim); font-size: 14px;">DAY ' + currentPage + ' / ' + totalPages + '</span>' +
-                        '<button onclick="changePage(-1)" ' + (currentPage === 1 ? 'disabled' : '') + ' ' +
-                            'style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 700; transition: all 0.3s ease; opacity: ' + (currentPage === 1 ? '0.3' : '1') + '">NEXT</button>' +
-                    '</div>' : '';
-
-                document.getElementById('log-html').innerHTML = logHtml + paginationHtml || '<div style="text-align:center; padding: 40px; color: var(--text-dim); font-weight: 700;">[ NO_RECORDS_FOUND ]</div>';
-            }}
-
-            window.toggleDay = (idx) => {{
-                const el = document.getElementById('log-' + idx);
-                const icon = document.getElementById('icon-' + idx);
-                const isVisible = el.style.display !== 'none';
-                el.style.display = isVisible ? 'none' : 'block';
-                icon.innerText = isVisible ? '▶' : '▼';
-            }};
-
-            window.changePage = (dir) => {{
-                currentPage += dir;
-                renderLog(document.getElementById('logSearch').value);
-                
-                // Sync rest of dashboard
-                const allDays = [...data.raw_days].reverse();
-                const day = allDays[currentPage - 1];
-                if (day) {{
-                    const dateObj = new Date(day.iso_date);
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    const dateStr = `${{dateObj.getDate().toString().padStart(2, '0')}}-${{monthNames[dateObj.getMonth()]}}-${{dateObj.getFullYear()}}`;
-                    window.currentSyncDate = dateStr;
-                    renderPieChart(dateStr);
-                    renderReflections(dateStr);
-                    
-                    // Update all date pickers
-                    const iso = day.iso_date;
-                    if (document.getElementById('pieDateJump')) document.getElementById('pieDateJump').value = iso;
-                    if (document.getElementById('refDateJump')) document.getElementById('refDateJump').value = iso;
-                    if (document.getElementById('dateJump')) document.getElementById('dateJump').value = iso;
-                }}
-                
-                document.getElementById('logSearch').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
-            }};
-
-            document.getElementById('logSearch').addEventListener('input', (e) => {{
-                currentPage = 1;
-                renderLog(e.target.value);
-            }});
-
-            document.getElementById('dateJump').addEventListener('change', (e) => {{
-                const selectedDate = e.target.value;
-                const foundIdx = data.raw_days.findIndex(d => d.iso_date === selectedDate);
-                if (foundIdx !== -1) {{
-                    currentPage = Math.floor(foundIdx / pageSize) + 1;
-                    renderLog();
-                    document.getElementById('logSearch').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
-                }}
-            }});
+        window.renderLogsAndReflections = () => {{
+            const targetDate = window.state.currentDate;
             
-            // Initial render
-            renderLog();
-        }}
+            // Render Service Logs
+            const serviceDay = window.dashboardData.services.find(d => d.iso_date === targetDate);
+            const logBody = $('serviceLogBody');
+            logBody.innerHTML = '';
+            
+            if (serviceDay && serviceDay.services.length) {{
+                serviceDay.services.forEach(line => {{
+                    const match = line.match(/^(\d+)\.(.*)/);
+                    if (match) {{
+                        const row = `<tr><td>${{match[1]}}</td><td>${{match[2].trim()}}</td></tr>`;
+                        logBody.insertAdjacentHTML('beforeend', row);
+                    }}
+                }});
+            }} else {{
+                logBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim);">No services recorded for this date</td></tr>';
+            }}
 
-        function copyReflection() {{
-            const text = document.getElementById('newReflectionText').value;
+            // Render Reflections
+            const refEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
+            const refList = $('reflectionList');
+            refList.innerHTML = '';
+            
+            if (refEntry && refEntry.reflections.length) {{
+                refEntry.reflections.forEach((text, idx) => {{
+                    const li = document.createElement('li');
+                    li.className = 'ref-item';
+                    li.innerHTML = `<span>${{text}}</span><span class="ref-delete" onclick="window.deleteReflection(${{idx}})">DELETE</span>`;
+                    refList.appendChild(li);
+                }});
+            }} else {{
+                refList.innerHTML = '<li style="color:var(--text-dim); font-size:0.9rem;">No reflections yet. Add your first one above.</li>';
+            }}
+        }};
+
+        window.jumpToDate = (isoDate) => {{
+            if (!isoDate) return;
+            window.state.currentDate = isoDate;
+            
+            // Sync all jump inputs
+            $('dateJump').value = isoDate;
+            $('logDateJump').value = isoDate;
+            $('pieDateJump').value = isoDate;
+            
+            // Update Header
+            const serviceDay = window.dashboardData.services.find(d => d.iso_date === isoDate);
+            $('currentHeaderDate').innerText = serviceDay ? serviceDay.date : formatLongDate(isoDate);
+            
+            window.renderCharts();
+            window.renderLogsAndReflections();
+        }};
+
+        window.navTrajectory = (dir) => {{
+            const trendDays = window.dashboardData.services.filter(d => d.iso_date).sort((a,b) => a.iso_date.localeCompare(b.iso_date));
+            const curIdx = trendDays.findIndex(d => d.iso_date === window.state.currentDate);
+            let nextIdx = dir === 'prev' ? curIdx - 1 : curIdx + 1;
+            
+            if (nextIdx >= 0 && nextIdx < trendDays.length) {{
+                window.jumpToDate(trendDays[nextIdx].iso_date);
+            }}
+        }};
+
+        // --- GITHUB SYNC LOGIC ---
+        window.updateSyncStatus = (status) => {{
+            const el = $('syncStatus');
+            el.className = '';
+            if (status === 'syncing') {{ el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); }}
+            else if (status === 'error') {{ el.innerText = 'SYNC ERROR'; el.classList.add('status-error'); }}
+            else {{ el.innerText = 'READY'; el.classList.add('status-ready'); }}
+        }};
+
+        window.pushToGitHub = async (message) => {{
+            const token = localStorage.getItem('github_token');
+            if (!token) {{
+                const t = prompt("Enter GitHub PAT for Sync:");
+                if (t) localStorage.setItem('github_token', t);
+                else return false;
+            }}
+            
+            window.state.isSyncing = true;
+            window.updateSyncStatus('syncing');
+            $('saveBtn').disabled = true;
+
+            try {{
+                const response = await fetch("https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments", {{
+                    method: "POST",
+                    headers: {{ "Authorization": `token ${{token}}`, "Accept": "application/vnd.github.v3+json" }},
+                    body: JSON.stringify({{ body: message }})
+                }});
+                if (response.ok) {{
+                    window.updateSyncStatus('ready');
+                    return true;
+                }} else {{ throw new Error("API Failure"); }}
+            }} catch (e) {{
+                window.updateSyncStatus('error');
+                console.error(e);
+                return false;
+            }} finally {{
+                window.state.isSyncing = false;
+                $('saveBtn').disabled = false;
+            }}
+        }};
+
+        window.saveReflection = async () => {{
+            const text = $('reflectionInput').value.trim();
             if (!text) return;
             
-            // 1. Save to localStorage for persistence across refreshes
-            const targetDate = window.currentSyncDate;
-            let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
-            pending.push(text);
-            localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
-
-            // 2. Immediate UI update
-            if (!window.remoteAdds) window.remoteAdds = [];
-            window.remoteAdds.push({{ date: targetDate, text: text }});
-            renderReflections(targetDate);
-
-            // 3. Save to "Database" (GitHub Issue)
-            saveToRemoteDatabase(text, targetDate);
+            const targetDate = window.state.currentDate;
+            const logDateStr = targetDate.split('-').reverse().join('-'); // DD-MM-YYYY
             
-            // 4. UI Feedback on button
-            const btn = document.querySelector('[onclick=\"copyReflection()\"]');
-            const oldText = btn.innerText;
-            btn.innerText = 'SAVED TO DB!';
-            btn.style.background = '#00FF00';
-            btn.style.color = '#000';
-            setTimeout(() => {{
-                btn.innerText = oldText;
-                btn.style.background = '';
-                btn.style.color = '';
-                document.getElementById('newReflectionText').value = '';
-            }}, 2000);
-        }}
-
-        async function saveToRemoteDatabase(text, date) {{
-            let token = localStorage.getItem('gh_token');
-            if (!token) {{
-                token = prompt('Please enter your GitHub PAT (repo scope) to save to DB:');
-                if (token) localStorage.setItem('gh_token', token);
+            // Optimistic Update
+            let logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
+            if (!logEntry) {{
+                logEntry = {{ iso_date: targetDate, date: logDateStr, logs: [], reflections: [], total: 0 }};
+                window.dashboardData.logs.push(logEntry);
             }}
-            if (!token) return;
+            logEntry.reflections.push(text);
+            window.renderLogsAndReflections();
+            $('reflectionInput').value = '';
 
-            const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
-            try {{
-                const command = `ADD_REF: Date: ${{date}}, Text: ${{text}}`;
-                const res = await fetch(url, {{
-                    method: 'POST',
-                    headers: {{
-                        'Authorization': `token ${{token}}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    }},
-                    body: JSON.stringify({{ body: command }})
-                }});
-                if (res.ok) {{
-                    console.log('Successfully saved to remote DB');
-                    setTimeout(() => window.syncRemoteReflections(), 1000);
-                }}
-                else if (res.status === 401) localStorage.removeItem('gh_token');
-            }} catch (e) {{
-                console.error('Save to DB failed:', e);
-            }}
-        }}
+            // Remote Sync
+            const cmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
+            await window.pushToGitHub(cmd);
+        }};
 
-        function deletePendingReflection(targetDate, text) {{
-            let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
-            pending = pending.filter(p => p !== text);
-            localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
+        window.deleteReflection = async (idx) => {{
+            const targetDate = window.state.currentDate;
+            const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
+            if (!logEntry) return;
+
+            const logDateStr = targetDate.split('-').reverse().join('-');
             
-            // Also remove from optimistic remoteAdds if it's there
-            if (window.remoteAdds) {{
-                window.remoteAdds = window.remoteAdds.filter(a => !(a.date === targetDate && a.text === text));
-            }}
-            
-            renderReflections(targetDate);
-        }}
+            // Optimistic Delete
+            logEntry.reflections.splice(idx, 1);
+            window.renderLogsAndReflections();
 
-        async function deleteReflection(date, index) {{
-            if (!confirm('Are you sure you want to delete this reflection?')) return;
-            
-            let token = localStorage.getItem('gh_token');
-            if (!token) {{
-                token = prompt('Please enter your GitHub PAT (repo scope) to authorize deletion:');
-                if (token) localStorage.setItem('gh_token', token);
-            }}
-            if (!token) return;
+            // Remote Sync
+            const cmd = `DELETE_REF: Date: ${{logDateStr}}, Index: ${{idx}}`;
+            await window.pushToGitHub(cmd);
+        }};
 
-            const command = `DELETE_REF: Date: ${{date}}, Index: ${{index}}`;
-            const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {{
+            const today = window.dashboardData.today;
+            $('dateJump').value = today;
+            $('logDateJump').value = today;
+            $('pieDateJump').value = today;
             
-            try {{
-                const res = await fetch(url, {{
-                    method: 'POST',
-                    headers: {{
-                        'Authorization': `token ${{token}}`,
-                        'Accept': 'application/vnd.github.v3+json',
-                        'Content-Type': 'application/json'
-                    }},
-                    body: JSON.stringify({{ body: command }})
-                }});
-                if (res.ok) {{
-                    alert('Deletion request sent. Syncing cloud...');
-                    setTimeout(() => window.syncRemoteReflections(), 1000);
-                    // Visually remove it for the current session
-                    const area = document.getElementById('reflectionsText');
-                    const items = area.querySelectorAll('li');
-                    if (items[index]) items[index].style.opacity = '0.3';
-                }}
-            }} catch (e) {{
-                console.error('Delete request failed:', e);
-            }}
-        }}
+            // Bind input changes
+            $('dateJump').onchange = (e) => window.jumpToDate(e.target.value);
+            $('logDateJump').onchange = (e) => window.jumpToDate(e.target.value);
+            $('pieDateJump').onchange = (e) => window.jumpToDate(e.target.value);
 
-        initDashboard(data);
+            window.jumpToDate(today);
+        }});
     </script>
 </body>
 </html>"""
@@ -1230,11 +823,13 @@ def update_readme(stats, time_logs):
     with open(path, 'r', encoding='utf-8') as f: content = f.read()
     sec = f"## 📉 Live Stats\n- **Total Earnings**: ₹{stats['total_earnings']}\n- **Average Daily**: ₹{stats['avg_daily']}/day\n- **Monthly Projection**: ₹{stats['projected_total']}\n"
     if time_logs:
-        log = time_logs[-1]
-        sec += f"\n## ⏳ Productivity Today ({log['date']})\n"
-        for e in log['logs']: sec += f"- **{e['activity']}**: {e['hours']}h\n"
-        if 'note' in log and log['note']:
-            sec += f"- **Note**: *{log['note']}*\n"
+        # Find today's log or last log
+        log = next((l for l in time_logs if l['iso_date'] == stats['today_date_raw']), time_logs[-1] if time_logs else None)
+        if log:
+            sec += f"\n## ⏳ Productivity Today ({log['date']})\n"
+            for e in log['logs']: sec += f"- **{e['activity']}**: {e['hours']}h\n"
+            if 'reflections' in log and log['reflections']:
+                sec += f"- **Latest Reflection**: *{log['reflections'][-1]}*\n"
     sec += f"- **Last Sync**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n"
     if "## 📉 Live Stats" in content:
         new = re.sub(r'## 📉 Live Stats\n.*?(?=\n## |$)', sec.strip() + "\n\n", content, flags=re.DOTALL)
@@ -1251,16 +846,21 @@ def update_github():
     except: pass
 
 def main():
+    # Sync first to pick up any remote changes
+    process_remote_reflections()
+    
     header, days, body, prev_avg, prev_pace = parse_txt()
     stats = calculate_stats(days)
     stats['prev_avg_services'] = prev_avg
     stats['prev_recovery_pace'] = prev_pace
     time_logs = parse_time_log()
     c_stats = calculate_complexity_stats()
+    
     update_txt(body, stats)
     update_html(header, days, stats, c_stats)
     update_readme(stats, time_logs)
     update_github()
+    print("Dashboard updated successfully.")
 
 if __name__ == "__main__":
     main()
