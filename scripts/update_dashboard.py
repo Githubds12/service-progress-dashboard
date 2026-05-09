@@ -515,7 +515,7 @@ def update_html(header, days, stats, complexity_stats=None):
             </div>
         </div>
 
-        <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s; display: none;">
+        <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s;">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span>Daily Reflections</span>
                 <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800;">NEURAL FEEDBACK LOOP</div>
@@ -665,10 +665,10 @@ def update_html(header, days, stats, complexity_stats=None):
                     refText.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\">` + 
                         points.map(p => `<li style=\"margin-bottom: 12px; padding-left: 10px;\">${{p.trim()}}</li>`).join('') + 
                         `</ol>`;
-                    refCard.style.display = 'block';
                 }} else {{
-                    refCard.style.display = 'none';
+                    refText.innerHTML = `<span style=\"color: var(--text-dim); opacity: 0.5;\">No reflections logged for this day yet.</span>`;
                 }}
+                refCard.style.display = 'block';
 
                 const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
                 if (pieChart) pieChart.destroy();
@@ -742,29 +742,32 @@ def update_html(header, days, stats, complexity_stats=None):
                 
                 // 1. Immediate UI update
                 const logArea = document.getElementById('reflectionsText');
-                const currentText = logArea.innerText;
-                const m = currentText.match(/(\d+)\./g);
-                const nextNum = m ? m.length + 1 : 1;
-                logArea.innerText += (currentText ? ' ' : '') + `${{nextNum}}. ${{text}}`;
+                let list = logArea.querySelector('ol');
+                if (!list) {{
+                    logArea.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\"></ol>`;
+                    list = logArea.querySelector('ol');
+                }}
+                const li = document.createElement('li');
+                li.style.marginBottom = '12px';
+                li.style.paddingLeft = '10px';
+                li.innerText = text;
+                list.appendChild(li);
 
                 // 2. Save to "Database" (GitHub Issue)
                 saveToRemoteDatabase(text);
                 
-                // 3. Copy to clipboard as fallback
-                const formatted = `Reflections: ${{nextNum}}. ${{text}}`;
-                navigator.clipboard.writeText(formatted).then(() => {{
-                    const btn = document.querySelector('[onclick=\"copyReflection()\"]');
-                    const oldText = btn.innerText;
-                    btn.innerText = 'SAVED TO DB!';
-                    btn.style.background = '#00FF00';
-                    btn.style.color = '#000';
-                    setTimeout(() => {{
-                        btn.innerText = oldText;
-                        btn.style.background = '';
-                        btn.style.color = '';
-                        document.getElementById('newReflectionText').value = '';
-                    }}, 2000);
-                }});
+                // 3. UI Feedback on button
+                const btn = document.querySelector('[onclick=\"copyReflection()\"]');
+                const oldText = btn.innerText;
+                btn.innerText = 'SAVED TO DB!';
+                btn.style.background = '#00FF00';
+                btn.style.color = '#000';
+                setTimeout(() => {{
+                    btn.innerText = oldText;
+                    btn.style.background = '';
+                    btn.style.color = '';
+                    document.getElementById('newReflectionText').value = '';
+                }}, 2000);
             }}
 
             async function saveToRemoteDatabase(text) {{
