@@ -296,6 +296,7 @@
             // Optimistic UI
             const target = window.apkhunterData.find(i => i.id === id);
             if (target) target[field] = value;
+            applyFilters();
             render();
 
             // Push to GitHub Command Bus
@@ -365,7 +366,7 @@
                     <tr class="${i.claimed ? 'row-claimed' : ''} ${i.root_detected ? 'row-root' : ''}">
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate('${i.id}', 'claimed', ${!i.claimed})">
+                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed})">
                                     ${i.claimed ? 'CLAIMED' : 'CLAIM'}
                                 </button>
                                 <div class="score-badge ${scoreClass}">${i.difficulty}/100</div>
@@ -376,7 +377,7 @@
                             <div class="apk-id">${i.id}</div>
                             <div class="apk-reason">🧠 ${i.reason}</div>
                             <div class="apk-sms">${i.sms || 'No sample message recorded.'}</div>
-                            <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate('${i.id}', 'note', this.value)">${i.note || ''}</textarea>
+                            <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate(\`${i.id}\`, 'note', this.value)">${i.note || ''}</textarea>
                         </td>
                         <td>
                             <div class="mirror-grid">
@@ -391,7 +392,7 @@
                             <div class="action-btns">
                                 <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
                                 <button class="btn btn-recon" onclick='copyRecon(${JSON.stringify(i)})'>COPY RECON</button>
-                                <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate('${i.id}', 'root_detected', ${!i.root_detected})">
+                                <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">
                                     ROOT
                                 </button>
                             </div>
