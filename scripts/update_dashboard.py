@@ -417,6 +417,11 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="glass-card" style="animation-delay: 0.5s;">
             <div class="section-title">
                 <span>Daily Focus Distribution</span>
+                <div style=\"display: flex; align-items: center; gap: 10px; margin-left: auto;\">
+                    <button onclick=\"navigatePie(-1)\" style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;\">&lt;</button>
+                    <span id=\"pieViewedDate\" style=\"font-size: 12px; color: var(--accent); font-weight: 800; min-width: 120px; text-align: center;\"></span>
+                    <button onclick=\"navigatePie(1)\" style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #FFF; padding: 5px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;\">&gt;</button>
+                </div>
                 <span id="pieTotalHours" style="font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; margin-left: 20px;"></span>
                 <span id="pieViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; margin-left: 10px;"></span>
                 <input type="date" id="pieDateJump" 
@@ -528,8 +533,19 @@ def update_html(header, days, stats, complexity_stats=None):
 
             // 2. Pie Chart (Task Distribution)
             let pieChart;
+            let currentPieIndex = data.time_logs.length - 1;
+
+            window.navigatePie = (dir) => {{
+                currentPieIndex = Math.max(0, Math.min(data.time_logs.length - 1, currentPieIndex + dir));
+                const log = data.time_logs[currentPieIndex];
+                renderPieChart(log.date);
+            }};
+
             function renderPieChart(dateStr) {{
-                // Find log by partial match or literal
+                // Find log index for navigation tracking
+                const idx = data.time_logs.findIndex(l => l.date.includes(dateStr));
+                if (idx !== -1) currentPieIndex = idx;
+
                 let log = data.time_logs.find(l => l.date.includes(dateStr));
                 
                 // If not found and dateStr looks like YYYY-MM-DD, try converting
@@ -541,11 +557,11 @@ def update_html(header, days, stats, complexity_stats=None):
                     log = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
                 }}
                 
-                if (!log) log = data.time_logs[data.time_logs.length - 1];
+                if (!log) log = data.time_logs[currentPieIndex];
                 if (!log) return;
                 
                 document.getElementById('pieTotalHours').innerText = `[ ${{log.total}} HR TOTAL ]`;
-                document.getElementById('pieViewedDate').innerText = log.date;
+                document.getElementById('pieViewedDate').innerText = log.date.split(',')[0];
 
                 // Reflections
                 const refCard = document.getElementById('reflectionsCard');
@@ -569,15 +585,20 @@ def update_html(header, days, stats, complexity_stats=None):
 
                 // Render Side Legend
                 const legendEl = document.getElementById('pieLegend');
-                legendEl.innerHTML = sortedLogs.map((l, i) => `
+                legendEl.innerHTML = sortedLogs.map((l, i) => {{
+                    const percent = ((l.hours / log.total) * 100).toFixed(1);
+                    return `
                     <div class=\"legend-item\">
                         <div style=\"display: flex; align-items: center;\">
                             <div class=\"legend-color\" style=\"background: ${{colors[i % colors.length]}}\"></div>
                             <span style=\"font-size: 13px; font-weight: 700; color: #FFF;\">${{l.activity}}</span>
                         </div>
-                        <span style=\"font-size: 13px; font-weight: 900; color: var(--accent);\">${{l.hours}}H</span>
+                        <div style=\"text-align: right;\">
+                            <div style=\"font-size: 13px; font-weight: 900; color: var(--accent);\">${{l.hours}}H</div>
+                            <div style=\"font-size: 10px; color: var(--text-dim); font-weight: 700;\">${{percent}}%</div>
+                        </div>
                     </div>
-                `).join('');
+                `}}).join('');
                 
                 pieChart = new Chart(document.getElementById('pieChart'), {{
                     type: 'pie',
