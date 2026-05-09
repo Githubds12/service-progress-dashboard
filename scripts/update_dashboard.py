@@ -17,11 +17,10 @@ TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
 TIME_LOG_FILE = os.path.join(REPORT_DIR, "trackers", "Time Log.txt")
 HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
 
-def process_remote_reflections():
+def sync_github_commands():
     token = os.getenv("GITHUB_TOKEN")
     if not token: return
     
-    # Check Issue Comments (DB)
     url = "https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments"
     headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
     
@@ -32,106 +31,119 @@ def process_remote_reflections():
         comments = response.json()
         if not comments: return
         
+        # Load Logs for reflections
         log_path = TIME_LOG_FILE
-        if not os.path.exists(log_path): return
+        lines = []
+        if os.path.exists(log_path):
+            with open(log_path, 'r', encoding='utf-8') as f:
+                lines = f.readlines()
         
-        with open(log_path, 'r', encoding='utf-8') as f:
-            lines = f.readlines()
-            
-        new_reflections = []
-        deletions = []
+        # Load APK DB
+        apk_db_path = r"C:\HTB-Notes-Portal\apk_local_database.json"
+        apk_db = None
+        if os.path.exists(apk_db_path):
+            with open(apk_db_path, 'r', encoding='utf-8') as f:
+                apk_db = json.load(f)
+
+        processed_count = 0
+        apk_updated = False
+        
         for comment in comments:
             body = comment['body'].strip()
+            
+            # --- HANDLE APK UPDATES ---
+            if body.startswith("APK_UPDATE:"):
+                if apk_db:
+                    m_id = re.search(r'ID:\s*(.*?),', body)
+                    m_field = re.search(r'Field:\s*(.*?),', body)
+                    m_val = re.search(r'Value:\s*(.*)', body)
+                    if m_id and m_field and m_val:
+                        tid, field, val_str = m_id.group(1).strip(), m_field.group(1).strip(), m_val.group(1).strip()
+                        val = True if val_str.lower() == 'true' else False if val_str.lower() == 'false' else val_str
+                        if field == 'note': apk_db.setdefault('notes', {})[tid] = val
+                        elif field == 'claimed': apk_db.setdefault('claimed', {})[tid] = val
+                        elif field == 'root_detected': apk_db.setdefault('root_detected', {})[tid] = val
+                        elif field == 'not_found': apk_db.setdefault('not_found', {})[tid] = val
+                        apk_db.setdefault('last_updated', {})[tid] = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        apk_updated = True
+                requests.delete(comment['url'], headers=headers)
+                processed_count += 1
+                continue
+
+            # --- HANDLE REFLECTION DELETIONS ---
             if body.startswith("DELETE_REF:"):
-                deletions.append(body)
-            else:
-                new_reflections.append(body)
-            requests.delete(comment['url'], headers=headers)
-            
-        if not new_reflections and not deletions: return
-        
-        # Process Deletions
-        if deletions:
-            for d_cmd in deletions:
                 try:
-                    m_date = re.search(r'Date:\s*(.*?)(?:,|$)', d_cmd)
-                    m_idx = re.search(r'Index:\s*(\d+)', d_cmd)
-                    if not m_date or not m_idx: continue
-                    
-                    target_date = m_date.group(1).strip()
-                    target_idx = int(m_idx.group(1))
-                    
-                    for i, line in enumerate(lines):
-                        if line.startswith("Date:") and target_date in line:
-                            for j in range(i + 1, len(lines)):
-                                if lines[j].startswith("Date:"): break
-                                if lines[j].strip().startswith("Reflections:"):
-                                    content = lines[j].split("Reflections:")[1].strip()
-                                    items = re.split(r'\s*\d+\.\s*', content)
-                                    items = [it.strip() for it in items if it.strip()]
-                                    
-                                    if 0 <= target_idx < len(items):
-                                        items.pop(target_idx)
-                                        if items:
-                                            lines[j] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
-                                        else:
-                                            lines[j] = "Reflections:\n"
-                                    break
-                            break
-                except: continue
+                    m_date = re.search(r'Date:\s*(.*?)(?:,|$)', body)
+                    m_idx = re.search(r'Index:\s*(\d+)', body)
+                    if m_date and m_idx:
+                        target_date, target_idx = m_date.group(1).strip(), int(m_idx.group(1))
+                        for i, line in enumerate(lines):
+                            if line.startswith("Date:") and target_date in line:
+                                for j in range(i + 1, len(lines)):
+                                    if lines[j].startswith("Date:"): break
+                                    if lines[j].strip().startswith("Reflections:"):
+                                        content = lines[j].split("Reflections:")[1].strip()
+                                        items = [it.strip() for it in re.split(r'\s*\d+\.\s*', content) if it.strip()]
+                                        if 0 <= target_idx < len(items):
+                                            items.pop(target_idx)
+                                            lines[j] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n" if items else "Reflections:\n"
+                                        break
+                                break
+                except: pass
+                requests.delete(comment['url'], headers=headers)
+                processed_count += 1
+                continue
 
-        # Process Additions
-        if new_reflections:
-            for ref_cmd in new_reflections:
-                target_date = ""
-                text = ref_cmd
-                if ref_cmd.startswith("ADD_REF:"):
-                    m_date = re.search(r'Date:\s*(.*?),\s*Text:\s*(.*)', ref_cmd, re.DOTALL)
-                    if m_date:
-                        target_date = m_date.group(1).strip()
-                        text = m_date.group(2).strip()
-                
-                # Find target date section or default to latest
-                target_idx = -1
-                if target_date:
-                    for i, line in enumerate(lines):
-                        if line.startswith("Date:") and target_date in line:
-                            target_idx = i
-                            break
-                if target_idx == -1:
-                    for i, line in enumerate(lines):
-                        if line.startswith("Date:"): target_idx = i
-                
-                if target_idx != -1:
-                    ref_line_idx = -1
-                    insert_pos = -1
-                    for j in range(target_idx + 1, len(lines)):
-                        if lines[j].startswith("Date:"):
-                            insert_pos = j
-                            break
-                        if lines[j].strip().startswith("Reflections:"):
-                            ref_line_idx = j
-                            break
-                    
-                    if ref_line_idx != -1:
-                        content = lines[ref_line_idx].split("Reflections:")[1].strip()
-                        items = re.split(r'\s*\d+\.\s*', content)
-                        items = [it.strip() for it in items if it.strip()]
-                        items.append(text)
-                        lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
-                    else:
-                        lines.insert(target_idx + 1, f"Reflections: 1. {text}\n")
-                else:
-                    # If no date header at all, create one (fallback)
-                    lines.append(f"\nDate: {target_date if target_date else datetime.now().strftime('%d-%m-%Y')}\n")
-                    lines.append(f"Reflections: 1. {text}\n")
-
-        with open(log_path, 'w', encoding='utf-8') as f:
-            f.writelines(lines)
+            # --- HANDLE REFLECTION ADDITIONS (Default) ---
+            target_date, text = "", body
+            if body.startswith("ADD_REF:"):
+                m_date = re.search(r'Date:\s*(.*?),\s*Text:\s*(.*)', body, re.DOTALL)
+                if m_date: target_date, text = m_date.group(1).strip(), m_date.group(2).strip()
             
-        print(f"Synced {len(new_reflections)} additions and {len(deletions)} deletions.")
+            target_idx = -1
+            if target_date:
+                for i, line in enumerate(lines):
+                    if line.startswith("Date:") and target_date in line:
+                        target_idx = i; break
+            if target_idx == -1:
+                for i, line in enumerate(lines):
+                    if line.startswith("Date:"): target_idx = i
+            
+            if target_idx != -1:
+                ref_line_idx = -1
+                for j in range(target_idx + 1, len(lines)):
+                    if lines[j].startswith("Date:"): break
+                    if lines[j].strip().startswith("Reflections:"): ref_line_idx = j; break
+                
+                if ref_line_idx != -1:
+                    content = lines[ref_line_idx].split("Reflections:")[1].strip()
+                    items = [it.strip() for it in re.split(r'\s*\d+\.\s*', content) if it.strip()]
+                    items.append(text)
+                    lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
+                else:
+                    lines.insert(target_idx + 1, f"Reflections: 1. {text}\n")
+            else:
+                lines.append(f"\nDate: {target_date if target_date else datetime.now().strftime('%d-%m-%Y')}\n")
+                lines.append(f"Reflections: 1. {text}\n")
+            
+            requests.delete(comment['url'], headers=headers)
+            processed_count += 1
+
+        # Save Changes
+        if lines:
+            with open(log_path, 'w', encoding='utf-8') as f:
+                f.writelines(lines)
+        if apk_updated and apk_db:
+            with open(apk_db_path, 'w', encoding='utf-8') as f:
+                json.dump(apk_db, f, indent=4)
+            # Re-generate the APK JS data
+            import sys
+            subprocess.run([sys.executable, os.path.join(REPORT_DIR, "scripts", "sync_apkhunter.py")])
+
+        print(f"Synced {processed_count} commands from GitHub.")
     except Exception as e:
-        print(f"Error syncing remote reflections: {e}")
+        print(f"Error syncing GitHub commands: {e}")
+
 
 def get_ordinal(n):
     if 11 <= n % 100 <= 13:
@@ -509,7 +521,7 @@ def update_html(header, days, stats, complexity_stats=None):
 <body>
     <div class="container">
         <header>
-            <div class="logo">Operational Intelligence</div>
+            <div class="logo">Operational Intelligence <a href="apkhunter.html" style="margin-left: 20px; font-size: 0.8rem; text-decoration: none; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 10px; border-radius: 4px; vertical-align: middle;">APK HUNTER</a></div>
             <div class="header-meta">
                 <div>DATE: <span id="currentHeaderDate">{stats['today_date']}</span></div>
                 <div style="margin-top: 5px;"><span id="syncStatus" class="status-ready">READY</span></div>
@@ -932,7 +944,7 @@ def update_github():
 
 def main():
     # Sync first to pick up any remote changes
-    process_remote_reflections()
+    sync_github_commands()
     
     header, days, body, prev_avg, prev_pace = parse_txt()
     stats = calculate_stats(days)
