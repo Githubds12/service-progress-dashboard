@@ -554,7 +554,10 @@ def update_html(header, days, stats, complexity_stats=None):
 
         <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s;">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <span>Daily Reflections</span>
+                <div style=\"display: flex; align-items: center; gap: 10px;\">
+                    <span>Daily Reflections</span>
+                    <span id=\"cloudSyncBtn\" onclick=\"window.syncRemoteReflections()\" title=\"Real-time Cloud Sync\" style=\"cursor: pointer; font-size: 14px; opacity: 0.5; transition: all 0.3s;\">☁</span>
+                </div>
                 <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
                     <button onclick="navigateRef(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
                     <span id="refViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
@@ -597,6 +600,55 @@ def update_html(header, days, stats, complexity_stats=None):
         const data = {json.dumps(data_dict)};
         
         function initDashboard(data) {{
+            // Real-time Cloud Sync Engine
+            window.syncRemoteReflections = async function() {{
+                const token = localStorage.getItem('gh_token');
+                if (!token) return;
+
+                const syncBtn = document.getElementById('cloudSyncBtn');
+                if (syncBtn) syncBtn.style.color = 'var(--accent)';
+
+                const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+                try {{
+                    const res = await fetch(url, {{
+                        headers: {{ 'Authorization': `token ${{token}}`, 'Accept': 'application/vnd.github.v3+json' }}
+                    }});
+                    if (!res.ok) throw new Error('Sync failed');
+                    const comments = await res.json();
+                    
+                    // Reset remote layers
+                    window.remoteAdds = [];
+                    window.remoteDeletes = [];
+
+                    comments.forEach(c => {{
+                        const body = c.body;
+                        if (body.startsWith('ADD_REF:')) {{
+                            const dateMatch = body.match(/Date: (.*?), Text:/);
+                            const textMatch = body.match(/Text: (.*)$/);
+                            if (dateMatch && textMatch) {{
+                                window.remoteAdds.push({{ date: dateMatch[1], text: textMatch[1] }});
+                            }}
+                        }} else if (body.startsWith('DELETE_REF:')) {{
+                            const dateMatch = body.match(/Date: (.*?), Index:/);
+                            const idxMatch = body.match(/Index: (\d+)$/);
+                            if (dateMatch && idxMatch) {{
+                                window.remoteDeletes.push({{ date: dateMatch[1], index: parseInt(idxMatch[1]) }});
+                            }}
+                        }}
+                    }});
+
+                    if (window.currentSyncDate) renderReflections(window.currentSyncDate);
+                    if (syncBtn) syncBtn.style.color = '';
+                }} catch (e) {{
+                    console.error('Cloud Sync Error:', e);
+                    if (syncBtn) syncBtn.style.color = '#FF4444';
+                }}
+            }};
+
+            // Auto-sync every 30 seconds
+            setInterval(window.syncRemoteReflections, 30000);
+            window.syncRemoteReflections();
+
             // Animate Units
             setTimeout(() => {{
                 const pct = Math.min((data.stats.completed_today / data.stats.recommended_today) * 100, 100);
@@ -730,47 +782,68 @@ def update_html(header, days, stats, complexity_stats=None):
 
             window.renderReflections = (targetDate) => {{
                 document.getElementById('refViewedDate').innerText = targetDate;
-                const log = data.time_logs.find(l => l.date === targetDate);
+                let log = data.time_logs.find(l => l.date === targetDate);
                 const area = document.getElementById('reflectionsText');
                 
-                // Load pending reflections from localStorage
-                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
-                
-                // Deduplicate: if a pending reflection is already in the main data, remove it from pending
-                if (log && log.reflections) {{
-                    const originalPendingCount = pending.length;
-                    pending = pending.filter(p => !log.reflections.includes(p));
-                    if (pending.length !== originalPendingCount) {{
-                        localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
-                    }}
+                // Base reflections from static file
+                let reflections = log ? [...log.reflections] : [];
+
+                // 1. Apply Remote Additions (Real-time from Cloud)
+                if (window.remoteAdds) {{
+                    window.remoteAdds.forEach(add => {{
+                        if (add.date === targetDate && !reflections.includes(add.text)) {{
+                            reflections.push(add.text);
+                        }}
+                    }});
                 }}
 
-                const allRefs = (log ? log.reflections : []) || [];
-                
-                if (allRefs.length === 0 && pending.length === 0) {{
+                // 2. Apply Remote Deletions
+                if (window.remoteDeletes) {{
+                    window.remoteDeletes.forEach(del => {{
+                        if (del.date === targetDate) {{
+                            // Mark for soft delete in UI
+                            // We don't remove from array because index might shift
+                        }}
+                    }});
+                }}
+
+                // 3. Local Pending (Fallback for offline/immediate)
+                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
+                pending = pending.filter(p => !reflections.includes(p));
+
+                if (reflections.length === 0 && pending.length === 0) {{
                     area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
                 }} else {{
                     let html = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">';
-                    // Permanent Refs
-                    html += allRefs.map((ref, idx) => `
-                        <li style=\"margin-bottom: 12px; padding-left: 10px;\">
-                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                <span style=\"flex: 1;\">${{ref}}</span>
-                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                    title=\"Delete Reflection\"
-                                    style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
-                            </div>
-                        </li>
-                    `).join('');
+                    
+                    // Combined List
+                    reflections.forEach((ref, idx) => {{
+                        const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
+                        html += `
+                            <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.2; text-decoration: line-through;' : ''}}\">
+                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                    <span style=\"flex: 1;\">${{ref}} ${{isBeingDeleted ? '<small>(Deleting...)</small>' : ''}}</span>
+                                    <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
+                                        ${{isBeingDeleted ? 'disabled' : ''}}
+                                        title=\"Delete Reflection\"
+                                        style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
+                                </div>
+                            </li>
+                        `;
+                    }});
+
                     // Pending Refs
-                    html += pending.map((ref) => `
-                        <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
-                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Sync Pending...)</small></span>
-                                <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                            </div>
-                        </li>
-                    `).join('');
+                    pending.forEach((ref) => {{
+                        html += `
+                            <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
+                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                    <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
+                                    <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                                </div>
+                            </li>
+                        `;
+                    }});
+
                     html += '</ol>';
                     area.innerHTML = html;
                 }}
@@ -1024,7 +1097,10 @@ def update_html(header, days, stats, complexity_stats=None):
                     }},
                     body: JSON.stringify({{ body: command }})
                 }});
-                if (res.ok) console.log('Successfully saved to remote DB');
+                if (res.ok) {{
+                    console.log('Successfully saved to remote DB');
+                    setTimeout(() => window.syncRemoteReflections(), 1000);
+                }}
                 else if (res.status === 401) localStorage.removeItem('gh_token');
             }} catch (e) {{
                 console.error('Save to DB failed:', e);
@@ -1055,7 +1131,8 @@ def update_html(header, days, stats, complexity_stats=None):
                     body: JSON.stringify({{ body: command }})
                 }});
                 if (res.ok) {{
-                    alert('Deletion request sent. It will be removed in the next sync (15 mins).');
+                    alert('Deletion request sent. Syncing cloud...');
+                    setTimeout(() => window.syncRemoteReflections(), 1000);
                     // Visually remove it for the current session
                     const area = document.getElementById('reflectionsText');
                     const items = area.querySelectorAll('li');
