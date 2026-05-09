@@ -729,6 +729,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 const month = monthNames[d.getMonth()];
                 const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
                 if (targetLog) renderPieChart(targetLog.date);
+            }});
         }} // End of initDashboard
 
         function copyReflection() {{
