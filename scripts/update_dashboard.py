@@ -416,11 +416,11 @@ def update_html(header, days, stats, complexity_stats=None):
                 <input type="date" id="pieDateJump" 
                     style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
             </div>
-            <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                <div class="chart-container" style="flex: 1.2; min-width: 300px; height: 400px;">
+            <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: nowrap; margin-top: 10px;">
+                <div class="chart-container" style="flex: 0 0 450px; height: 450px;">
                     <canvas id="pieChart"></canvas>
                 </div>
-                <div id="pieLegend" style="flex: 1; min-width: 250px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                <div id="pieLegend" style="flex: 1; max-height: 450px; overflow-y: auto; padding-right: 15px;">
                     <!-- Legend dynamic content -->
                 </div>
             </div>
