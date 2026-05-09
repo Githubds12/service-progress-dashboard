@@ -469,8 +469,10 @@ def update_html(header, days, stats, complexity_stats=None):
             gap: 10px;
         }}
         .ref-item span:first-child {{ flex: 1; word-break: break-word; }}
+        .ref-actions {{ display: flex; gap: 10px; }}
+        .ref-edit {{ color: var(--accent-primary); cursor: pointer; opacity: 0.7; font-size: 0.8rem; white-space: nowrap; }}
         .ref-delete {{ color: var(--danger); cursor: pointer; opacity: 0.7; font-size: 0.8rem; white-space: nowrap; }}
-        .ref-delete:hover {{ opacity: 1; }}
+        .ref-edit:hover, .ref-delete:hover {{ opacity: 1; }}
 
         /* Tip of the day */
         .tip-banner {{
@@ -611,7 +613,8 @@ def update_html(header, days, stats, complexity_stats=None):
         window.dashboardData = {json.dumps(data_dict)};
         window.state = {{
             currentDate: window.dashboardData.today,
-            isSyncing: false
+            isSyncing: false,
+            editingIdx: null
         }};
 
         // --- UTILS ---
@@ -724,7 +727,11 @@ def update_html(header, days, stats, complexity_stats=None):
                 refEntry.reflections.forEach((text, idx) => {{
                     const li = document.createElement('li');
                     li.className = 'ref-item';
-                    li.innerHTML = `<span>${{text}}</span><span class="ref-delete" onclick="window.deleteReflection(${{idx}})">DELETE</span>`;
+                    li.innerHTML = `<span>${{text}}</span>
+                                   <div class="ref-actions">
+                                       <span class="ref-edit" onclick="window.editReflection(${{idx}})">EDIT</span>
+                                       <span class="ref-delete" onclick="window.deleteReflection(${{idx}})">DELETE</span>
+                                   </div>`;
                     refList.appendChild(li);
                 }});
             }} else {{
@@ -800,26 +807,57 @@ def update_html(header, days, stats, complexity_stats=None):
             }}
         }};
 
+        window.editReflection = (idx) => {{
+            const targetDate = window.state.currentDate;
+            const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
+            if (!logEntry) return;
+
+            $('reflectionInput').value = logEntry.reflections[idx];
+            $('saveBtn').innerText = 'UPDATE';
+            window.state.editingIdx = idx;
+            $('reflectionInput').focus();
+        }};
+
         window.saveReflection = async () => {{
             const text = $('reflectionInput').value.trim();
             if (!text) return;
             
             const targetDate = window.state.currentDate;
             const logDateStr = targetDate.split('-').reverse().join('-'); // DD-MM-YYYY
-            
+            const isEditing = window.state.editingIdx !== null;
+            const oldIdx = window.state.editingIdx;
+
             // Optimistic Update
             let logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
             if (!logEntry) {{
                 logEntry = {{ iso_date: targetDate, date: logDateStr, logs: [], reflections: [], total: 0 }};
                 window.dashboardData.logs.push(logEntry);
             }}
-            logEntry.reflections.push(text);
-            window.renderLogsAndReflections();
-            $('reflectionInput').value = '';
 
-            // Remote Sync
-            const cmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
-            await window.pushToGitHub(cmd);
+            if (isEditing) {{
+                // Delete old, then add new
+                const deleteCmd = `DELETE_REF: Date: ${{logDateStr}}, Index: ${{oldIdx}}`;
+                logEntry.reflections.splice(oldIdx, 1);
+                
+                // Add new at the same place or end? Let's add at end for simplicity
+                logEntry.reflections.push(text);
+                
+                window.renderLogsAndReflections();
+                $('reflectionInput').value = '';
+                $('saveBtn').innerText = 'SAVE';
+                window.state.editingIdx = null;
+
+                await window.pushToGitHub(deleteCmd);
+                const addCmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
+                await window.pushToGitHub(addCmd);
+            }} else {{
+                logEntry.reflections.push(text);
+                window.renderLogsAndReflections();
+                $('reflectionInput').value = '';
+
+                const cmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
+                await window.pushToGitHub(cmd);
+            }}
         }};
 
         window.deleteReflection = async (idx) => {{

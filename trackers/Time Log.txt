@@ -20,7 +20,7 @@ Date: Friday, 08-05-2026
 - Security Research: Galarm: 1.5h (Analyzed Firebase Cloud Functions and AES encryption)
 - Security Research: Coinstore: 1.5h (Analyzed GeeTest integration and phone binding flow)
 Total: 12.5h
-Reflections: 1. Intense research day. T-Bank and Aegean auth flows are complex but now fully mapped. 2. HI 3. JI
+Reflections: 1. Intense research day. T-Bank and Aegean auth flows are complex but now fully mapped. 2. HI
 The automation scripts are significantly speeding up the reporting process.
 Performance is peaking.
 Performance Note: Completed T-Bank and Aegean reconnaissance. All auth flows documented and synchronized with portal.
