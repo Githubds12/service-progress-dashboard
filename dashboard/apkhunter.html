@@ -368,7 +368,7 @@
         }
 
         async function pushToGitHub(message) {
-            const token = localStorage.getItem('github_token');
+            const token = localStorage.getItem('github_token') || window.GH_TOKEN_INJECTED;
             if (!token) {
                 const t = prompt("Enter GitHub PAT for Sync:");
                 if (t) localStorage.setItem('github_token', t);

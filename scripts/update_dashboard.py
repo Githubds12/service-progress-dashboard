@@ -920,6 +920,19 @@ def update_html(header, days, stats, complexity_stats=None):
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
 
+    # Inject Token into apkhunter.html for zero-prompt sync
+    token = os.getenv("GITHUB_TOKEN", "")
+    if token:
+        apk_html_path = os.path.join(REPORT_DIR, "dashboard", "apkhunter.html")
+        if os.path.exists(apk_html_path):
+            with open(apk_html_path, 'r', encoding='utf-8') as f: content = f.read()
+            injection = f'<script>window.GH_TOKEN_INJECTED = "{token}";</script>'
+            if "window.GH_TOKEN_INJECTED" not in content:
+                content = content.replace('</head>', f'{injection}\n</head>')
+            else:
+                content = re.sub(r'window\.GH_TOKEN_INJECTED = ".*?";', f'window.GH_TOKEN_INJECTED = "{token}";', content)
+            with open(apk_html_path, 'w', encoding='utf-8') as f: f.write(content)
+
 def update_readme(stats, time_logs):
     path = os.path.join(REPORT_DIR, 'README.md')
     if not os.path.exists(path): return
