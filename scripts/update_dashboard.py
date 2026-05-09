@@ -357,7 +357,12 @@ def update_html(header, days, stats, complexity_stats=None):
         .header-meta {{ text-align: right; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--text-dim); }}
         
         /* Dashboard Grid */
-        .dashboard-grid {{ display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 30px; }}
+        .dashboard-grid {{ 
+            display: grid; 
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            gap: 20px; 
+            margin-bottom: 30px; 
+        }}
         .stat-card {{
             background: var(--card-bg);
             padding: 20px;
@@ -380,17 +385,29 @@ def update_html(header, days, stats, complexity_stats=None):
             border-radius: 12px;
             border: 1px solid var(--border-color);
             margin-bottom: 20px;
+            max-height: 600px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
         }}
+        .chart-card::-webkit-scrollbar {{ width: 6px; }}
+        .chart-card::-webkit-scrollbar-thumb {{ background-color: var(--border-color); border-radius: 10px; }}
+
         .card-header {{
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
+            position: sticky;
+            top: -25px;
+            background: var(--card-bg);
+            padding: 10px 0;
+            z-index: 10;
         }}
         .card-title {{ font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--accent-primary); }}
         
         /* Interactive Elements */
-        .controls {{ display: flex; gap: 10px; }}
+        .controls {{ display: flex; gap: 10px; flex-wrap: wrap; }}
         .btn {{
             background: #21262d;
             color: var(--text-main);
@@ -404,6 +421,7 @@ def update_html(header, days, stats, complexity_stats=None):
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            white-space: nowrap;
         }}
         .btn:hover:not(:disabled) {{ background: #30363d; border-color: var(--accent-primary); }}
         .btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
@@ -420,7 +438,8 @@ def update_html(header, days, stats, complexity_stats=None):
         }}
 
         /* Activity Log Table */
-        .log-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
+        .log-table-wrapper {{ overflow-x: auto; }}
+        .log-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 400px; }}
         .log-table th {{ text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-dim); font-size: 0.85rem; }}
         .log-table td {{ padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }}
         .log-table tr:hover {{ background: #161b22; }}
@@ -435,6 +454,7 @@ def update_html(header, days, stats, complexity_stats=None):
             padding: 10px;
             border-radius: 6px;
             font-family: 'Inter', sans-serif;
+            min-width: 0;
         }}
         .ref-list {{ margin-top: 20px; list-style: none; }}
         .ref-item {{
@@ -446,8 +466,10 @@ def update_html(header, days, stats, complexity_stats=None):
             justify-content: space-between;
             align-items: center;
             border-left: 3px solid var(--accent-secondary);
+            gap: 10px;
         }}
-        .ref-delete {{ color: var(--danger); cursor: pointer; opacity: 0.7; font-size: 0.8rem; }}
+        .ref-item span:first-child {{ flex: 1; word-break: break-word; }}
+        .ref-delete {{ color: var(--danger); cursor: pointer; opacity: 0.7; font-size: 0.8rem; white-space: nowrap; }}
         .ref-delete:hover {{ opacity: 1; }}
 
         /* Tip of the day */
@@ -465,6 +487,21 @@ def update_html(header, days, stats, complexity_stats=None):
         .status-ready {{ background: var(--success); color: #fff; }}
         .status-syncing {{ background: var(--accent-secondary); color: #fff; }}
         .status-error {{ background: var(--danger); color: #fff; }}
+
+        /* Mobile Adjustments */
+        @media (max-width: 1000px) {{
+            .main-layout {{ grid-template-columns: 1fr; }}
+            .container {{ padding: 15px; }}
+        }}
+        @media (max-width: 600px) {{
+            header {{ flex-direction: column; align-items: flex-start; gap: 15px; }}
+            .header-meta {{ text-align: left; }}
+            .stat-value {{ font-size: 1.5rem; }}
+            .tip-header {{ font-size: 0.9rem; }}
+            .logo {{ font-size: 1.2rem; }}
+            .ref-input-group {{ flex-direction: column; }}
+            .btn {{ width: 100%; justify-content: center; }}
+        }}
     </style>
 </head>
 <body>
@@ -525,7 +562,7 @@ def update_html(header, days, stats, complexity_stats=None):
                             <input type="date" id="logDateJump" class="date-picker">
                         </div>
                     </div>
-                    <div id="serviceLogContainer">
+                    <div class="log-table-wrapper" id="serviceLogContainer">
                         <table class="log-table">
                             <thead>
                                 <tr>
@@ -641,7 +678,17 @@ def update_html(header, days, stats, complexity_stats=None):
                     }},
                     options: {{
                         responsive: true,
-                        plugins: {{ legend: {{ position: 'bottom', labels: {{ color: '#e6edf3', padding: 20 }} }} }},
+                        maintainAspectRatio: false,
+                        plugins: {{ 
+                            legend: {{ 
+                                position: 'bottom', 
+                                labels: {{ 
+                                    color: '#e6edf3', 
+                                    padding: 20,
+                                    font: {{ size: 12 }}
+                                }} 
+                            }} 
+                        }},
                         cutout: '70%'
                     }}
                 }});
