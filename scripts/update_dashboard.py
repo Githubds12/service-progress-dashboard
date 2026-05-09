@@ -783,20 +783,46 @@ def update_html(header, days, stats, complexity_stats=None):
                 const log = data.time_logs.find(l => l.date === targetDate);
                 const area = document.getElementById('reflectionsText');
                 
-                if (!log || !log.reflections || log.reflections.length === 0) {{
+                // Load pending reflections from localStorage
+                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
+                
+                // Deduplicate: if a pending reflection is already in the main data, remove it from pending
+                if (log && log.reflections) {{
+                    const originalPendingCount = pending.length;
+                    pending = pending.filter(p => !log.reflections.includes(p));
+                    if (pending.length !== originalPendingCount) {{
+                        localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
+                    }}
+                }}
+
+                const allRefs = (log ? log.reflections : []) || [];
+                
+                if (allRefs.length === 0 && pending.length === 0) {{
                     area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
                 }} else {{
-                    area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + 
-                        log.reflections.map((ref, idx) => `
-                            <li style=\"margin-bottom: 12px; padding-left: 10px;\">
-                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                    <span style=\"flex: 1;\">${{ref}}</span>
-                                    <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                        title=\"Delete Reflection\"
-                                        style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
-                                </div>
-                            </li>
-                        `).join('') + '</ol>';
+                    let html = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">';
+                    // Permanent Refs
+                    html += allRefs.map((ref, idx) => `
+                        <li style=\"margin-bottom: 12px; padding-left: 10px;\">
+                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                <span style=\"flex: 1;\">${{ref}}</span>
+                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
+                                    title=\"Delete Reflection\"
+                                    style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
+                            </div>
+                        </li>
+                    `).join('');
+                    // Pending Refs
+                    html += pending.map((ref) => `
+                        <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
+                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Sync Pending...)</small></span>
+                                <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                            </div>
+                        </li>
+                    `).join('');
+                    html += '</ol>';
+                    area.innerHTML = html;
                 }}
                 
                 const label = document.getElementById('refInputLabel');
@@ -951,29 +977,19 @@ def update_html(header, days, stats, complexity_stats=None):
             const text = document.getElementById('newReflectionText').value;
             if (!text) return;
             
-            // 1. Immediate UI update
-            const logArea = document.getElementById('reflectionsText');
-            let list = logArea.querySelector('ol');
-            if (!list) {{
-                logArea.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\"></ol>`;
-                list = logArea.querySelector('ol');
-            }}
-            const li = document.createElement('li');
-            li.style.marginBottom = '12px';
-            li.style.paddingLeft = '10px';
-            li.style.opacity = '0.7';
-            li.innerHTML = `
-                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                    <span style=\"flex: 1;\">${{text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Sync Pending...)</small></span>
-                    <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                </div>
-            `;
-            list.appendChild(li);
+            // 1. Save to localStorage for persistence across refreshes
+            const targetDate = window.currentSyncDate;
+            let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
+            pending.push(text);
+            localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
 
-            // 2. Save to "Database" (GitHub Issue)
-            saveToRemoteDatabase(text, window.currentSyncDate);
+            // 2. Immediate UI update
+            renderReflections(targetDate);
+
+            // 3. Save to "Database" (GitHub Issue)
+            saveToRemoteDatabase(text, targetDate);
             
-            // 3. UI Feedback on button
+            // 4. UI Feedback on button
             const btn = document.querySelector('[onclick=\"copyReflection()\"]');
             const oldText = btn.innerText;
             btn.innerText = 'SAVED TO DB!';
