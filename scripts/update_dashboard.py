@@ -236,7 +236,7 @@ def update_html(header, days, stats, complexity_stats=None):
             100% {{ transform: scale(1.1); opacity: 1; }}
         }}
 
-        .container {{ max-width: 600px; margin: auto; position: relative; z-index: 1; }}
+        .container {{ max-width: 900px; margin: auto; position: relative; z-index: 1; }}
         
         .header {{ text-align: center; padding: 40px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }}
         
