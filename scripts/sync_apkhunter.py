@@ -78,23 +78,30 @@ def sync():
             p_issues = i_d.get(tid, [])
             intel_pool = (" ".join([str(x.get('text','')).lower() for x in p_issues]) + " " + note.lower()).strip()
             
-            # --- CATEGORIZATION LOGIC ---
+            # --- DEEP CATEGORIZATION ENGINE ---
             def guess_category(name, tid):
-                n = name.lower() + " " + tid.lower()
-                if any(x in n for x in ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker', 'card', 'loan', 'credit']): return "Banking/Fintech"
-                if any(x in n for x in ['shop', 'store', 'mall', 'market', 'cart', 'buy', 'deals', 'sale', 'fashion', 'grocery', 'amazon', 'ebay']): return "E-Commerce"
-                if any(x in n for x in ['chat', 'social', 'meet', 'date', 'talk', 'message', 'video', 'stream', 'live', 'fan', 'social']): return "Social/Media"
-                if any(x in n for x in ['delivery', 'food', 'eat', 'order', 'taxi', 'ride', 'travel', 'trip', 'hotel', 'flight', 'booking', 'bus', 'train']): return "Lifestyle/Travel"
-                if any(x in n for x in ['game', 'play', 'fun', 'poker', 'casino', 'bet', 'slot', 'puzzle', 'action', 'rpg']): return "Gaming/Entertainment"
-                if any(x in n for x in ['health', 'doctor', 'clinic', 'workout', 'gym', 'pharmacy', 'fitness', 'medical', 'hospital']): return "Health/Fitness"
-                if any(x in n for x in ['school', 'university', 'learn', 'course', 'quiz', 'student', 'study', 'education', 'academy']): return "Education/Learning"
-                if any(x in n for x in ['gov', 'passport', 'citizen', 'tax', ' id ', 'vote', 'official', 'public', 'service']): return "Government/Public"
-                if any(x in n for x in ['map', 'gps', 'navigate', 'direction', 'location', 'radar', 'drive', 'traffic']): return "Navigation/Maps"
-                if any(x in n for x in ['music', 'radio', 'mp3', 'player', 'song', 'podcast', 'audio', 'sound']): return "Music/Audio"
-                if any(x in n for x in ['photo', 'camera', 'editor', 'gallery', 'video', 'clip', 'collage', 'beauty']): return "Photography/Video"
-                if any(x in n for x in ['news', 'book', 'reader', 'paper', 'magazine', 'novel', 'daily']): return "News/Books"
-                if any(x in n for x in ['meeting', 'zoom', 'office', 'work', 'job', 'recruit', 'business', 'resume', 'teams']): return "Business/Work"
-                if any(x in n for x in ['vpn', 'proxy', 'secure', 'protect', 'antivirus', 'cleaner', 'battery', 'tool', 'file', 'manager']): return "Tools/Security"
+                n = (name.lower() + " " + tid.lower()).replace('.', ' ')
+                
+                cat_map = {
+                    "Banking/Fintech": ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker', 'card', 'loan', 'credit', 'money', 'cash', 'transfer', 'ledger', 'stock', 'forex', 'capital', 'wealth', 'save', 'budget', 'billing', 'invoice', 'checkout', 'pos', 'payment', 'atm', 'remit', 'paisa', 'khata', 'upi'],
+                    "E-Commerce": ['shop', 'store', 'mall', 'market', 'cart', 'buy', 'deals', 'sale', 'fashion', 'grocery', 'amazon', 'ebay', 'aliexpress', 'shopee', 'lazada', 'flipkart', 'walmart', 'target', 'brand', 'retail', 'pos', 'kiosk', 'coupon', 'voucher', 'order', 'merch', 'boutique', 'clothe', 'shoe'],
+                    "Social/Media": ['chat', 'social', 'meet', 'date', 'talk', 'message', 'video', 'stream', 'live', 'fan', 'social', 'post', 'status', 'follow', 'messenger', 'viber', 'telegram', 'whatsapp', 'signal', 'wechat', 'tinder', 'bumble', 'discord', 'reels', 'tiktok', 'snapchat', 'insta', 'tweet', 'blog', 'forum'],
+                    "Lifestyle/Travel": ['delivery', 'food', 'eat', 'order', 'taxi', 'ride', 'travel', 'trip', 'hotel', 'flight', 'booking', 'bus', 'train', 'airline', 'resort', 'vacation', 'uber', 'grab', 'bolt', 'foodpanda', 'zomato', 'swiggy', 'doordash', 'deliveroo', 'map', 'tourism', 'guide', 'passport', 'visa'],
+                    "Gaming/Entertainment": ['game', 'play', 'fun', 'poker', 'casino', 'bet', 'slot', 'puzzle', 'action', 'rpg', 'mmo', 'strategy', 'arcade', 'simulator', 'quest', 'win', 'prize', 'spin', 'card', 'board', 'adventure', 'craft', 'battle', 'strike', 'combat', 'war', 'hero', 'legend', 'quest'],
+                    "Health/Fitness": ['health', 'doctor', 'clinic', 'workout', 'gym', 'pharmacy', 'fitness', 'medical', 'hospital', 'yoga', 'meditation', 'sleep', 'period', 'cycle', 'track', 'calorie', 'step', 'nurse', 'appointment', 'patient', 'lab', 'medicine', 'drug', 'care', 'well', 'heart', 'body'],
+                    "Education/Learning": ['school', 'university', 'learn', 'course', 'quiz', 'student', 'study', 'education', 'academy', 'tutor', 'exam', 'result', 'portal', 'class', 'teacher', 'lesson', 'skill', 'language', 'read', 'write', 'math', 'science', 'history', 'dictionary', 'vocabulary', 'prep'],
+                    "Government/Public": ['gov', 'passport', 'citizen', 'tax', ' id ', 'vote', 'official', 'public', 'service', 'national', 'ministry', 'police', 'emergency', 'utility', 'bill', 'electric', 'water', 'gas', 'council', 'election', 'permit', 'license', 'registry', 'pension', 'benefit'],
+                    "Navigation/Maps": ['map', 'gps', 'navigate', 'direction', 'location', 'radar', 'drive', 'traffic', 'compass', 'street', 'route', 'tracking', 'finder', 'way', 'address', 'postal', 'coordinate', 'earth', 'world', 'transit', 'speed', 'speedo', 'trip', 'odometer'],
+                    "Music/Audio": ['music', 'radio', 'mp3', 'player', 'song', 'podcast', 'audio', 'sound', 'dj', 'mix', 'equalizer', 'spotify', 'deezer', 'shazam', 'recorder', 'voice', 'sing', 'karaoke', 'instrument', 'guitar', 'piano', 'beat', 'rhythm', 'tune', 'tuner'],
+                    "Photography/Video": ['photo', 'camera', 'editor', 'gallery', 'video', 'clip', 'collage', 'beauty', 'filter', 'lens', 'selfie', 'retouch', 'frame', 'album', 'shot', 'capture', 'movie', 'cinema', 'player', 'vlc', 'netflix', 'youtube', 'prime', 'hulu', 'disney', 'tv', 'show'],
+                    "News/Books": ['news', 'book', 'reader', 'paper', 'magazine', 'novel', 'daily', 'times', 'post', 'journal', 'headline', 'article', 'feed', 'rss', 'library', 'story', 'author', 'kindle', 'pdf', 'epub', 'comic', 'manga', 'shelf', 'publisher', 'medium'],
+                    "Business/Work": ['meeting', 'zoom', 'office', 'work', 'job', 'recruit', 'business', 'resume', 'teams', 'hr', 'staff', 'employee', 'enterprise', 'crm', 'erp', 'slack', 'outlook', 'mail', 'calendar', 'task', 'project', 'collab', 'management', 'admin', 'hiring', 'interview', 'salary'],
+                    "Tools/Security": ['vpn', 'proxy', 'secure', 'protect', 'antivirus', 'cleaner', 'battery', 'tool', 'file', 'manager', 'browser', 'web', 'launcher', 'theme', 'font', 'keyboard', 'calculator', 'clock', 'alarm', 'weather', 'widget', 'backup', 'restore', 'scan', 'zip', 'rar', 'authenticator', 'otp']
+                }
+
+                for category, keywords in cat_map.items():
+                    if any(k in n for k in keywords):
+                        return category
                 return "General/Utility"
 
             cat = guess_category(name, tid)
