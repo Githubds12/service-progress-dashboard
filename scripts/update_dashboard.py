@@ -788,35 +788,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 // Base reflections from static file
                 let reflections = log ? [...log.reflections] : [];
 
-                // 1. Apply Remote Additions (Real-time from Cloud)
-                if (window.remoteAdds) {{
-                    window.remoteAdds.forEach(add => {{
-                        if (add.date === targetDate && !reflections.includes(add.text)) {{
-                            reflections.push(add.text);
-                        }}
-                    }});
-                }}
-
-                // 2. Apply Remote Deletions
-                if (window.remoteDeletes) {{
-                    window.remoteDeletes.forEach(del => {{
-                        if (del.date === targetDate) {{
-                            // Mark for soft delete in UI
-                            // We don't remove from array because index might shift
-                        }}
-                    }});
-                }}
-
-                // 3. Local Pending (Fallback for offline/immediate)
-                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
-                pending = pending.filter(p => !reflections.includes(p));
-
-                if (reflections.length === 0 && pending.length === 0) {{
-                    area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
-                }} else {{
-                    let html = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">';
-                    
-                    // Combined List
+                    // 1. Permanent Reflections (from file)
                     reflections.forEach((ref, idx) => {{
                         const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
                         html += `
@@ -831,12 +803,31 @@ def update_html(header, days, stats, complexity_stats=None):
                         `;
                     }});
 
-                    // Pending Refs (Instant feedback)
+                    // 2. Syncing Reflections (Cloud but not in file yet)
+                    if (window.remoteAdds) {{
+                        window.remoteAdds.forEach(add => {{
+                            if (add.date === targetDate && !reflections.includes(add.text)) {{
+                                html += `
+                                    <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.8;\">
+                                        <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                            <span style=\"flex: 1;\">${{add.text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
+                                            <button onclick=\"deletePendingReflection('${{targetDate}}', '${{add.text.replace(/'/g, "\\'")}}')\"
+                                                title=\"Cancel Sync\"
+                                                style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                                        </div>
+                                    </li>
+                                `;
+                            }}
+                        }});
+                    }}
+
+                    // 3. Local Pending (Offline/Immediate)
                     pending.forEach((ref) => {{
+                        if (window.remoteAdds && window.remoteAdds.some(a => a.date === targetDate && a.text === ref)) return;
                         html += `
                             <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
                                 <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                    <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
+                                    <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Local Syncing...)</small></span>
                                     <button onclick=\"deletePendingReflection('${{targetDate}}', '${{ref.replace(/'/g, "\\'")}}')\"
                                         title=\"Cancel Sync\"
                                         style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
