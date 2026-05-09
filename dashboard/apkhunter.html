@@ -131,6 +131,7 @@
         .btn-claim.saving { opacity: 0.5; cursor: wait; }
         .btn-claim.saving::after { content: '...'; position: absolute; right: 5px; }
         .btn-recon { border-color: var(--accent); color: var(--accent); }
+        .btn-recon.copied { background: var(--accent); color: #000; border-color: var(--accent); }
         
         .last-update { font-size: 10px; color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
         
@@ -382,10 +383,30 @@
             else { el.innerText = 'SYSTEM READY'; el.classList.add('status-ready'); }
         }
 
-        function copyRecon(item) {
-            const text = `${item.name} [${item.id}]\nREASON: ${item.reason}\nSAMPLE SMS: ${item.sms}`;
-            navigator.clipboard.writeText(text);
-            alert("Recon data copied to clipboard!");
+        function copyRecon(id, btn) {
+            const i = window.apkhunterData.find(x => x.id === id);
+            if (!i) return;
+
+            const text = `--- APK RESEARCH RECON ---
+NAME: ${i.name}
+ID: ${i.id}
+CATEGORY: ${i.category}
+DIFFICULTY: ${i.difficulty}/100
+REASON: ${i.reason}
+SAMPLE SMS: ${i.sms || 'N/A'}
+NOTE: ${i.note || 'N/A'}
+URL: ${i.urls.play}
+---------------------------`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "COPIED";
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
         }
 
         function openAllMirrors(urls) {
@@ -438,7 +459,7 @@
                         <td>
                             <div class="action-btns">
                                 <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
-                                <button class="btn btn-recon" onclick='copyRecon(${JSON.stringify(i)})'>COPY RECON</button>
+                                <button class="btn btn-recon" onclick="copyRecon(\`${i.id}\`, this)">COPY RECON</button>
                                 <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">
                                     ROOT
                                 </button>
