@@ -402,7 +402,7 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="glass-card" style="animation-delay: 0.7s;">
             <div class="section-title" style="margin-bottom: 25px;">
                 <span>Operational Intelligence Log</span>
-                <span id="log-header-date" style="font-size: 13px; color: var(--accent); margin-left: auto; letter-spacing: 2px; font-weight: 900;">[ {{stats['today_date']}} ]</span>
+                <span id="log-header-date" style="font-size: 13px; color: var(--accent); margin-left: auto; letter-spacing: 2px; font-weight: 900;">[ {stats['today_date']} ]</span>
             </div>
             <div style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
                 <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
