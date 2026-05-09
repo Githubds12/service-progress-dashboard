@@ -658,6 +658,8 @@ def update_html(header, days, stats, complexity_stats=None):
 
             // 2. Pie Chart (Task Distribution)
             // 3. Task Distribution & Reflections Engine (Synchronized)
+            let currentPage = 1;
+            const pageSize = 1;
             window.currentSyncDate = data.stats.today_date_raw;
             let pieChart;
 
@@ -807,8 +809,6 @@ def update_html(header, days, stats, complexity_stats=None):
 
 
             // 4. Operational Log Rendering Engine
-            let currentPage = 1;
-            const pageSize = 1;
 
             function renderLog(filter = '') {{
                 const query = filter.toLowerCase();
@@ -894,6 +894,25 @@ def update_html(header, days, stats, complexity_stats=None):
             window.changePage = (dir) => {{
                 currentPage += dir;
                 renderLog(document.getElementById('logSearch').value);
+                
+                // Sync rest of dashboard
+                const allDays = [...data.raw_days].reverse();
+                const day = allDays[currentPage - 1];
+                if (day) {{
+                    const dateObj = new Date(day.iso_date);
+                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    const dateStr = `${{dateObj.getDate().toString().padStart(2, '0')}}-${{monthNames[dateObj.getMonth()]}}-${{dateObj.getFullYear()}}`;
+                    window.currentSyncDate = dateStr;
+                    renderPieChart(dateStr);
+                    renderReflections(dateStr);
+                    
+                    // Update all date pickers
+                    const iso = day.iso_date;
+                    if (document.getElementById('pieDateJump')) document.getElementById('pieDateJump').value = iso;
+                    if (document.getElementById('refDateJump')) document.getElementById('refDateJump').value = iso;
+                    if (document.getElementById('dateJump')) document.getElementById('dateJump').value = iso;
+                }}
+                
                 document.getElementById('logSearch').scrollIntoView({{ behavior: 'smooth', block: 'start' }});
             }};
 
