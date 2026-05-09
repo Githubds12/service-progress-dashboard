@@ -98,17 +98,31 @@ def sync():
 
             cat = guess_category(name, tid, row.get("Description", ""), row.get("Sample_Message", ""))
             
+            # Improved Tier/Difficulty Logic
+            raw_tier = row.get("Tier", "").strip()
+            if not raw_tier:
+                # Guess difficulty based on category if Tier is missing
+                easy_cats = ["Telecom/OTP", "Social/Media", "Tools/Security", "Lifestyle/Travel"]
+                med_cats = ["Gaming/Entertainment", "E-Commerce", "Business/Work", "Navigation/Maps"]
+                
+                if cat in easy_cats:
+                    tier = "Tier 1 (Instant/Public)"
+                elif cat in med_cats:
+                    tier = "Tier 2 (Moderate/Private)"
+                else:
+                    tier = "Tier 3 (Hard/Secured)"
+            else:
+                tier = raw_tier
+
             if tid in SECURITY_INTEL:
                 diff = SECURITY_INTEL[tid]
                 reason = f"Score {diff}: {cat} (Verified intelligence)."
             else:
                 reason = TIER_MAP.get(tier, f"Base score {base_score}: {cat}.")
-            
-            # Adjust score based on tier if unknown
-            if tid not in SECURITY_INTEL:
-                if "Tier 1" in tier: diff = 35 # Explicitly Easy
-                elif "Tier 2" in tier: diff = 65 # Moderate
-                else: diff = 85 # Tier 3
+                # Assign scores
+                if "Tier 1" in tier: diff = 35
+                elif "Tier 2" in tier: diff = 65
+                else: diff = 85
             
             triggers = []
             is_nf = "not found" in row.get("Description", "").lower()
