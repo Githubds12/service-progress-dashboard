@@ -259,7 +259,7 @@
         </div>
     </div>
 
-    <script src="apkhunter_data.js"></script>
+    <script src="apkhunter_data.js?v=1.0.1"></script>
     <script>
         const $ = id => document.getElementById(id);
         let state = {
@@ -387,7 +387,7 @@
             try {
                 const response = await fetch("https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments", {
                     method: "POST",
-                    headers: { "Authorization": `token ${token}`, "Accept": "application/vnd.github.v3+json" },
+                    headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" },
                     body: JSON.stringify({ body: message })
                 });
                 if (response.ok) updateSyncStatus('ready');
@@ -415,10 +415,10 @@
             el.className = '';
             if (s === 'syncing') { el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); el.onclick = null; }
             else if (s === 'error') { 
-                el.innerText = `SYNC ERROR: ${msg || 'Unknown'}`; 
+                el.innerText = `SYNC ERROR: ${msg || 'Unknown'} (Click to Reset Token)`; 
                 el.classList.add('status-error'); 
                 el.onclick = clearToken;
-                el.title = "Click to reset token";
+                el.title = "Click to reset token and reload";
             }
             else { el.innerText = 'SYSTEM READY'; el.classList.add('status-ready'); el.onclick = null; }
         }
