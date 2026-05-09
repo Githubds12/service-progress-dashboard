@@ -781,7 +781,8 @@ def update_html(header, days, stats, complexity_stats=None):
                                 <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
                                     <span style=\"flex: 1;\">${{ref}}</span>
                                     <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                        style=\"background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: #FF4444; border-radius: 6px; padding: 2px 8px; font-size: 10px; cursor: pointer; font-weight: 800; transition: all 0.3s;\">DELETE</button>
+                                        title=\"Delete Reflection\"
+                                        style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
                                 </div>
                             </li>
                         `).join('') + '</ol>';
