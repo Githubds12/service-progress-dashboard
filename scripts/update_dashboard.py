@@ -657,39 +657,58 @@ def update_html(header, days, stats, complexity_stats=None):
             }});
 
             // 2. Pie Chart (Task Distribution)
+            // 3. Task Distribution & Reflections Engine (Synchronized)
+            window.currentSyncDate = data.stats.today_date_raw;
             let pieChart;
-            window.currentPieDate = data.time_logs.length > 0 ? data.time_logs[data.time_logs.length-1].date : '';
-            window.currentRefDate = window.currentPieDate;
+
+            function updateDashboardDate(targetDate) {{
+                if (!targetDate) return;
+                window.currentSyncDate = targetDate;
+                renderPieChart(targetDate);
+                renderReflections(targetDate);
+                
+                // Update both date pickers to match (convert DD-Mon-YYYY to YYYY-MM-DD)
+                const parts = targetDate.split('-');
+                if (parts.length === 3) {{
+                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    const monthIdx = monthNames.indexOf(parts[1]);
+                    if (monthIdx !== -1) {{
+                        const isoDate = `${{parts[2]}}-${{(monthIdx + 1).toString().padStart(2, '0')}}-${{parts[0].padStart(2, '0')}}`;
+                        document.getElementById('pieDateJump').value = isoDate;
+                        document.getElementById('refDateJump').value = isoDate;
+                    }}
+                }}
+            }}
 
             window.navigatePie = (dir) => {{
-                const idx = data.time_logs.findIndex(l => l.date === currentPieDate);
-                if (idx === -1) return;
+                let idx = data.time_logs.findIndex(l => l.date === currentSyncDate);
+                if (idx === -1) {{
+                    // If current date not in logs, find the closest log
+                    idx = data.time_logs.length - 1;
+                }}
                 const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
-                const newDate = data.time_logs[newIdx].date;
-                renderPieChart(newDate);
-                renderReflections(newDate);
+                if (data.time_logs[newIdx]) {{
+                    updateDashboardDate(data.time_logs[newIdx].date);
+                }}
             }};
 
-            window.navigateRef = (dir) => {{
-                const idx = data.time_logs.findIndex(l => l.date === currentRefDate);
-                if (idx === -1) return;
-                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
-                const newDate = data.time_logs[newIdx].date;
-                renderReflections(newDate);
-                renderPieChart(newDate);
-            }};
+            window.navigateRef = window.navigatePie;
 
             function renderPieChart(targetDate) {{
-                if (!targetDate) return;
-                currentPieDate = targetDate;
                 document.getElementById('pieViewedDate').innerText = targetDate;
                 const log = data.time_logs.find(l => l.date === targetDate);
-                if (!log) return;
+                const ctx = document.getElementById('pieChart').getContext('2d');
+                const legend = document.getElementById('pieLegend');
+                
+                if (pieChart) pieChart.destroy();
+                
+                if (!log || !log.logs || log.logs.length === 0) {{
+                    document.getElementById('pieTotalHours').innerText = 'NO DATA FOR THIS DATE';
+                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_DATA ]</div>';
+                    return;
+                }}
                 
                 document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
-                
-                const ctx = document.getElementById('pieChart').getContext('2d');
-                if (pieChart) pieChart.destroy();
                 
                 const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
                 
@@ -714,7 +733,6 @@ def update_html(header, days, stats, complexity_stats=None):
                     }}
                 }});
 
-                const legend = document.getElementById('pieLegend');
                 legend.innerHTML = log.logs.map((l, i) => `
                     <div class="legend-item">
                         <div style="display: flex; align-items: center;">
@@ -727,28 +745,24 @@ def update_html(header, days, stats, complexity_stats=None):
             }}
 
             function renderReflections(targetDate) {{
-                if (!targetDate) return;
-                currentRefDate = targetDate;
                 document.getElementById('refViewedDate').innerText = targetDate;
-                
                 const log = data.time_logs.find(l => l.date === targetDate);
                 const area = document.getElementById('reflectionsText');
                 
                 if (!log || !log.reflections || log.reflections.length === 0) {{
                     area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
-                    return;
+                }} else {{
+                    area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + 
+                        log.reflections.map((ref, idx) => `
+                            <li style=\"margin-bottom: 12px; padding-left: 10px;\">
+                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                    <span style=\"flex: 1;\">${{ref}}</span>
+                                    <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
+                                        style=\"background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: #FF4444; border-radius: 6px; padding: 2px 8px; font-size: 10px; cursor: pointer; font-weight: 800; transition: all 0.3s;\">DELETE</button>
+                                </div>
+                            </li>
+                        `).join('') + '</ol>';
                 }}
-
-                area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + 
-                    log.reflections.map((ref, idx) => `
-                        <li style=\"margin-bottom: 12px; padding-left: 10px;\">
-                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                <span style=\"flex: 1;\">${{ref}}</span>
-                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                    style=\"background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: #FF4444; border-radius: 6px; padding: 2px 8px; font-size: 10px; cursor: pointer; font-weight: 800; transition: all 0.3s;\">DELETE</button>
-                            </div>
-                        </li>
-                    `).join('') + '</ol>';
                 
                 const label = document.getElementById('refInputLabel');
                 label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
@@ -759,19 +773,15 @@ def update_html(header, days, stats, complexity_stats=None):
                 const day = d.getDate();
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const month = monthNames[d.getMonth()];
-                const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
-                if (targetLog) {{
-                    renderPieChart(targetLog.date);
-                    renderReflections(targetLog.date);
-                }}
+                const dateStr = `${{day.toString().padStart(2, '0')}}-${{month}}-${{d.getFullYear()}}`;
+                updateDashboardDate(dateStr);
             }};
 
             document.getElementById('pieDateJump').addEventListener('change', dateJumpHandler);
             document.getElementById('refDateJump').addEventListener('change', dateJumpHandler);
 
             // Initial render
-            renderPieChart(currentPieDate);
-            renderReflections(currentRefDate);
+            updateDashboardDate(currentSyncDate);
 
 
 
