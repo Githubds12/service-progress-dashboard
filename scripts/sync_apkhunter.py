@@ -72,18 +72,34 @@ def sync():
             is_nf = nf_d.get(tid, False)
             note = n_d.get(tid, "").strip()
             
-            base_score = SECURITY_INTEL.get(tid, 50)
+            base_score = SECURITY_INTEL.get(tid, 45) # Default to 45 (Moderate-Easy)
             diff = base_score
             
             p_issues = i_d.get(tid, [])
             intel_pool = (" ".join([str(x.get('text','')).lower() for x in p_issues]) + " " + note.lower()).strip()
+            
+            # --- CATEGORIZATION LOGIC ---
+            def guess_category(name, tid):
+                n = name.lower() + " " + tid.lower()
+                if any(x in n for x in ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker']): return "Banking/Fintech"
+                if any(x in n for x in ['shop', 'store', 'mall', 'market', 'cart', 'buy', 'deals', 'sale', 'fashion']): return "E-Commerce"
+                if any(x in n for x in ['chat', 'social', 'meet', 'date', 'talk', 'message', 'video', 'stream']): return "Social/Media"
+                if any(x in n for x in ['delivery', 'food', 'eat', 'order', 'taxi', 'ride', 'travel', 'trip', 'hotel']): return "Lifestyle/Logistics"
+                if any(x in n for x in ['game', 'play', 'fun', 'poker', 'casino', 'bet']): return "Gaming/Entertainment"
+                return "General/Utility"
 
+            cat = guess_category(name, tid)
+            
             if tid in SECURITY_INTEL:
                 diff = SECURITY_INTEL[tid]
-                cat = "Banking/Fintech" if diff >= 95 else "Logistics" if diff >= 85 else "E-Commerce" if diff >= 70 else "Social/Utility"
-                reason = f"Score {diff}: {cat} (Researched security posture)."
+                reason = f"Score {diff}: {cat} (Verified intelligence)."
             else:
-                reason = TIER_MAP.get(tier, f"Base score {base_score}: Standard service.")
+                reason = TIER_MAP.get(tier, f"Base score {base_score}: {cat}.")
+            
+            # Adjust score based on tier if unknown
+            if tid not in SECURITY_INTEL:
+                if "Tier 1" in tier: diff = 35 # Explicitly Easy
+                elif "Tier 2" in tier: diff = 65 # Moderate
             
             triggers = []
             if is_nf: 
@@ -110,7 +126,7 @@ def sync():
             targets.append({
                 "id": tid, "name": name, "sms": row.get("Sample_Message", ""), 
                 "claimed": is_c, "note": note, "root_detected": is_r, "not_found": is_nf,
-                "difficulty": final_diff, "reason": reason,
+                "difficulty": final_diff, "reason": reason, "category": cat,
                 "last_updated": u_d.get(tid, "NEVER"),
                 "urls": {
                     "play": f"https://play.google.com/store/search?q={q}&c=apps",

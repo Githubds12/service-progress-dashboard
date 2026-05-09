@@ -130,6 +130,17 @@
         .btn-claim.active { background: var(--green); color: #000; }
         .btn-recon { border-color: var(--accent); color: var(--accent); }
         
+        .category-badge {
+            display: inline-block; padding: 2px 6px; border-radius: 4px; 
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            background: #222; color: #aaa; margin-left: 10px; vertical-align: middle;
+        }
+        .cat-banking { border-left: 3px solid var(--accent); color: var(--accent); }
+        .cat-e-commerce { border-left: 3px solid var(--yellow); color: var(--yellow); }
+        .cat-lifestyle { border-left: 3px solid var(--green); color: var(--green); }
+        .cat-social { border-left: 3px solid #e91e63; color: #e91e63; }
+        .cat-gaming { border-left: 3px solid #9c27b0; color: #9c27b0; }
+
         .mirror-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4px; }
         .btn-mir { font-size: 10px; padding: 6px; }
         .pure { background: #24b897; border: none; }
@@ -188,6 +199,15 @@
                 <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
                 <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
                 <button class="filter-btn" onclick="setFilter('easy', this)">EASY</button>
+                <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
+                    <option value="all">ALL CATEGORIES</option>
+                    <option value="Banking/Fintech">BANKING/FINTECH</option>
+                    <option value="E-Commerce">E-COMMERCE</option>
+                    <option value="Social/Media">SOCIAL/MEDIA</option>
+                    <option value="Lifestyle/Logistics">LIFESTYLE/LOGISTICS</option>
+                    <option value="Gaming/Entertainment">GAMING</option>
+                    <option value="General/Utility">UTILITY</option>
+                </select>
             </div>
         </div>
 
@@ -221,6 +241,7 @@
             page: 1,
             pageSize: 20,
             filter: 'all',
+            catFilter: 'all',
             search: '',
             filteredData: [],
             isSyncing: false
@@ -254,7 +275,15 @@
         function setFilter(f, el) {
             state.filter = f;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            el.classList.add('active');
+            if (el && el.tagName === 'BUTTON') el.classList.add('active');
+            state.page = 1;
+            updateUrl();
+            applyFilters();
+            render();
+        }
+
+        function handleCatChange(el) {
+            state.catFilter = el.value;
             state.page = 1;
             updateUrl();
             applyFilters();
@@ -281,7 +310,9 @@
                 if (state.filter === 'hard') matchesType = item.difficulty >= 75;
                 if (state.filter === 'easy') matchesType = item.difficulty < 40;
 
-                return matchesSearch && matchesType;
+                let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
+
+                return matchesSearch && matchesType && matchesCat;
             });
         }
 
@@ -373,7 +404,10 @@
                             </div>
                         </td>
                         <td>
-                            <div class="apk-name">${i.name}</div>
+                            <div class="apk-name">
+                                ${i.name}
+                                <span class="category-badge cat-${i.category.split('/')[0].toLowerCase().replace(' ', '-')}">${i.category}</span>
+                            </div>
                             <div class="apk-id">${i.id}</div>
                             <div class="apk-reason">🧠 ${i.reason}</div>
                             <div class="apk-sms">${i.sms || 'No sample message recorded.'}</div>
