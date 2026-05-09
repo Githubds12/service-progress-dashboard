@@ -126,9 +126,13 @@
             cursor: pointer; transition: 0.2s; text-align: center; text-decoration: none;
         }
         .btn:hover { background: #222; border-color: #444; }
-        .btn-claim { border-color: var(--green); color: var(--green); }
+        .btn-claim { border-color: var(--green); color: var(--green); position: relative; }
         .btn-claim.active { background: var(--green); color: #000; }
+        .btn-claim.saving { opacity: 0.5; cursor: wait; }
+        .btn-claim.saving::after { content: '...'; position: absolute; right: 5px; }
         .btn-recon { border-color: var(--accent); color: var(--accent); }
+        
+        .last-update { font-size: 10px; color: var(--text-dim); margin-top: 5px; font-family: 'JetBrains Mono', monospace; }
         
         .category-badge {
             display: inline-block; padding: 2px 6px; border-radius: 4px; 
@@ -323,16 +327,24 @@
             window.scrollTo(0, 0);
         }
 
-        async function syncUpdate(id, field, value) {
+        async function syncUpdate(id, field, value, btnEl) {
             // Optimistic UI
             const target = window.apkhunterData.find(i => i.id === id);
-            if (target) target[field] = value;
+            if (target) {
+                target[field] = value;
+                target.last_updated = "SAVING...";
+            }
+            if (btnEl) btnEl.classList.add('saving');
+            
             applyFilters();
             render();
 
             // Push to GitHub Command Bus
             const cmd = `APK_UPDATE: ID: ${id}, Field: ${field}, Value: ${value}`;
             await pushToGitHub(cmd);
+            
+            if (target) target.last_updated = "JUST NOW";
+            render();
         }
 
         async function pushToGitHub(message) {
@@ -397,10 +409,11 @@
                     <tr class="${i.claimed ? 'row-claimed' : ''} ${i.root_detected ? 'row-root' : ''}">
                         <td>
                             <div class="action-btns">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed})">
+                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
                                     ${i.claimed ? 'CLAIMED' : 'CLAIM'}
                                 </button>
                                 <div class="score-badge ${scoreClass}">${i.difficulty}/100</div>
+                                <div class="last-update">SYNC: ${i.last_updated}</div>
                             </div>
                         </td>
                         <td>
