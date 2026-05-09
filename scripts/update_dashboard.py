@@ -236,7 +236,13 @@ def update_html(header, days, stats, complexity_stats=None):
             100% {{ transform: scale(1.1); opacity: 1; }}
         }}
 
-        .container {{ max-width: 900px; margin: auto; position: relative; z-index: 1; }}
+        .container {{ max-width: 1100px; margin: auto; position: relative; z-index: 1; padding: 0 10px; }}
+        
+        @media (max-width: 1000px) {{
+            .pie-section-content {{ flex-direction: column !important; align-items: center !important; }}
+            .chart-container {{ flex: 0 0 auto !important; width: 100% !important; max-width: 450px !important; }}
+            #pieLegend {{ width: 100% !important; margin-top: 20px; }}
+        }}
         
         .header {{ text-align: center; padding: 40px 0; animation: fadeInDown 1.2s cubic-bezier(0.22, 1, 0.36, 1); position: relative; }}
         
@@ -416,7 +422,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 <input type="date" id="pieDateJump" 
                     style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
             </div>
-            <div style="display: flex; gap: 30px; align-items: flex-start; flex-wrap: nowrap; margin-top: 10px;">
+            <div class="pie-section-content" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 10px;">
                 <div class="chart-container" style="flex: 0 0 450px; height: 450px;">
                     <canvas id="pieChart"></canvas>
                 </div>
@@ -545,7 +551,10 @@ def update_html(header, days, stats, complexity_stats=None):
                 const refCard = document.getElementById('reflectionsCard');
                 const refText = document.getElementById('reflectionsText');
                 if (log.reflections) {{
-                    refText.innerText = log.reflections;
+                    const points = log.reflections.split('\\n').filter(p => p.trim());
+                    refText.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\">` + 
+                        points.map(p => `<li style=\"margin-bottom: 12px; padding-left: 10px;\">${{p.trim()}}</li>`).join('') + 
+                        `</ol>`;
                     refCard.style.display = 'block';
                 }} else {{
                     refCard.style.display = 'none';
