@@ -15,5 +15,8 @@ Date: Friday, 08-05-2026
 - Portal Sync & Dashboard: 1.0h (Synchronized research artifacts and updated "Ghost Glass" terminal)
 - Security Research: Aegean: 2.5h (Analyzed Miles+Bonus auth flow, identified 429 rate limits, and developed api.py)
 - Portal Sync & Finalization: 0.5h (Registered Aegean project and updated dashboard statistics)
-Total: 8.0h
+- Security Research: Fairpari: 1.5h (Analyzed X-Sign signing and captured registration flow)
+- Security Research: Galarm: 1.5h (Analyzed Firebase Cloud Functions and AES encryption)
+- Security Research: Coinstore: 1.5h (Analyzed GeeTest integration and phone binding flow)
+Total: 12.5h
 Performance Note: Completed T-Bank and Aegean reconnaissance. All auth flows documented and synchronized with portal.

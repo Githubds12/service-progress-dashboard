@@ -4,7 +4,10 @@
 1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs
 2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs
 3. [09:35] Soul - com.soul.android.international - 400rs
-Daily Summary: 3 services, 1200 rs
+4. [16:05] Fairpari - org.fairpari.client - 400rs
+5. [21:40] Galarm - com.galarmapp - 400rs
+6. [22:20] Coinstore - com.io.coinstore - 400rs
+Daily Summary: 6 services, 2400 rs
 ----------
 
 7th May, Thursday
@@ -176,9 +179,9 @@ Daily Summary: 0 services, 0 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 6
-- Total Earnings: 2400 rs
-- Average Daily Earning: 1200.0 rs/day
-- Average Daily Services: 3.0 services/day
-- Recovery Pace: 7.8 Services / day
-- Projected Monthly Total: ₹36000.0
+- Total Services: 9
+- Total Earnings: 3600 rs
+- Average Daily Earning: 1800.0 rs/day
+- Average Daily Services: 4.5 services/day
+- Recovery Pace: 7.7 Services / day
+- Projected Monthly Total: ₹54000.0
