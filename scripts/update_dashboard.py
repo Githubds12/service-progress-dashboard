@@ -630,7 +630,7 @@ def update_html(header, days, stats, complexity_stats=None):
                             }}
                         }} else if (body.startsWith('DELETE_REF:')) {{
                             const dateMatch = body.match(/Date: (.*?), Index:/);
-                            const idxMatch = body.match(/Index: (\d+)$/);
+                            const idxMatch = body.match(/Index: (\\d+)$/);
                             if (dateMatch && idxMatch) {{
                                 window.remoteDeletes.push({{ date: dateMatch[1], index: parseInt(idxMatch[1]) }});
                             }}
