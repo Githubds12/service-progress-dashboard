@@ -199,6 +199,7 @@
         <header>
             <div class="logo"><i>APK</i> HUNTER</div>
             <div id="syncStatus" class="status-ready">SYSTEM READY</div>
+            <div id="injectedStatus" style="font-size:10px; color:var(--green); display:none; margin-left:10px; opacity:0.7;">[HARDCODED AUTH ACTIVE]</div>
             <div class="nav-links">
                 <a href="../index.html" class="nav-btn">← MAIN DASHBOARD</a>
             </div>
@@ -272,6 +273,9 @@
         };
 
         function init() {
+            if (window.GH_TOKEN_INJECTED) {
+                document.getElementById('injectedStatus').style.display = 'inline-block';
+            }
             const params = new URLSearchParams(window.location.search);
             const p = parseInt(params.get('page'));
             if (p) state.page = p;

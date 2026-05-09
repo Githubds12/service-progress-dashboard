@@ -920,6 +920,15 @@ def update_html(header, days, stats, complexity_stats=None):
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
 
+    # Load .env manually if not in environment
+    if not os.getenv("GITHUB_TOKEN"):
+        env_path = os.path.join(os.getcwd(), ".env")
+        if os.path.exists(env_path):
+            with open(env_path, 'r') as f:
+                for line in f:
+                    if line.startswith("GITHUB_TOKEN="):
+                        os.environ["GITHUB_TOKEN"] = line.split("=", 1)[1].strip()
+
     # Inject Token into apkhunter.html for zero-prompt sync
     token = os.getenv("GITHUB_TOKEN", "")
     if token:
