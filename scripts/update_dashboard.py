@@ -907,8 +907,14 @@ def update_html(header, days, stats, complexity_stats=None):
 </html>"""
     
     # Save files
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html"), os.path.join(REPORT_DIR, "index.html")]:
+    # Save dashboard files
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    
+    # Save root index file with adjusted path
+    index_path = os.path.join(REPORT_DIR, "index.html")
+    with open(index_path, 'w', encoding='utf-8') as f:
+        f.write(html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"'))
     
     data_js = f"window.dashboardData = {json.dumps(data_dict)};"
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
