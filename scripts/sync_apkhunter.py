@@ -169,7 +169,18 @@ def sync():
     # Sort by difficulty descending for high-value targets first
     targets.sort(key=lambda x: x['difficulty'], reverse=True)
 
+    # Load token for injection
+    token = os.getenv("GITHUB_TOKEN", "")
+    if not token:
+        env_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), ".env")
+        if os.path.exists(env_path):
+            with open(env_path, 'r') as f:
+                for line in f:
+                    if line.startswith("GITHUB_TOKEN="):
+                        token = line.split("=", 1)[1].strip()
+
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+        f.write(f"window.GH_TOKEN_INJECTED = '{token}';\n")
         f.write(f"window.apkhunterData = {json.dumps(targets, indent=2)};\n")
         f.write(f"window.apkhunterLastSync = '{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}';\n")
     
