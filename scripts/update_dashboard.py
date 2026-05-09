@@ -307,9 +307,10 @@ def update_html(header, days, stats, complexity_stats=None):
         
         .section-title {{ 
             font-size: 15px; font-weight: 950; color: #FFF; text-transform: uppercase; 
-            letter-spacing: 3px; margin-bottom: 25px; display: flex; align-items: center; gap: 18px;
+            letter-spacing: 3px; margin-bottom: 25px; display: flex; align-items: center; gap: 15px;
+            flex-wrap: wrap;
         }}
-        .section-title::after {{ content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0.4; }}
+        .section-title::after {{ content: ""; flex: 1; height: 1px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0.4; min-width: 50px; }}
         
         .chart-container {{ height: 320px; position: relative; padding: 10px; }}
         
