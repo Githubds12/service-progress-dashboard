@@ -117,8 +117,19 @@ def sync():
                 diff = max(diff, 90)
                 triggers.append(f"Hard Security ({found_ssl[0]})")
 
+            trigger_explanations = {
+                "Binary Not Found": "Scrapers failed to locate the APK binary across known mirrors. Manual acquisition required.",
+                "No Endpoint": "Potential lack of standard web/phone endpoints; research suggests mobile-only or hidden flows.",
+                "Hard Security": "Protections like SSL Pinning or Flutter detected in intelligence logs. Significant research effort expected."
+            }
+            
             if triggers:
-                reason = f"Score {diff}: Triggers: {', '.join(triggers)}."
+                expls = [trigger_explanations.get(t.split(' (')[0], t) for t in triggers]
+                reason = f"Critical Hurdles: {' '.join(expls)}"
+            elif tid in SECURITY_INTEL:
+                reason = f"Target verified as {cat}. Known security posture: {diff}/100."
+            else:
+                reason = f"Standard {cat} service. No specific security hurdles identified in intelligence logs."
             
             final_diff = int(max(0, min(100, diff)))
             
