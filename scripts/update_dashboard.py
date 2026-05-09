@@ -415,15 +415,15 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.5s;">
-            <div class="section-title">
+            <div class="section-title" style="display: flex; align-items: center; gap: 15px; flex-wrap: wrap;">
                 <span>Daily Focus Distribution</span>
-                <div style="display: flex; align-items: center; gap: 8px; margin-left: auto;">
-                    <button onclick="navigatePie(-1)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #FFF; padding: 4px 10px; border-radius: 8px; cursor: pointer;">&lt;</button>
-                    <span id="pieViewedDate" style="font-size: 11px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
-                    <button onclick="navigatePie(1)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #FFF; padding: 4px 10px; border-radius: 8px; cursor: pointer;">&gt;</button>
-                </div>
                 <span id="pieTotalHours" style="font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05);"></span>
-                <input type="date" id="pieDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 6px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
+                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
+                    <button onclick="navigatePie(-1)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #FFF; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
+                    <span id="pieViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
+                    <button onclick="navigatePie(1)" style="background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: #FFF; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                    <input type="date" id="pieDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
+                </div>
             </div>
             <div class="pie-section-content" style="display: flex; gap: 30px; align-items: flex-start; margin-top: 10px;">
                 <div class="chart-container" style="flex: 0 0 450px; height: 450px;">
