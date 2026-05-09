@@ -79,8 +79,8 @@ def sync():
             intel_pool = (" ".join([str(x.get('text','')).lower() for x in p_issues]) + " " + note.lower()).strip()
             
             # --- ELITE CATEGORIZATION ENGINE ---
-            def guess_category(name, tid, desc=""):
-                n = (name.lower() + " " + tid.lower() + " " + desc.lower()).replace('.', ' ')
+            def guess_category(name, tid, desc="", sms=""):
+                n = (name.lower() + " " + tid.lower() + " " + desc.lower() + " " + (sms or "").lower()).replace('.', ' ')
                 
                 cat_map = {
                     "Banking/Fintech": ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker', 'card', 'loan', 'credit', 'money', 'cash', 'transfer', 'ledger', 'stock', 'forex', 'capital', 'wealth', 'save', 'budget', 'billing', 'invoice', 'checkout', 'pos', 'payment', 'atm', 'remit', 'paisa', 'khata', 'upi', 'fintech', 'merchant', 'mortgage', 'insurance', 'repay', 'interest', 'vault', 'balance', 'stmt', 'banker', 'teller', 'debit', 'mastercard', 'visa', 'amex', 'paypal', 'venmo', 'stripe', 'zelle'],
@@ -104,7 +104,7 @@ def sync():
                         return category
                 return "General/Utility"
 
-            cat = guess_category(name, tid, row.get("Description", ""))
+            cat = guess_category(name, tid, row.get("Description", ""), row.get("Sample_Message", ""))
             
             if tid in SECURITY_INTEL:
                 diff = SECURITY_INTEL[tid]
