@@ -729,72 +729,67 @@ def update_html(header, days, stats, complexity_stats=None):
                 const month = monthNames[d.getMonth()];
                 const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
                 if (targetLog) renderPieChart(targetLog.date);
-            }});
+        }} // End of initDashboard
 
-            function toggleReflectionInput() {{
-                const area = document.getElementById('reflectionInputArea');
-                area.style.display = area.style.display === 'none' ? 'block' : 'none';
+        function copyReflection() {{
+            const text = document.getElementById('newReflectionText').value;
+            if (!text) return;
+            
+            // 1. Immediate UI update
+            const logArea = document.getElementById('reflectionsText');
+            let list = logArea.querySelector('ol');
+            if (!list) {{
+                logArea.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\"></ol>`;
+                list = logArea.querySelector('ol');
             }}
+            const li = document.createElement('li');
+            li.style.marginBottom = '12px';
+            li.style.paddingLeft = '10px';
+            li.innerText = text;
+            list.appendChild(li);
 
-            function copyReflection() {{
-                const text = document.getElementById('newReflectionText').value;
-                if (!text) return;
-                
-                // 1. Immediate UI update
-                const logArea = document.getElementById('reflectionsText');
-                let list = logArea.querySelector('ol');
-                if (!list) {{
-                    logArea.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\"></ol>`;
-                    list = logArea.querySelector('ol');
-                }}
-                const li = document.createElement('li');
-                li.style.marginBottom = '12px';
-                li.style.paddingLeft = '10px';
-                li.innerText = text;
-                list.appendChild(li);
+            // 2. Save to "Database" (GitHub Issue)
+            saveToRemoteDatabase(text);
+            
+            // 3. UI Feedback on button
+            const btn = document.querySelector('[onclick=\"copyReflection()\"]');
+            const oldText = btn.innerText;
+            btn.innerText = 'SAVED TO DB!';
+            btn.style.background = '#00FF00';
+            btn.style.color = '#000';
+            setTimeout(() => {{
+                btn.innerText = oldText;
+                btn.style.background = '';
+                btn.style.color = '';
+                document.getElementById('newReflectionText').value = '';
+            }}, 2000);
+        }}
 
-                // 2. Save to "Database" (GitHub Issue)
-                saveToRemoteDatabase(text);
-                
-                // 3. UI Feedback on button
-                const btn = document.querySelector('[onclick=\"copyReflection()\"]');
-                const oldText = btn.innerText;
-                btn.innerText = 'SAVED TO DB!';
-                btn.style.background = '#00FF00';
-                btn.style.color = '#000';
-                setTimeout(() => {{
-                    btn.innerText = oldText;
-                    btn.style.background = '';
-                    btn.style.color = '';
-                    document.getElementById('newReflectionText').value = '';
-                }}, 2000);
+        async function saveToRemoteDatabase(text) {{
+            let token = localStorage.getItem('gh_token');
+            if (!token) {{
+                token = prompt('Please enter your GitHub PAT (repo scope) to save to DB:');
+                if (token) localStorage.setItem('gh_token', token);
             }}
+            if (!token) return;
 
-            async function saveToRemoteDatabase(text) {{
-                let token = localStorage.getItem('gh_token');
-                if (!token) {{
-                    token = prompt('Please enter your GitHub PAT (repo scope) to save to DB:');
-                    if (token) localStorage.setItem('gh_token', token);
-                }}
-                if (!token) return;
-
-                const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
-                try {{
-                    const res = await fetch(url, {{
-                        method: 'POST',
-                        headers: {{
-                            'Authorization': `token ${{token}}`,
-                            'Accept': 'application/vnd.github.v3+json',
-                            'Content-Type': 'application/json'
-                        }},
-                        body: JSON.stringify({{ body: text }})
-                    }});
-                    if (res.ok) console.log('Successfully saved to remote DB');
-                    else if (res.status === 401) localStorage.removeItem('gh_token');
-                }} catch (e) {{
-                    console.error('Save to DB failed:', e);
-                }}
+            const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+            try {{
+                const res = await fetch(url, {{
+                    method: 'POST',
+                    headers: {{
+                        'Authorization': `token ${{token}}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    }},
+                    body: JSON.stringify({{ body: text }})
+                }});
+                if (res.ok) console.log('Successfully saved to remote DB');
+                else if (res.status === 401) localStorage.removeItem('gh_token');
+            }} catch (e) {{
+                console.error('Save to DB failed:', e);
             }}
+        }}
 
             // 4. Operational Log Rendering Engine
             let currentPage = 1;
