@@ -154,8 +154,8 @@ def sync():
     # Sort final data (Unclaimed first, then by Difficulty)
     final_data.sort(key=lambda x: (x['claimed'], -x['difficulty']))
     
-    with open(OUTPUT_JS, 'w', encoding='utf-8') as f:
-        f.write("const apkhunterData = " + json.dumps(final_data, indent=4) + ";")
+    with open(OUTPUT_JS, "w", encoding="utf-8") as f:
+        f.write(f"window.apkhunterData = {json.dumps(final_data, indent=4)};")
     
     print(f"[*] Processed {len(final_data)} targets.")
     print(f"[+] Sync Complete: {OUTPUT_JS}")

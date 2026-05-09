@@ -285,7 +285,8 @@
             }
 
             // Merge local claims to prevent refresh reverts
-            window.apkhunterData.forEach(item => {
+            const data = window.apkhunterData || (typeof apkhunterData !== 'undefined' ? apkhunterData : []);
+            data.forEach(item => {
                 if (state.localClaims[item.id] !== undefined) {
                     item.claimed = state.localClaims[item.id];
                 }
@@ -295,7 +296,7 @@
             const p = parseInt(params.get('page'));
             if (p) state.page = p;
 
-            state.filteredData = window.apkhunterData;
+            state.filteredData = data;
             applyFilters();
             render();
         }
