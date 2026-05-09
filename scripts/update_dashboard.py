@@ -5,6 +5,7 @@ import json
 import math
 import subprocess
 import csv
+import requests
 from google import genai
 from dotenv import load_dotenv
 
@@ -81,35 +82,45 @@ def process_remote_reflections():
 
         # Process Additions
         if new_reflections:
-            found_date = False
-            latest_date_idx = -1
-            for i, line in enumerate(lines):
-                if line.startswith("Date:"):
-                    latest_date_idx = i
-                    found_date = True
-            
-            if found_date:
-                ref_line_idx = -1
-                insert_pos = len(lines)
-                for j in range(latest_date_idx + 1, len(lines)):
-                    if lines[j].startswith("Date:"):
-                        insert_pos = j
-                        break
-                    if lines[j].strip().startswith("Reflections:"):
-                        ref_line_idx = j
-                        break
+            for ref_cmd in new_reflections:
+                target_date = ""
+                text = ref_cmd
+                if ref_cmd.startswith("ADD_REF:"):
+                    m_date = re.search(r'Date:\s*(.*?),\s*Text:\s*(.*)', ref_cmd, re.DOTALL)
+                    if m_date:
+                        target_date = m_date.group(1).strip()
+                        text = m_date.group(2).strip()
                 
-                if ref_line_idx != -1:
-                    content = lines[ref_line_idx].split("Reflections:")[1].strip()
-                    items = re.split(r'\s*\d+\.\s*', content)
-                    items = [it.strip() for it in items if it.strip()]
-                    items.extend(new_reflections)
-                    lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
-                else:
-                    ref_line = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(new_reflections)]) + "\n"
-                    lines.insert(insert_pos, ref_line)
-            else:
-                lines.append("\nReflections: 1. " + " ".join(new_reflections) + "\n")
+                # Find target date section or default to latest
+                target_idx = -1
+                if target_date:
+                    for i, line in enumerate(lines):
+                        if line.startswith("Date:") and target_date in line:
+                            target_idx = i
+                            break
+                if target_idx == -1:
+                    for i, line in enumerate(lines):
+                        if line.startswith("Date:"): target_idx = i
+                
+                if target_idx != -1:
+                    ref_line_idx = -1
+                    insert_pos = -1
+                    for j in range(target_idx + 1, len(lines)):
+                        if lines[j].startswith("Date:"):
+                            insert_pos = j
+                            break
+                        if lines[j].strip().startswith("Reflections:"):
+                            ref_line_idx = j
+                            break
+                    
+                    if ref_line_idx != -1:
+                        content = lines[ref_line_idx].split("Reflections:")[1].strip()
+                        items = re.split(r'\s*\d+\.\s*', content)
+                        items = [it.strip() for it in items if it.strip()]
+                        items.append(text)
+                        lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
+                    else:
+                        lines.insert(target_idx + 1, f"Reflections: 1. {text}\n")
 
         with open(log_path, 'w', encoding='utf-8') as f:
             f.writelines(lines)
@@ -954,7 +965,7 @@ def update_html(header, days, stats, complexity_stats=None):
             list.appendChild(li);
 
             // 2. Save to "Database" (GitHub Issue)
-            saveToRemoteDatabase(text);
+            saveToRemoteDatabase(text, window.currentSyncDate);
             
             // 3. UI Feedback on button
             const btn = document.querySelector('[onclick=\"copyReflection()\"]');
@@ -970,7 +981,7 @@ def update_html(header, days, stats, complexity_stats=None):
             }}, 2000);
         }}
 
-        async function saveToRemoteDatabase(text) {{
+        async function saveToRemoteDatabase(text, date) {{
             let token = localStorage.getItem('gh_token');
             if (!token) {{
                 token = prompt('Please enter your GitHub PAT (repo scope) to save to DB:');
@@ -980,6 +991,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
             const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
             try {{
+                const command = `ADD_REF: Date: ${{date}}, Text: ${{text}}`;
                 const res = await fetch(url, {{
                     method: 'POST',
                     headers: {{
@@ -987,7 +999,7 @@ def update_html(header, days, stats, complexity_stats=None):
                         'Accept': 'application/vnd.github.v3+json',
                         'Content-Type': 'application/json'
                     }},
-                    body: JSON.stringify({{ body: text }})
+                    body: JSON.stringify({{ body: command }})
                 }});
                 if (res.ok) console.log('Successfully saved to remote DB');
                 else if (res.status === 401) localStorage.removeItem('gh_token');
