@@ -269,13 +269,22 @@
             catFilter: 'all',
             search: '',
             filteredData: [],
-            isSyncing: false
+            isSyncing: false,
+            localClaims: JSON.parse(localStorage.getItem('local_claims') || '{}')
         };
 
         function init() {
             if (window.GH_TOKEN_INJECTED) {
                 document.getElementById('injectedStatus').style.display = 'inline-block';
             }
+
+            // Merge local claims to prevent refresh reverts
+            window.apkhunterData.forEach(item => {
+                if (state.localClaims[item.id] !== undefined) {
+                    item.claimed = state.localClaims[item.id];
+                }
+            });
+
             const params = new URLSearchParams(window.location.search);
             const p = parseInt(params.get('page'));
             if (p) state.page = p;
@@ -357,6 +366,12 @@
             if (target) {
                 target[field] = value;
                 target.last_updated = "SAVING...";
+                
+                // Cache claimed status locally to survive refresh
+                if (field === 'claimed') {
+                    state.localClaims[id] = value;
+                    localStorage.setItem('local_claims', JSON.stringify(state.localClaims));
+                }
             }
             if (btnEl) btnEl.classList.add('saving');
             
