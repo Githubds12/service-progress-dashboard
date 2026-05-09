@@ -527,7 +527,14 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.4s;">
-            <div class="section-title">Revenue Trajectory</div>
+            <div class="section-title" style="display: flex; align-items: center; gap: 15px;">
+                <span>Revenue Trajectory</span>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+                    <button onclick="navigateTrend(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
+                    <span id="trendViewedRange" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;">LAST 30 DAYS</span>
+                    <button onclick="navigateTrend(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                </div>
+            </div>
             <div class="chart-container"><canvas id="trendChart"></canvas></div>
         </div>
 
@@ -582,9 +589,13 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" style="animation-delay: 0.7s;">
-            <div class="section-title" style="margin-bottom: 25px;">
+            <div class="section-title" style="display: flex; align-items: center; gap: 15px; margin-bottom: 25px;">
                 <span>Operational Intelligence Log</span>
-                <span id="log-header-date" style="font-size: 13px; color: var(--accent); margin-left: auto; letter-spacing: 2px; font-weight: 900;">[ {stats['today_date']} ]</span>
+                <div style="margin-left: auto; display: flex; align-items: center; gap: 12px;">
+                    <button onclick="navigateLog(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
+                    <span id="log-header-date" style="font-size: 13px; color: var(--accent); letter-spacing: 2px; font-weight: 900;">[ {stats['today_date']} ]</span>
+                    <button onclick="navigateLog(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                </div>
             </div>
             <div style="margin-bottom: 25px; display: flex; gap: 15px; flex-wrap: wrap;">
                 <input type="text" id="logSearch" placeholder="SEARCH NEURAL RECORDS..." 
@@ -682,42 +693,63 @@ def update_html(header, days, stats, complexity_stats=None):
             }};
 
             // 1. Line Chart
-            new Chart(document.getElementById('trendChart'), {{
-                type: 'line',
-                data: {{
-                    labels: data.labels,
-                    datasets: [{{
-                        data: data.earnings,
-                        borderColor: '#D4AF37',
-                        borderWidth: 5,
-                        backgroundColor: (ctx) => {{
-                            const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 350);
-                            gradient.addColorStop(0, 'rgba(212, 175, 55, 0.3)');
-                            gradient.addColorStop(1, 'transparent');
-                            return gradient;
-                        }},
-                        tension: 0.45, fill: true, pointRadius: 7, pointHoverRadius: 10,
-                        pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37', pointBorderWidth: 4
-                    }}]
-                }},
-                options: {{
-                    ...commonOptions,
-                    scales: {{ 
-                        y: {{ 
-                            grid: {{ color: 'rgba(255,255,255,0.05)' }}, 
-                            ticks: {{ padding: 10, color: '#94A3B8', font: {{ weight: 600 }} }} 
-                        }},
-                        x: {{ 
-                            grid: {{ display: false }}, 
-                            ticks: {{ 
-                                padding: 10, color: '#94A3B8', font: {{ weight: 600 }},
-                                maxRotation: 45, minRotation: 45,
-                                autoSkip: true, maxTicksLimit: 10
-                            }} 
+            let trendChart;
+            const renderTrendChart = (range = 30) => {{
+                const ctx = document.getElementById('trendChart');
+                if (!ctx) return;
+                if (trendChart) trendChart.destroy();
+                
+                const labels = data.labels.slice(-range);
+                const earnings = data.earnings.slice(-range);
+
+                trendChart = new Chart(ctx, {{
+                    type: 'line',
+                    data: {{
+                        labels: labels,
+                        datasets: [{{
+                            data: earnings,
+                            borderColor: '#D4AF37',
+                            borderWidth: 5,
+                            backgroundColor: (ctx) => {{
+                                const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 350);
+                                gradient.addColorStop(0, 'rgba(212, 175, 55, 0.3)');
+                                gradient.addColorStop(1, 'transparent');
+                                return gradient;
+                            }},
+                            tension: 0.45, fill: true, pointRadius: 7, pointHoverRadius: 10,
+                            pointBackgroundColor: '#FFF', pointBorderColor: '#D4AF37', pointBorderWidth: 4
+                        }}]
+                    }},
+                    options: {{
+                        ...commonOptions,
+                        scales: {{ 
+                            y: {{ 
+                                grid: {{ color: 'rgba(255,255,255,0.05)' }}, 
+                                ticks: {{ padding: 10, color: '#94A3B8', font: {{ weight: 600 }} }} 
+                            }},
+                            x: {{ 
+                                grid: {{ display: false }}, 
+                                ticks: {{ 
+                                    padding: 10, color: '#94A3B8', font: {{ weight: 600 }},
+                                    maxRotation: 45, minRotation: 45,
+                                    autoSkip: true, maxTicksLimit: 10
+                                }} 
+                            }}
                         }}
                     }}
-                }}
-            }});
+                }});
+                document.getElementById('trendViewedRange').innerText = `LAST ${{range}} DAYS`;
+            }};
+            renderTrendChart(30);
+
+            let currentTrendRange = 30;
+            window.navigateTrend = (dir) => {{
+                const options = [7, 15, 30, 60, 90];
+                let idx = options.indexOf(currentTrendRange);
+                idx = Math.max(0, Math.min(options.length - 1, idx + dir));
+                currentTrendRange = options[idx];
+                renderTrendChart(currentTrendRange);
+            }};
 
             // 2. Pie Chart (Task Distribution)
             // 3. Task Distribution & Reflections Engine (Synchronized)
@@ -772,73 +804,84 @@ def update_html(header, days, stats, complexity_stats=None):
                     return parse(a) - parse(b);
                 }});
 
-                let idx = allDatesInLogs.indexOf(currentSyncDate);
+                let idx = allDatesInLogs.indexOf(window.currentSyncDate);
                 if (idx === -1) idx = allDatesInLogs.length - 1;
                 const newIdx = Math.max(0, Math.min(allDatesInLogs.length - 1, idx + dir));
                 updateDashboardDate(allDatesInLogs[newIdx]);
             }};
 
             window.navigateRef = window.navigatePie;
+            window.navigateLog = (dir) => window.changePage(-dir);
 
             window.renderReflections = (targetDate) => {{
-                document.getElementById('refViewedDate').innerText = targetDate;
+                const dateEl = document.getElementById('refViewedDate');
+                if (dateEl) dateEl.innerText = targetDate;
+                
                 let log = data.time_logs.find(l => l.date === targetDate);
                 const area = document.getElementById('reflectionsText');
+                if (!area) return;
                 
-                // Base reflections from static file
                 let reflections = log ? [...log.reflections] : [];
+                let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
+                let html = '';
 
-                    // 1. Permanent Reflections (from file)
-                    reflections.forEach((ref, idx) => {{
-                        const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
-                        html += `
-                            <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.3; text-decoration: line-through;' : ''}}\">
-                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                    <span style=\"flex: 1;\">${{ref}} ${{isBeingDeleted ? '<small>(Deleting...)</small>' : ''}}</span>
-                                    <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                        title=\"Delete Reflection\"
-                                        style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
-                                </div>
-                            </li>
-                        `;
+                // 1. Permanent Reflections (from file)
+                reflections.forEach((ref, idx) => {{
+                    const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
+                    html += `
+                        <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.3; text-decoration: line-through;' : ''}}\">
+                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                <span style=\"flex: 1;\">${{ref}} ${{isBeingDeleted ? '<small>(Deleting...)</small>' : ''}}</span>
+                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
+                                    title=\"Delete Reflection\"
+                                    style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
+                            </div>
+                        </li>
+                    `;
+                }});
+
+                // 2. Syncing Reflections (Cloud but not in file yet)
+                if (window.remoteAdds) {{
+                    window.remoteAdds.forEach(add => {{
+                        if (add.date === targetDate && !reflections.includes(add.text)) {{
+                            html += `
+                                <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.8;\">
+                                    <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                        <span style=\"flex: 1;\">${{add.text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
+                                        <button onclick=\"deletePendingReflection('${{targetDate}}', '${{add.text.replace(/'/g, "\\'")}}')\"
+                                            title=\"Cancel Sync\"
+                                            style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                                    </div>
+                                </li>
+                            `;
+                        }}
                     }});
-
-                    // 2. Syncing Reflections (Cloud but not in file yet)
-                    if (window.remoteAdds) {{
-                        window.remoteAdds.forEach(add => {{
-                            if (add.date === targetDate && !reflections.includes(add.text)) {{
-                                html += `
-                                    <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.8;\">
-                                        <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                            <span style=\"flex: 1;\">${{add.text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
-                                            <button onclick=\"deletePendingReflection('${{targetDate}}', '${{add.text.replace(/'/g, "\\'")}}')\"
-                                                title=\"Cancel Sync\"
-                                                style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                                        </div>
-                                    </li>
-                                `;
-                            }}
-                        }});
-                    }}
-
-                    // 3. Local Pending (Offline/Immediate)
-                    pending.forEach((ref) => {{
-                        if (window.remoteAdds && window.remoteAdds.some(a => a.date === targetDate && a.text === ref)) return;
-                        html += `
-                            <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
-                                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
-                                    <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Local Syncing...)</small></span>
-                                    <button onclick=\"deletePendingReflection('${{targetDate}}', '${{ref.replace(/'/g, "\\'")}}')\"
-                                        title=\"Cancel Sync\"
-                                        style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
-                                </div>
-                            </li>
-                        `;
-                    }});
-
-                    html += '</ol>';
-                    area.innerHTML = html;
                 }}
+
+                // 3. Local Pending
+                pending.forEach((ref) => {{
+                    if (window.remoteAdds && window.remoteAdds.some(a => a.date === targetDate && a.text === ref)) return;
+                    html += `
+                        <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
+                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Local Syncing...)</small></span>
+                                <button onclick=\"deletePendingReflection('${{targetDate}}', '${{ref.replace(/'/g, "\\'")}}')\"
+                                    title=\"Cancel Sync\"
+                                    style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                            </div>
+                        </li>
+                    `;
+                }});
+
+                if (html === '') {{
+                    area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
+                }} else {{
+                    area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + html + '</ol>';
+                }}
+                
+                const label = document.getElementById('refInputLabel');
+                if (label) label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
+            }}
                 
                 const label = document.getElementById('refInputLabel');
                 label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
