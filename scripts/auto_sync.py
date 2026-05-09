@@ -31,8 +31,8 @@ def main():
         except Exception as e:
             print(f"[{current_time}] System Error: {e}")
         
-        # Wait for 15 minutes
-        time.sleep(15 * 60)
+        # Wait for 2 minutes
+        time.sleep(2 * 60)
 
 if __name__ == "__main__":
     main()
