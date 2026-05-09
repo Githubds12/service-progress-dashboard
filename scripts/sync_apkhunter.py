@@ -180,7 +180,7 @@ def sync():
                         token = line.split("=", 1)[1].strip()
 
     with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
-        f.write(f"window.GH_TOKEN_INJECTED = '{token}';\n")
+        f.write(f"window.GH_TOKEN_INJECTED = '';\n")
         f.write(f"window.apkhunterData = {json.dumps(targets, indent=2)};\n")
         f.write(f"window.apkhunterLastSync = '{datetime.now().strftime('%Y-%m-%d %H:%M:%S')}';\n")
     

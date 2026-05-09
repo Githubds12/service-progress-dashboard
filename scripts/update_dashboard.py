@@ -926,7 +926,7 @@ def update_html(header, days, stats, complexity_stats=None):
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write(html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"'))
     
-    data_js = f"window.GH_TOKEN_INJECTED = '{token}';\nwindow.dashboardData = {json.dumps(data_dict)};"
+    data_js = f"window.GH_TOKEN_INJECTED = '';\nwindow.dashboardData = {json.dumps(data_dict)};"
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
 
