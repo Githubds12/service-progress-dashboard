@@ -95,14 +95,17 @@ def sync():
                     "Music/Audio": ['music', 'radio', 'mp3', 'player', 'song', 'podcast', 'audio', 'sound', 'dj', 'mix', 'equalizer', 'spotify', 'deezer', 'shazam', 'recorder', 'voice', 'sing', 'karaoke', 'instrument', 'guitar', 'piano', 'beat', 'rhythm', 'tune', 'tuner', 'streaming', 'album', 'artist', 'track', 'playlist', 'lyrics'],
                     "Photography/Video": ['photo', 'camera', 'editor', 'gallery', 'video', 'clip', 'collage', 'beauty', 'filter', 'lens', 'selfie', 'retouch', 'frame', 'album', 'shot', 'capture', 'movie', 'cinema', 'player', 'vlc', 'netflix', 'youtube', 'prime', 'hulu', 'disney', 'tv', 'show', 'ott', 'vlog', 'reels', 'cinema', 'theatre', 'broadcasting', 'production'],
                     "News/Books": ['news', 'book', 'reader', 'paper', 'magazine', 'novel', 'daily', 'times', 'post', 'journal', 'headline', 'article', 'feed', 'rss', 'library', 'story', 'author', 'kindle', 'pdf', 'epub', 'comic', 'manga', 'shelf', 'publisher', 'medium', 'newspaper', 'bulletin', 'report', 'press', 'literary'],
-                    "Business/Work": ['meeting', 'zoom', 'office', 'work', 'job', 'recruit', 'business', 'resume', 'teams', 'hr', 'staff', 'employee', 'enterprise', 'crm', 'erp', 'slack', 'outlook', 'mail', 'calendar', 'task', 'project', 'collab', 'management', 'admin', 'hiring', 'interview', 'salary', 'payroll', 'expense', 'inc', 'corp', 'company', 'startup', 'client', 'partner'],
-                    "Tools/Security": ['vpn', 'proxy', 'secure', 'protect', 'antivirus', 'cleaner', 'battery', 'tool', 'file', 'manager', 'browser', 'web', 'launcher', 'theme', 'font', 'keyboard', 'calculator', 'clock', 'alarm', 'weather', 'widget', 'backup', 'restore', 'scan', 'zip', 'rar', 'authenticator', 'otp', 'checker', 'speedtest', 'mirror', 'converter', 'explorer', 'root', 'super', 'flash', 'light', 'torch', 'wifi', 'signal', 'network']
+                    "Business/Work": ['meeting', 'zoom', 'office', 'work', 'job', 'recruit', 'business', 'resume', 'teams', 'hr', 'staff', 'employee', 'enterprise', 'crm', 'erp', 'slack', 'outlook', 'mail', 'calendar', 'task', 'project', 'collab', 'management', 'admin', 'hiring', 'interview', 'salary', 'payroll', 'expense', 'inc', 'corp', 'company', 'startup', 'client', 'partner', 'github', 'docusign', 'linkedin', 'xing'],
+                    "Betting/Gambling": ['bet', 'win', 'casino', 'slot', 'poker', 'gambling', '1win', 'pin-up', 'betpawa', 'betwinner', '888starz', 'megapari', 'winwin', 'linebet', 'melbet', 'mostbet', 'parimatch', 'betway', 'dafabet', '1xbet'],
+                    "Telecom/OTP": ['sms', 'verify', 'otp', 'auth', 'code', 'link', 'msg', 'notif', 'cloud', 'vonage', 'sinch', 'twilio', 'nexmo', 'plvrfy', 'itcotp', 'smsto', 'duosec', 'msgdog', 'stripelink', 'sinchverify', 'authmsg', 'verify', 'notify', 'bilgimsj', 'message'],
+                    "Logistics/Transport": ['delivery', 'courier', 'parcel', 'ship', 'cargo', 'logistic', 'taxi', 'ride', 'uber', 'grab', 'bolt', 'yango', 'yandex', 'toters', 'careem', 'indrive', 'lalamove', 'foodpanda', 'doordash', 'deliveroo', 'glovo', 'rappi', 'talabat', 'deliveryhero'],
+                    "Tools/Security": ['vpn', 'proxy', 'secure', 'protect', 'antivirus', 'cleaner', 'battery', 'tool', 'file', 'manager', 'browser', 'web', 'launcher', 'theme', 'font', 'keyboard', 'calculator', 'clock', 'alarm', 'weather', 'widget', 'backup', 'restore', 'scan', 'zip', 'rar', 'authenticator', 'otp', 'checker', 'speedtest', 'mirror', 'converter', 'explorer', 'root', 'super', 'flash', 'light', 'torch', 'wifi', 'signal', 'network', 'camscanner']
                 }
 
                 for category, keywords in cat_map.items():
                     if any(k in n for k in keywords):
                         return category
-                return "General/Utility"
+                return "UNCATEGORIZED"
 
             cat = guess_category(name, tid, row.get("Description", ""), row.get("Sample_Message", ""))
             
