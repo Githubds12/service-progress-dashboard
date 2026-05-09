@@ -81,11 +81,20 @@ def sync():
             # --- CATEGORIZATION LOGIC ---
             def guess_category(name, tid):
                 n = name.lower() + " " + tid.lower()
-                if any(x in n for x in ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker']): return "Banking/Fintech"
-                if any(x in n for x in ['shop', 'store', 'mall', 'market', 'cart', 'buy', 'deals', 'sale', 'fashion']): return "E-Commerce"
-                if any(x in n for x in ['chat', 'social', 'meet', 'date', 'talk', 'message', 'video', 'stream']): return "Social/Media"
-                if any(x in n for x in ['delivery', 'food', 'eat', 'order', 'taxi', 'ride', 'travel', 'trip', 'hotel']): return "Lifestyle/Logistics"
-                if any(x in n for x in ['game', 'play', 'fun', 'poker', 'casino', 'bet']): return "Gaming/Entertainment"
+                if any(x in n for x in ['bank', 'pay', 'wallet', 'finance', 'invest', 'crypto', 'coin', 'trading', 'broker', 'card', 'loan', 'credit']): return "Banking/Fintech"
+                if any(x in n for x in ['shop', 'store', 'mall', 'market', 'cart', 'buy', 'deals', 'sale', 'fashion', 'grocery', 'amazon', 'ebay']): return "E-Commerce"
+                if any(x in n for x in ['chat', 'social', 'meet', 'date', 'talk', 'message', 'video', 'stream', 'live', 'fan', 'social']): return "Social/Media"
+                if any(x in n for x in ['delivery', 'food', 'eat', 'order', 'taxi', 'ride', 'travel', 'trip', 'hotel', 'flight', 'booking', 'bus', 'train']): return "Lifestyle/Travel"
+                if any(x in n for x in ['game', 'play', 'fun', 'poker', 'casino', 'bet', 'slot', 'puzzle', 'action', 'rpg']): return "Gaming/Entertainment"
+                if any(x in n for x in ['health', 'doctor', 'clinic', 'workout', 'gym', 'pharmacy', 'fitness', 'medical', 'hospital']): return "Health/Fitness"
+                if any(x in n for x in ['school', 'university', 'learn', 'course', 'quiz', 'student', 'study', 'education', 'academy']): return "Education/Learning"
+                if any(x in n for x in ['gov', 'passport', 'citizen', 'tax', ' id ', 'vote', 'official', 'public', 'service']): return "Government/Public"
+                if any(x in n for x in ['map', 'gps', 'navigate', 'direction', 'location', 'radar', 'drive', 'traffic']): return "Navigation/Maps"
+                if any(x in n for x in ['music', 'radio', 'mp3', 'player', 'song', 'podcast', 'audio', 'sound']): return "Music/Audio"
+                if any(x in n for x in ['photo', 'camera', 'editor', 'gallery', 'video', 'clip', 'collage', 'beauty']): return "Photography/Video"
+                if any(x in n for x in ['news', 'book', 'reader', 'paper', 'magazine', 'novel', 'daily']): return "News/Books"
+                if any(x in n for x in ['meeting', 'zoom', 'office', 'work', 'job', 'recruit', 'business', 'resume', 'teams']): return "Business/Work"
+                if any(x in n for x in ['vpn', 'proxy', 'secure', 'protect', 'antivirus', 'cleaner', 'battery', 'tool', 'file', 'manager']): return "Tools/Security"
                 return "General/Utility"
 
             cat = guess_category(name, tid)
