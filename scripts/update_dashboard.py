@@ -436,20 +436,24 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s; display: none;">
-            <div class="section-title" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span>Daily Reflections</span>
-                <button onclick="toggleReflectionInput()" style="background: var(--accent); border: none; color: #000; padding: 5px 15px; border-radius: 12px; font-weight: 900; cursor: pointer; font-size: 11px;">+ NEW REFLECTION</button>
+                <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800;">NEURAL FEEDBACK LOOP</div>
             </div>
             
-            <div id="reflectionInputArea" style="display: none; margin-bottom: 20px; background: rgba(255,255,255,0.03); padding: 20px; border-radius: 20px; border: 1px dashed var(--accent);">
-                <textarea id="newReflectionText" placeholder="Enter your reflection here..." 
-                    style="width: 100%; background: transparent; border: none; color: #FFF; font-family: 'Outfit'; font-size: 14px; min-height: 80px; outline: none; resize: vertical;"></textarea>
-                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
-                    <button onclick="copyReflection()" style="background: rgba(212, 175, 55, 0.2); border: 1px solid var(--accent); color: var(--accent); padding: 5px 15px; border-radius: 8px; font-weight: 800; cursor: pointer; font-size: 11px;">COPY TO CLIPBOARD</button>
+            <div id="reflectionInputArea" style="margin-bottom: 30px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 28px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,0.2);">
+                <label style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight</label>
+                <textarea id="newReflectionText" placeholder="Type your reflections for today here..." 
+                    style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: #FFF; font-family: 'Outfit'; font-size: 15px; min-height: 120px; outline: none; resize: vertical; padding: 15px; border-radius: 16px; line-height: 1.6;"></textarea>
+                <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
+                    <button onclick="copyReflection()" style="background: var(--accent); border: none; color: #000; padding: 10px 25px; border-radius: 12px; font-weight: 950; cursor: pointer; font-size: 12px; letter-spacing: 1px; transition: all 0.3s ease; box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);">COPY FOR TIME LOG</button>
                 </div>
             </div>
 
-            <p id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;"></p>
+            <div style="padding: 0 10px;">
+                <label style="display: block; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">Logged Reflections</label>
+                <p id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></p>
+            </div>
         </div>
 
         <div class="glass-card" style="animation-delay: 0.7s;">
@@ -669,7 +673,6 @@ def update_html(header, days, stats, complexity_stats=None):
                         btn.style.background = '';
                         btn.style.color = '';
                         document.getElementById('newReflectionText').value = '';
-                        toggleReflectionInput();
                     }}, 2000);
                 }});
             }}
