@@ -923,8 +923,6 @@ def update_html(header, days, stats, complexity_stats=None):
                 
                 document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
                 
-                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
-                
                 pieChart = new Chart(ctx, {{
                     type: 'doughnut',
                     data: {{
