@@ -100,8 +100,13 @@ def parse_time_log():
                         act, h = match.groups()
                         logs.append({'activity': act.strip(), 'hours': float(h)})
                         total_h += float(h)
+            
+            # Extract Reflections
+            ref_match = re.search(r'Reflections:\s*(.*?)(?=\nDate:|$)', entry, re.DOTALL | re.IGNORECASE)
+            ref_text = ref_match.group(1).strip() if ref_match else ""
+
             if logs:
-                days.append({'date': date_str, 'logs': logs, 'total': total_h})
+                days.append({'date': date_str, 'logs': logs, 'total': total_h, 'reflections': ref_text})
         return days
     except Exception as e:
         print(f"Error parsing time log: {e}")
@@ -314,6 +319,18 @@ def update_html(header, days, stats, complexity_stats=None):
         
         .chart-container {{ height: 320px; position: relative; padding: 10px; }}
         
+        .legend-item {{
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 12px 18px; background: rgba(255,255,255,0.03);
+            border: 1px solid var(--border); border-radius: 16px; margin-bottom: 10px;
+            transition: all 0.3s ease;
+        }}
+        .legend-item:hover {{ background: rgba(255,255,255,0.07); transform: translateX(5px); }}
+        .legend-color {{ width: 12px; height: 12px; border-radius: 4px; margin-right: 12px; }}
+        
+        #pieLegend::-webkit-scrollbar {{ width: 4px; }}
+        #pieLegend::-webkit-scrollbar-thumb {{ background: var(--accent); border-radius: 10px; }}
+        
         .day-group {{ margin-bottom: 40px; }}
         .day-header {{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; font-weight: 900; font-size: 18px; color: #FFF; border-left: 6px solid var(--accent); padding-left: 18px; }}
         .service-link {{ display: block; margin-bottom: 15px; outline: none; }}
@@ -399,7 +416,19 @@ def update_html(header, days, stats, complexity_stats=None):
                 <input type="date" id="pieDateJump" 
                     style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
             </div>
-            <div class="chart-container" style="height: 480px;"><canvas id="pieChart"></canvas></div>
+            <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                <div class="chart-container" style="flex: 1.2; min-width: 300px; height: 400px;">
+                    <canvas id="pieChart"></canvas>
+                </div>
+                <div id="pieLegend" style="flex: 1; min-width: 250px; max-height: 400px; overflow-y: auto; padding-right: 10px;">
+                    <!-- Legend dynamic content -->
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s; display: none;">
+            <div class="section-title">Daily Reflections</div>
+            <p id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;"></p>
         </div>
 
         <div class="glass-card" style="animation-delay: 0.7s;">
@@ -494,14 +523,52 @@ def update_html(header, days, stats, complexity_stats=None):
             // 2. Pie Chart (Task Distribution)
             let pieChart;
             function renderPieChart(dateStr) {{
-                const log = data.time_logs.find(l => l.date === dateStr) || data.time_logs[data.time_logs.length - 1];
+                // Find log by partial match or literal
+                let log = data.time_logs.find(l => l.date.includes(dateStr));
+                
+                // If not found and dateStr looks like YYYY-MM-DD, try converting
+                if (!log && dateStr.includes('-')) {{
+                    const d = new Date(dateStr);
+                    const day = d.getDate();
+                    const monthNames = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"];
+                    const month = monthNames[d.getMonth()];
+                    log = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
+                }}
+                
+                if (!log) log = data.time_logs[data.time_logs.length - 1];
                 if (!log) return;
                 
                 document.getElementById('pieTotalHours').innerText = `[ ${{log.total}} HR TOTAL ]`;
                 document.getElementById('pieViewedDate').innerText = log.date;
 
+                // Reflections
+                const refCard = document.getElementById('reflectionsCard');
+                const refText = document.getElementById('reflectionsText');
+                if (log.reflections) {{
+                    refText.innerText = log.reflections;
+                    refCard.style.display = 'block';
+                }} else {{
+                    refCard.style.display = 'none';
+                }}
+
                 const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
                 if (pieChart) pieChart.destroy();
+                
+                const colors = [
+                    '#66FFCC', '#FF007F', '#4B0082', '#FFBF00', '#007AFF', '#2ECC71', '#FF4500'
+                ];
+
+                // Render Side Legend
+                const legendEl = document.getElementById('pieLegend');
+                legendEl.innerHTML = sortedLogs.map((l, i) => `
+                    <div class=\"legend-item\">
+                        <div style=\"display: flex; align-items: center;\">
+                            <div class=\"legend-color\" style=\"background: ${{colors[i % colors.length]}}\"></div>
+                            <span style=\"font-size: 13px; font-weight: 700; color: #FFF;\">${{l.activity}}</span>
+                        </div>
+                        <span style=\"font-size: 13px; font-weight: 900; color: var(--accent);\">${{l.hours}}H</span>
+                    </div>
+                `).join('');
                 
                 pieChart = new Chart(document.getElementById('pieChart'), {{
                     type: 'pie',
@@ -509,11 +576,7 @@ def update_html(header, days, stats, complexity_stats=None):
                         labels: sortedLogs.map(l => l.activity),
                         datasets: [{{
                             data: sortedLogs.map(l => l.hours),
-                            backgroundColor: [
-                                'rgba(102, 255, 204, 0.6)', 'rgba(255, 0, 127, 0.6)',
-                                'rgba(75, 0, 130, 0.6)', 'rgba(255, 191, 0, 0.6)',
-                                'rgba(0, 122, 255, 0.6)', 'rgba(46, 204, 113, 0.6)', 'rgba(255, 69, 0, 0.6)'
-                            ],
+                            backgroundColor: colors.map(c => c + '99'), // Add transparency
                             borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
                             hoverOffset: 30
                         }}]
@@ -522,20 +585,7 @@ def update_html(header, days, stats, complexity_stats=None):
                         ...commonOptions,
                         plugins: {{ 
                             ...commonOptions.plugins, 
-                            legend: {{ 
-                                display: true, position: 'bottom', 
-                                labels: {{ 
-                                    padding: 25, color: '#FFF', font: {{ size: 14, weight: 600 }},
-                                    generateLabels: (chart) => {{
-                                        const original = Chart.overrides.pie.plugins.legend.labels.generateLabels(chart);
-                                        return original.map(label => {{
-                                            const val = chart.data.datasets[0].data[label.index];
-                                            label.text = `${{label.text}} (${{val}} HR)`;
-                                            return label;
-                                        }});
-                                    }}
-                                }} 
-                            }},
+                            legend: {{ display: false }}, // Custom legend used
                             tooltip: {{
                                 ...commonOptions.plugins.tooltip,
                                 callbacks: {{ label: (item) => ` ${{item.label}}: ${{item.raw}} HR` }}
