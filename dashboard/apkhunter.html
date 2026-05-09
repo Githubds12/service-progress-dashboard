@@ -215,6 +215,7 @@
                 <button class="filter-btn" onclick="setFilter('unclaimed', this)">UNCLAIMED</button>
                 <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
                 <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
+                <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
                 <button class="filter-btn" onclick="setFilter('easy', this)">EASY</button>
                 <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
                     <option value="all">ALL CATEGORIES</option>
@@ -350,6 +351,7 @@
                 if (state.filter === 'claimed') matchesType = item.claimed;
                 if (state.filter === 'unclaimed') matchesType = !item.claimed;
                 if (state.filter === 'hard') matchesType = item.difficulty >= 75;
+                if (state.filter === 'moderate') matchesType = item.difficulty >= 40 && item.difficulty < 75;
                 if (state.filter === 'easy') matchesType = item.difficulty < 40;
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
