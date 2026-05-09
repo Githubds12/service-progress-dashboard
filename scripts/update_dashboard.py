@@ -880,24 +880,44 @@ def update_html(header, days, stats, complexity_stats=None):
                 }}
                 
                 const label = document.getElementById('refInputLabel');
-                if (label) label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
-            }}
-                
-                const label = document.getElementById('refInputLabel');
                 label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
             }}
 
             window.renderPieChart = (targetDate) => {{
-                document.getElementById('pieViewedDate').innerText = targetDate;
+                const viewedDateEl = document.getElementById('pieViewedDate');
+                if (viewedDateEl) viewedDateEl.innerText = targetDate;
+                
                 const log = data.time_logs.find(l => l.date === targetDate);
-                const ctx = document.getElementById('pieChart').getContext('2d');
+                const ctx = document.getElementById('pieChart');
+                if (!ctx) return;
                 const legend = document.getElementById('pieLegend');
                 
                 if (pieChart) pieChart.destroy();
                 
+                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
+
                 if (!log || !log.logs || log.logs.length === 0) {{
-                    document.getElementById('pieTotalHours').innerText = 'NO DATA FOR THIS DATE';
-                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_LOG_ENTRIES ]</div>';
+                    const totalHoursEl = document.getElementById('pieTotalHours');
+                    if (totalHoursEl) totalHoursEl.innerText = 'NO DATA FOR THIS DATE';
+                    if (legend) legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px; opacity: 0.5;\">[ NO_LOG_ENTRIES ]</div>';
+                    
+                    // Render "Empty" Gray Chart
+                    pieChart = new Chart(ctx.getContext('2d'), {{
+                        type: 'doughnut',
+                        data: {{
+                            labels: ['Empty'],
+                            datasets: [{{
+                                data: [1],
+                                backgroundColor: ['rgba(255,255,255,0.05)'],
+                                borderWidth: 0
+                            }}]
+                        }},
+                        options: {{
+                            ...commonOptions,
+                            cutout: '80%',
+                            plugins: {{ tooltip: {{ enabled: false }} }}
+                        }}
+                    }});
                     return;
                 }}
                 
