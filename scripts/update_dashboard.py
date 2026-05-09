@@ -961,7 +961,13 @@ def update_html(header, days, stats, complexity_stats=None):
             const li = document.createElement('li');
             li.style.marginBottom = '12px';
             li.style.paddingLeft = '10px';
-            li.innerText = text;
+            li.style.opacity = '0.7';
+            li.innerHTML = `
+                <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                    <span style=\"flex: 1;\">${{text}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Sync Pending...)</small></span>
+                    <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                </div>
+            `;
             list.appendChild(li);
 
             // 2. Save to "Database" (GitHub Issue)
