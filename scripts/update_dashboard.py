@@ -38,61 +38,83 @@ def process_remote_reflections():
             lines = f.readlines()
             
         new_reflections = []
+        deletions = []
         for comment in comments:
-            new_reflections.append(comment['body'])
+            body = comment['body'].strip()
+            if body.startswith("DELETE_REF:"):
+                deletions.append(body)
+            else:
+                new_reflections.append(body)
             requests.delete(comment['url'], headers=headers)
             
-        if not new_reflections: return
+        if not new_reflections and not deletions: return
         
-        # Find the last "Reflections:" line or create one for the latest date
-        updated_lines = []
-        found_date = False
-        latest_date_idx = -1
-        
-        for i, line in enumerate(lines):
-            if line.startswith("Date:"):
-                latest_date_idx = i
-                found_date = True
-            updated_lines.append(line)
+        # Process Deletions
+        if deletions:
+            for d_cmd in deletions:
+                try:
+                    m_date = re.search(r'Date:\s*(.*?)(?:,|$)', d_cmd)
+                    m_idx = re.search(r'Index:\s*(\d+)', d_cmd)
+                    if not m_date or not m_idx: continue
+                    
+                    target_date = m_date.group(1).strip()
+                    target_idx = int(m_idx.group(1))
+                    
+                    for i, line in enumerate(lines):
+                        if line.startswith("Date:") and target_date in line:
+                            for j in range(i + 1, len(lines)):
+                                if lines[j].startswith("Date:"): break
+                                if lines[j].strip().startswith("Reflections:"):
+                                    content = lines[j].split("Reflections:")[1].strip()
+                                    items = re.split(r'\s*\d+\.\s*', content)
+                                    items = [it.strip() for it in items if it.strip()]
+                                    
+                                    if 0 <= target_idx < len(items):
+                                        items.pop(target_idx)
+                                        if items:
+                                            lines[j] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
+                                        else:
+                                            lines[j] = "Reflections:\n"
+                                    break
+                            break
+                except: continue
+
+        # Process Additions
+        if new_reflections:
+            found_date = False
+            latest_date_idx = -1
+            for i, line in enumerate(lines):
+                if line.startswith("Date:"):
+                    latest_date_idx = i
+                    found_date = True
             
-        if found_date:
-            # Look for existing reflections after this date
-            ref_idx = -1
-            for j in range(latest_date_idx + 1, len(updated_lines)):
-                if updated_lines[j].startswith("Reflections:"):
-                    ref_idx = j
-                    break
-                if updated_lines[j].startswith("Date:"):
-                    break
-            
-            if ref_idx != -1:
-                # Append to existing
-                current_ref = updated_lines[ref_idx].strip()
-                for nr in new_reflections:
-                    # Check if it ends with a number
-                    m = re.findall(r'(\d+)\.', current_ref)
-                    next_num = int(m[-1]) + 1 if m else 2
-                    current_ref += f" {next_num}. {nr}"
-                updated_lines[ref_idx] = current_ref + "\n"
-            else:
-                # Create new
-                # Find the Total: or end of section
-                insert_pos = len(updated_lines)
-                for j in range(latest_date_idx + 1, len(updated_lines)):
-                    if updated_lines[j].startswith("Date:"):
+            if found_date:
+                ref_line_idx = -1
+                insert_pos = len(lines)
+                for j in range(latest_date_idx + 1, len(lines)):
+                    if lines[j].startswith("Date:"):
                         insert_pos = j
                         break
+                    if lines[j].strip().startswith("Reflections:"):
+                        ref_line_idx = j
+                        break
                 
-                ref_line = "Reflections: 1. " + " ".join(new_reflections) + "\n"
-                updated_lines.insert(insert_pos, ref_line)
-        else:
-            # Fallback append
-            updated_lines.append("\nReflections: 1. " + " ".join(new_reflections) + "\n")
+                if ref_line_idx != -1:
+                    content = lines[ref_line_idx].split("Reflections:")[1].strip()
+                    items = re.split(r'\s*\d+\.\s*', content)
+                    items = [it.strip() for it in items if it.strip()]
+                    items.extend(new_reflections)
+                    lines[ref_line_idx] = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(items)]) + "\n"
+                else:
+                    ref_line = "Reflections: " + " ".join([f"{k+1}. {it}" for k, it in enumerate(new_reflections)]) + "\n"
+                    lines.insert(insert_pos, ref_line)
+            else:
+                lines.append("\nReflections: 1. " + " ".join(new_reflections) + "\n")
 
         with open(log_path, 'w', encoding='utf-8') as f:
-            f.writelines(updated_lines)
+            f.writelines(lines)
             
-        print(f"Synced {len(new_reflections)} reflections to Time Log.txt")
+        print(f"Synced {len(new_reflections)} additions and {len(deletions)} deletions.")
     except Exception as e:
         print(f"Error syncing remote reflections: {e}")
 
@@ -183,10 +205,14 @@ def parse_time_log():
             
             # Extract Reflections
             ref_match = re.search(r'Reflections:\s*(.*?)(?=\nDate:|$)', entry, re.DOTALL | re.IGNORECASE)
-            ref_text = ref_match.group(1).strip() if ref_match else ""
+            ref_raw = ref_match.group(1).strip() if ref_match else ""
+            
+            # Parse numbered list: "1. A 2. B" -> ["A", "B"]
+            ref_items = re.split(r'\s*\d+\.\s*', ref_raw)
+            ref_items = [it.strip() for it in ref_items if it.strip()]
 
-            if logs:
-                days.append({'date': date_str, 'logs': logs, 'total': total_h, 'reflections': ref_text})
+            if logs or ref_items:
+                days.append({'date': date_str, 'logs': logs, 'total': total_h, 'reflections': ref_items})
         return days
     except Exception as e:
         print(f"Error parsing time log: {e}")
@@ -518,11 +544,16 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s;">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span>Daily Reflections</span>
-                <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800;">NEURAL FEEDBACK LOOP</div>
+                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
+                    <button onclick="navigateRef(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
+                    <span id="refViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
+                    <button onclick="navigateRef(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                    <input type="date" id="refDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
+                </div>
             </div>
             
             <div id="reflectionInputArea" style="margin-bottom: 30px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 28px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,0.2);">
-                <label style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight</label>
+                <label id="refInputLabel" style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight for Today</label>
                 <textarea id="newReflectionText" placeholder="Type your reflections for today here..." 
                     style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: #FFF; font-family: 'Outfit'; font-size: 15px; min-height: 120px; outline: none; resize: vertical; padding: 15px; border-radius: 16px; line-height: 1.6;"></textarea>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
@@ -532,7 +563,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
             <div style="padding: 0 10px;">
                 <label style="display: block; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">Logged Reflections</label>
-                <p id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></p>
+                <div id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></div>
             </div>
         </div>
 
@@ -627,109 +658,120 @@ def update_html(header, days, stats, complexity_stats=None):
 
             // 2. Pie Chart (Task Distribution)
             let pieChart;
-            let currentPieIndex = data.time_logs.length - 1;
+            window.currentPieDate = data.time_logs.length > 0 ? data.time_logs[data.time_logs.length-1].date : '';
+            window.currentRefDate = window.currentPieDate;
 
             window.navigatePie = (dir) => {{
-                currentPieIndex = Math.max(0, Math.min(data.time_logs.length - 1, currentPieIndex + dir));
-                const log = data.time_logs[currentPieIndex];
-                renderPieChart(log.date);
+                const idx = data.time_logs.findIndex(l => l.date === currentPieDate);
+                if (idx === -1) return;
+                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
+                const newDate = data.time_logs[newIdx].date;
+                renderPieChart(newDate);
+                renderReflections(newDate);
             }};
 
-            function renderPieChart(dateStr) {{
-                // Find log index for navigation tracking
-                const idx = data.time_logs.findIndex(l => l.date.includes(dateStr));
-                if (idx !== -1) currentPieIndex = idx;
+            window.navigateRef = (dir) => {{
+                const idx = data.time_logs.findIndex(l => l.date === currentRefDate);
+                if (idx === -1) return;
+                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
+                const newDate = data.time_logs[newIdx].date;
+                renderReflections(newDate);
+                renderPieChart(newDate);
+            }};
 
-                let log = data.time_logs.find(l => l.date.includes(dateStr));
-                
-                // If not found and dateStr looks like YYYY-MM-DD, try converting
-                if (!log && dateStr.includes('-')) {{
-                    const d = new Date(dateStr);
-                    const day = d.getDate();
-                    const monthNames = [\"Jan\", \"Feb\", \"Mar\", \"Apr\", \"May\", \"Jun\", \"Jul\", \"Aug\", \"Sep\", \"Oct\", \"Nov\", \"Dec\"];
-                    const month = monthNames[d.getMonth()];
-                    log = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
-                }}
-                
-                if (!log) log = data.time_logs[currentPieIndex];
+            function renderPieChart(targetDate) {{
+                if (!targetDate) return;
+                currentPieDate = targetDate;
+                document.getElementById('pieViewedDate').innerText = targetDate;
+                const log = data.time_logs.find(l => l.date === targetDate);
                 if (!log) return;
                 
-                document.getElementById('pieTotalHours').innerText = `[ ${{log.total}} HR TOTAL ]`;
-                document.getElementById('pieViewedDate').innerText = log.date;
-
-                // Reflections
-                const refCard = document.getElementById('reflectionsCard');
-                const refText = document.getElementById('reflectionsText');
-                if (log.reflections) {{
-                    const points = log.reflections.split('\\n').filter(p => p.trim());
-                    refText.innerHTML = `<ol style=\"padding-left: 20px; list-style-type: decimal;\">` + 
-                        points.map(p => `<li style=\"margin-bottom: 12px; padding-left: 10px;\">${{p.trim()}}</li>`).join('') + 
-                        `</ol>`;
-                }} else {{
-                    refText.innerHTML = `<span style=\"color: var(--text-dim); opacity: 0.5;\">No reflections logged for this day yet.</span>`;
-                }}
-                refCard.style.display = 'block';
-
-                const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
+                document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
+                
+                const ctx = document.getElementById('pieChart').getContext('2d');
                 if (pieChart) pieChart.destroy();
                 
-                const colors = [
-                    '#66FFCC', '#FF007F', '#4B0082', '#FFBF00', '#007AFF', '#2ECC71', '#FF4500'
-                ];
-
-                // Render Side Legend
-                const legendEl = document.getElementById('pieLegend');
-                legendEl.innerHTML = sortedLogs.map((l, i) => {{
-                    const percent = ((l.hours / log.total) * 100).toFixed(1);
-                    return `
-                    <div class=\"legend-item\">
-                        <div style=\"display: flex; align-items: center;\">
-                            <div class=\"legend-color\" style=\"background: ${{colors[i % colors.length]}}\"></div>
-                            <span style=\"font-size: 13px; font-weight: 700; color: #FFF;\">${{l.activity}}</span>
-                        </div>
-                        <div style=\"text-align: right;\">
-                            <div style=\"font-size: 13px; font-weight: 900; color: var(--accent);\">${{l.hours}}H</div>
-                            <div style=\"font-size: 10px; color: var(--text-dim); font-weight: 700;\">${{percent}}%</div>
-                        </div>
-                    </div>
-                `}}).join('');
+                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
                 
-                pieChart = new Chart(document.getElementById('pieChart'), {{
-                    type: 'pie',
+                pieChart = new Chart(ctx, {{
+                    type: 'doughnut',
                     data: {{
-                        labels: sortedLogs.map(l => l.activity),
+                        labels: log.logs.map(l => l.activity),
                         datasets: [{{
-                            data: sortedLogs.map(l => l.hours),
-                            backgroundColor: colors.map(c => c + '99'), // Add transparency
-                            borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
-                            hoverOffset: 30
+                            data: log.logs.map(l => l.hours),
+                            backgroundColor: colors.map(c => c + '99'),
+                            borderWidth: 2,
+                            borderColor: 'rgba(5,5,5,0.5)'
                         }}]
                     }},
                     options: {{
                         ...commonOptions,
-                        plugins: {{ 
-                            ...commonOptions.plugins, 
-                            legend: {{ display: false }}, // Custom legend used
-                            tooltip: {{
-                                ...commonOptions.plugins.tooltip,
-                                callbacks: {{ label: (item) => ` ${{item.label}}: ${{item.raw}} HR` }}
-                            }}
+                        cutout: '75%',
+                        plugins: {{
+                            ...commonOptions.plugins,
+                            legend: {{ display: false }}
                         }}
                     }}
                 }});
+
+                const legend = document.getElementById('pieLegend');
+                legend.innerHTML = log.logs.map((l, i) => `
+                    <div class="legend-item">
+                        <div style="display: flex; align-items: center;">
+                            <div class="legend-color" style="background: ${{colors[i % colors.length]}}"></div>
+                            <span style="font-weight: 800; font-size: 13px;">${{l.activity}}</span>
+                        </div>
+                        <span style="font-weight: 1000; color: var(--accent);">${{l.hours.toFixed(1)}}h</span>
+                    </div>
+                `).join('');
             }}
 
-            const todayStr = data.stats.today_date_raw;
-            renderPieChart(todayStr);
+            function renderReflections(targetDate) {{
+                if (!targetDate) return;
+                currentRefDate = targetDate;
+                document.getElementById('refViewedDate').innerText = targetDate;
+                
+                const log = data.time_logs.find(l => l.date === targetDate);
+                const area = document.getElementById('reflectionsText');
+                
+                if (!log || !log.reflections || log.reflections.length === 0) {{
+                    area.innerHTML = '<div style=\"padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;\">[ NO_REFLECTIONS_RECORDED ]</div>';
+                    return;
+                }}
 
-            document.getElementById('pieDateJump').addEventListener('change', (e) => {{
+                area.innerHTML = '<ol style=\"padding-left: 20px; list-style-type: decimal;\">' + 
+                    log.reflections.map((ref, idx) => `
+                        <li style=\"margin-bottom: 12px; padding-left: 10px;\">
+                            <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
+                                <span style=\"flex: 1;\">${{ref}}</span>
+                                <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
+                                    style=\"background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: #FF4444; border-radius: 6px; padding: 2px 8px; font-size: 10px; cursor: pointer; font-weight: 800; transition: all 0.3s;\">DELETE</button>
+                            </div>
+                        </li>
+                    `).join('') + '</ol>';
+                
+                const label = document.getElementById('refInputLabel');
+                label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
+            }}
+
+            const dateJumpHandler = (e) => {{
                 const d = new Date(e.target.value);
                 const day = d.getDate();
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const month = monthNames[d.getMonth()];
                 const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
-                if (targetLog) renderPieChart(targetLog.date);
-            }});
+                if (targetLog) {{
+                    renderPieChart(targetLog.date);
+                    renderReflections(targetLog.date);
+                }}
+            }};
+
+            document.getElementById('pieDateJump').addEventListener('change', dateJumpHandler);
+            document.getElementById('refDateJump').addEventListener('change', dateJumpHandler);
+
+            // Initial render
+            renderPieChart(currentPieDate);
+            renderReflections(currentRefDate);
 
 
 
@@ -900,6 +942,41 @@ def update_html(header, days, stats, complexity_stats=None):
                 else if (res.status === 401) localStorage.removeItem('gh_token');
             }} catch (e) {{
                 console.error('Save to DB failed:', e);
+            }}
+        }}
+
+        async function deleteReflection(date, index) {{
+            if (!confirm('Are you sure you want to delete this reflection?')) return;
+            
+            let token = localStorage.getItem('gh_token');
+            if (!token) {{
+                token = prompt('Please enter your GitHub PAT (repo scope) to authorize deletion:');
+                if (token) localStorage.setItem('gh_token', token);
+            }}
+            if (!token) return;
+
+            const command = `DELETE_REF: Date: ${{date}}, Index: ${{index}}`;
+            const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+            
+            try {{
+                const res = await fetch(url, {{
+                    method: 'POST',
+                    headers: {{
+                        'Authorization': `token ${{token}}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    }},
+                    body: JSON.stringify({{ body: command }})
+                }});
+                if (res.ok) {{
+                    alert('Deletion request sent. It will be removed in the next sync (15 mins).');
+                    // Visually remove it for the current session
+                    const area = document.getElementById('reflectionsText');
+                    const items = area.querySelectorAll('li');
+                    if (items[index]) items[index].style.opacity = '0.3';
+                }}
+            }} catch (e) {{
+                console.error('Delete request failed:', e);
             }}
         }}
 

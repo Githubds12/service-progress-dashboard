@@ -183,9 +183,9 @@
         <div class="glass-card stats-hero" style="animation-delay: 0.1s;">
             <div class="hero-label">Terminal Revenue Prediction</div>
             <div class="hero-value">₹54000.0</div>
-            <p style="margin-top: 18px; color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;">**उद्यमेन हि सिध्यन्ति (Success is achieved through effort)**
+            <p style="margin-top: 18px; color: var(--text-dim); font-size: 15px; line-height: 1.7; font-weight: 600;">**शनैः शनैः (Slowly and Steadily)**
 
-You have successfully crossed 4% of your journey, but rebuilding momentum requires immediate action. Focus solely on completing today’s 10 tasks to break the inertia and turn your ambitious goal into a series of manageable daily victories.</p>
+Even a journey of 90,000 steps begins with a single day's commitment; focus on completing your 10 tasks today to rebuild your momentum. Small, consistent actions are the only way to transform a daunting total into a finished masterpiece.</p>
             
             <div class="progress-container">
                 <div class="progress-header">
@@ -244,11 +244,16 @@ You have successfully crossed 4% of your journey, but rebuilding momentum requir
         <div class="glass-card" id="reflectionsCard" style="animation-delay: 0.6s;">
             <div class="section-title" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <span>Daily Reflections</span>
-                <div style="font-size: 10px; color: var(--accent); letter-spacing: 2px; font-weight: 800;">NEURAL FEEDBACK LOOP</div>
+                <div style="flex: 1; display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 300px;">
+                    <button onclick="navigateRef(-1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&lt;</button>
+                    <span id="refViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; text-transform: uppercase;"></span>
+                    <button onclick="navigateRef(1)" style="background: var(--accent); border: none; color: #000; padding: 6px 12px; border-radius: 8px; cursor: pointer; font-weight: 900;">&gt;</button>
+                    <input type="date" id="refDateJump" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 12px; color: #FFF; cursor: pointer; color-scheme: dark;">
+                </div>
             </div>
             
             <div id="reflectionInputArea" style="margin-bottom: 30px; background: rgba(255,255,255,0.02); padding: 25px; border-radius: 28px; border: 1px solid var(--border); box-shadow: inset 0 0 20px rgba(0,0,0,0.2);">
-                <label style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight</label>
+                <label id="refInputLabel" style="display: block; font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 12px;">New Insight for Today</label>
                 <textarea id="newReflectionText" placeholder="Type your reflections for today here..." 
                     style="width: 100%; background: rgba(0,0,0,0.2); border: 1px solid rgba(255,255,255,0.05); color: #FFF; font-family: 'Outfit'; font-size: 15px; min-height: 120px; outline: none; resize: vertical; padding: 15px; border-radius: 16px; line-height: 1.6;"></textarea>
                 <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px;">
@@ -258,7 +263,7 @@ You have successfully crossed 4% of your journey, but rebuilding momentum requir
 
             <div style="padding: 0 10px;">
                 <label style="display: block; font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; font-weight: 900; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 10px;">Logged Reflections</label>
-                <p id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></p>
+                <div id="reflectionsText" style="color: var(--text-dim); font-size: 15px; line-height: 1.8; font-weight: 600;"></div>
             </div>
         </div>
 
@@ -278,7 +283,7 @@ You have successfully crossed 4% of your journey, but rebuilding momentum requir
     </div>
 
     <script>
-        const data = {"header": "7th May to 7th June", "stats": {"total_services": 9, "total_earnings": 3600, "avg_daily": 1800.0, "avg_daily_services": 4.5, "days_elapsed": 2, "recovery_pace_services": 7.7, "days_remaining": 28, "recommended_today": 10, "completed_today": 0, "explanation": "**\u0909\u0926\u094d\u092f\u092e\u0947\u0928 \u0939\u093f \u0938\u093f\u0927\u094d\u092f\u0928\u094d\u0924\u093f (Success is achieved through effort)**\n\nYou have successfully crossed 4% of your journey, but rebuilding momentum requires immediate action. Focus solely on completing today\u2019s 10 tasks to break the inertia and turn your ambitious goal into a series of manageable daily victories.", "projected_total": 54000.0, "today_date": "9th May, 2026", "today_date_raw": "9th May", "projection_sentence": "**\u0909\u0926\u094d\u092f\u092e\u0947\u0928 \u0939\u093f \u0938\u093f\u0927\u094d\u092f\u0928\u094d\u0924\u093f (Success is achieved through effort)**\n\nYou have successfully crossed 4% of your journey, but rebuilding momentum requires immediate action. Focus solely on completing today\u2019s 10 tasks to break the inertia and turn your ambitious goal into a series of manageable daily victories.", "prev_avg_services": 4.5, "prev_recovery_pace": 7.7}, "labels": ["15th April", "20th April", "21st April", "22nd April", "23rd April", "25th April", "26th April", "27th April", "28th April", "29th April", "30th April", "1st May", "2nd May", "3rd May", "6th May", "7th May", "8th May", "9th May"], "earnings": [2000, 3600, 1600, 3600, 4400, 4000, 6000, 2400, 1300, 8000, 1600, 400, 2500, 2000, 400, 1200, 2400, 0], "services": [5, 9, 4, 9, 11, 10, 15, 6, 3, 20, 4, 1, 6, 5, 1, 3, 6, 0], "raw_days": [{"date": "15th April, Wednesday", "iso_date": "2026-04-15", "services": ["1. Hinge - 400rs", "2. Niimbot - 400rs", "3. VFS Global - 400rs", "4. yandexgo - 400rs", "5. yandexpro - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "20th April, Monday", "iso_date": "2026-04-20", "services": ["6. Blink - 400rs", "7. DBBet - 400rs", "8. ivi.ru - 400rs", "9. MoonPay - 400rs", "10. Palfish - 400rs", "11. PokaLive - 400rs", "12. Wix - 400rs", "13. Chamet - 400rs", "14. dolynk - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "21st April, Tuesday", "iso_date": "2026-04-21", "services": ["15. oneplus - 400rs", "16. mxt - com.vantagefx.app - 400rs", "17. Luckin Coffee - com.luckin.client.i - 400rs", "18. ccc - eu.ccc.mobile - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "22nd April, Wednesday", "iso_date": "2026-04-22", "services": ["19. HapyLive - 400rs", "20. FastPari - 400rs", "21. Planity - 400rs", "22. Slack - 400rs", "23. Floward - 400rs", "24. Normal - 400rs", "25. BetJam - 400rs", "26. Ring - 400rs", "27. Qunar - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "23rd April, Thursday", "iso_date": "2026-04-23", "services": ["28. Healthify - 400rs", "29. Zid - 400rs", "30. XPariBet - 400rs", "31. Boyaa - 400rs", "32. WePlay - 400rs", "33. HepsiBurada - 400rs", "34. Canva - 400rs", "35. 4Fun - 400rs", "36. Yalla - 400rs", "37. AlmaGo - 400rs", "38. Catawiki - 400rs"], "summary": "Daily Summary: 11 services, 4400 rs", "earnings": 4400, "count": 11, "is_history": true}, {"date": "25th April, Saturday", "iso_date": "2026-04-25", "services": ["39. TruthSocial - 400rs", "40. Partiful - 400rs", "41. NiceOne - 400rs", "42. Qmove - 400rs", "43. BetAndYou - 400rs", "44. MarathonBet - 400rs", "45. Nestle Waters - 400rs", "46. MiTrade - 400rs", "47. Yamaha Motor ID - 400rs", "48. Yolla - 400rs", "49. (Reserved/Skip) - 0rs"], "summary": "Daily Summary: 10 services, 4000 rs", "earnings": 4000, "count": 10, "is_history": true}, {"date": "26th April, Sunday", "iso_date": "2026-04-26", "services": ["50. IBI Smart - com.ibidev.ibitrade - 400rs", "51. BitDeer - com.bitdeer.cloud.android - 400rs", "52. Liki24 - com.liki24.customerapp - 400rs", "53. Raya - com.raya_app - 400rs", "54. Medal - tv.medal.recorder - 400rs", "55. YandexEats - ru.foodfox.client - 400rs", "56. BetLabel - org.betlabel.client - 400rs", "57. Shell Go+ India - com.shell.sitibv.shellgoplusindia - 400rs", "58. HoYoLab - com.mihoyo.hoyolab - 400rs", "59. nextBike - de.nextbike - 400rs", "60. RockFlow - team.flowai.android - 400rs", "61. WellTrade - com.weltrade.appterminal - 400rs", "62. CubaMessenger - com.cubamessenger.cubamessengerapp - 400rs", "63. Bolt Food - com.bolt.food - 400rs", "64. PokerBet - com.pokerbet.casino - 400rs"], "summary": "Daily Summary: 15 services, 6000 rs", "earnings": 6000, "count": 15, "is_history": true}, {"date": "27th April, Monday", "iso_date": "2026-04-27", "services": ["65. BPme - com.bp.app.bpme.global.pl - 400rs", "66. Sage - com.sage.accounting - 400rs", "67. XTransfer - com.xtapp.xtransfer - 400rs", "68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke - 400rs", "69. iHerb - com.iherb - 400rs", "70. KuCoin - com.kubi.kucoin - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": true}, {"date": "28th April, Tuesday", "iso_date": "2026-04-28", "services": ["71. Pegasus - com.pozitron.pegasus - 400rs", "72. Daraz - com.daraz.android - 400rs", "73. ehamarkets - com.trade.trade211 - 500rs"], "summary": "Daily Summary: 3 services, 1300 rs", "earnings": 1300, "count": 3, "is_history": true}, {"date": "29th April, Wednesday", "iso_date": "2026-04-29", "services": ["74. [10:00] wave - com.wave.personal - 400rs", "75. [10:15] eneba - com.eneba.app - 400rs", "76. [10:30] maxim - com.taxsee.taxsee - 400rs", "77. [10:45] Poppo Live - com.baitu.qingshu - 400rs", "78. [11:00] buz - com.interfun.buz - 400rs", "79. [11:15] Rednote - com.xingin.xhs - 400rs", "80. [11:30] ColdBet - org.coldbet.client - 400rs", "81. [11:45] Bitget - com.bitget.exchange - 400rs", "82. [12:00] Klook - com.klook - 400rs", "83. [12:15] SoulChill - com.live.soulchill - 400rs", "84. [11:10] PaySend - com.paysend.app - 400rs", "85. [11:53] AMO - com.xiaoyu.amo - 400rs", "86. [12:54] Tongcheng - com.tongcheng.android - 400rs", "87. [13:30] Gooobet - org.gooobet.client - 400rs", "88. [13:40] Live.me - com.cmcm.live - 400rs", "89. [14:30] E-GetS - com.egets.takeaways - 400rs", "90. [22:50] Luno - co.bitx.android.wallet - 400rs", "91. [23:20] 1xCasino - org.xbet.casino - 400rs", "92. [23:33] LC Waikiki - com.lcwaikiki.android - 400rs", "93. [23:42] EZVIZ - com.ezviz - 400rs"], "summary": "Daily Summary: 20 services, 8000 rs", "earnings": 8000, "count": 20, "is_history": true}, {"date": "30th April, Thursday", "iso_date": "2026-04-30", "services": ["94. [09:50] Tuda - com.tuda.android - 400rs", "95. [10:10] Paybis - com.paybis - 400rs", "96. [10:50] Boxy - com.client.boxy - 400rs", "97. [11:10] ClubApparel - com.appemirates.clubapparel - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "1st May, Friday", "iso_date": "2026-05-01", "services": ["98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "2nd May, Saturday", "iso_date": "2026-05-02", "services": ["99. [10:30] Deriv - com.deriv.home - 400rs", "100. [10:50] jameda - de.jameda - 500rs", "101. [11:10] weststein - com.weststeincard.weststein - 400rs", "102. [12:00] pro1bet - org.pro1bet.client - 400rs", "103. [12:10] xtb - com.xtb.xmobile2 - 400rs", "104. [13:15] Flowwow - com.flowwow - 400rs"], "summary": "Daily Summary: 6 services, 2500 rs", "earnings": 2500, "count": 6, "is_history": true}, {"date": "3rd May, Sunday", "iso_date": "2026-05-03", "services": ["105. [14:41] OpenTable - com.opentable - 400rs", "106. [15:33] Qantas - au.com.qantas.qantas - 400rs", "107. [15:52] JoyBuy - com.joybuy.jdi - 400rs", "108. [16:13] ForDeal - com.fordeal.android - 400rs", "109. [16:40] KwikPay - com.kwikpay.transfers - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "6th May, Wednesday", "iso_date": "2026-05-06", "services": ["110. [17:15] JvSpinBet - org.jvspinbet.client - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "7th May, Thursday", "iso_date": "2026-05-07", "services": ["1. [12:35] Utair - ru.utair.android - 400rs", "2. [14:15] Lyft - me.lyft.android - 400rs", "3. [15:05] ViYa Lite - com.kinkey.vgolite - 400rs"], "summary": "Daily Summary: 3 services, 1200 rs", "earnings": 1200, "count": 3, "is_history": false}, {"date": "8th May, Friday", "iso_date": "2026-05-08", "services": ["1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs", "2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs", "3. [09:35] Soul - com.soul.android.international - 400rs", "4. [16:05] Fairpari - org.fairpari.client - 400rs", "5. [21:40] Galarm - com.galarmapp - 400rs", "6. [22:20] Coinstore - com.io.coinstore - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": false}, {"date": "9th May, Saturday", "iso_date": "2026-05-09", "services": [], "summary": "Daily Summary: 0 services, 0 rs", "earnings": 0, "count": 0, "is_history": true}], "time_logs": [{"date": "Thursday, 07-05-2026", "logs": [{"activity": "Dashboard Development", "hours": 2.0}, {"activity": "Bot Optimization", "hours": 1.5}, {"activity": "Data Management", "hours": 1.0}, {"activity": "Performance Monitoring", "hours": 0.5}, {"activity": "AI Automation & UI Upgrades", "hours": 1.5}, {"activity": "Security Research: ViYa Lite", "hours": 3.0}], "total": 9.5, "reflections": "Successfully implemented the search and filter logic. The new Glass Morphism theme is holding up well. Need to optimize the data loading for mobile devices."}, {"date": "Friday, 08-05-2026", "logs": [{"activity": "Security Research: T-Bank", "hours": 2.5}, {"activity": "Security Research: T-Bank", "hours": 1.5}, {"activity": "Portal Sync & Dashboard", "hours": 1.0}, {"activity": "Security Research: Aegean", "hours": 2.5}, {"activity": "Portal Sync & Finalization", "hours": 0.5}, {"activity": "Security Research: Fairpari", "hours": 1.5}, {"activity": "Security Research: Galarm", "hours": 1.5}, {"activity": "Security Research: Coinstore", "hours": 1.5}], "total": 12.5, "reflections": "Intense research day. T-Bank and Aegean auth flows are complex but now fully mapped.\nThe automation scripts are significantly speeding up the reporting process.\nPerformance is peaking.\nPerformance Note: Completed T-Bank and Aegean reconnaissance. All auth flows documented and synchronized with portal."}], "complexity_stats": {"labels": [1, 2, 3, 4, 5], "avg_earnings": [348.42, 360.0, 400.0, 400.0, 0.0], "counts": [221, 15, 7, 10, 3]}};
+        const data = {"header": "7th May to 7th June", "stats": {"total_services": 9, "total_earnings": 3600, "avg_daily": 1800.0, "avg_daily_services": 4.5, "days_elapsed": 2, "recovery_pace_services": 7.7, "days_remaining": 28, "recommended_today": 10, "completed_today": 0, "explanation": "**\u0936\u0928\u0948\u0903 \u0936\u0928\u0948\u0903 (Slowly and Steadily)**\n\nEven a journey of 90,000 steps begins with a single day's commitment; focus on completing your 10 tasks today to rebuild your momentum. Small, consistent actions are the only way to transform a daunting total into a finished masterpiece.", "projected_total": 54000.0, "today_date": "9th May, 2026", "today_date_raw": "9th May", "projection_sentence": "**\u0936\u0928\u0948\u0903 \u0936\u0928\u0948\u0903 (Slowly and Steadily)**\n\nEven a journey of 90,000 steps begins with a single day's commitment; focus on completing your 10 tasks today to rebuild your momentum. Small, consistent actions are the only way to transform a daunting total into a finished masterpiece.", "prev_avg_services": 4.5, "prev_recovery_pace": 7.7}, "labels": ["15th April", "20th April", "21st April", "22nd April", "23rd April", "25th April", "26th April", "27th April", "28th April", "29th April", "30th April", "1st May", "2nd May", "3rd May", "6th May", "7th May", "8th May", "9th May"], "earnings": [2000, 3600, 1600, 3600, 4400, 4000, 6000, 2400, 1300, 8000, 1600, 400, 2500, 2000, 400, 1200, 2400, 0], "services": [5, 9, 4, 9, 11, 10, 15, 6, 3, 20, 4, 1, 6, 5, 1, 3, 6, 0], "raw_days": [{"date": "15th April, Wednesday", "iso_date": "2026-04-15", "services": ["1. Hinge - 400rs", "2. Niimbot - 400rs", "3. VFS Global - 400rs", "4. yandexgo - 400rs", "5. yandexpro - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "20th April, Monday", "iso_date": "2026-04-20", "services": ["6. Blink - 400rs", "7. DBBet - 400rs", "8. ivi.ru - 400rs", "9. MoonPay - 400rs", "10. Palfish - 400rs", "11. PokaLive - 400rs", "12. Wix - 400rs", "13. Chamet - 400rs", "14. dolynk - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "21st April, Tuesday", "iso_date": "2026-04-21", "services": ["15. oneplus - 400rs", "16. mxt - com.vantagefx.app - 400rs", "17. Luckin Coffee - com.luckin.client.i - 400rs", "18. ccc - eu.ccc.mobile - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "22nd April, Wednesday", "iso_date": "2026-04-22", "services": ["19. HapyLive - 400rs", "20. FastPari - 400rs", "21. Planity - 400rs", "22. Slack - 400rs", "23. Floward - 400rs", "24. Normal - 400rs", "25. BetJam - 400rs", "26. Ring - 400rs", "27. Qunar - 400rs"], "summary": "Daily Summary: 9 services, 3600 rs", "earnings": 3600, "count": 9, "is_history": true}, {"date": "23rd April, Thursday", "iso_date": "2026-04-23", "services": ["28. Healthify - 400rs", "29. Zid - 400rs", "30. XPariBet - 400rs", "31. Boyaa - 400rs", "32. WePlay - 400rs", "33. HepsiBurada - 400rs", "34. Canva - 400rs", "35. 4Fun - 400rs", "36. Yalla - 400rs", "37. AlmaGo - 400rs", "38. Catawiki - 400rs"], "summary": "Daily Summary: 11 services, 4400 rs", "earnings": 4400, "count": 11, "is_history": true}, {"date": "25th April, Saturday", "iso_date": "2026-04-25", "services": ["39. TruthSocial - 400rs", "40. Partiful - 400rs", "41. NiceOne - 400rs", "42. Qmove - 400rs", "43. BetAndYou - 400rs", "44. MarathonBet - 400rs", "45. Nestle Waters - 400rs", "46. MiTrade - 400rs", "47. Yamaha Motor ID - 400rs", "48. Yolla - 400rs", "49. (Reserved/Skip) - 0rs"], "summary": "Daily Summary: 10 services, 4000 rs", "earnings": 4000, "count": 10, "is_history": true}, {"date": "26th April, Sunday", "iso_date": "2026-04-26", "services": ["50. IBI Smart - com.ibidev.ibitrade - 400rs", "51. BitDeer - com.bitdeer.cloud.android - 400rs", "52. Liki24 - com.liki24.customerapp - 400rs", "53. Raya - com.raya_app - 400rs", "54. Medal - tv.medal.recorder - 400rs", "55. YandexEats - ru.foodfox.client - 400rs", "56. BetLabel - org.betlabel.client - 400rs", "57. Shell Go+ India - com.shell.sitibv.shellgoplusindia - 400rs", "58. HoYoLab - com.mihoyo.hoyolab - 400rs", "59. nextBike - de.nextbike - 400rs", "60. RockFlow - team.flowai.android - 400rs", "61. WellTrade - com.weltrade.appterminal - 400rs", "62. CubaMessenger - com.cubamessenger.cubamessengerapp - 400rs", "63. Bolt Food - com.bolt.food - 400rs", "64. PokerBet - com.pokerbet.casino - 400rs"], "summary": "Daily Summary: 15 services, 6000 rs", "earnings": 6000, "count": 15, "is_history": true}, {"date": "27th April, Monday", "iso_date": "2026-04-27", "services": ["65. BPme - com.bp.app.bpme.global.pl - 400rs", "66. Sage - com.sage.accounting - 400rs", "67. XTransfer - com.xtapp.xtransfer - 400rs", "68. Shop Apotheke - shop.shop_apotheke.com.shopapotheke - 400rs", "69. iHerb - com.iherb - 400rs", "70. KuCoin - com.kubi.kucoin - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": true}, {"date": "28th April, Tuesday", "iso_date": "2026-04-28", "services": ["71. Pegasus - com.pozitron.pegasus - 400rs", "72. Daraz - com.daraz.android - 400rs", "73. ehamarkets - com.trade.trade211 - 500rs"], "summary": "Daily Summary: 3 services, 1300 rs", "earnings": 1300, "count": 3, "is_history": true}, {"date": "29th April, Wednesday", "iso_date": "2026-04-29", "services": ["74. [10:00] wave - com.wave.personal - 400rs", "75. [10:15] eneba - com.eneba.app - 400rs", "76. [10:30] maxim - com.taxsee.taxsee - 400rs", "77. [10:45] Poppo Live - com.baitu.qingshu - 400rs", "78. [11:00] buz - com.interfun.buz - 400rs", "79. [11:15] Rednote - com.xingin.xhs - 400rs", "80. [11:30] ColdBet - org.coldbet.client - 400rs", "81. [11:45] Bitget - com.bitget.exchange - 400rs", "82. [12:00] Klook - com.klook - 400rs", "83. [12:15] SoulChill - com.live.soulchill - 400rs", "84. [11:10] PaySend - com.paysend.app - 400rs", "85. [11:53] AMO - com.xiaoyu.amo - 400rs", "86. [12:54] Tongcheng - com.tongcheng.android - 400rs", "87. [13:30] Gooobet - org.gooobet.client - 400rs", "88. [13:40] Live.me - com.cmcm.live - 400rs", "89. [14:30] E-GetS - com.egets.takeaways - 400rs", "90. [22:50] Luno - co.bitx.android.wallet - 400rs", "91. [23:20] 1xCasino - org.xbet.casino - 400rs", "92. [23:33] LC Waikiki - com.lcwaikiki.android - 400rs", "93. [23:42] EZVIZ - com.ezviz - 400rs"], "summary": "Daily Summary: 20 services, 8000 rs", "earnings": 8000, "count": 20, "is_history": true}, {"date": "30th April, Thursday", "iso_date": "2026-04-30", "services": ["94. [09:50] Tuda - com.tuda.android - 400rs", "95. [10:10] Paybis - com.paybis - 400rs", "96. [10:50] Boxy - com.client.boxy - 400rs", "97. [11:10] ClubApparel - com.appemirates.clubapparel - 400rs"], "summary": "Daily Summary: 4 services, 1600 rs", "earnings": 1600, "count": 4, "is_history": true}, {"date": "1st May, Friday", "iso_date": "2026-05-01", "services": ["98. [12:45] uo verify (Urban Outfitters) - com.urbanoutfitters.android - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "2nd May, Saturday", "iso_date": "2026-05-02", "services": ["99. [10:30] Deriv - com.deriv.home - 400rs", "100. [10:50] jameda - de.jameda - 500rs", "101. [11:10] weststein - com.weststeincard.weststein - 400rs", "102. [12:00] pro1bet - org.pro1bet.client - 400rs", "103. [12:10] xtb - com.xtb.xmobile2 - 400rs", "104. [13:15] Flowwow - com.flowwow - 400rs"], "summary": "Daily Summary: 6 services, 2500 rs", "earnings": 2500, "count": 6, "is_history": true}, {"date": "3rd May, Sunday", "iso_date": "2026-05-03", "services": ["105. [14:41] OpenTable - com.opentable - 400rs", "106. [15:33] Qantas - au.com.qantas.qantas - 400rs", "107. [15:52] JoyBuy - com.joybuy.jdi - 400rs", "108. [16:13] ForDeal - com.fordeal.android - 400rs", "109. [16:40] KwikPay - com.kwikpay.transfers - 400rs"], "summary": "Daily Summary: 5 services, 2000 rs", "earnings": 2000, "count": 5, "is_history": true}, {"date": "6th May, Wednesday", "iso_date": "2026-05-06", "services": ["110. [17:15] JvSpinBet - org.jvspinbet.client - 400rs"], "summary": "Daily Summary: 1 service, 400 rs", "earnings": 400, "count": 1, "is_history": true}, {"date": "7th May, Thursday", "iso_date": "2026-05-07", "services": ["1. [12:35] Utair - ru.utair.android - 400rs", "2. [14:15] Lyft - me.lyft.android - 400rs", "3. [15:05] ViYa Lite - com.kinkey.vgolite - 400rs"], "summary": "Daily Summary: 3 services, 1200 rs", "earnings": 1200, "count": 3, "is_history": false}, {"date": "8th May, Friday", "iso_date": "2026-05-08", "services": ["1. [10:15] T-Business (T-Bank) - ru.tinkoff.sme - 400rs", "2. [06:05] Aegean Airlines - com.aegean.airlines.prod - 400rs", "3. [09:35] Soul - com.soul.android.international - 400rs", "4. [16:05] Fairpari - org.fairpari.client - 400rs", "5. [21:40] Galarm - com.galarmapp - 400rs", "6. [22:20] Coinstore - com.io.coinstore - 400rs"], "summary": "Daily Summary: 6 services, 2400 rs", "earnings": 2400, "count": 6, "is_history": false}, {"date": "9th May, Saturday", "iso_date": "2026-05-09", "services": [], "summary": "Daily Summary: 0 services, 0 rs", "earnings": 0, "count": 0, "is_history": true}], "time_logs": [{"date": "Thursday, 07-05-2026", "logs": [{"activity": "Dashboard Development", "hours": 2.0}, {"activity": "Bot Optimization", "hours": 1.5}, {"activity": "Data Management", "hours": 1.0}, {"activity": "Performance Monitoring", "hours": 0.5}, {"activity": "AI Automation & UI Upgrades", "hours": 1.5}, {"activity": "Security Research: ViYa Lite", "hours": 3.0}], "total": 9.5, "reflections": ["Successfully implemented the search and filter logic. The new Glass Morphism theme is holding up well. Need to optimize the data loading for mobile devices."]}, {"date": "Friday, 08-05-2026", "logs": [{"activity": "Security Research: T-Bank", "hours": 2.5}, {"activity": "Security Research: T-Bank", "hours": 1.5}, {"activity": "Portal Sync & Dashboard", "hours": 1.0}, {"activity": "Security Research: Aegean", "hours": 2.5}, {"activity": "Portal Sync & Finalization", "hours": 0.5}, {"activity": "Security Research: Fairpari", "hours": 1.5}, {"activity": "Security Research: Galarm", "hours": 1.5}, {"activity": "Security Research: Coinstore", "hours": 1.5}], "total": 12.5, "reflections": ["Intense research day. T-Bank and Aegean auth flows are complex but now fully mapped.\nThe automation scripts are significantly speeding up the reporting process.\nPerformance is peaking.\nPerformance Note: Completed T-Bank and Aegean reconnaissance. All auth flows documented and synchronized with portal."]}], "complexity_stats": {"labels": [1, 2, 3, 4, 5], "avg_earnings": [348.42, 360.0, 400.0, 400.0, 0.0], "counts": [221, 15, 7, 10, 3]}};
         
         function initDashboard(data) {
             // Animate Units
@@ -353,109 +358,120 @@ You have successfully crossed 4% of your journey, but rebuilding momentum requir
 
             // 2. Pie Chart (Task Distribution)
             let pieChart;
-            let currentPieIndex = data.time_logs.length - 1;
+            window.currentPieDate = data.time_logs.length > 0 ? data.time_logs[data.time_logs.length-1].date : '';
+            window.currentRefDate = window.currentPieDate;
 
             window.navigatePie = (dir) => {
-                currentPieIndex = Math.max(0, Math.min(data.time_logs.length - 1, currentPieIndex + dir));
-                const log = data.time_logs[currentPieIndex];
-                renderPieChart(log.date);
+                const idx = data.time_logs.findIndex(l => l.date === currentPieDate);
+                if (idx === -1) return;
+                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
+                const newDate = data.time_logs[newIdx].date;
+                renderPieChart(newDate);
+                renderReflections(newDate);
             };
 
-            function renderPieChart(dateStr) {
-                // Find log index for navigation tracking
-                const idx = data.time_logs.findIndex(l => l.date.includes(dateStr));
-                if (idx !== -1) currentPieIndex = idx;
+            window.navigateRef = (dir) => {
+                const idx = data.time_logs.findIndex(l => l.date === currentRefDate);
+                if (idx === -1) return;
+                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
+                const newDate = data.time_logs[newIdx].date;
+                renderReflections(newDate);
+                renderPieChart(newDate);
+            };
 
-                let log = data.time_logs.find(l => l.date.includes(dateStr));
-                
-                // If not found and dateStr looks like YYYY-MM-DD, try converting
-                if (!log && dateStr.includes('-')) {
-                    const d = new Date(dateStr);
-                    const day = d.getDate();
-                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-                    const month = monthNames[d.getMonth()];
-                    log = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
-                }
-                
-                if (!log) log = data.time_logs[currentPieIndex];
+            function renderPieChart(targetDate) {
+                if (!targetDate) return;
+                currentPieDate = targetDate;
+                document.getElementById('pieViewedDate').innerText = targetDate;
+                const log = data.time_logs.find(l => l.date === targetDate);
                 if (!log) return;
                 
-                document.getElementById('pieTotalHours').innerText = `[ ${log.total} HR TOTAL ]`;
-                document.getElementById('pieViewedDate').innerText = log.date;
-
-                // Reflections
-                const refCard = document.getElementById('reflectionsCard');
-                const refText = document.getElementById('reflectionsText');
-                if (log.reflections) {
-                    const points = log.reflections.split('\n').filter(p => p.trim());
-                    refText.innerHTML = `<ol style="padding-left: 20px; list-style-type: decimal;">` + 
-                        points.map(p => `<li style="margin-bottom: 12px; padding-left: 10px;">${p.trim()}</li>`).join('') + 
-                        `</ol>`;
-                } else {
-                    refText.innerHTML = `<span style="color: var(--text-dim); opacity: 0.5;">No reflections logged for this day yet.</span>`;
-                }
-                refCard.style.display = 'block';
-
-                const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
+                document.getElementById('pieTotalHours').innerText = `${log.total.toFixed(1)} HOURS LOGGED`;
+                
+                const ctx = document.getElementById('pieChart').getContext('2d');
                 if (pieChart) pieChart.destroy();
                 
-                const colors = [
-                    '#66FFCC', '#FF007F', '#4B0082', '#FFBF00', '#007AFF', '#2ECC71', '#FF4500'
-                ];
-
-                // Render Side Legend
-                const legendEl = document.getElementById('pieLegend');
-                legendEl.innerHTML = sortedLogs.map((l, i) => {
-                    const percent = ((l.hours / log.total) * 100).toFixed(1);
-                    return `
-                    <div class="legend-item">
-                        <div style="display: flex; align-items: center;">
-                            <div class="legend-color" style="background: ${colors[i % colors.length]}"></div>
-                            <span style="font-size: 13px; font-weight: 700; color: #FFF;">${l.activity}</span>
-                        </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 13px; font-weight: 900; color: var(--accent);">${l.hours}H</div>
-                            <div style="font-size: 10px; color: var(--text-dim); font-weight: 700;">${percent}%</div>
-                        </div>
-                    </div>
-                `}).join('');
+                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
                 
-                pieChart = new Chart(document.getElementById('pieChart'), {
-                    type: 'pie',
+                pieChart = new Chart(ctx, {
+                    type: 'doughnut',
                     data: {
-                        labels: sortedLogs.map(l => l.activity),
+                        labels: log.logs.map(l => l.activity),
                         datasets: [{
-                            data: sortedLogs.map(l => l.hours),
-                            backgroundColor: colors.map(c => c + '99'), // Add transparency
-                            borderWidth: 2, borderColor: 'rgba(255,255,255,0.1)',
-                            hoverOffset: 30
+                            data: log.logs.map(l => l.hours),
+                            backgroundColor: colors.map(c => c + '99'),
+                            borderWidth: 2,
+                            borderColor: 'rgba(5,5,5,0.5)'
                         }]
                     },
                     options: {
                         ...commonOptions,
-                        plugins: { 
-                            ...commonOptions.plugins, 
-                            legend: { display: false }, // Custom legend used
-                            tooltip: {
-                                ...commonOptions.plugins.tooltip,
-                                callbacks: { label: (item) => ` ${item.label}: ${item.raw} HR` }
-                            }
+                        cutout: '75%',
+                        plugins: {
+                            ...commonOptions.plugins,
+                            legend: { display: false }
                         }
                     }
                 });
+
+                const legend = document.getElementById('pieLegend');
+                legend.innerHTML = log.logs.map((l, i) => `
+                    <div class="legend-item">
+                        <div style="display: flex; align-items: center;">
+                            <div class="legend-color" style="background: ${colors[i % colors.length]}"></div>
+                            <span style="font-weight: 800; font-size: 13px;">${l.activity}</span>
+                        </div>
+                        <span style="font-weight: 1000; color: var(--accent);">${l.hours.toFixed(1)}h</span>
+                    </div>
+                `).join('');
             }
 
-            const todayStr = data.stats.today_date_raw;
-            renderPieChart(todayStr);
+            function renderReflections(targetDate) {
+                if (!targetDate) return;
+                currentRefDate = targetDate;
+                document.getElementById('refViewedDate').innerText = targetDate;
+                
+                const log = data.time_logs.find(l => l.date === targetDate);
+                const area = document.getElementById('reflectionsText');
+                
+                if (!log || !log.reflections || log.reflections.length === 0) {
+                    area.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--text-dim); opacity: 0.5;">[ NO_REFLECTIONS_RECORDED ]</div>';
+                    return;
+                }
 
-            document.getElementById('pieDateJump').addEventListener('change', (e) => {
+                area.innerHTML = '<ol style="padding-left: 20px; list-style-type: decimal;">' + 
+                    log.reflections.map((ref, idx) => `
+                        <li style="margin-bottom: 12px; padding-left: 10px;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;">
+                                <span style="flex: 1;">${ref}</span>
+                                <button onclick="deleteReflection('${targetDate}', ${idx})" 
+                                    style="background: rgba(255,0,0,0.1); border: 1px solid rgba(255,0,0,0.2); color: #FF4444; border-radius: 6px; padding: 2px 8px; font-size: 10px; cursor: pointer; font-weight: 800; transition: all 0.3s;">DELETE</button>
+                            </div>
+                        </li>
+                    `).join('') + '</ol>';
+                
+                const label = document.getElementById('refInputLabel');
+                label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
+            }
+
+            const dateJumpHandler = (e) => {
                 const d = new Date(e.target.value);
                 const day = d.getDate();
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const month = monthNames[d.getMonth()];
                 const targetLog = data.time_logs.find(l => l.date.includes(day) && l.date.includes(month));
-                if (targetLog) renderPieChart(targetLog.date);
-            });
+                if (targetLog) {
+                    renderPieChart(targetLog.date);
+                    renderReflections(targetLog.date);
+                }
+            };
+
+            document.getElementById('pieDateJump').addEventListener('change', dateJumpHandler);
+            document.getElementById('refDateJump').addEventListener('change', dateJumpHandler);
+
+            // Initial render
+            renderPieChart(currentPieDate);
+            renderReflections(currentRefDate);
 
 
 
@@ -626,6 +642,41 @@ You have successfully crossed 4% of your journey, but rebuilding momentum requir
                 else if (res.status === 401) localStorage.removeItem('gh_token');
             } catch (e) {
                 console.error('Save to DB failed:', e);
+            }
+        }
+
+        async function deleteReflection(date, index) {
+            if (!confirm('Are you sure you want to delete this reflection?')) return;
+            
+            let token = localStorage.getItem('gh_token');
+            if (!token) {
+                token = prompt('Please enter your GitHub PAT (repo scope) to authorize deletion:');
+                if (token) localStorage.setItem('gh_token', token);
+            }
+            if (!token) return;
+
+            const command = `DELETE_REF: Date: ${date}, Index: ${index}`;
+            const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+            
+            try {
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `token ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ body: command })
+                });
+                if (res.ok) {
+                    alert('Deletion request sent. It will be removed in the next sync (15 mins).');
+                    // Visually remove it for the current session
+                    const area = document.getElementById('reflectionsText');
+                    const items = area.querySelectorAll('li');
+                    if (items[index]) items[index].style.opacity = '0.3';
+                }
+            } catch (e) {
+                console.error('Delete request failed:', e);
             }
         }
 
