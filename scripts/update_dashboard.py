@@ -393,6 +393,8 @@ def update_html(header, days, stats, complexity_stats=None):
         <div class="glass-card" style="animation-delay: 0.5s;">
             <div class="section-title">
                 <span>Daily Focus Distribution</span>
+                <span id="pieTotalHours" style="font-size: 11px; color: #FFF; background: rgba(255,255,255,0.05); padding: 4px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.05); letter-spacing: 1px; margin-left: 20px;"></span>
+                <span id="pieViewedDate" style="font-size: 12px; color: var(--accent); font-weight: 800; margin-left: 10px;"></span>
                 <input type="date" id="pieDateJump" 
                     style="margin-left: auto; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 12px; padding: 8px 15px; color: #FFF; font-family: 'Outfit'; font-size: 13px; font-weight: 700; outline: none; transition: all 0.3s ease; cursor: pointer; color-scheme: dark;">
             </div>
@@ -494,6 +496,9 @@ def update_html(header, days, stats, complexity_stats=None):
                 const log = data.time_logs.find(l => l.date === dateStr) || data.time_logs[data.time_logs.length - 1];
                 if (!log) return;
                 
+                document.getElementById('pieTotalHours').innerText = `[ ${{log.total}} HR TOTAL ]`;
+                document.getElementById('pieViewedDate').innerText = log.date;
+
                 const sortedLogs = [...log.logs].sort((a, b) => b.hours - a.hours);
                 if (pieChart) pieChart.destroy();
                 
