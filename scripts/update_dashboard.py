@@ -312,6 +312,16 @@ def update_txt(body, stats):
         f.write(body + "\n\n" + new_stats.strip() + "\n")
 
 def update_html(header, days, stats, complexity_stats=None):
+    # Load .env manually if not in environment
+    token = os.getenv("GITHUB_TOKEN", "")
+    if not token:
+        env_path = os.path.join(os.getcwd(), ".env")
+        if os.path.exists(env_path):
+            with open(env_path, 'r') as f:
+                for line in f:
+                    if line.startswith("GITHUB_TOKEN="):
+                        token = line.split("=", 1)[1].strip()
+                        os.environ["GITHUB_TOKEN"] = token
     time_logs = parse_time_log()
     
     # Sort days by date for charts
@@ -916,31 +926,9 @@ def update_html(header, days, stats, complexity_stats=None):
     with open(index_path, 'w', encoding='utf-8') as f:
         f.write(html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"'))
     
-    data_js = f"window.dashboardData = {json.dumps(data_dict)};"
+    data_js = f"window.GH_TOKEN_INJECTED = '{token}';\nwindow.dashboardData = {json.dumps(data_dict)};"
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
         with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
-
-    # Load .env manually if not in environment
-    if not os.getenv("GITHUB_TOKEN"):
-        env_path = os.path.join(os.getcwd(), ".env")
-        if os.path.exists(env_path):
-            with open(env_path, 'r') as f:
-                for line in f:
-                    if line.startswith("GITHUB_TOKEN="):
-                        os.environ["GITHUB_TOKEN"] = line.split("=", 1)[1].strip()
-
-    # Inject Token into apkhunter.html for zero-prompt sync
-    token = os.getenv("GITHUB_TOKEN", "")
-    if token:
-        apk_html_path = os.path.join(REPORT_DIR, "dashboard", "apkhunter.html")
-        if os.path.exists(apk_html_path):
-            with open(apk_html_path, 'r', encoding='utf-8') as f: content = f.read()
-            injection = f'<script>window.GH_TOKEN_INJECTED = "{token}";</script>'
-            if "window.GH_TOKEN_INJECTED" not in content:
-                content = content.replace('</head>', f'{injection}\n</head>')
-            else:
-                content = re.sub(r'window\.GH_TOKEN_INJECTED = ".*?";', f'window.GH_TOKEN_INJECTED = "{token}";', content)
-            with open(apk_html_path, 'w', encoding='utf-8') as f: f.write(content)
 
 def update_readme(stats, time_logs):
     path = os.path.join(REPORT_DIR, 'README.md')
