@@ -16,6 +16,86 @@ TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
 TIME_LOG_FILE = os.path.join(REPORT_DIR, "trackers", "Time Log.txt")
 HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
 
+def process_remote_reflections():
+    token = os.getenv("GITHUB_TOKEN")
+    if not token: return
+    
+    # Check Issue Comments (DB)
+    url = "https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments"
+    headers = {"Authorization": f"token {token}", "Accept": "application/vnd.github.v3+json"}
+    
+    try:
+        response = requests.get(url, headers=headers)
+        if response.status_code != 200: return
+        
+        comments = response.json()
+        if not comments: return
+        
+        log_path = TIME_LOG_FILE
+        if not os.path.exists(log_path): return
+        
+        with open(log_path, 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+            
+        new_reflections = []
+        for comment in comments:
+            new_reflections.append(comment['body'])
+            requests.delete(comment['url'], headers=headers)
+            
+        if not new_reflections: return
+        
+        # Find the last "Reflections:" line or create one for the latest date
+        updated_lines = []
+        found_date = False
+        latest_date_idx = -1
+        
+        for i, line in enumerate(lines):
+            if line.startswith("Date:"):
+                latest_date_idx = i
+                found_date = True
+            updated_lines.append(line)
+            
+        if found_date:
+            # Look for existing reflections after this date
+            ref_idx = -1
+            for j in range(latest_date_idx + 1, len(updated_lines)):
+                if updated_lines[j].startswith("Reflections:"):
+                    ref_idx = j
+                    break
+                if updated_lines[j].startswith("Date:"):
+                    break
+            
+            if ref_idx != -1:
+                # Append to existing
+                current_ref = updated_lines[ref_idx].strip()
+                for nr in new_reflections:
+                    # Check if it ends with a number
+                    m = re.findall(r'(\d+)\.', current_ref)
+                    next_num = int(m[-1]) + 1 if m else 2
+                    current_ref += f" {next_num}. {nr}"
+                updated_lines[ref_idx] = current_ref + "\n"
+            else:
+                # Create new
+                # Find the Total: or end of section
+                insert_pos = len(updated_lines)
+                for j in range(latest_date_idx + 1, len(updated_lines)):
+                    if updated_lines[j].startswith("Date:"):
+                        insert_pos = j
+                        break
+                
+                ref_line = "Reflections: 1. " + " ".join(new_reflections) + "\n"
+                updated_lines.insert(insert_pos, ref_line)
+        else:
+            # Fallback append
+            updated_lines.append("\nReflections: 1. " + " ".join(new_reflections) + "\n")
+
+        with open(log_path, 'w', encoding='utf-8') as f:
+            f.writelines(updated_lines)
+            
+        print(f"Synced {len(new_reflections)} reflections to Time Log.txt")
+    except Exception as e:
+        print(f"Error syncing remote reflections: {e}")
+
 def get_ordinal(n):
     if 11 <= n % 100 <= 13:
         return f"{n}th"
@@ -660,12 +740,22 @@ def update_html(header, days, stats, complexity_stats=None):
                 const text = document.getElementById('newReflectionText').value;
                 if (!text) return;
                 
-                // Format for the Time Log
-                const formatted = `Reflections: 1. ${{text}}`;
+                // 1. Immediate UI update
+                const logArea = document.getElementById('reflectionsText');
+                const currentText = logArea.innerText;
+                const m = currentText.match(/(\d+)\./g);
+                const nextNum = m ? m.length + 1 : 1;
+                logArea.innerText += (currentText ? ' ' : '') + `${{nextNum}}. ${{text}}`;
+
+                // 2. Save to "Database" (GitHub Issue)
+                saveToRemoteDatabase(text);
+                
+                // 3. Copy to clipboard as fallback
+                const formatted = `Reflections: ${{nextNum}}. ${{text}}`;
                 navigator.clipboard.writeText(formatted).then(() => {{
                     const btn = document.querySelector('[onclick=\"copyReflection()\"]');
                     const oldText = btn.innerText;
-                    btn.innerText = 'COPIED!';
+                    btn.innerText = 'SAVED TO DB!';
                     btn.style.background = '#00FF00';
                     btn.style.color = '#000';
                     setTimeout(() => {{
@@ -675,6 +765,32 @@ def update_html(header, days, stats, complexity_stats=None):
                         document.getElementById('newReflectionText').value = '';
                     }}, 2000);
                 }});
+            }}
+
+            async function saveToRemoteDatabase(text) {{
+                let token = localStorage.getItem('gh_token');
+                if (!token) {{
+                    token = prompt('Please enter your GitHub PAT (repo scope) to save to DB:');
+                    if (token) localStorage.setItem('gh_token', token);
+                }}
+                if (!token) return;
+
+                const url = 'https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments';
+                try {{
+                    const res = await fetch(url, {{
+                        method: 'POST',
+                        headers: {{
+                            'Authorization': `token ${{token}}`,
+                            'Accept': 'application/vnd.github.v3+json',
+                            'Content-Type': 'application/json'
+                        }},
+                        body: JSON.stringify({{ body: text }})
+                    }});
+                    if (res.ok) console.log('Successfully saved to remote DB');
+                    else if (res.status === 401) localStorage.removeItem('gh_token');
+                }} catch (e) {{
+                    console.error('Save to DB failed:', e);
+                }}
             }}
 
             // 4. Operational Log Rendering Engine
