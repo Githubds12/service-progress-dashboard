@@ -560,7 +560,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 if (!log) return;
                 
                 document.getElementById('pieTotalHours').innerText = `[ ${{log.total}} HR TOTAL ]`;
-                document.getElementById('pieViewedDate').innerText = log.date.split(',')[0];
+                document.getElementById('pieViewedDate').innerText = log.date;
 
                 // Reflections
                 const refCard = document.getElementById('reflectionsCard');
