@@ -172,6 +172,7 @@
         #syncStatus { font-size: 10px; font-weight: 700; letter-spacing: 1px; color: var(--text-dim); }
         .status-ready { color: var(--green) !important; }
         .status-syncing { color: var(--accent) !important; animation: blink 1s infinite; }
+        .status-error { color: var(--red) !important; cursor: pointer; text-decoration: underline; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
         @media (max-width: 1000px) {
@@ -366,21 +367,36 @@
                     body: JSON.stringify({ body: message })
                 });
                 if (response.ok) updateSyncStatus('ready');
-                else throw new Error("API Failure");
+                else {
+                    const err = await response.json();
+                    throw new Error(err.message || response.statusText);
+                }
             } catch (e) {
-                updateSyncStatus('error');
+                updateSyncStatus('error', e.message);
                 console.error(e);
             } finally {
                 state.isSyncing = false;
             }
         }
 
-        function updateSyncStatus(s) {
+        function clearToken() {
+            if (confirm("Clear GitHub Token?")) {
+                localStorage.removeItem('github_token');
+                location.reload();
+            }
+        }
+
+        function updateSyncStatus(s, msg) {
             const el = $('syncStatus');
             el.className = '';
-            if (s === 'syncing') { el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); }
-            else if (s === 'error') { el.innerText = 'SYNC ERROR'; el.classList.add('status-error'); }
-            else { el.innerText = 'SYSTEM READY'; el.classList.add('status-ready'); }
+            if (s === 'syncing') { el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); el.onclick = null; }
+            else if (s === 'error') { 
+                el.innerText = `SYNC ERROR: ${msg || 'Unknown'}`; 
+                el.classList.add('status-error'); 
+                el.onclick = clearToken;
+                el.title = "Click to reset token";
+            }
+            else { el.innerText = 'SYSTEM READY'; el.classList.add('status-ready'); el.onclick = null; }
         }
 
         function copyRecon(id, btn) {
