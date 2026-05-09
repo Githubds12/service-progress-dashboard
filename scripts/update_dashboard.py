@@ -667,29 +667,50 @@ def update_html(header, days, stats, complexity_stats=None):
                 renderPieChart(targetDate);
                 renderReflections(targetDate);
                 
-                // Update both date pickers to match (convert DD-Mon-YYYY to YYYY-MM-DD)
+                // Update all date pickers
                 const parts = targetDate.split('-');
                 if (parts.length === 3) {{
                     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                     const monthIdx = monthNames.indexOf(parts[1]);
                     if (monthIdx !== -1) {{
                         const isoDate = `${{parts[2]}}-${{(monthIdx + 1).toString().padStart(2, '0')}}-${{parts[0].padStart(2, '0')}}`;
-                        document.getElementById('pieDateJump').value = isoDate;
-                        document.getElementById('refDateJump').value = isoDate;
+                        if (document.getElementById('pieDateJump')) document.getElementById('pieDateJump').value = isoDate;
+                        if (document.getElementById('refDateJump')) document.getElementById('refDateJump').value = isoDate;
+                        if (document.getElementById('dateJump')) document.getElementById('dateJump').value = isoDate;
                     }}
+                }}
+
+                // Sync the Log Section
+                const allDays = [...data.raw_days].reverse();
+                const dayIdx = allDays.findIndex(d => {{
+                    const dObj = new Date(d.iso_date);
+                    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                    const dStr = `${{dObj.getDate().toString().padStart(2, '0')}}-${{monthNames[dObj.getMonth()]}}-${{dObj.getFullYear()}}`;
+                    return dStr === targetDate;
+                }});
+                if (dayIdx !== -1) {{
+                    currentPage = dayIdx + 1;
+                    renderLog();
                 }}
             }}
 
             window.navigatePie = (dir) => {{
-                let idx = data.time_logs.findIndex(l => l.date === currentSyncDate);
-                if (idx === -1) {{
-                    // If current date not in logs, find the closest log
-                    idx = data.time_logs.length - 1;
-                }}
-                const newIdx = Math.max(0, Math.min(data.time_logs.length - 1, idx + dir));
-                if (data.time_logs[newIdx]) {{
-                    updateDashboardDate(data.time_logs[newIdx].date);
-                }}
+                const allDatesInLogs = data.time_logs.map(l => l.date);
+                if (!allDatesInLogs.includes(data.stats.today_date_raw)) allDatesInLogs.push(data.stats.today_date_raw);
+                
+                allDatesInLogs.sort((a,b) => {{
+                    const parse = (s) => {{
+                        const p = s.split('-');
+                        const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+                        return new Date(p[2], monthNames.indexOf(p[1]), p[0]);
+                    }};
+                    return parse(a) - parse(b);
+                }});
+
+                let idx = allDatesInLogs.indexOf(currentSyncDate);
+                if (idx === -1) idx = allDatesInLogs.length - 1;
+                const newIdx = Math.max(0, Math.min(allDatesInLogs.length - 1, idx + dir));
+                updateDashboardDate(allDatesInLogs[newIdx]);
             }};
 
             window.navigateRef = window.navigatePie;
@@ -704,7 +725,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 
                 if (!log || !log.logs || log.logs.length === 0) {{
                     document.getElementById('pieTotalHours').innerText = 'NO DATA FOR THIS DATE';
-                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_DATA ]</div>';
+                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_LOG_ENTRIES ]</div>';
                     return;
                 }}
                 
