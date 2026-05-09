@@ -674,7 +674,7 @@ def update_html(header, days, stats, complexity_stats=None):
             window.currentSyncDate = data.stats.today_date_raw;
             let pieChart;
 
-            function updateDashboardDate(targetDate) {{
+            window.updateDashboardDate = (targetDate) => {{
                 if (!targetDate) return;
                 window.currentSyncDate = targetDate;
                 renderPieChart(targetDate);
@@ -728,57 +728,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
             window.navigateRef = window.navigatePie;
 
-            function renderPieChart(targetDate) {{
-                document.getElementById('pieViewedDate').innerText = targetDate;
-                const log = data.time_logs.find(l => l.date === targetDate);
-                const ctx = document.getElementById('pieChart').getContext('2d');
-                const legend = document.getElementById('pieLegend');
-                
-                if (pieChart) pieChart.destroy();
-                
-                if (!log || !log.logs || log.logs.length === 0) {{
-                    document.getElementById('pieTotalHours').innerText = 'NO DATA FOR THIS DATE';
-                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_LOG_ENTRIES ]</div>';
-                    return;
-                }}
-                
-                document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
-                
-                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
-                
-                pieChart = new Chart(ctx, {{
-                    type: 'doughnut',
-                    data: {{
-                        labels: log.logs.map(l => l.activity),
-                        datasets: [{{
-                            data: log.logs.map(l => l.hours),
-                            backgroundColor: colors.map(c => c + '99'),
-                            borderWidth: 2,
-                            borderColor: 'rgba(5,5,5,0.5)'
-                        }}]
-                    }},
-                    options: {{
-                        ...commonOptions,
-                        cutout: '75%',
-                        plugins: {{
-                            ...commonOptions.plugins,
-                            legend: {{ display: false }}
-                        }}
-                    }}
-                }});
-
-                legend.innerHTML = log.logs.map((l, i) => `
-                    <div class="legend-item">
-                        <div style="display: flex; align-items: center;">
-                            <div class="legend-color" style="background: ${{colors[i % colors.length]}}"></div>
-                            <span style="font-weight: 800; font-size: 13px;">${{l.activity}}</span>
-                        </div>
-                        <span style="font-weight: 1000; color: var(--accent);">${{l.hours.toFixed(1)}}h</span>
-                    </div>
-                `).join('');
-            }}
-
-            function renderReflections(targetDate) {{
+            window.renderReflections = (targetDate) => {{
                 document.getElementById('refViewedDate').innerText = targetDate;
                 const log = data.time_logs.find(l => l.date === targetDate);
                 const area = document.getElementById('reflectionsText');
@@ -829,13 +779,64 @@ def update_html(header, days, stats, complexity_stats=None):
                 label.innerText = (targetDate === data.stats.today_date_raw) ? 'New Insight for Today' : 'Add Insight for ' + targetDate;
             }}
 
+            window.renderPieChart = (targetDate) => {{
+                document.getElementById('pieViewedDate').innerText = targetDate;
+                const log = data.time_logs.find(l => l.date === targetDate);
+                const ctx = document.getElementById('pieChart').getContext('2d');
+                const legend = document.getElementById('pieLegend');
+                
+                if (pieChart) pieChart.destroy();
+                
+                if (!log || !log.logs || log.logs.length === 0) {{
+                    document.getElementById('pieTotalHours').innerText = 'NO DATA FOR THIS DATE';
+                    legend.innerHTML = '<div style=\"text-align: center; color: var(--text-dim); padding: 20px;\">[ NO_LOG_ENTRIES ]</div>';
+                    return;
+                }}
+                
+                document.getElementById('pieTotalHours').innerText = `${{log.total.toFixed(1)}} HOURS LOGGED`;
+                
+                const colors = ['#D4AF37', '#800000', '#4A0404', '#B8860B', '#DAA520', '#8B4513', '#5D4037', '#795548'];
+                
+                pieChart = new Chart(ctx, {{
+                    type: 'doughnut',
+                    data: {{
+                        labels: log.logs.map(l => l.activity),
+                        datasets: [{{
+                            data: log.logs.map(l => l.hours),
+                            backgroundColor: colors.map(c => c + '99'),
+                            borderWidth: 2,
+                            borderColor: 'rgba(5,5,5,0.5)'
+                        }}]
+                    }},
+                    options: {{
+                        ...commonOptions,
+                        cutout: '75%',
+                        plugins: {{
+                            ...commonOptions.plugins,
+                            legend: {{ display: false }}
+                        }}
+                    }}
+                }});
+
+                legend.innerHTML = log.logs.map((l, i) => `
+                    <div class="legend-item">
+                        <div style="display: flex; align-items: center;">
+                            <div class="legend-color" style="background: ${{colors[i % colors.length]}}"></div>
+                            <span style="font-weight: 800; font-size: 13px;">${{l.activity}}</span>
+                        </div>
+                        <span style="font-weight: 1000; color: var(--accent);">${{l.hours.toFixed(1)}}h</span>
+                    </div>
+                `).join('');
+            }}
+
+            // Date Jump Handlers
             const dateJumpHandler = (e) => {{
                 const d = new Date(e.target.value);
                 const day = d.getDate();
                 const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
                 const month = monthNames[d.getMonth()];
                 const dateStr = `${{day.toString().padStart(2, '0')}}-${{month}}-${{d.getFullYear()}}`;
-                updateDashboardDate(dateStr);
+                window.updateDashboardDate(dateStr);
             }};
 
             document.getElementById('pieDateJump').addEventListener('change', dateJumpHandler);
