@@ -820,11 +820,10 @@ def update_html(header, days, stats, complexity_stats=None):
                     reflections.forEach((ref, idx) => {{
                         const isBeingDeleted = window.remoteDeletes && window.remoteDeletes.some(d => d.date === targetDate && d.index === idx);
                         html += `
-                            <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.2; text-decoration: line-through;' : ''}}\">
+                            <li style=\"margin-bottom: 12px; padding-left: 10px; ${{isBeingDeleted ? 'opacity: 0.3; text-decoration: line-through;' : ''}}\">
                                 <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
                                     <span style=\"flex: 1;\">${{ref}} ${{isBeingDeleted ? '<small>(Deleting...)</small>' : ''}}</span>
                                     <button onclick=\"deleteReflection('${{targetDate}}', ${{idx}})\" 
-                                        ${{isBeingDeleted ? 'disabled' : ''}}
                                         title=\"Delete Reflection\"
                                         style=\"background: rgba(255,68,68,0.1); border: 1px solid rgba(255,68,68,0.2); color: #FF4444; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; transition: all 0.3s; flex-shrink: 0; font-size: 16px; line-height: 1;\">×</button>
                                 </div>
@@ -832,13 +831,15 @@ def update_html(header, days, stats, complexity_stats=None):
                         `;
                     }});
 
-                    // Pending Refs
+                    // Pending Refs (Instant feedback)
                     pending.forEach((ref) => {{
                         html += `
                             <li style=\"margin-bottom: 12px; padding-left: 10px; opacity: 0.7;\">
                                 <div style=\"display: flex; justify-content: space-between; align-items: flex-start; gap: 15px;\">
                                     <span style=\"flex: 1;\">${{ref}} <small style=\"color: var(--accent); opacity: 0.8; margin-left: 5px;\">(Syncing...)</small></span>
-                                    <button style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: not-allowed; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
+                                    <button onclick=\"deletePendingReflection('${{targetDate}}', '${{ref.replace(/'/g, "\\'")}}')\"
+                                        title=\"Cancel Sync\"
+                                        style=\"background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text-dim); border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; cursor: pointer; font-weight: 800; font-size: 16px; line-height: 1;\">×</button>
                                 </div>
                             </li>
                         `;
@@ -1058,6 +1059,8 @@ def update_html(header, days, stats, complexity_stats=None):
             localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
 
             // 2. Immediate UI update
+            if (!window.remoteAdds) window.remoteAdds = [];
+            window.remoteAdds.push({{ date: targetDate, text: text }});
             renderReflections(targetDate);
 
             // 3. Save to "Database" (GitHub Issue)
@@ -1105,6 +1108,19 @@ def update_html(header, days, stats, complexity_stats=None):
             }} catch (e) {{
                 console.error('Save to DB failed:', e);
             }}
+        }}
+
+        function deletePendingReflection(targetDate, text) {{
+            let pending = JSON.parse(localStorage.getItem('pending_refs_' + targetDate) || '[]');
+            pending = pending.filter(p => p !== text);
+            localStorage.setItem('pending_refs_' + targetDate, JSON.stringify(pending));
+            
+            // Also remove from optimistic remoteAdds if it's there
+            if (window.remoteAdds) {{
+                window.remoteAdds = window.remoteAdds.filter(a => !(a.date === targetDate && a.text === text));
+            }}
+            
+            renderReflections(targetDate);
         }}
 
         async function deleteReflection(date, index) {{
