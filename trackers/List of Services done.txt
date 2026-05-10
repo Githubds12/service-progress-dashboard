@@ -177,11 +177,14 @@ Daily Summary: 5 services, 2000 rs
 9th May, Saturday
 Daily Summary: 0 services, 0 rs
 ----------
+10th May, Sunday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 9
 - Total Earnings: 3600 rs
-- Average Daily Earning: 1800.0 rs/day
-- Average Daily Services: 4.5 services/day
-- Recovery Pace: 7.7 Services / day
-- Projected Monthly Total: ₹54000.0
+- Average Daily Earning: 1200.0 rs/day
+- Average Daily Services: 3.0 services/day
+- Recovery Pace: 8.0 Services / day
+- Projected Monthly Total: ₹36000.0
