@@ -184,11 +184,14 @@ Daily Summary: 0 services, 0 rs
 4. [23:45] PullAndBear - com.inditex.pullandbear - 400rs
 Daily Summary: 4 services, 1600 rs
 ----------
+11th May, Monday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 9
 - Total Earnings: 3600 rs
-- Average Daily Earning: 1200.0 rs/day
-- Average Daily Services: 3.0 services/day
-- Recovery Pace: 8.0 Services / day
-- Projected Monthly Total: ₹36000.0
+- Average Daily Earning: 900.0 rs/day
+- Average Daily Services: 2.25 services/day
+- Recovery Pace: 8.3 Services / day
+- Projected Monthly Total: ₹27000.0
