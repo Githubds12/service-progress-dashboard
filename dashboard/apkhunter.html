@@ -369,8 +369,6 @@
 
                 return matchesSearch && matchesType && matchesCat;
             });
-            // Sort by difficulty ascending (easiest first, like original dashboard)
-            state.filteredData.sort((a, b) => a.difficulty - b.difficulty);
         }
 
         function changePage(delta) {

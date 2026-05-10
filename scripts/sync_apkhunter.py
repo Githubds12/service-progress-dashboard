@@ -209,8 +209,7 @@ def sync():
                 }
             })
 
-    # Sort final data (Unclaimed first, then by Difficulty)
-    final_data.sort(key=lambda x: (x['claimed'], -x['difficulty']))
+    # Preserve original CSV order (do NOT sort - order comes from fresh_detailed.csv)
     
     with open(OUTPUT_JS, "w", encoding="utf-8") as f:
         f.write(f"window.apkhunterData = {json.dumps(final_data, indent=4)};")
