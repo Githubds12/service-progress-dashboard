@@ -11,6 +11,11 @@ DB_PATH = r"C:\HTB-Notes-Portal\apk_local_database.json"
 CSV_PATH = r"C:\HTB-Notes-Portal\fresh_detailed.csv"
 OUTPUT_JS = r"c:\Users\Gorri\Documents\Reports\dashboard\apkhunter_data.js"
 
+# API Configuration (from api_portal.py)
+API_BASE = "http://51.195.24.179:8092/api"
+EMAIL = "deepanshu@test.com"
+PASS = "deep@nshu"
+
 # Pre-defined high-intel targets (manual verified)
 SECURITY_INTEL = {
     "sms20120": 100, # Bank of America
@@ -24,6 +29,37 @@ TIER_MAP = {
     "Tier 3 (Hard/Secured)": "Hard (App Only/Pinning)"
 }
 
+def fetch_api_claimed_ids():
+    """Fetches unique claimed service IDs from the external API projects."""
+    try:
+        print("[*] API: Logging in to fetch claimed services...")
+        res = requests.post(f"{API_BASE}/auth/login", json={"email": EMAIL, "password": PASS}, timeout=5)
+        if res.status_code != 200:
+            print(f"[-] API: Login failed ({res.status_code})")
+            return set()
+        
+        token = res.json().get("access_token")
+        headers = {"Authorization": f"Bearer {token}"}
+        
+        print("[*] API: Fetching projects to determine claimed status...")
+        res = requests.get(f"{API_BASE}/projects", headers=headers, timeout=10)
+        if res.status_code != 200:
+            print(f"[-] API: Failed to fetch projects ({res.status_code})")
+            return set()
+            
+        projects = res.json()
+        claimed_ids = set()
+        if isinstance(projects, list):
+            for p in projects:
+                if isinstance(p, dict) and p.get('linked_service_id'):
+                    claimed_ids.add(p.get('linked_service_id'))
+        
+        print(f"[+] API: Found {len(claimed_ids)} claimed services via portal projects.")
+        return claimed_ids
+    except Exception as e:
+        print(f"[-] API: Error during sync: {e}")
+        return set()
+
 def sync():
     print("[*] Starting APKHunter Sync...")
     
@@ -31,7 +67,10 @@ def sync():
         print(f"Error: {CSV_PATH} not found")
         return
 
-    # Load Claims/Notes
+    # Load API Claims
+    api_claims = fetch_api_claimed_ids()
+
+    # Load Local Claims/Notes
     claims = {}
     if os.path.exists(DB_PATH):
         with open(DB_PATH, 'r') as f:
@@ -52,7 +91,18 @@ def sync():
             
             p_issues = []
             note = claims.get(tid, {}).get("notes", "")
-            claimed = claims.get(tid, {}).get("claimed", False)
+            
+            # Merged Claimed Logic: Local DB OR External API
+            local_claimed = claims.get(tid, {}).get("claimed", False)
+            is_api_claimed = tid in api_claims
+            claimed = local_claimed or is_api_claimed
+            
+            if is_api_claimed and not local_claimed:
+                if not note:
+                    note = "[Portal] Service claimed in Intelligence Portal."
+                else:
+                    note = f"{note} (Also claimed in Portal)".strip()
+            
             intel_pool = (" ".join([str(x.get('text','')).lower() for x in p_issues]) + " " + note.lower()).strip()
             
             # --- ELITE CATEGORIZATION ENGINE ---
