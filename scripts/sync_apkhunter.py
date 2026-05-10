@@ -105,8 +105,6 @@ def sync():
             
             # Merged Claimed Logic: Local DB (by UUID or name) OR External API
             local_claimed = claims_dict.get(tid, claims_dict.get(name_key, False))
-            if tid == 'ecb6926b-f0a1-41ff-a42f-2d88ad925b72':
-                print(f"[DEBUG] tid: {tid}, name_key: {name_key}, local_claimed: {local_claimed}")
             is_api_claimed = tid in api_claims
             claimed = local_claimed or is_api_claimed
             
