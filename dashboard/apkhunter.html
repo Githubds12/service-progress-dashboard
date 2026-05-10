@@ -483,6 +483,18 @@ URL: ${i.urls.play}
             });
         }
 
+        function copyText(text, btn) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = btn.innerText;
+                btn.innerText = "COPIED";
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove('copied');
+                }, 1500);
+            });
+        }
+
         function openAllMirrors(urls) {
             Object.values(urls).forEach(url => window.open(url, '_blank'));
         }
@@ -520,6 +532,7 @@ URL: ${i.urls.play}
                         <td>
                             <div class="apk-name">
                                 ${i.name}
+                                <button class="btn btn-mir" style="display:inline-block; margin-left:8px; padding:2px 8px; font-size:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); width:auto;" onclick="copyText('${i.name}', this)">📋 COPY</button>
                                 <span class="category-badge cat-${i.category.split('/')[0].toLowerCase().replace(' ', '-')}">${i.category}</span>
                             </div>
                             <div class="apk-id">${i.id}</div>
