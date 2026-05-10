@@ -222,6 +222,7 @@
                 <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
                 <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
                 <button class="filter-btn" onclick="setFilter('easy', this)">EASY</button>
+                <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa; background:rgba(0,255,170,0.08);">🆕 NEW</button>
                 <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
                     <option value="all">ALL CATEGORIES</option>
                     <option value="UNCATEGORIZED">UNCATEGORIZED / RESEARCH</option>
@@ -364,6 +365,7 @@
                 if (state.filter === 'hard') matchesType = item.difficulty >= 75;
                 if (state.filter === 'moderate') matchesType = item.difficulty >= 40 && item.difficulty < 75;
                 if (state.filter === 'easy') matchesType = item.difficulty < 40;
+                if (state.filter === 'new') matchesType = item.is_new === true;
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
 

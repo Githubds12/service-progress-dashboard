@@ -75,6 +75,7 @@ def sync():
     notes_dict = {}
     root_dict = {}
     nf_dict = {}
+    updated_dict = {}
     if os.path.exists(DB_PATH):
         with open(DB_PATH, 'r') as f:
             db = json.load(f)
@@ -82,6 +83,7 @@ def sync():
             notes_dict = db.get('notes', {})
             root_dict = db.get('root_detected', {})
             nf_dict = db.get('not_found', {})
+            updated_dict = db.get('last_updated', {})
             print(f"[+] Loaded {len(claims_dict)} claims, {len(notes_dict)} notes from local DB.")
 
     final_data = []
@@ -194,6 +196,7 @@ def sync():
                 "root_detected": root_dict.get(tid, False),
                 "not_found": is_nf,
                 "note": note,
+                "is_new": tid not in claims_dict and tid not in notes_dict and tid not in root_dict and tid not in nf_dict and tid not in updated_dict,
                 "difficulty": diff,
                 "category": cat,
                 "tier": tier,
