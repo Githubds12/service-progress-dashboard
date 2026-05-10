@@ -70,15 +70,19 @@ def sync():
     # Load API Claims
     api_claims = fetch_api_claimed_ids()
 
-    # Load Local Claims/Notes
+    # Load Local Claims/Notes/Root/NF
     claims_dict = {}
     notes_dict = {}
+    root_dict = {}
+    nf_dict = {}
     if os.path.exists(DB_PATH):
         with open(DB_PATH, 'r') as f:
             db = json.load(f)
             claims_dict = db.get('claimed', {})
             notes_dict = db.get('notes', {})
-            print(f"[+] Loaded {len(claims_dict)} claims and {len(notes_dict)} notes from local DB.")
+            root_dict = db.get('root_detected', {})
+            nf_dict = db.get('not_found', {})
+            print(f"[+] Loaded {len(claims_dict)} claims, {len(notes_dict)} notes from local DB.")
 
     final_data = []
     
@@ -178,7 +182,7 @@ def sync():
                 else: diff = 85
             
             triggers = []
-            is_nf = "not found" in row.get("Description", "").lower()
+            is_nf = nf_dict.get(tid, False) or "not found" in row.get("Description", "").lower()
             if is_nf: 
                 diff, triggers = 100, ["Binary Not Found"]
             
@@ -187,7 +191,8 @@ def sync():
                 "name": name,
                 "sms": row.get("Sample_Message", ""),
                 "claimed": claimed,
-                "root_detected": claims.get(tid, {}).get("root_detected", False),
+                "root_detected": root_dict.get(tid, False),
+                "not_found": is_nf,
                 "notes": note,
                 "difficulty": diff,
                 "category": cat,
