@@ -95,14 +95,16 @@ def sync():
             if not tid: continue
             
             name = row.get("Name", tid)
+            name_key = name.strip().lower()  # short name key used in some DB entries
             tier = row.get("Category", row.get("Tier", "Tier 2 (Moderate/Private)"))
             base_score = 50
             
             p_issues = []
-            note = notes_dict.get(tid, "")
+            # Lookup by UUID first, fall back to short name
+            note = notes_dict.get(tid, notes_dict.get(name_key, ""))
             
-            # Merged Claimed Logic: Local DB OR External API
-            local_claimed = claims_dict.get(tid, False)
+            # Merged Claimed Logic: Local DB (by UUID or name) OR External API
+            local_claimed = claims_dict.get(tid, claims_dict.get(name_key, False))
             is_api_claimed = tid in api_claims
             claimed = local_claimed or is_api_claimed
             
