@@ -1,0 +1,16 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-10
+com.pof.android 5.63.0.1516574
+Service: Plenty Of Fish (POF)
+Service ID: aef07ae4-589c-4255-9c18-38d73707f3e9
+Service SMS: Your Plenty Of Fish verification code is: 198695
+Service Description: Plenty Of Fish (POF) is a global dating service with millions of active users, owned by Match Group.
+Verification Type: SMS
+Captcha: undefined
+Rate Limits: Unknown
+Endpoints Involved: 1
+Bot Protection: High (Binary protocol & Gzip payloads)
+Automation Feasibility: Low < 40%
+Detailed Conclusion: The application uses a proprietary binary protocol over a single root API endpoint (2.api.pof.com). All request and response data is binary-encoded and GZIP-compressed, preventing standard analysis of field names or parameters. Automation is only possible through protocol reversal.
+Flow: Binary API Session -> Binary SMS Request -> Binary OTP Submit
+Proof API Endpoint: https://2.api.pof.com/ (POST with binary payload)
