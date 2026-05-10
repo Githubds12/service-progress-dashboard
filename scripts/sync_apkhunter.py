@@ -71,29 +71,32 @@ def sync():
     api_claims = fetch_api_claimed_ids()
 
     # Load Local Claims/Notes
-    claims = {}
+    claims_dict = {}
+    notes_dict = {}
     if os.path.exists(DB_PATH):
         with open(DB_PATH, 'r') as f:
             db = json.load(f)
-            targets_list = db.get('targets', [])
-            for t in targets_list:
-                claims[t['id']] = t
+            claims_dict = db.get('claimed', {})
+            notes_dict = db.get('notes', {})
+            print(f"[+] Loaded {len(claims_dict)} claims and {len(notes_dict)} notes from local DB.")
 
     final_data = []
     
     with open(CSV_PATH, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
-            tid = row.get("API_ID", row.get("Slug", ""))
+            tid = row.get("API_ID", row.get("Slug", "")).strip().lower()
+            if not tid: continue
+            
             name = row.get("Name", tid)
-            tier = row.get("Tier", "Tier 2 (Moderate/Private)")
+            tier = row.get("Category", row.get("Tier", "Tier 2 (Moderate/Private)"))
             base_score = 65
             
             p_issues = []
-            note = claims.get(tid, {}).get("notes", "")
+            note = notes_dict.get(tid, "")
             
             # Merged Claimed Logic: Local DB OR External API
-            local_claimed = claims.get(tid, {}).get("claimed", False)
+            local_claimed = claims_dict.get(tid, False)
             is_api_claimed = tid in api_claims
             claimed = local_claimed or is_api_claimed
             
