@@ -277,6 +277,21 @@ def calculate_stats(days):
     days_elapsed = max((today_dt - start_date).days, 1)
     avg_daily = total_earnings / days_elapsed
     avg_daily_services = total_services / days_elapsed
+    
+    # Calculate Total Claimed APKs
+    apk_claimed_count = 0
+    apk_data_path = os.path.join(REPORT_DIR, "dashboard", "apkhunter_data.js")
+    if os.path.exists(apk_data_path):
+        try:
+            with open(apk_data_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                # Find the JSON part: window.apkhunterData = [...]
+                match = re.search(r'window\.apkhunterData\s*=\s*(\[.*\])', content, re.DOTALL)
+                if match:
+                    apk_list = json.loads(match.group(1))
+                    apk_claimed_count = sum(1 for item in apk_list if item.get('claimed'))
+        except: pass
+
     target_total = 90000
     remaining_target = target_total - total_earnings
     days_remaining = max(30 - days_elapsed, 1)
@@ -296,6 +311,7 @@ def calculate_stats(days):
 
     return {
         'total_services': total_services, 'total_earnings': total_earnings,
+        'apk_claimed': apk_claimed_count,
         'avg_daily': round(avg_daily, 2), 'avg_daily_services': round(avg_daily_services, 2),
         'days_elapsed': days_elapsed, 'recovery_pace_services': round(recovery_pace_services, 1),
         'days_remaining': days_remaining, 'recommended_today': int(recommended_today),
@@ -539,7 +555,14 @@ def update_html(header, days, stats, complexity_stats=None):
         </header>
 
         <div class="tip-banner">
-            <div class="tip-header">✨ {stats['explanation'].split(' ')[0] if ' ' in stats['explanation'] else 'ADVICE'}</div>
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div class="tip-header">✨ {stats['explanation'].split(' ')[0] if ' ' in stats['explanation'] else 'ADVICE'}</div>
+                <div class="controls">
+                    <button class="btn" onclick="window.navTrajectory('prev')">← PREV DAY</button>
+                    <input type="date" id="dateJumpTop" class="date-picker">
+                    <button class="btn" onclick="window.navTrajectory('next')">NEXT DAY →</button>
+                </div>
+            </div>
             <p id="projectionText">{stats['explanation']}</p>
         </div>
 
@@ -558,6 +581,11 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="stat-label">Pace Required</div>
                 <div class="stat-value">{stats['recovery_pace_services']}</div>
                 <div class="stat-sub">Monthly Target: ₹90,000</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-label">Claimed Services</div>
+                <div class="stat-value">{stats['apk_claimed']}</div>
+                <div class="stat-sub" style="color: var(--accent-primary)">Total APK Hunter Claims</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Recommendation</div>
@@ -767,6 +795,7 @@ def update_html(header, days, stats, complexity_stats=None):
             
             // Sync all jump inputs
             $('dateJump').value = isoDate;
+            if ($('dateJumpTop')) $('dateJumpTop').value = isoDate;
             $('logDateJump').value = isoDate;
             $('pieDateJump').value = isoDate;
             
@@ -902,11 +931,13 @@ def update_html(header, days, stats, complexity_stats=None):
         window.addEventListener('DOMContentLoaded', () => {{
             const today = window.dashboardData.today;
             $('dateJump').value = today;
+            if ($('dateJumpTop')) $('dateJumpTop').value = today;
             $('logDateJump').value = today;
             $('pieDateJump').value = today;
             
             // Bind input changes
             $('dateJump').onchange = (e) => window.jumpToDate(e.target.value);
+            if ($('dateJumpTop')) $('dateJumpTop').onchange = (e) => window.jumpToDate(e.target.value);
             $('logDateJump').onchange = (e) => window.jumpToDate(e.target.value);
             $('pieDateJump').onchange = (e) => window.jumpToDate(e.target.value);
 
