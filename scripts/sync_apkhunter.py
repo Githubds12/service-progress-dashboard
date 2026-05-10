@@ -193,7 +193,7 @@ def sync():
                 "claimed": claimed,
                 "root_detected": root_dict.get(tid, False),
                 "not_found": is_nf,
-                "notes": note,
+                "note": note,
                 "difficulty": diff,
                 "category": cat,
                 "tier": tier,
