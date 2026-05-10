@@ -179,7 +179,8 @@ Daily Summary: 0 services, 0 rs
 ----------
 10th May, Sunday
 1. [22:00] AstroGlobal - com.astroglobal.app - 400rs
-Daily Summary: 1 service, 400 rs
+2. [22:45] Naver - com.nhn.android.search - 400rs
+Daily Summary: 2 services, 800 rs
 ----------
 
 Dashboard Stats:
