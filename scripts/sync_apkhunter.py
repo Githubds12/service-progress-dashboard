@@ -94,7 +94,7 @@ def sync():
             
             name = row.get("Name", tid)
             tier = row.get("Category", row.get("Tier", "Tier 2 (Moderate/Private)"))
-            base_score = 65
+            base_score = 50
             
             p_issues = []
             note = notes_dict.get(tid, "")
@@ -177,9 +177,9 @@ def sync():
             else:
                 reason = TIER_MAP.get(tier, f"Base score {base_score}: {cat}.")
                 # Assign scores
-                if "Tier 1" in tier: diff = 35
-                elif "Tier 2" in tier: diff = 65
-                else: diff = 85
+                if "Tier 1" in tier: diff = 50
+                elif "Tier 2" in tier: diff = 50
+                else: diff = 50
             
             triggers = []
             is_nf = nf_dict.get(tid, False) or "not found" in row.get("Description", "").lower()
