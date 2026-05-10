@@ -37,6 +37,16 @@ User-Agent: PullAndBear_eCom/2604.1.0 (Pixel 7; Android; 15; en-IN; ITXCORE 1)
 }
 ```
 
+**Response**:
+```json
+{
+  "email": "***********************roes@gmail.com",
+  "rueiData": {
+    "StoreLangRUEI": "<!--itxStoreLang='en'-->"
+  }
+}
+```
+
 ### 3.2 OTP Submission (Login)
 The final authentication step combines the phone details, the received 6-digit code, and the account password.
 
@@ -53,6 +63,27 @@ Cookie: ak_bmsc=...; ITXSESSIONID=...; ITXDEVICEID=...
   },
   "code": "252525",
   "password": "REDACTED"
+}
+```
+
+**Response (Invalid OTP/Password)**:
+```json
+{
+  "description": "_ERR_VALIDATION",
+  "action": null,
+  "key": "_ERR_VALIDATION",
+  "commitMark": true,
+  "url": null,
+  "causes": [
+    {
+      "description": "The password or verification code you entered is incorrect. Please try again.",
+      "action": null,
+      "key": "_ERR_VALIDATION_AUTHENTICATION",
+      "commitMark": false,
+      "url": null,
+      "parameters": []
+    }
+  ]
 }
 ```
 
