@@ -490,6 +490,8 @@
 
             // Merge local claims to prevent refresh reverts
             const data = window.apkhunterData || (typeof apkhunterData !== 'undefined' ? apkhunterData : []);
+            window.apkhunterData = data; // Ensure it's defined globally
+            
             data.forEach(item => {
                 if (state.localClaims[item.id] !== undefined) {
                     item.claimed = state.localClaims[item.id];
@@ -547,7 +549,7 @@
         }
 
         function applyFilters() {
-            state.filteredData = window.apkhunterData.filter(item => {
+            state.filteredData = (window.apkhunterData || []).filter(item => {
                 const matchesSearch = item.name.toLowerCase().includes(state.search) || 
                                      item.id.toLowerCase().includes(state.search) || 
                                      item.sms.toLowerCase().includes(state.search);
@@ -575,7 +577,7 @@
 
         async function syncUpdate(id, field, value, btnEl) {
             // Optimistic UI
-            const target = window.apkhunterData.find(i => i.id === id);
+            const target = (window.apkhunterData || []).find(i => i.id === id);
             if (target) {
                 target[field] = value;
                 target.last_updated = "SAVING...";
@@ -653,7 +655,7 @@
         }
 
         function copyRecon(id, btn) {
-            const i = window.apkhunterData.find(x => x.id === id);
+            const i = (window.apkhunterData || []).find(x => x.id === id);
             if (!i) return;
 
             const text = `--- APK RESEARCH RECON ---
@@ -707,7 +709,7 @@ URL: ${i.urls.play}
             if ($('nextBtnTop')) $('nextBtnTop').disabled = state.page === totalPages;
 
             // Update Total Claimed Count
-            const totalClaimed = window.apkhunterData.filter(i => i.claimed).length;
+            const totalClaimed = (window.apkhunterData || []).filter(i => i.claimed).length;
             if ($('totalClaimedCount')) $('totalClaimedCount').innerText = totalClaimed;
 
             let html = '';
