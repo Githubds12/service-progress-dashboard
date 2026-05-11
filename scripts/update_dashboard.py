@@ -638,7 +638,12 @@ def update_html(header, days, stats, complexity_stats=None):
         .sidebar-item:hover, .sidebar-item.active {{ color: var(--accent-primary); background: rgba(0, 242, 255, 0.08); }}
         .sidebar-item.active::after {{ content: ''; position: absolute; left: 0; width: 4px; height: 60%; top: 20%; background: var(--accent-primary); border-radius: 0 4px 4px 0; box-shadow: 0 0 15px var(--accent-primary); }}
 
-        .main-content-wrapper {{ margin-left: 80px; transition: margin-left 0.4s; }}
+        .main-content-wrapper {{ 
+            margin-left: 80px; 
+            width: calc(100% - 80px);
+            transition: margin-left 0.4s; 
+            overflow-x: hidden;
+        }}
         
         #syncStatus {{ font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }}
         .status-ready {{ background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid #3fb950; }}
