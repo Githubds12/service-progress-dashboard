@@ -876,6 +876,10 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="chart-card">
                     <div class="card-header">
                         <div class="card-title">EFFORT ALLOCATION <span id="localEffortDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: #f0f; margin-left: 10px; font-weight: 800; opacity: 0.8;"></span></div>
+                        <div class="controls">
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                        </div>
                     </div>
                     <div style="height: 300px; position: relative;">
                         <canvas id="effortPieChart"></canvas>
