@@ -30,26 +30,28 @@ class TourGuide {
         if (!this.tooltip) {
             this.tooltip = document.createElement('div');
             this.tooltip.className = 'tour-tooltip';
-            Object.assign(this.tooltip.style, {
-                position: 'fixed', zIndex: 9999, display: 'none',
-                background: '#0c0c0c', border: '1px solid #00e5ff',
-                borderRadius: '12px', padding: '20px', width: '300px',
-                boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)',
-                color: '#fff', fontFamily: 'Outfit, sans-serif'
-            });
-            this.tooltip.innerHTML = `
-                <h4 id="tour-title" style="margin:0 0 10px 0; color:#00e5ff; font-size:14px; text-transform:uppercase; letter-spacing:1px;"></h4>
-                <p id="tour-content" style="font-size:13px; color:#aaa; line-height:1.5; margin-bottom:20px;"></p>
-                <div style="display:flex; justify-content:space-between; align-items:center;">
-                    <span id="tour-progress" style="font-size:11px; color:#555;"></span>
-                    <div>
-                        <button id="tour-prev" style="background:none; border:none; color:#555; cursor:pointer; font-size:11px; margin-right:10px;">BACK</button>
-                        <button id="tour-next" style="background:#00e5ff; border:none; color:#000; padding:6px 15px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">NEXT</button>
-                    </div>
-                </div>
-            `;
             document.body.appendChild(this.tooltip);
         }
+
+        Object.assign(this.tooltip.style, {
+            position: 'fixed', zIndex: 9999, display: 'none',
+            background: '#0c0c0c', border: '1px solid #00e5ff',
+            borderRadius: '12px', padding: '20px', width: '300px',
+            boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)',
+            color: '#fff', fontFamily: 'Outfit, sans-serif'
+        });
+
+        this.tooltip.innerHTML = `
+            <h4 id="tour-title" style="margin:0 0 10px 0; color:#00e5ff; font-size:14px; text-transform:uppercase; letter-spacing:1px;"></h4>
+            <p id="tour-content" style="font-size:13px; color:#aaa; line-height:1.5; margin-bottom:20px;"></p>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span id="tour-progress" style="font-size:11px; color:#555;"></span>
+                <div>
+                    <button id="tour-prev" style="background:none; border:none; color:#555; cursor:pointer; font-size:11px; margin-right:10px;">BACK</button>
+                    <button id="tour-next" style="background:#00e5ff; border:none; color:#000; padding:6px 15px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">NEXT</button>
+                </div>
+            </div>
+        `;
 
         // Re-bind buttons to current instance
         this.tooltip.querySelector('#tour-next').onclick = () => this.next();
@@ -75,23 +77,30 @@ class TourGuide {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             const rect = el.getBoundingClientRect();
             
-            // Position tooltip
+            // Position tooltip relative to element
+            this.tooltip.style.transform = 'none';
             this.tooltip.style.top = `${rect.bottom + 15}px`;
             this.tooltip.style.left = `${Math.max(20, rect.left)}px`;
             
-            // Highlight element (simple implementation)
+            // Highlight element
             document.querySelectorAll('.tour-highlight').forEach(e => e.classList.remove('tour-highlight'));
             el.classList.add('tour-highlight');
-            
-            // Add pulse effect if not present
-            if (!document.getElementById('tour-styles')) {
-                const style = document.createElement('style');
-                style.id = 'tour-styles';
-                style.innerHTML = `
-                    .tour-highlight { position: relative; z-index: 9999 !important; box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.2) !important; transition: all 0.3s; pointer-events: none; }
-                `;
-                document.head.appendChild(style);
-            }
+        } else {
+            console.warn(`TourGuide: Element "${step.element}" not found.`);
+            // Fallback: center the tooltip
+            this.tooltip.style.top = '50%';
+            this.tooltip.style.left = '50%';
+            this.tooltip.style.transform = 'translate(-50%, -50%)';
+        }
+
+        // Add pulse effect if not present
+        if (!document.getElementById('tour-styles')) {
+            const style = document.createElement('style');
+            style.id = 'tour-styles';
+            style.innerHTML = `
+                .tour-highlight { position: relative; z-index: 9999 !important; box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.2) !important; transition: all 0.3s; pointer-events: none; }
+            `;
+            document.head.appendChild(style);
         }
         
         document.getElementById('tour-next').innerText = this.currentStep === this.steps.length - 1 ? 'FINISH' : 'NEXT';
