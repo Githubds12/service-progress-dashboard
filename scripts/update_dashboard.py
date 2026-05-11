@@ -585,11 +585,18 @@ def update_html(header, days, stats, complexity_stats=None):
             flex-direction: column;
             gap: 15px;
             margin-top: 10px;
+            overflow-x: auto;
+            padding-bottom: 10px;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-color) transparent;
         }}
+        .heatmap-container::-webkit-scrollbar {{ height: 6px; }}
+        .heatmap-container::-webkit-scrollbar-thumb {{ background: var(--border-color); border-radius: 10px; }}
         .heatmap-grid {{
             display: grid;
             grid-template-columns: repeat(53, 1fr);
             gap: 4px;
+            min-width: 950px;
         }}
         .heat-cell {{
             width: 14px;
@@ -652,8 +659,14 @@ def update_html(header, days, stats, complexity_stats=None):
 
         @media (max-width: 1100px) {{
             .main-layout {{ grid-template-columns: 1fr; }}
+        }}
+
+        @media (max-width: 768px) {{
             .sidebar {{ display: none; }}
-            .main-content-wrapper {{ margin-left: 0; }}
+            .main-content-wrapper {{ 
+                margin-left: 0; 
+                width: 100%;
+            }}
         }}
     </style>
     <script src="tour_guide.js"></script>
