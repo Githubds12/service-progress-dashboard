@@ -527,6 +527,10 @@
             state.filteredData = data;
             applyFilters();
             render();
+
+            if (window.location.hash === '#diagnostics') {
+                switchView('diagnostics', document.querySelector('[onclick*="diagnostics"]'));
+            }
         }
 
         window.onpopstate = () => {
