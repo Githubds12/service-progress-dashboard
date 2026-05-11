@@ -1055,42 +1055,42 @@ def update_html(header, days, stats, complexity_stats=None):
                 {{ 
                     element: '.logo', 
                     title: '🚀 APK HUNTER INTEL', 
-                    content: 'Welcome to your Command Center. This portal centralizes real-time intelligence from our APK research operations, tracking every bounty, technical win, and system pulse.' 
+                    content: 'Your primary command interface for APK research intelligence and operational tracking.' 
                 }},
                 {{ 
                     element: '.dashboard-grid', 
                     title: '📊 CORE METRICS', 
-                    content: 'Your high-level KPIs. REVENUE tracks total payouts, PACE monitors targets processed per day, and RESEARCH VOLUME shows the density of our current mission pipeline.' 
-                }},
-                {{ 
-                    element: '.main-layout > .chart-card:first-child', 
-                    title: '📈 REVENUE TRAJECTORY', 
-                    content: 'A visual history of our financial momentum. Use this to identify peak research periods and project future growth based on historical trends.' 
+                    content: 'Real-time KPIs tracking total earnings vs. monthly goals, current research pace, and active APK claims.' 
                 }},
                 {{ 
                     element: '.heatmap-container', 
                     title: '🔥 MASTERY HEATMAP', 
-                    content: 'This 53-week grid tracks our daily research consistency. Darker cells indicate high-intensity days where multiple technical wins were recorded.' 
+                    content: 'Visualizes your technical breakthroughs over 53 weeks. Select any node to view specific technical wins and RE milestones.' 
                 }},
                 {{ 
-                    element: '.main-layout > .chart-card:last-child', 
-                    title: '📝 ACTIVITY & LOGS', 
-                    content: 'The pulse of the system. This feed captures live research milestones, system syncs, and manual technical wins as they happen.' 
+                    element: '#revenueChart', 
+                    title: '📈 REVENUE TRAJECTORY', 
+                    content: 'An interactive trend analysis of your financial growth. Tracks your progress against the 90K mastery milestone.' 
+                }},
+                {{ 
+                    element: '#serviceLogContainer', 
+                    title: '📝 OPERATIONAL LOG', 
+                    content: 'A detailed activity specification feed. Each entry includes a unique ID and timestamped activity record (e.g., [12:05] inTaxi - 400rs).' 
+                }},
+                {{ 
+                    element: '#effortPieChart', 
+                    title: '🥧 EFFORT ALLOCATION', 
+                    content: 'Visualizes where your research energy is spent. If no activity is logged for the selected period, it will show "NO TELEMETRY DATA".' 
+                }},
+                {{ 
+                    element: '.ref-input-group', 
+                    title: '🧠 STRATEGIC REFLECTIONS', 
+                    content: 'Record critical technical observations here. Use the input to "RECORD OBSERVATION..." and hit SAVE to sync it to the secure technical ledger.' 
                 }},
                 {{ 
                     element: '.sidebar', 
-                    title: '🧭 NAVIGATION HUB', 
-                    content: 'Access all sectors here: 📊 OVERVIEW for this dashboard, 🎯 APK HUNTER for deep-dive intelligence, and 🛡️ SYSTEM HEALTH for diagnostic monitoring.' 
-                }},
-                {{ 
-                    element: '.sidebar-item:nth-child(2)', 
-                    title: '🎯 TARGET RESEARCH', 
-                    content: 'Clicking here takes you to the APK Hunter deep-dive page where you can manage individual service claims and technical documentation.' 
-                }},
-                {{ 
-                    element: '.sidebar-item:nth-child(3)', 
-                    title: '🛡️ SYSTEM DIAGNOSTICS', 
-                    content: 'Monitors the health of our background sync engines, API connectivity, and data integrity. Essential for ensuring the dashboard stays live.' 
+                    title: '🧭 NAVIGATION SECTORS', 
+                    content: 'Switch between the high-level OVERVIEW, target-rich APK HUNTER research view, and SYSTEM HEALTH diagnostics.' 
                 }}
             ];
             new TourGuide(steps).start();
