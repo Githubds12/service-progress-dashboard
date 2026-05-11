@@ -1009,23 +1009,25 @@ def update_html(header, days, stats, complexity_stats=None):
             const pieCtx = $('effortPieChart').getContext('2d');
             if (window.pieChartInst) window.pieChartInst.destroy();
             const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
-            if (!logEntry || !logEntry.logs.length) {{
-                $('effortPieChart').style.display = 'none';
-                $('noDataMessage').style.display = 'block';
-            }} else {{
-                $('effortPieChart').style.display = 'block';
-                $('noDataMessage').style.display = 'none';
-                window.pieChartInst = new Chart(pieCtx, {{
-                    type: 'doughnut',
-                    data: {{
-                        labels: logEntry.logs.map(l => l.activity),
-                        datasets: [{{
-                            data: logEntry.logs.map(l => l.hours),
-                            backgroundColor: ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'],
-                            borderWidth: 0,
-                            hoverOffset: 20
-                        }}]
-                    }},
+            
+            const finalLabels = (logEntry && logEntry.logs.length) ? logEntry.logs.map(l => l.activity) : ['DORMANT'];
+            const finalData = (logEntry && logEntry.logs.length) ? logEntry.logs.map(l => l.hours) : [1];
+            const finalColors = (logEntry && logEntry.logs.length) ? ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'] : ['rgba(255, 255, 255, 0.05)'];
+
+            $('effortPieChart').style.display = 'block';
+            $('noDataMessage').style.display = 'none';
+
+            window.pieChartInst = new Chart(pieCtx, {{
+                type: 'doughnut',
+                data: {{
+                    labels: finalLabels,
+                    datasets: [{{
+                        data: finalData,
+                        backgroundColor: finalColors,
+                        borderWidth: 0,
+                        hoverOffset: (logEntry && logEntry.logs.length) ? 20 : 0
+                    }}]
+                }},
                     options: {{
                         responsive: true,
                         maintainAspectRatio: false,
