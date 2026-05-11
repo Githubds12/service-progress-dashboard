@@ -1,0 +1,17 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-11
+it.ud.microtek.InTaxi 4.0.16
+Service: inTaxi
+Service ID: d6e81057-01ef-4171-873b-5517e06f97d5
+Service SMS: SMS: +393720518803 code 25888
+Official Website: intaxi.it
+Google Play Store: inTaxi: prenotazione taxi
+Package Name: it.ud.microtek.InTaxi
+APKPure: it.ud.microtek.InTaxi
+One-liner Flow: Init -> getSubscriptionConfiguration (Captcha/Magic) -> generaCodice (SMS) -> completaRegistrazione (Verify)
+Captcha: Text CAPTCHA (Distorted Characters)
+Rate Limits: Unknown
+Encryption: Zlib compressed and Base64 encoded
+Vulnerability: Low
+Feasibility: High > 70%
+Description: Italian taxi booking service providing professional taxi hailing and scheduling across major Italian cities.
