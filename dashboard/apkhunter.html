@@ -821,6 +821,7 @@ URL: ${i.urls.play}
                         </td>
                         <td>
                             <div class="action-btns">
+                                ${i.urls.portal ? `<a href="${i.urls.portal}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900;">INTEL PORTAL</a>` : ''}
                                 <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
                                 <button class="btn btn-recon" onclick="copyRecon(\`${i.id}\`, this)">COPY RECON</button>
                                 <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">

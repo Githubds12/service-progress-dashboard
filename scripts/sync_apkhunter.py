@@ -67,8 +67,8 @@ def sync():
         print(f"Error: {CSV_PATH} not found")
         return
 
-    # Load API Claims
-    api_claims = fetch_api_claimed_ids()
+    # Load API Claims Mapping
+    api_claims_map = fetch_api_claimed_mapping()
 
     # Load Local Claims/Notes/Root/NF/History
     claims_dict = {}
@@ -111,9 +111,9 @@ def sync():
             # Lookup by UUID first, fall back to short name
             note = notes_dict.get(tid, notes_dict.get(name_key, ""))
             
-            # Merged Claimed Logic: Local DB (by UUID or name) OR External API
             local_claimed = claims_dict.get(tid, claims_dict.get(name_key, False))
-            is_api_claimed = tid in api_claims
+            portal_id = api_claims_map.get(tid)
+            is_api_claimed = portal_id is not None
             claimed = local_claimed or is_api_claimed
             
             if is_api_claimed and not local_claimed:
@@ -215,6 +215,7 @@ def sync():
                 "history": history_dict.get(tid, []),
                 "last_updated": row.get("Last_Updated", "2024-05-09"),
                 "urls": {
+                    "portal": f"http://51.195.24.179:3000/services/{portal_id}" if portal_id else None,
                     "play": f"https://play.google.com/store/apps/details?id={tid}",
                     "pure": f"https://apkpure.com/search?q={tid}",
                     "mirror": f"https://www.apkmirror.com/?post_type=app_release&searchtype=apk&s={tid}",
