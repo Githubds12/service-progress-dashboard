@@ -617,6 +617,56 @@ def update_html(header, days, stats, complexity_stats=None):
         .heat-level-3 {{ background: #26a641; }}
         .heat-level-4 {{ background: #39d353; box-shadow: 0 0 10px #39d353; }}
         
+        /* Settings Modal */
+        .modal-overlay {{
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(15px);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }}
+        .modal-content {{
+            background: #0d1117;
+            border: 1px solid var(--accent-primary);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 35px;
+            box-shadow: 0 0 50px rgba(0, 242, 255, 0.15);
+            position: relative;
+        }}
+        .modal-header {{
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }}
+        .modal-title {{ font-family: 'Orbitron'; font-size: 1.2rem; color: var(--accent-primary); letter-spacing: 2px; }}
+        .close-modal {{ color: var(--text-dim); cursor: pointer; font-size: 1.5rem; transition: 0.3s; }}
+        .close-modal:hover {{ color: var(--danger); }}
+        .setting-row {{ margin-bottom: 20px; }}
+        .setting-label {{ display: block; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }}
+        .setting-input {{
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border-color);
+            color: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Outfit';
+            outline: none;
+            transition: 0.3s;
+        }}
+        .setting-input:focus {{ border-color: var(--accent-primary); box-shadow: 0 0 15px rgba(0, 242, 255, 0.2); }}
+
         /* Tip Banner */
         .tip-banner {{
             background: linear-gradient(135deg, rgba(13, 17, 23, 0.9), rgba(22, 27, 34, 0.9));
@@ -773,15 +823,21 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="chart-card">
                     <div class="card-header">
                         <div class="card-title">RE MASTERY HEATMAP (BHM)</div>
-                        <div class="heat-legend">
-                            LESS <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> MORE
-                        </div>
+                    </div>
+                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(0, 242, 255, 0.03); border-radius: 10px; border: 1px solid rgba(0, 242, 255, 0.1);">
+                        <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.6;">
+                            <strong style="color: var(--accent-primary);">CORE INTELLIGENCE:</strong> This heatmap tracks your deep research activity across 53 weeks. Each cell represents a day of technical analysis.
+                            <br>
+                            <span id="heatmapStatusMsg" style="color: var(--danger); font-weight: 700;"></span>
+                        </p>
                     </div>
                     <div class="heatmap-container">
-                        <div id="masteryHeatmap" class="heatmap-grid"></div>
-                        <div id="masteryEvents" class="mastery-event-list">
-                            <div style="color: var(--text-dim); text-align: center; padding: 20px;">SELECT A DATA NODE TO VIEW TECHNICAL WINS</div>
+                        <div id="masteryHeatmap" class="heatmap-grid">
+                            <!-- Cells generated via JS -->
                         </div>
+                    </div>
+                    <div id="masteryEvents" style="margin-top: 20px; max-height: 200px; overflow-y: auto;">
+                        <div style="color: var(--text-dim); text-align: center; padding: 20px; font-size: 0.8rem;">SELECT A DATA NODE TO VIEW ACTIVITY SPECIFICATIONS</div>
                     </div>
                 </div>
 
@@ -857,6 +913,13 @@ def update_html(header, days, stats, complexity_stats=None):
             if (!grid) return;
             grid.innerHTML = '';
             const events = window.dashboardData.mastery || [];
+            const msgEl = $('heatmapStatusMsg');
+            if (events.length === 0) {{
+                msgEl.innerText = "⚠ NO RESEARCH LOG DETECTED: research_heat.json is missing or empty. Nodes will remain inactive.";
+            }} else {{
+                msgEl.innerText = "✅ SYSTEM ONLINE: Deep research data synced.";
+            }}
+            
             const heatMap = {{}};
             events.forEach(e => {{ heatMap[e.date] = (heatMap[e.date] || 0) + e.points; }});
 
