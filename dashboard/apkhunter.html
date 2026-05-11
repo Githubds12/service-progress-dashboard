@@ -184,11 +184,31 @@
         .status-error { color: var(--red) !important; cursor: pointer; text-decoration: underline; }
         @keyframes blink { 50% { opacity: 0.5; } }
 
-        @media (max-width: 1000px) {
-            th:nth-child(3), td:nth-child(3) { display: none; }
-            .mirror-grid { grid-template-columns: 1fr; }
-            .open-all { grid-column: span 1; }
+        /* Heatmap Styles */
+        .heatmap-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 12px;
+            padding: 20px; margin-bottom: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
+        .heatmap-grid {
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            gap: 3px;
+        }
+        .heat-cell {
+            width: 12px;
+            height: 12px;
+            background: #111;
+            border-radius: 2px;
+            cursor: pointer;
+        }
+        .heat-cell:hover { border: 1px solid var(--accent); }
+        .heat-level-1 { background: #0e4429; }
+        .heat-level-2 { background: #006d32; }
+        .heat-level-3 { background: #26a641; }
+        .heat-level-4 { background: #39d353; }
+        .heat-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        .heat-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .heat-legend { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-dim); }
     </style>
 </head>
 <body>
@@ -211,7 +231,16 @@
             </div>
         </header>
 
-        <div class="controls">
+        <div class="heatmap-card">
+            <div class="heat-title">Technical Mastery Focus (BHM)</div>
+            <div id="masteryHeatmap" class="heatmap-grid"></div>
+            <div class="heat-meta">
+                <div id="selectedDateEvents" style="font-size: 12px; color: var(--text-dim);">Click a cell to see RE wins</div>
+                <div class="heat-legend">
+                    Less <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> More
+                </div>
+            </div>
+        </div>
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="SEARCH PACKAGE NAME, ID OR SMS CONTENT..." oninput="handleSearch()">
             </div>
@@ -275,6 +304,7 @@
         </div>
     </div>
 
+    <script src="mastery_data.js"></script>
     <script src="apkhunter_data.js?v=1.0.1"></script>
     <script>
         const $ = id => document.getElementById(id);
@@ -587,7 +617,48 @@ URL: ${i.urls.play}
             }, 1000);
         }
 
+        function renderMasteryHeatmap() {
+            const grid = $('masteryHeatmap');
+            if (!grid) return;
+            grid.innerHTML = '';
+            const events = window.masteryData || [];
+            
+            const heatMap = {};
+            events.forEach(e => {
+                heatMap[e.date] = (heatMap[e.date] || 0) + e.points;
+            });
+
+            const today = new Date();
+            for (let i = 370; i >= 0; i--) {
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const iso = d.toISOString().split('T')[0];
+                const points = heatMap[iso] || 0;
+                
+                const cell = document.createElement('div');
+                cell.className = 'heat-cell';
+                if (points > 0) {
+                    const level = points >= 50 ? 4 : points >= 30 ? 3 : points >= 15 ? 2 : 1;
+                    cell.classList.add(`heat-level-${level}`);
+                }
+                cell.title = `${iso}: ${points} Mastery Points`;
+                cell.onclick = () => showMasteryEvents(iso);
+                grid.appendChild(cell);
+            }
+        }
+
+        function showMasteryEvents(date) {
+            const el = $('selectedDateEvents');
+            const events = (window.masteryData || []).filter(e => e.date === date);
+            if (events.length === 0) {
+                el.innerHTML = `No technical wins for ${date}`;
+                return;
+            }
+            el.innerHTML = `<b>${date}:</b> ` + events.map(e => `[${e.event_type}] ${e.details}`).join(' | ');
+        }
+
         init();
+        renderMasteryHeatmap();
     </script>
 </body>
 </html>

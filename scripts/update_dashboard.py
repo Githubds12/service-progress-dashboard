@@ -9,6 +9,9 @@ import requests
 from google import genai
 from dotenv import load_dotenv
 
+MASTERY_LOG_PATH = r"c:\Users\Gorri\Documents\Reports\data\research_heat.json"
+MASTERY_JS_PATH = r"c:\Users\Gorri\Documents\Reports\dashboard\mastery_data.js"
+
 load_dotenv()
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
@@ -346,12 +349,25 @@ def update_html(header, days, stats, complexity_stats=None):
     trend_earnings = [d['earnings'] for d in chart_days]
     trend_counts = [d['count'] for d in chart_days]
     
+    # Load Mastery Heat Data
+    mastery_data = []
+    if os.path.exists(MASTERY_LOG_PATH):
+        try:
+            with open(MASTERY_LOG_PATH, 'r', encoding='utf-8') as f:
+                mastery_data = json.load(f)
+        except: pass
+
+    # Export Mastery JS for APK Hunter
+    with open(MASTERY_JS_PATH, 'w', encoding='utf-8') as f:
+        f.write(f"window.masteryData = {json.dumps(mastery_data)};")
+
     data_dict = {
         'services': days,
         'logs': time_logs,
         'today': stats['today_date_raw'],
         'stats': stats,
-        'complexity': complexity_stats
+        'complexity': complexity_stats,
+        'mastery': mastery_data
     }
 
     html_content = f"""<!DOCTYPE html>
@@ -498,6 +514,58 @@ def update_html(header, days, stats, complexity_stats=None):
         .ref-item {{
             background: #161b22;
             padding: 12px;
+            border-radius: 8px;
+            border-left: 3px solid var(--accent-secondary);
+            margin-bottom: 10px;
+            font-size: 0.9rem;
+            position: relative;
+        }}
+
+        /* Heatmap Styles */
+        .heatmap-container {{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+        }}
+        .heatmap-grid {{
+            display: grid;
+            grid-template-columns: repeat(53, 1fr);
+            gap: 3px;
+        }}
+        .heat-cell {{
+            width: 12px;
+            height: 12px;
+            background: #161b22;
+            border-radius: 2px;
+            cursor: pointer;
+        }}
+        .heat-cell:hover {{ border: 1px solid var(--accent-primary); }}
+        .heat-level-1 {{ background: #0e4429; }}
+        .heat-level-2 {{ background: #006d32; }}
+        .heat-level-3 {{ background: #26a641; }}
+        .heat-level-4 {{ background: #39d353; }}
+        .heat-legend {{
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            justify-content: flex-end;
+        }}
+        .mastery-event-list {{
+            margin-top: 15px;
+            font-size: 0.85rem;
+            max-height: 200px;
+            overflow-y: auto;
+        }}
+        .event-item {{
+            padding: 5px 0;
+            border-bottom: 1px solid #21262d;
+            display: flex;
+            justify-content: space-between;
+        }}
+        .event-type {{ color: var(--accent-primary); font-weight: 600; font-size: 0.75rem; }}
             border-radius: 6px;
             margin-bottom: 10px;
             display: flex;
@@ -598,6 +666,21 @@ def update_html(header, days, stats, complexity_stats=None):
             <div class="content-left">
                 <div class="chart-card">
                     <div class="card-header">
+                        <div class="card-title">RE MASTERY HEATMAP (BHM)</div>
+                        <div class="heat-legend">
+                            Less <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> More
+                        </div>
+                    </div>
+                    <div class="heatmap-container">
+                        <div id="masteryHeatmap" class="heatmap-grid"></div>
+                        <div id="masteryEvents" class="mastery-event-list">
+                            <div style="color: var(--text-dim); text-align: center;">Click a cell to see technical wins</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
                         <div class="card-title">REVENUE TRAJECTORY</div>
                         <div class="controls">
                             <input type="date" id="dateJump" class="date-picker">
@@ -672,6 +755,58 @@ def update_html(header, days, stats, complexity_stats=None):
         const formatLongDate = iso => {{
             const d = new Date(iso);
             return d.toLocaleDateString('en-GB', {{ day:'numeric', month:'long', year:'numeric', weekday:'long' }});
+        }};
+
+        // --- MASTER HEATMAP RENDERER ---
+        window.renderMasteryHeatmap = () => {{
+            const grid = $('masteryHeatmap');
+            if (!grid) return;
+            grid.innerHTML = '';
+            const events = window.dashboardData.mastery || [];
+            
+            // Aggregate points by date
+            const heatMap = {{}};
+            events.forEach(e => {{
+                heatMap[e.date] = (heatMap[e.date] || 0) + e.points;
+            }});
+
+            // Generate last 371 days (53 weeks)
+            const today = new Date();
+            for (let i = 370; i >= 0; i--) {{
+                const d = new Date();
+                d.setDate(today.getDate() - i);
+                const iso = d.toISOString().split('T')[0];
+                const points = heatMap[iso] || 0;
+                
+                const cell = document.createElement('div');
+                cell.className = 'heat-cell';
+                if (points > 0) {{
+                    const level = points >= 50 ? 4 : points >= 30 ? 3 : points >= 15 ? 2 : 1;
+                    cell.classList.add(`heat-level-${{level}}`);
+                }}
+                cell.title = `${{iso}}: ${{points}} Mastery Points`;
+                cell.onclick = () => window.showMasteryEvents(iso);
+                grid.appendChild(cell);
+            }}
+        }};
+
+        window.showMasteryEvents = (date) => {{
+            const list = $('masteryEvents');
+            const events = (window.dashboardData.mastery || []).filter(e => e.date === date);
+            if (events.length === 0) {{
+                list.innerHTML = `<div style="color: var(--text-dim); text-align: center; padding: 10px;">No technical wins recorded for ${{date}}</div>`;
+                return;
+            }}
+            
+            list.innerHTML = events.map(e => `
+                <div class="event-item">
+                    <div>
+                        <span class="event-type">[${{e.event_type}}]</span>
+                        <span>${{e.details}}</span>
+                    </div>
+                    <div style="color: var(--accent-primary)">+${{e.points}}</div>
+                </div>
+            `).join('');
         }};
 
         // --- UI RENDERERS ---
@@ -941,6 +1076,7 @@ def update_html(header, days, stats, complexity_stats=None):
             $('logDateJump').onchange = (e) => window.jumpToDate(e.target.value);
             $('pieDateJump').onchange = (e) => window.jumpToDate(e.target.value);
 
+            window.renderMasteryHeatmap();
             window.jumpToDate(today);
         }});
     </script>
