@@ -697,6 +697,16 @@ URL: ${i.urls.play}
             Object.values(urls).forEach(url => window.open(url, '_blank'));
         }
 
+        function checkSkillFocus(item) {
+            const el = $('skillReminder');
+            if (!el) return;
+            if (item.root_detected || (item.reason && item.reason.toLowerCase().includes('ssl'))) {
+                el.style.display = 'flex';
+            } else {
+                el.style.display = 'none';
+            }
+        }
+
         function render() {
             const start = (state.page - 1) * state.pageSize;
             const end = start + state.pageSize;
