@@ -185,7 +185,8 @@ Daily Summary: 0 services, 0 rs
 Daily Summary: 4 services, 1600 rs
 ----------
 11th May, Monday
-Daily Summary: 0 services, 0 rs
+1. [12:05] inTaxi - it.ud.microtek.InTaxi - 400rs
+Daily Summary: 1 service, 400 rs
 ----------
 
 Dashboard Stats:
