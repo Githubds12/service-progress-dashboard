@@ -1054,7 +1054,9 @@ def update_html(header, days, stats, complexity_stats=None):
     # Save root index file with adjusted path
     index_path = os.path.join(REPORT_DIR, "index.html")
     with open(index_path, 'w', encoding='utf-8') as f:
-        f.write(html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"'))
+        content = html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"')
+        content = content.replace('href="apkhunter.html#diagnostics"', 'href="dashboard/apkhunter.html#diagnostics"')
+        f.write(content)
     
     data_js = f"window.GH_TOKEN_INJECTED = '';\nwindow.dashboardData = {json.dumps(data_dict)};"
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
