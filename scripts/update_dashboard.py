@@ -916,7 +916,7 @@ def update_html(header, days, stats, complexity_stats=None):
             
             if (serviceDay && serviceDay.services.length) {{
                 serviceDay.services.forEach(line => {{
-                    const match = line.match(/^(\d+)\.(.*)/);
+                    const match = line.match(/^(\\d+)\\.(.*)/);
                     if (match) {{
                         logBody.insertAdjacentHTML('beforeend', `<tr><td style="font-family: 'Orbitron'; color: var(--accent-primary); font-weight: 700;">${{match[1]}}</td><td>${{match[2].trim()}}</td></tr>`);
                     }}
