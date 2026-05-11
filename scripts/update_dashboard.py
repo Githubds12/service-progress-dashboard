@@ -1155,7 +1155,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 {{ 
                     element: '.nav-sidebar', 
                     title: '🛰️ NAVIGATION ARRAY', 
-                    content: 'This is your primary navigation hub. It contains specialized portals for different operational tasks. Let\'s explore them.' 
+                    content: 'This is your primary navigation hub. It contains specialized portals for different operational tasks. Let\\\'s explore them.' 
                 }},
                 {{ 
                     element: 'div[title="OVERVIEW"]', 

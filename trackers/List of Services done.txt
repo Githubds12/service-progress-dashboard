@@ -184,11 +184,14 @@ Daily Summary: 3 services, 1200 rs
 1. [12:05] inTaxi - it.ud.microtek.InTaxi - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
+12th May, Tuesday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 121
 - Total Earnings: 48200 rs
-- Average Daily Earning: 12050.0 rs/day
-- Average Daily Services: 30.25 services/day
-- Recovery Pace: 4.0 Services / day
-- Projected Monthly Total: ₹361500.0
+- Average Daily Earning: 9640.0 rs/day
+- Average Daily Services: 24.2 services/day
+- Recovery Pace: 4.2 Services / day
+- Projected Monthly Total: ₹289200.0
