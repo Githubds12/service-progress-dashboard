@@ -17,13 +17,14 @@ class TourGuide {
         if (!this.overlay) {
             this.overlay = document.createElement('div');
             this.overlay.className = 'tour-overlay';
-            Object.assign(this.overlay.style, {
-                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-                background: 'rgba(0,0,0,0.7)', zIndex: 9998, display: 'none',
-                transition: 'opacity 0.3s'
-            });
             document.body.appendChild(this.overlay);
         }
+
+        Object.assign(this.overlay.style, {
+            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+            background: 'rgba(0,0,0,0.8)', zIndex: 10000, display: 'none',
+            transition: 'opacity 0.3s', backdropFilter: 'blur(4px)'
+        });
 
         // Create or find tooltip
         this.tooltip = document.querySelector('.tour-tooltip');
@@ -34,11 +35,12 @@ class TourGuide {
         }
 
         Object.assign(this.tooltip.style, {
-            position: 'fixed', zIndex: 9999, display: 'none',
+            position: 'fixed', zIndex: 10001, display: 'none',
             background: '#0c0c0c', border: '1px solid #00e5ff',
             borderRadius: '12px', padding: '20px', width: '300px',
-            boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)',
-            color: '#fff', fontFamily: 'Outfit, sans-serif'
+            boxShadow: '0 0 30px rgba(0, 229, 255, 0.3)',
+            color: '#fff', fontFamily: 'Outfit, sans-serif',
+            boxSizing: 'border-box'
         });
 
         this.tooltip.innerHTML = `
@@ -66,30 +68,49 @@ class TourGuide {
     }
 
     showStep() {
-        if (!this.steps || this.steps.length === 0) {
-            console.error('TourGuide: No steps defined');
-            this.finish();
-            return;
-        }
+        if (!this.steps || this.steps.length === 0) return;
         const step = this.steps[this.currentStep];
         const el = document.querySelector(step.element);
         
-        document.getElementById('tour-title').innerText = step.title;
-        document.getElementById('tour-content').innerText = step.content;
-        document.getElementById('tour-progress').innerText = `${this.currentStep + 1} / ${this.steps.length}`;
+        const titleEl = this.tooltip.querySelector('#tour-title');
+        const contentEl = this.tooltip.querySelector('#tour-content');
+        const progressEl = this.tooltip.querySelector('#tour-progress');
+        const nextBtn = this.tooltip.querySelector('#tour-next');
+        const prevBtn = this.tooltip.querySelector('#tour-prev');
+
+        if (titleEl) titleEl.innerText = step.title;
+        if (contentEl) contentEl.innerText = step.content;
+        if (progressEl) progressEl.innerText = `${this.currentStep + 1} / ${this.steps.length}`;
         
         if (el) {
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            const rect = el.getBoundingClientRect();
             
-            // Position tooltip relative to element
-            this.tooltip.style.transform = 'none';
-            this.tooltip.style.top = `${rect.bottom + 15}px`;
-            this.tooltip.style.left = `${Math.max(20, rect.left)}px`;
-            
-            // Highlight element
-            document.querySelectorAll('.tour-highlight').forEach(e => e.classList.remove('tour-highlight'));
-            el.classList.add('tour-highlight');
+            // Positioning update (small delay to wait for scroll)
+            setTimeout(() => {
+                const rect = el.getBoundingClientRect();
+                this.tooltip.style.transform = 'none';
+                
+                let top = rect.bottom + 15;
+                if (top + 150 > window.innerHeight) { // Tooltip would go off-bottom
+                    top = rect.top - 180;
+                }
+                
+                this.tooltip.style.top = `${Math.max(20, top)}px`;
+                this.tooltip.style.left = `${Math.max(20, Math.min(window.innerWidth - 320, rect.left))}px`;
+                
+                document.querySelectorAll('.tour-highlight').forEach(e => e.classList.remove('tour-highlight'));
+                el.classList.add('tour-highlight');
+                
+                // Ensure highlight style exists
+                if (!document.getElementById('tour-styles')) {
+                    const style = document.createElement('style');
+                    style.id = 'tour-styles';
+                    style.innerHTML = `
+                        .tour-highlight { position: relative; z-index: 10001 !important; box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.2) !important; transition: all 0.3s; pointer-events: none; }
+                    `;
+                    document.head.appendChild(style);
+                }
+            }, 350);
         } else {
             console.warn(`TourGuide: Element "${step.element}" not found.`);
             // Fallback: center the tooltip
@@ -97,19 +118,9 @@ class TourGuide {
             this.tooltip.style.left = '50%';
             this.tooltip.style.transform = 'translate(-50%, -50%)';
         }
-
-        // Add pulse effect if not present
-        if (!document.getElementById('tour-styles')) {
-            const style = document.createElement('style');
-            style.id = 'tour-styles';
-            style.innerHTML = `
-                .tour-highlight { position: relative; z-index: 9999 !important; box-shadow: 0 0 0 5px rgba(0, 229, 255, 0.4), 0 0 40px rgba(0, 229, 255, 0.2) !important; transition: all 0.3s; pointer-events: none; }
-            `;
-            document.head.appendChild(style);
-        }
         
-        document.getElementById('tour-next').innerText = this.currentStep === this.steps.length - 1 ? 'FINISH' : 'NEXT';
-        document.getElementById('tour-prev').style.visibility = this.currentStep === 0 ? 'hidden' : 'visible';
+        if (nextBtn) nextBtn.innerText = this.currentStep === this.steps.length - 1 ? 'FINISH' : 'NEXT';
+        if (prevBtn) prevBtn.style.visibility = this.currentStep === 0 ? 'hidden' : 'visible';
     }
 
     next() {
