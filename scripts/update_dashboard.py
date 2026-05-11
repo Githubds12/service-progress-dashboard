@@ -612,11 +612,60 @@ def update_html(header, days, stats, complexity_stats=None):
             transition: 0.2s;
         }}
         .heat-cell:hover {{ transform: scale(1.3); z-index: 2; border: 1px solid var(--accent-primary); }}
-        .heat-level-1 {{ background: #0e4429; }}
-        .heat-level-2 {{ background: #006d32; }}
-        .heat-level-3 {{ background: #26a641; }}
-        .heat-level-4 {{ background: #39d353; box-shadow: 0 0 10px #39d353; }}
+        .heat-level-1 {{ background: #0e4429 !important; }}
+        .heat-level-2 {{ background: #006d32 !important; }}
+        .heat-level-3 {{ background: #26a641 !important; }}
+        .heat-level-4 {{ background: #39d353 !important; }}
+
+        /* New Heatmap Meta Styles */
+        .heatmap-wrapper {{ display: flex; gap: 10px; min-width: 980px; }}
+        .heatmap-axis-labels {{ 
+            display: grid; 
+            grid-template-rows: repeat(7, 14px); 
+            gap: 4px; 
+            padding-top: 25px; /* Alignment with month labels */
+            font-size: 0.65rem; 
+            color: var(--text-dim); 
+            font-family: 'Orbitron';
+        }}
+        .heatmap-month-labels {{ 
+            display: grid; 
+            grid-template-columns: repeat(53, 1fr); 
+            gap: 4px; 
+            margin-bottom: 5px; 
+            margin-left: 35px; /* Offset for day labels */
+            font-size: 0.65rem; 
+            color: var(--text-dim); 
+            font-family: 'Orbitron';
+            min-width: 950px;
+        }}
+        .heatmap-footer {{ 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            margin-top: 15px; 
+            padding: 0 5px;
+        }}
+        .heatmap-legend {{ 
+            display: flex; 
+            align-items: center; 
+            gap: 5px; 
+            font-size: 0.7rem; 
+            color: var(--text-dim); 
+            font-family: 'Outfit';
+        }}
+        .legend-box {{ width: 10px; height: 10px; border-radius: 2px; }}
         
+        .heatmap-stats {{
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }}
+        .h-stat {{ flex: 1; }}
+        .h-stat-label {{ font-size: 0.6rem; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }}
+        .h-stat-value {{ font-family: 'Orbitron'; font-size: 1rem; color: var(--accent-primary); margin-top: 5px; }}
         /* Settings Modal */
         .modal-overlay {{
             position: fixed;
@@ -824,18 +873,54 @@ def update_html(header, days, stats, complexity_stats=None):
                     <div class="card-header">
                         <div class="card-title">RE MASTERY HEATMAP (BHM)</div>
                     </div>
-                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(0, 242, 255, 0.03); border-radius: 10px; border: 1px solid rgba(0, 242, 255, 0.1);">
-                        <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.6;">
-                            <strong style="color: var(--accent-primary);">CORE INTELLIGENCE:</strong> This heatmap tracks your deep research activity across 53 weeks. Each cell represents a day of technical analysis.
-                            <br>
-                            <span id="heatmapStatusMsg" style="color: var(--danger); font-weight: 700;"></span>
-                        </p>
-                    </div>
-                    <div class="heatmap-container">
-                        <div id="masteryHeatmap" class="heatmap-grid">
-                            <!-- Cells generated via JS -->
+                    <div class="heatmap-stats">
+                        <div class="h-stat">
+                            <div class="h-stat-label">Total Mastery</div>
+                            <div id="totalMasteryPoints" class="h-stat-value">0</div>
+                        </div>
+                        <div class="h-stat">
+                            <div class="h-stat-label">Current Streak</div>
+                            <div id="currentStreak" class="h-stat-value">0 Days</div>
+                        </div>
+                        <div class="h-stat">
+                            <div class="h-stat-label">Peak Intensity</div>
+                            <div id="peakIntensity" class="h-stat-value">0 Pts</div>
                         </div>
                     </div>
+                    
+                    <div style="margin-bottom: 15px; padding: 15px; background: rgba(0, 242, 255, 0.03); border-radius: 10px; border: 1px solid rgba(0, 242, 255, 0.1);">
+                        <p style="font-size: 0.85rem; color: var(--text-dim); line-height: 1.6;">
+                            <strong style="color: var(--accent-primary);">CORE INTELLIGENCE:</strong> This heatmap tracks your deep research activity. Darker cells indicate higher technical intensity.
+                            <span id="heatmapStatusMsg" style="color: var(--danger); font-weight: 700; margin-left: 10px;"></span>
+                        </p>
+                    </div>
+
+                    <div id="heatmapMonthLabels" class="heatmap-month-labels">
+                        <!-- Generated via JS -->
+                    </div>
+                    <div class="heatmap-container">
+                        <div class="heatmap-wrapper">
+                            <div class="heatmap-axis-labels">
+                                <div></div><div>Mon</div><div></div><div>Wed</div><div></div><div>Fri</div><div></div>
+                            </div>
+                            <div id="masteryHeatmap" class="heatmap-grid">
+                                <!-- Cells generated via JS -->
+                            </div>
+                        </div>
+                    </div>
+                    <div class="heatmap-footer">
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">LAST 370 DAYS OF RECONNAISSANCE</div>
+                        <div class="heatmap-legend">
+                            <span>Less</span>
+                            <div class="legend-box" style="background: rgba(255,255,255,0.05);"></div>
+                            <div class="legend-box heat-level-1"></div>
+                            <div class="legend-box heat-level-2"></div>
+                            <div class="legend-box heat-level-3"></div>
+                            <div class="legend-box heat-level-4"></div>
+                            <span>More</span>
+                        </div>
+                    </div>
+
                     <div id="masteryEvents" style="margin-top: 20px; max-height: 200px; overflow-y: auto;">
                         <div style="color: var(--text-dim); text-align: center; padding: 20px; font-size: 0.8rem;">SELECT A DATA NODE TO VIEW ACTIVITY SPECIFICATIONS</div>
                     </div>
@@ -922,36 +1007,107 @@ def update_html(header, days, stats, complexity_stats=None):
         // --- MASTER RENDERER ---
         window.renderMasteryHeatmap = () => {{
             const grid = $('masteryHeatmap');
+            const monthLabels = $('heatmapMonthLabels');
             if (!grid) return;
+            
             grid.innerHTML = '';
+            monthLabels.innerHTML = '';
+            
             const events = window.dashboardData.mastery || [];
             const msgEl = $('heatmapStatusMsg');
             if (events.length === 0) {{
-                msgEl.innerText = "⚠ NO RESEARCH LOG DETECTED: research_heat.json is missing or empty. Nodes will remain inactive.";
+                msgEl.innerText = "⚠ NO RESEARCH LOG DETECTED";
             }} else {{
-                msgEl.innerText = "✅ SYSTEM ONLINE: Deep research data synced.";
+                msgEl.innerText = "✅ SYSTEM ONLINE";
             }}
             
             const heatMap = {{}};
-            events.forEach(e => {{ heatMap[e.date] = (heatMap[e.date] || 0) + e.points; }});
+            let totalPoints = 0;
+            let peakPoints = 0;
+            events.forEach(e => {{ 
+                heatMap[e.date] = (heatMap[e.date] || 0) + e.points;
+                totalPoints += e.points;
+                if (heatMap[e.date] > peakPoints) peakPoints = heatMap[e.date];
+            }});
+
+            // Stats Update
+            $('totalMasteryPoints').innerText = totalPoints.toLocaleString();
+            $('peakIntensity').innerText = peakPoints + ' Pts';
+            
+            // Streak Calculation
+            let streak = 0;
+            let checkDate = new Date();
+            while (true) {{
+                const iso = checkDate.toISOString().split('T')[0];
+                if (heatMap[iso]) {{
+                    streak++;
+                    checkDate.setDate(checkDate.getDate() - 1);
+                }} else {{
+                    break;
+                }}
+            }}
+            $('currentStreak').innerText = streak + ' Days';
 
             const today = new Date();
-            for (let i = 370; i >= 0; i--) {{
-                const d = new Date();
-                d.setDate(today.getDate() - i);
-                const iso = d.toISOString().split('T')[0];
-                const points = heatMap[iso] || 0;
+            const dayOfWeek = today.getDay(); // 0 is Sun
+            
+            // Adjust to start from a Sunday 371 days ago to fill 53 weeks
+            const startDate = new Date();
+            startDate.setDate(today.getDate() - 370);
+            while (startDate.getDay() !== 0) startDate.setDate(startDate.getDate() - 1);
+
+            const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+            let lastMonth = -1;
+
+            // Generate 53 weeks (columns)
+            for (let w = 0; w < 53; w++) {{
+                // Month Label logic
+                const weekDate = new Date(startDate);
+                weekDate.setDate(startDate.getDate() + (w * 7));
+                const currentMonth = weekDate.getMonth();
                 
-                const cell = document.createElement('div');
-                cell.className = 'heat-cell';
-                if (points > 0) {{
-                    const level = points >= 50 ? 4 : points >= 30 ? 3 : points >= 15 ? 2 : 1;
-                    cell.classList.add(`heat-level-${{level}}`);
+                const mLabel = document.createElement('div');
+                if (currentMonth !== lastMonth && w < 52) {{
+                    mLabel.innerText = months[currentMonth];
+                    lastMonth = currentMonth;
                 }}
-                cell.title = `${{iso}}: ${{points}} Mastery Points`;
-                cell.onclick = () => window.showMasteryEvents(iso);
-                grid.appendChild(cell);
+                monthLabels.appendChild(mLabel);
+
+                // Week Column
+                const col = document.createElement('div');
+                col.style.display = 'grid';
+                col.style.gridTemplateRows = 'repeat(7, 14px)';
+                col.style.gap = '4px';
+
+                for (let d = 0; d < 7; d++) {{
+                    const currentDate = new Date(weekDate);
+                    currentDate.setDate(weekDate.getDate() + d);
+                    const iso = currentDate.toISOString().split('T')[0];
+                    const points = heatMap[iso] || 0;
+                    
+                    const cell = document.createElement('div');
+                    cell.className = 'heat-cell';
+                    if (points > 0) {{
+                        const level = points >= 50 ? 4 : points >= 30 ? 3 : points >= 15 ? 2 : 1;
+                        cell.classList.add(`heat-level-${{level}}`);
+                    }}
+                    
+                    // Don't show future dates
+                    if (currentDate > today) {{
+                        cell.style.opacity = '0';
+                        cell.style.pointerEvents = 'none';
+                    }}
+
+                    cell.title = `${{iso}}: ${{points}} Mastery Points`;
+                    cell.onclick = () => window.showMasteryEvents(iso);
+                    col.appendChild(cell);
+                }}
+                grid.appendChild(col);
             }}
+
+            // Fix grid layout for columns
+            grid.style.display = 'flex';
+            grid.style.gap = '4px';
         }};
 
         window.showMasteryEvents = (date) => {{
