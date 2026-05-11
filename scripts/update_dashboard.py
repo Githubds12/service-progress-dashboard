@@ -399,6 +399,7 @@ def update_html(header, days, stats, complexity_stats=None):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operational Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="tour_guide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
