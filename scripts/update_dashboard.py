@@ -853,7 +853,7 @@ def update_html(header, days, stats, complexity_stats=None):
                         <div class="card-title">OPERATIONAL LOG</div>
                         <div class="controls">
                             <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
-                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                            <span id="localLogDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-primary); margin: 0 5px; font-weight: 800;"></span><button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
                         </div>
                     </div>
                     <div class="log-table-wrapper" id="serviceLogContainer">
@@ -888,7 +888,7 @@ def update_html(header, days, stats, complexity_stats=None):
                         <div class="card-title">STRATEGIC REFLECTIONS</div>
                         <div class="controls">
                             <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
-                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                            <span id="localRefDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-secondary); margin: 0 5px; font-weight: 800;"></span><button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
                         </div>
                     </div>
                     <div class="ref-input-group">
@@ -1037,6 +1037,12 @@ def update_html(header, days, stats, complexity_stats=None):
         window.renderLogsAndReflections = () => {{
             const targetDate = window.state.currentDate;
             const serviceDay = window.dashboardData.services.find(d => d.iso_date === targetDate);
+            
+            // Update local date labels
+            const dateLabel = serviceDay ? serviceDay.date.split(',')[0].toUpperCase() : targetDate;
+            if ($('localLogDate')) $('localLogDate').innerText = dateLabel;
+            if ($('localRefDate')) $('localRefDate').innerText = dateLabel;
+
             const logBody = $('serviceLogBody');
             logBody.innerHTML = '';
             

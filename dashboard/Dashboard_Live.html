@@ -375,7 +375,7 @@
             <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[GOAL PERIOD: MAY 1st - 31st, 2026]</span></div>
             <div class="header-meta">
                 <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
-                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">00:20:29</span></div>
+                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">00:23:50</span></div>
             </div>
         </header>
 
@@ -456,7 +456,7 @@
                         <div class="card-title">OPERATIONAL LOG</div>
                         <div class="controls">
                             <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
-                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                            <span id="localLogDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-primary); margin: 0 5px; font-weight: 800;"></span><button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
                         </div>
                     </div>
                     <div class="log-table-wrapper" id="serviceLogContainer">
@@ -491,7 +491,7 @@
                         <div class="card-title">STRATEGIC REFLECTIONS</div>
                         <div class="controls">
                             <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
-                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                            <span id="localRefDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: var(--accent-secondary); margin: 0 5px; font-weight: 800;"></span><button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
                         </div>
                     </div>
                     <div class="ref-input-group">
@@ -640,6 +640,12 @@
         window.renderLogsAndReflections = () => {
             const targetDate = window.state.currentDate;
             const serviceDay = window.dashboardData.services.find(d => d.iso_date === targetDate);
+            
+            // Update local date labels
+            const dateLabel = serviceDay ? serviceDay.date.split(',')[0].toUpperCase() : targetDate;
+            if ($('localLogDate')) $('localLogDate').innerText = dateLabel;
+            if ($('localRefDate')) $('localRefDate').innerText = dateLabel;
+
             const logBody = $('serviceLogBody');
             logBody.innerHTML = '';
             
