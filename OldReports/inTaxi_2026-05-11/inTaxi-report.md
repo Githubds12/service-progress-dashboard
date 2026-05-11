@@ -15,8 +15,8 @@ The **inTaxi** Android application implements a structured multi-step registrati
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS | Primary channel for OTP-based registration |
-| **Captcha** | Yes | Custom Text CAPTCHA (SVG-based) |
-| **Encryption** | Yes | Zlib compression + Base64 encoding |
+| **Captcha** | Text CAPTCHA | Custom SVG-based challenge |
+| **Encryption** | Zlib + Base64 | Custom data obfuscation layer |
 | **Rate Limits** | Unknown | No rate limiting behavior observed in testing |
 | **Endpoints Involved** | 3 | getSubscriptionConfiguration, generaCodice, completaRegistrazione |
 
