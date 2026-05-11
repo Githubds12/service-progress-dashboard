@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operational Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
-    <script src="tour_guide.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
         :root {
             --bg-color: #05070a;
@@ -226,6 +225,10 @@
         .status-error { background: var(--danger); color: #fff; }
 
         /* Mobile Adjustments */
+        @media (max-width: 1000px) {
+            .main-layout { grid-template-columns: 1fr; }
+            .container { padding: 15px; }
+        }
         @media (max-width: 600px) {
             header { flex-direction: column; align-items: flex-start; gap: 15px; }
             .header-meta { text-align: left; }
@@ -235,50 +238,10 @@
             .ref-input-group { flex-direction: column; }
             .btn { width: 100%; justify-content: center; }
         }
-
-        /* --- SIDEBAR --- */
-        .sidebar {
-            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
-            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
-            border-right: 1px solid var(--border-color); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden; font-family: 'Outfit', sans-serif;
-        }
-        .sidebar:hover { width: 240px; }
-        .sidebar-item {
-            width: 100%; padding: 15px 25px; display: flex; align-items: center; gap: 20px;
-            color: var(--text-dim); cursor: pointer; transition: 0.2s; white-space: nowrap;
-            text-decoration: none;
-        }
-        .sidebar-item i { font-size: 20px; min-width: 30px; text-align: center; font-style: normal; }
-        .sidebar-item span { opacity: 0; transition: 0.2s; font-weight: 600; font-size: 14px; }
-        .sidebar:hover .sidebar-item span { opacity: 1; }
-        .sidebar-item:hover, .sidebar-item.active { color: var(--accent-primary); background: rgba(0, 242, 255, 0.05); }
-        .sidebar-item.active { border-right: 3px solid var(--accent-primary); color: var(--accent-primary); }
-
-        .main-content-wrapper { margin-left: 80px; transition: margin-left 0.3s; }
-        @media (max-width: 1000px) {
-            .sidebar { display: none; }
-            .main-content-wrapper { margin-left: 0; }
-        }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-item active">
-            <i>🏠</i><span>DASHBOARD</span>
-        </div>
-        <a href="dashboard/apkhunter.html" class="sidebar-item">
-            <i>🎯</i><span>APK HUNTER</span>
-        </a>
-        <div class="sidebar-item" onclick="startTour()" style="color: #e3b341;">
-            <i>🎓</i><span>START TOUR</span>
-        </div>
-    </div>
-
-    <div class="main-content-wrapper">
-        <div class="container">
+    <div class="container">
         <header>
             <div class="logo">Operational Intelligence <a href="dashboard/apkhunter.html" style="margin-left: 20px; font-size: 0.8rem; text-decoration: none; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 10px; border-radius: 4px; vertical-align: middle;">APK HUNTER</a></div>
             <div class="header-meta">
@@ -743,15 +706,6 @@
 
             window.renderMasteryHeatmap();
             window.jumpToDate(today);
-
-            // Tour Guide Init
-            const dashboardTour = new TourGuide([
-                { element: '.tip-banner', title: 'Target Tracking', content: 'This shows your recovery pace. To reach 90k, you need to stay above the calculated daily service count.' },
-                { element: '.dashboard-grid', title: 'Real-time Stats', content: 'Track your total earnings and APK Hunter claims across your entire research lifecycle.' },
-                { element: '.chart-card', title: 'Mastery Heatmap', content: 'Your technical wins. Brighter cells indicate harder services like Banking or Gaming apps.' },
-                { element: '.content-right', title: 'Strategic Intelligence', content: 'Analyze your effort distribution and document critical reconnaissance findings.' }
-            ]);
-            window.startTour = () => dashboardTour.start();
         });
     </script>
 </body>
