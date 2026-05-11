@@ -317,10 +317,80 @@
         @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .reminder-title { font-weight: 700; color: var(--red); font-size: 14px; text-transform: uppercase; }
         .reminder-text { font-size: 13px; color: var(--text); }
+        /* Settings Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(8px);
+            z-index: 20000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: #0d1117;
+            border: 1px solid var(--accent-glow);
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            box-shadow: 0 0 50px rgba(0, 229, 255, 0.1);
+            position: relative;
+        }
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }
+        .modal-title { font-family: 'Orbitron'; font-size: 1.2rem; color: var(--accent); letter-spacing: 2px; }
+        .close-modal { color: var(--text-dim); cursor: pointer; font-size: 1.5rem; transition: 0.3s; }
+        .close-modal:hover { color: var(--red); }
+        .setting-row { margin-bottom: 20px; }
+        .setting-label { display: block; color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+        .setting-input {
+            width: 100%;
+            background: #000;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 12px;
+            border-radius: 10px;
+            font-family: 'Outfit';
+            outline: none;
+            transition: 0.3s;
+        }
+        .setting-input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
     </style>
     <script src="tour_guide.js"></script>
 </head>
 <body>
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ SYSTEM SETTINGS</div>
+                <div class="close-modal" onclick="window.closeSettings()">×</div>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="githubTokenInput" class="setting-input" placeholder="ghp_xxxxxxxxxxxx">
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">DroidPilot Intel Port</label>
+                <input type="number" id="droidPilotPortInput" class="setting-input" placeholder="7777">
+            </div>
+            <div style="margin-top: 30px; display: flex; gap: 15px;">
+                <button class="btn btn-primary" style="flex:1" onclick="window.saveSettings()">SAVE CONFIGURATION</button>
+            </div>
+        </div>
+    </div>
+
     <div class="sidebar">
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>A</i>H</div>
         <div class="sidebar-item active" onclick="switchView('intelligence', this)">
@@ -336,6 +406,9 @@
             <a href="../index.html" class="sidebar-item" style="text-decoration: none;">
                 <i>🏠</i><span>DASHBOARD</span>
             </a>
+            <div class="sidebar-item" onclick="window.showSettings()">
+                <i>⚙️</i><span>SETTINGS</span>
+            </div>
         </div>
     </div>
 
@@ -935,8 +1008,29 @@ URL: ${i.urls.play}
         }
 
         function triggerDroidPilot() {
-            window.open('http://localhost:3000', '_blank');
+            const port = localStorage.getItem('droidpilot_port') || '7777';
+            window.open(`http://localhost:${port}`, '_blank');
         }
+
+        window.showSettings = () => {
+            $('githubTokenInput').value = localStorage.getItem('github_token') || '';
+            $('droidPilotPortInput').value = localStorage.getItem('droidpilot_port') || '7777';
+            $('settingsModal').style.display = 'flex';
+        };
+
+        window.closeSettings = () => {
+            $('settingsModal').style.display = 'none';
+        };
+
+        window.saveSettings = () => {
+            const token = $('githubTokenInput').value.trim();
+            const port = $('droidPilotPortInput').value.trim() || '7777';
+            localStorage.setItem('github_token', token);
+            localStorage.setItem('droidpilot_port', port);
+            alert("Settings saved. Configuration applied.");
+            window.closeSettings();
+            location.reload();
+        };
 
         async function runDiagnostics() {
             logDiag('[SYSTEM]', 'Initiating dashboard health scan...', 'info');

@@ -677,16 +677,43 @@ def update_html(header, days, stats, complexity_stats=None):
     <script src="tour_guide.js"></script>
 </head>
 <body>
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">⚙️ SYSTEM SETTINGS</div>
+                <div class="close-modal" onclick="window.closeSettings()">×</div>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">GitHub Personal Access Token (PAT)</label>
+                <input type="password" id="githubTokenInput" class="setting-input" placeholder="ghp_xxxxxxxxxxxx">
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">DroidPilot Intel Port</label>
+                <input type="number" id="droidPilotPortInput" class="setting-input" placeholder="7777">
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">Display Preference</label>
+                <select id="displayPref" class="setting-input" style="background:#000;">
+                    <option value="cyber">CYBERPUNK (DEFAULT)</option>
+                    <option value="minimal">MINIMALIST</option>
+                </select>
+            </div>
+            <div style="margin-top: 30px; display: flex; gap: 15px;">
+                <button class="btn btn-primary" style="flex:1" onclick="window.saveSettings()">SAVE CONFIGURATION</button>
+            </div>
+        </div>
+    </div>
+
     <div class="grid-bg"></div>
     
     <div class="sidebar">
         <div class="sidebar-item active"><i>📊</i><span>OVERVIEW</span></div>
         <a href="apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
         <a href="apkhunter.html#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
-        <a href="http://localhost:3000" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
+        <a href="http://localhost:7777" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
         <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
         <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
-        <div class="sidebar-item" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
+        <div class="sidebar-item" onclick="window.showSettings()" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
     </div>
 
     <div class="main-content-wrapper">
@@ -1114,6 +1141,26 @@ def update_html(header, days, stats, complexity_stats=None):
                 }}
             ];
             new TourGuide(steps).start();
+        }};
+
+        window.showSettings = () => {{
+            $('githubTokenInput').value = localStorage.getItem('github_token') || '';
+            $('droidPilotPortInput').value = localStorage.getItem('droidpilot_port') || '7777';
+            $('settingsModal').style.display = 'flex';
+        }};
+
+        window.closeSettings = () => {{
+            $('settingsModal').style.display = 'none';
+        }};
+
+        window.saveSettings = () => {{
+            const token = $('githubTokenInput').value.trim();
+            const port = $('droidPilotPortInput').value.trim() || '7777';
+            localStorage.setItem('github_token', token);
+            localStorage.setItem('droidpilot_port', port);
+            alert("Settings saved. Some changes may require page refresh.");
+            window.closeSettings();
+            location.reload(); // Refresh to apply port changes etc
         }};
 
         window.addEventListener('DOMContentLoaded', () => {{
