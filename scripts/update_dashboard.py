@@ -399,11 +399,11 @@ def update_html(header, days, stats, complexity_stats=None):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operational Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
-            --bg-color: #05070a;
-            --card-bg: #0d1117;
+            --bg-color: #030508;
+            --card-bg: rgba(13, 17, 23, 0.7);
             --accent-primary: #00f2ff;
             --accent-secondary: #7000ff;
             --text-main: #e6edf3;
@@ -411,16 +411,31 @@ def update_html(header, days, stats, complexity_stats=None):
             --border-color: #30363d;
             --success: #238636;
             --danger: #da3633;
+            --glass-bg: rgba(10, 10, 10, 0.8);
         }}
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
             background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(112, 0, 255, 0.05) 0%, transparent 50%);
             color: var(--text-main);
-            font-family: 'Inter', sans-serif;
+            font-family: 'Outfit', sans-serif;
             line-height: 1.6;
             overflow-x: hidden;
+            min-height: 100vh;
         }}
-        .container {{ max-width: 1400px; margin: 0 auto; padding: 20px; }}
+        .container {{ max-width: 1400px; margin: 0 auto; padding: 30px; position: relative; z-index: 1; }}
+        
+        /* Background Grid */
+        .grid-bg {{
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: linear-gradient(var(--border-color) 1px, transparent 1px),
+                              linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 60px 60px;
+            z-index: -1; opacity: 0.05; pointer-events: none;
+        }}
+
         header {{
             display: flex;
             justify-content: space-between;
@@ -428,41 +443,44 @@ def update_html(header, days, stats, complexity_stats=None):
             padding: 20px 0;
             border-bottom: 1px solid var(--border-color);
             margin-bottom: 30px;
+            backdrop-filter: blur(10px);
         }}
-        .logo {{ font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 2px; }}
-        .header-meta {{ text-align: right; font-family: 'Orbitron', sans-serif; font-size: 0.9rem; color: var(--text-dim); }}
+        .logo {{ font-family: 'Orbitron', sans-serif; font-size: 1.5rem; color: var(--accent-primary); text-transform: uppercase; letter-spacing: 3px; text-shadow: 0 0 10px var(--accent-primary); }}
+        .header-meta {{ text-align: right; font-family: 'Orbitron', sans-serif; font-size: 0.85rem; color: var(--text-dim); }}
         
         /* Dashboard Grid */
         .dashboard-grid {{ 
             display: grid; 
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); 
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); 
             gap: 20px; 
             margin-bottom: 30px; 
         }}
         .stat-card {{
             background: var(--card-bg);
-            padding: 20px;
-            border-radius: 12px;
+            padding: 25px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            transition: transform 0.2s;
+            backdrop-filter: blur(15px);
+            transition: 0.3s cubic-bezier(0.19, 1, 0.22, 1);
         }}
-        .stat-card:hover {{ transform: translateY(-5px); border-color: var(--accent-primary); }}
-        .stat-label {{ color: var(--text-dim); font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; }}
-        .stat-value {{ font-family: 'Orbitron', sans-serif; font-size: 1.8rem; margin: 10px 0; color: var(--accent-primary); }}
-        .stat-sub {{ font-size: 0.85rem; display: flex; align-items: center; gap: 5px; }}
-        .up {{ color: #3fb950; }}
-        .down {{ color: #f85149; }}
+        .stat-card:hover {{ transform: translateY(-5px); border-color: var(--accent-primary); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }}
+        .stat-label {{ color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 2px; font-weight: 700; }}
+        .stat-value {{ font-family: 'Orbitron', sans-serif; font-size: 2rem; margin: 10px 0; color: #fff; }}
+        .stat-sub {{ font-size: 0.8rem; display: flex; align-items: center; gap: 5px; font-weight: 600; }}
+        .up {{ color: var(--success); }}
+        .down {{ color: var(--danger); }}
 
         /* Main Content Layout */
-        .main-layout {{ display: grid; grid-template-columns: 2fr 1fr; gap: 20px; }}
+        .main-layout {{ display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }}
         .chart-card {{
             background: var(--card-bg);
-            padding: 25px;
-            border-radius: 12px;
+            padding: 30px;
+            border-radius: 16px;
             border: 1px solid var(--border-color);
-            margin-bottom: 20px;
-            max-height: 600px;
+            margin-bottom: 25px;
+            max-height: 700px;
             overflow-y: auto;
+            backdrop-filter: blur(15px);
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) transparent;
         }}
@@ -473,189 +491,159 @@ def update_html(header, days, stats, complexity_stats=None):
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             position: sticky;
-            top: -25px;
+            top: -30px;
             background: var(--card-bg);
-            padding: 10px 0;
+            padding: 15px 0;
             z-index: 10;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }}
-        .card-title {{ font-family: 'Orbitron', sans-serif; font-size: 1.1rem; color: var(--accent-primary); }}
+        .card-title {{ font-family: 'Orbitron', sans-serif; font-size: 1rem; color: var(--accent-primary); letter-spacing: 2px; }}
         
         /* Interactive Elements */
-        .controls {{ display: flex; gap: 10px; flex-wrap: wrap; }}
+        .controls {{ display: flex; gap: 12px; align-items: center; }}
         .btn {{
-            background: #21262d;
+            background: rgba(48, 54, 61, 0.5);
             color: var(--text-main);
             border: 1px solid var(--border-color);
-            padding: 8px 16px;
-            border-radius: 6px;
+            padding: 10px 18px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 0.85rem;
-            transition: 0.2s;
+            font-size: 0.8rem;
+            font-weight: 700;
+            transition: 0.3s;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 8px;
             white-space: nowrap;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }}
-        .btn:hover:not(:disabled) {{ background: #30363d; border-color: var(--accent-primary); }}
-        .btn:disabled {{ opacity: 0.5; cursor: not-allowed; }}
-        .btn-primary {{ background: var(--accent-primary); color: #000; border: none; font-weight: 600; }}
-        .btn-primary:hover:not(:disabled) {{ background: #00d8e6; }}
+        .btn:hover:not(:disabled) {{ background: rgba(0, 242, 255, 0.1); border-color: var(--accent-primary); color: var(--accent-primary); box-shadow: 0 0 15px var(--accent-primary); }}
+        .btn:disabled {{ opacity: 0.3; cursor: not-allowed; }}
+        .btn-primary {{ background: var(--accent-primary); color: #000; border: none; }}
+        .btn-primary:hover:not(:disabled) {{ background: #fff; color: #000; box-shadow: 0 0 20px #fff; }}
         
+        .date-picker-wrapper {{ position: relative; }}
         .date-picker {{
-            background: #0d1117;
-            color: var(--text-main);
+            background: #000;
+            color: var(--accent-primary);
             border: 1px solid var(--border-color);
-            padding: 5px 10px;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
+            padding: 8px 12px;
+            border-radius: 8px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            outline: none;
+            transition: 0.3s;
         }}
+        .date-picker:focus {{ border-color: var(--accent-primary); box-shadow: 0 0 15px var(--accent-primary); }}
 
         /* Activity Log Table */
         .log-table-wrapper {{ overflow-x: auto; }}
-        .log-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; min-width: 400px; }}
-        .log-table th {{ text-align: left; padding: 12px; border-bottom: 2px solid var(--border-color); color: var(--text-dim); font-size: 0.85rem; }}
-        .log-table td {{ padding: 12px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }}
-        .log-table tr:hover {{ background: #161b22; }}
+        .log-table {{ width: 100%; border-collapse: collapse; margin-top: 15px; }}
+        .log-table th {{ text-align: left; padding: 15px; border-bottom: 2px solid var(--border-color); color: var(--text-dim); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; }}
+        .log-table td {{ padding: 15px; border-bottom: 1px solid var(--border-color); font-size: 0.9rem; }}
+        .log-table tr:hover {{ background: rgba(255,255,255,0.02); }}
         
         /* Reflections Section */
         .ref-input-group {{ display: flex; gap: 10px; margin-top: 20px; }}
         .ref-input {{
             flex: 1;
-            background: #0d1117;
+            background: #000;
             border: 1px solid var(--border-color);
-            color: var(--text-main);
-            padding: 10px;
-            border-radius: 6px;
-            font-family: 'Inter', sans-serif;
-            min-width: 0;
-        }}
-        .ref-list {{ margin-top: 20px; list-style: none; }}
-        .ref-item {{
-            background: #161b22;
-            padding: 12px;
-            border-radius: 8px;
-            border-left: 3px solid var(--accent-secondary);
-            margin-bottom: 10px;
+            color: #fff;
+            padding: 12px 18px;
+            border-radius: 10px;
+            font-family: 'Outfit', sans-serif;
             font-size: 0.9rem;
-            position: relative;
+            transition: 0.3s;
         }}
+        .ref-input:focus {{ border-color: var(--accent-primary); outline: none; box-shadow: 0 0 15px var(--accent-primary); }}
+        .ref-list {{ margin-top: 25px; list-style: none; }}
+        .ref-item {{
+            background: rgba(255,255,255,0.03);
+            padding: 18px;
+            border-radius: 12px;
+            border-left: 4px solid var(--accent-secondary);
+            margin-bottom: 15px;
+            font-size: 0.95rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.3s;
+        }}
+        .ref-item:hover {{ background: rgba(255,255,255,0.05); }}
 
         /* Heatmap Styles */
         .heatmap-container {{
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 15px;
             margin-top: 10px;
         }}
         .heatmap-grid {{
             display: grid;
             grid-template-columns: repeat(53, 1fr);
-            gap: 3px;
+            gap: 4px;
         }}
         .heat-cell {{
-            width: 12px;
-            height: 12px;
+            width: 14px;
+            height: 14px;
             background: #161b22;
-            border-radius: 2px;
+            border-radius: 3px;
             cursor: pointer;
+            transition: 0.2s;
         }}
-        .heat-cell:hover {{ border: 1px solid var(--accent-primary); }}
+        .heat-cell:hover {{ transform: scale(1.3); z-index: 2; border: 1px solid var(--accent-primary); }}
         .heat-level-1 {{ background: #0e4429; }}
         .heat-level-2 {{ background: #006d32; }}
         .heat-level-3 {{ background: #26a641; }}
-        .heat-level-4 {{ background: #39d353; }}
-        .heat-legend {{
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            font-size: 0.75rem;
-            color: var(--text-dim);
-            justify-content: flex-end;
-        }}
-        .mastery-event-list {{
-            margin-top: 15px;
-            font-size: 0.85rem;
-            max-height: 200px;
-            overflow-y: auto;
-        }}
-        .event-item {{
-            padding: 5px 0;
-            border-bottom: 1px solid #21262d;
-            display: flex;
-            justify-content: space-between;
-        }}
-        .event-type {{ color: var(--accent-primary); font-weight: 600; font-size: 0.75rem; }}
-            border-radius: 6px;
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 3px solid var(--accent-secondary);
-            gap: 10px;
-        }}
-        .ref-item span:first-child {{ flex: 1; word-break: break-word; }}
-        .ref-actions {{ display: flex; gap: 10px; }}
-        .ref-edit {{ color: var(--accent-primary); cursor: pointer; opacity: 0.7; font-size: 0.8rem; white-space: nowrap; }}
-        .ref-delete {{ color: var(--danger); cursor: pointer; opacity: 0.7; font-size: 0.8rem; white-space: nowrap; }}
-        .ref-edit:hover, .ref-delete:hover {{ opacity: 1; }}
-
-        /* Tip of the day */
-        .tip-banner {{
-            background: linear-gradient(90deg, #0d1117, #161b22);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 30px;
-            border-left: 4px solid var(--accent-primary);
-        }}
-        .tip-header {{ font-family: 'Orbitron', sans-serif; color: var(--accent-primary); margin-bottom: 5px; display: flex; align-items: center; gap: 10px; }}
+        .heat-level-4 {{ background: #39d353; box-shadow: 0 0 10px #39d353; }}
         
-        #syncStatus {{ font-size: 0.75rem; font-weight: bold; padding: 2px 8px; border-radius: 10px; }}
-        .status-ready {{ background: var(--success); color: #fff; }}
-        .status-syncing {{ background: var(--accent-secondary); color: #fff; }}
-        .status-error {{ background: var(--danger); color: #fff; }}
-
-        /* Mobile Adjustments */
-        @media (max-width: 1000px) {{
-            .main-layout {{ grid-template-columns: 1fr; }}
-            .container {{ padding: 15px; }}
+        /* Tip Banner */
+        .tip-banner {{
+            background: linear-gradient(135deg, rgba(13, 17, 23, 0.9), rgba(22, 27, 34, 0.9));
+            border: 1px solid var(--border-color);
+            padding: 25px;
+            border-radius: 16px;
+            margin-bottom: 35px;
+            border-left: 5px solid var(--accent-primary);
+            backdrop-filter: blur(20px);
         }}
-        @media (max-width: 600px) {{
-            header {{ flex-direction: column; align-items: flex-start; gap: 15px; }}
-            .header-meta {{ text-align: left; }}
-            .stat-value {{ font-size: 1.5rem; }}
-            .tip-header {{ font-size: 0.9rem; }}
-            .logo {{ font-size: 1.2rem; }}
-            .ref-input-group {{ flex-direction: column; }}
-            .btn {{ width: 100%; justify-content: center; }}
-        }}
+        .tip-header {{ font-family: 'Orbitron', sans-serif; color: var(--accent-primary); font-size: 1.1rem; font-weight: 700; letter-spacing: 2px; }}
 
-        /* --- SIDEBAR --- */
+        /* Sidebar */
         .sidebar {{
             position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
-            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
+            background: var(--glass-bg); backdrop-filter: blur(30px);
             border-right: 1px solid var(--border-color); z-index: 1000;
-            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
-            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            overflow: hidden; font-family: 'Inter', sans-serif;
+            display: flex; flex-direction: column; align-items: center; padding: 30px 0;
+            transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
         }}
-        .sidebar:hover {{ width: 240px; }}
+        .sidebar:hover {{ width: 260px; box-shadow: 10px 0 50px rgba(0,0,0,0.5); }}
         .sidebar-item {{
-            width: 100%; padding: 15px 25px; display: flex; align-items: center; gap: 20px;
-            color: var(--text-dim); cursor: pointer; transition: 0.2s; white-space: nowrap;
-            text-decoration: none;
+            width: 100%; padding: 18px 30px; display: flex; align-items: center; gap: 25px;
+            color: var(--text-dim); cursor: pointer; transition: 0.3s; white-space: nowrap;
+            text-decoration: none; position: relative;
         }}
-        .sidebar-item i {{ font-size: 20px; min-width: 30px; text-align: center; font-style: normal; }}
-        .sidebar-item span {{ opacity: 0; transition: 0.2s; font-weight: 600; font-size: 14px; }}
+        .sidebar-item i {{ font-size: 22px; min-width: 30px; text-align: center; font-style: normal; opacity: 0.7; }}
+        .sidebar-item span {{ opacity: 0; transition: 0.3s; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }}
         .sidebar:hover .sidebar-item span {{ opacity: 1; }}
-        .sidebar-item:hover, .sidebar-item.active {{ color: var(--accent-primary); background: rgba(0, 242, 255, 0.05); }}
-        .sidebar-item.active {{ border-right: 3px solid var(--accent-primary); color: var(--accent-primary); }}
+        .sidebar-item:hover, .sidebar-item.active {{ color: var(--accent-primary); background: rgba(0, 242, 255, 0.08); }}
+        .sidebar-item.active::after {{ content: ''; position: absolute; left: 0; width: 4px; height: 60%; top: 20%; background: var(--accent-primary); border-radius: 0 4px 4px 0; box-shadow: 0 0 15px var(--accent-primary); }}
 
-        .main-content-wrapper {{ margin-left: 80px; transition: margin-left 0.3s; }}
-        @media (max-width: 1000px) {{
+        .main-content-wrapper {{ margin-left: 80px; transition: margin-left 0.4s; }}
+        
+        #syncStatus {{ font-size: 0.7rem; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }}
+        .status-ready {{ background: rgba(35, 134, 54, 0.2); color: #3fb950; border: 1px solid #3fb950; }}
+        .status-syncing {{ background: rgba(112, 0, 255, 0.2); color: #a371f7; border: 1px solid #a371f7; }}
+        .status-error {{ background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid #f85149; }}
+
+        @media (max-width: 1100px) {{
+            .main-layout {{ grid-template-columns: 1fr; }}
             .sidebar {{ display: none; }}
             .main-content-wrapper {{ margin-left: 0; }}
         }}
@@ -663,65 +651,65 @@ def update_html(header, days, stats, complexity_stats=None):
     <script src="tour_guide.js"></script>
 </head>
 <body>
+    <div class="grid-bg"></div>
+    
     <div class="sidebar">
-        <div class="sidebar-item active">
-            <i>🏠</i><span>DASHBOARD</span>
-        </div>
-        <a href="dashboard/apkhunter.html" class="sidebar-item" style="text-decoration: none;">
-            <i>🎯</i><span>APK HUNTER</span>
-        </a>
-        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;">
-            <i>🎓</i><span>START TOUR</span>
-        </div>
+        <div class="sidebar-item active"><i>📊</i><span>OVERVIEW</span></div>
+        <a href="dashboard/apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
+        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
+        <a href="https://hackerone.com" target="_blank" class="sidebar-item"><i>🛡️</i><span>HACKERONE</span></a>
+        <div class="sidebar-item" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
     </div>
 
     <div class="main-content-wrapper">
     <div class="container">
         <header>
-            <div class="logo">Operational Intelligence <a href="apkhunter.html" style="margin-left: 20px; font-size: 0.8rem; text-decoration: none; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 10px; border-radius: 4px; vertical-align: middle;">APK HUNTER</a></div>
+            <div class="logo">OPERATIONAL INTELLIGENCE</div>
             <div class="header-meta">
-                <div>DATE: <span id="currentHeaderDate">{stats['today_date']}</span></div>
-                <div style="margin-top: 5px;"><span id="syncStatus" class="status-ready">READY</span></div>
+                <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
+                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">{datetime.now().strftime('%H:%M:%S')}</span></div>
             </div>
         </header>
 
-        <div class="tip-banner">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <div class="tip-header">✨ {stats['explanation'].split(' ')[0] if ' ' in stats['explanation'] else 'ADVICE'}</div>
+        <div class="chart-card" style="margin-bottom: 30px;">
+            <div class="card-header">
+                <div class="card-title">TRAJECTORY NAVIGATOR</div>
                 <div class="controls">
-                    <button class="btn" onclick="window.navTrajectory('prev')">← PREV DAY</button>
-                    <input type="date" id="dateJumpTop" class="date-picker">
-                    <button class="btn" onclick="window.navTrajectory('next')">NEXT DAY →</button>
+                    <button class="btn" onclick="window.navTrajectory('prev')">← PREV</button>
+                    <div class="date-picker-wrapper">
+                        <input type="date" id="dateJumpTop" class="date-picker">
+                    </div>
+                    <button class="btn" onclick="window.navTrajectory('next')">NEXT →</button>
                 </div>
             </div>
-            <p id="projectionText">{stats['explanation']}</p>
+            <h2 id="currentHeaderDate" style="text-align: center; font-family: 'Orbitron'; color: #fff; letter-spacing: 2px; margin: 10px 0;">{stats['today_date']}</h2>
+        </div>
+
+        <div class="tip-banner">
+            <div class="tip-header">✨ STRATEGIC ADVISORY</div>
+            <p id="projectionText" style="margin-top: 15px; font-size: 1.1rem; color: #fff; font-weight: 500;">{stats['explanation']}</p>
         </div>
 
         <div class="dashboard-grid">
             <div class="stat-card">
                 <div class="stat-label">Total Services</div>
                 <div class="stat-value">{stats['total_services']}</div>
-                <div class="stat-sub up">↑ {stats['total_services'] - 12} vs last sync</div>
+                <div class="stat-sub up">↑ {stats['total_services'] - 12 if stats['total_services'] > 12 else 0} VS BASELINE</div>
             </div>
             <div class="stat-card">
                 <div class="stat-label">Total Earnings</div>
                 <div class="stat-value">₹{stats['total_earnings']:,}</div>
-                <div class="stat-sub up">↑ Current: ₹{stats['total_earnings']}</div>
+                <div class="stat-sub up">↑ {round((stats['total_earnings']/90000)*100, 1)}% OF MONTHLY GOAL</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Pace Required</div>
+                <div class="stat-label">Recovery Pace</div>
                 <div class="stat-value">{stats['recovery_pace_services']}</div>
-                <div class="stat-sub">Monthly Target: ₹90,000</div>
+                <div class="stat-sub">SERVICES / DAY REQUIRED</div>
             </div>
             <div class="stat-card">
-                <div class="stat-label">Claimed Services</div>
+                <div class="stat-label">APK Claims</div>
                 <div class="stat-value">{stats['apk_claimed']}</div>
-                <div class="stat-sub" style="color: var(--accent-primary)">Total APK Hunter Claims</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Recommendation</div>
-                <div class="stat-value">{stats['recommended_today']}</div>
-                <div class="stat-sub">Services to complete today</div>
+                <div class="stat-sub" style="color: var(--accent-primary)">ACTIVE RESEARCH TARGETS</div>
             </div>
         </div>
 
@@ -731,13 +719,13 @@ def update_html(header, days, stats, complexity_stats=None):
                     <div class="card-header">
                         <div class="card-title">RE MASTERY HEATMAP (BHM)</div>
                         <div class="heat-legend">
-                            Less <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> More
+                            LESS <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> MORE
                         </div>
                     </div>
                     <div class="heatmap-container">
                         <div id="masteryHeatmap" class="heatmap-grid"></div>
                         <div id="masteryEvents" class="mastery-event-list">
-                            <div style="color: var(--text-dim); text-align: center;">Click a cell to see technical wins</div>
+                            <div style="color: var(--text-dim); text-align: center; padding: 20px;">SELECT A DATA NODE TO VIEW TECHNICAL WINS</div>
                         </div>
                     </div>
                 </div>
@@ -745,31 +733,24 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="chart-card">
                     <div class="card-header">
                         <div class="card-title">REVENUE TRAJECTORY</div>
-                        <div class="controls">
-                            <input type="date" id="dateJump" class="date-picker">
-                            <button class="btn" onclick="window.navTrajectory('prev')">PREVIOUS TRAJECTORY</button>
-                        </div>
                     </div>
                     <canvas id="revenueChart" height="150"></canvas>
                 </div>
 
                 <div class="chart-card">
                     <div class="card-header">
-                        <div class="card-title">OPERATIONAL INTELLIGENCE LOG</div>
-                        <div class="controls">
-                            <input type="date" id="logDateJump" class="date-picker">
-                        </div>
+                        <div class="card-title">OPERATIONAL LOG</div>
                     </div>
                     <div class="log-table-wrapper" id="serviceLogContainer">
                         <table class="log-table">
                             <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Activity / Task</th>
+                                    <th style="width: 60px;">ID</th>
+                                    <th>ACTIVITY SPECIFICATION</th>
                                 </tr>
                             </thead>
                             <tbody id="serviceLogBody">
-                                <!-- Dynamic -->
+                                <!-- Dynamic Content -->
                             </tbody>
                         </table>
                     </div>
@@ -779,13 +760,12 @@ def update_html(header, days, stats, complexity_stats=None):
             <div class="content-right">
                 <div class="chart-card">
                     <div class="card-header">
-                        <div class="card-title">EFFORT DISTRIBUTION</div>
-                        <div class="controls">
-                            <input type="date" id="pieDateJump" class="date-picker">
-                        </div>
+                        <div class="card-title">EFFORT ALLOCATION</div>
                     </div>
-                    <canvas id="effortPieChart" height="250"></canvas>
-                    <div id="noDataMessage" style="display:none; text-align:center; padding: 20px; color: var(--text-dim);">No time logs for this date</div>
+                    <div style="height: 300px; position: relative;">
+                        <canvas id="effortPieChart"></canvas>
+                    </div>
+                    <div id="noDataMessage" style="display:none; text-align:center; padding: 40px; color: var(--text-dim); font-size: 0.9rem;">NO TELEMETRY DATA FOR THIS PERIOD</div>
                 </div>
 
                 <div class="chart-card">
@@ -793,20 +773,20 @@ def update_html(header, days, stats, complexity_stats=None):
                         <div class="card-title">STRATEGIC REFLECTIONS</div>
                     </div>
                     <div class="ref-input-group">
-                        <input type="text" id="reflectionInput" class="ref-input" placeholder="Add observation...">
+                        <input type="text" id="reflectionInput" class="ref-input" placeholder="RECORD OBSERVATION...">
                         <button id="saveBtn" class="btn btn-primary" onclick="window.saveReflection()">SAVE</button>
                     </div>
                     <ul id="reflectionList" class="ref-list">
-                        <!-- Dynamic -->
+                        <!-- Dynamic Content -->
                     </ul>
                 </div>
             </div>
         </div>
     </div>
-    </div> <!-- end main-content-wrapper -->
+    </div>
 
     <script>
-        // --- GLOBAL DATA & STATE ---
+        // --- DATA HUB ---
         window.dashboardData = {json.dumps(data_dict)};
         window.state = {{
             currentDate: window.dashboardData.today,
@@ -814,27 +794,17 @@ def update_html(header, days, stats, complexity_stats=None):
             editingIdx: null
         }};
 
-        // --- UTILS ---
         const $ = id => document.getElementById(id);
-        const formatLongDate = iso => {{
-            const d = new Date(iso);
-            return d.toLocaleDateString('en-GB', {{ day:'numeric', month:'long', year:'numeric', weekday:'long' }});
-        }};
-
-        // --- MASTER HEATMAP RENDERER ---
+        
+        // --- MASTER RENDERER ---
         window.renderMasteryHeatmap = () => {{
             const grid = $('masteryHeatmap');
             if (!grid) return;
             grid.innerHTML = '';
             const events = window.dashboardData.mastery || [];
-            
-            // Aggregate points by date
             const heatMap = {{}};
-            events.forEach(e => {{
-                heatMap[e.date] = (heatMap[e.date] || 0) + e.points;
-            }});
+            events.forEach(e => {{ heatMap[e.date] = (heatMap[e.date] || 0) + e.points; }});
 
-            // Generate last 371 days (53 weeks)
             const today = new Date();
             for (let i = 370; i >= 0; i--) {{
                 const d = new Date();
@@ -858,57 +828,56 @@ def update_html(header, days, stats, complexity_stats=None):
             const list = $('masteryEvents');
             const events = (window.dashboardData.mastery || []).filter(e => e.date === date);
             if (events.length === 0) {{
-                list.innerHTML = `<div style="color: var(--text-dim); text-align: center; padding: 10px;">No technical wins recorded for ${{date}}</div>`;
+                list.innerHTML = `<div style="color: var(--text-dim); text-align: center; padding: 20px;">NO DATA NODES FOR ${{date}}</div>`;
                 return;
             }}
-            
             list.innerHTML = events.map(e => `
-                <div class="event-item">
+                <div class="event-item" style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-between;">
                     <div>
-                        <span class="event-type">[${{e.event_type}}]</span>
-                        <span>${{e.details}}</span>
+                        <span style="color: var(--accent-primary); font-weight: 800; font-size: 0.75rem; margin-right: 10px;">[${{e.event_type}}]</span>
+                        <span style="font-size: 0.9rem;">${{e.details}}</span>
                     </div>
-                    <div style="color: var(--accent-primary)">+${{e.points}}</div>
+                    <div style="color: var(--accent-primary); font-weight: 800;">+${{e.points}}</div>
                 </div>
             `).join('');
         }};
 
-        // --- UI RENDERERS ---
         window.renderCharts = () => {{
             const targetDate = window.state.currentDate;
             
-            // 1. Revenue Trend Chart (Full History)
+            // Revenue Line
             const trendCtx = $('revenueChart').getContext('2d');
             if (window.revenueChartInst) window.revenueChartInst.destroy();
-            
             const trendDays = window.dashboardData.services.filter(d => d.iso_date).sort((a,b) => a.iso_date.localeCompare(b.iso_date));
             window.revenueChartInst = new Chart(trendCtx, {{
                 type: 'line',
                 data: {{
                     labels: trendDays.map(d => d.date.split(',')[0]),
                     datasets: [{{
-                        label: 'Earnings (RS)',
+                        label: 'REVENUE',
                         data: trendDays.map(d => d.earnings),
                         borderColor: '#00f2ff',
-                        backgroundColor: 'rgba(0, 242, 255, 0.1)',
+                        backgroundColor: 'rgba(0, 242, 255, 0.05)',
                         fill: true,
-                        tension: 0.4
+                        tension: 0.4,
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
                     }}]
                 }},
                 options: {{
                     responsive: true,
                     plugins: {{ legend: {{ display: false }} }},
                     scales: {{
-                        y: {{ grid: {{ color: '#30363d' }}, ticks: {{ color: '#8b949e' }} }},
-                        x: {{ grid: {{ display: false }}, ticks: {{ color: '#8b949e' }} }}
+                        y: {{ grid: {{ color: 'rgba(255,255,255,0.05)' }}, ticks: {{ color: '#8b949e', font: {{ family: 'Orbitron', size: 10 }} }} }},
+                        x: {{ grid: {{ display: false }}, ticks: {{ color: '#8b949e', font: {{ family: 'Orbitron', size: 10 }} }} }}
                     }}
                 }}
             }});
 
-            // 2. Effort Pie Chart (Selected Date)
+            // Effort Pie
             const pieCtx = $('effortPieChart').getContext('2d');
             if (window.pieChartInst) window.pieChartInst.destroy();
-            
             const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
             if (!logEntry || !logEntry.logs.length) {{
                 $('effortPieChart').style.display = 'none';
@@ -916,7 +885,6 @@ def update_html(header, days, stats, complexity_stats=None):
             }} else {{
                 $('effortPieChart').style.display = 'block';
                 $('noDataMessage').style.display = 'none';
-                
                 window.pieChartInst = new Chart(pieCtx, {{
                     type: 'doughnut',
                     data: {{
@@ -925,23 +893,16 @@ def update_html(header, days, stats, complexity_stats=None):
                             data: logEntry.logs.map(l => l.hours),
                             backgroundColor: ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'],
                             borderWidth: 0,
-                            hoverOffset: 15
+                            hoverOffset: 20
                         }}]
                     }},
                     options: {{
                         responsive: true,
                         maintainAspectRatio: false,
                         plugins: {{ 
-                            legend: {{ 
-                                position: 'bottom', 
-                                labels: {{ 
-                                    color: '#e6edf3', 
-                                    padding: 20,
-                                    font: {{ size: 12 }}
-                                }} 
-                            }} 
+                            legend: {{ position: 'bottom', labels: {{ color: '#e6edf3', font: {{ family: 'Outfit', size: 11 }}, padding: 15 }} }}
                         }},
-                        cutout: '70%'
+                        cutout: '75%'
                     }}
                 }});
             }}
@@ -949,8 +910,6 @@ def update_html(header, days, stats, complexity_stats=None):
 
         window.renderLogsAndReflections = () => {{
             const targetDate = window.state.currentDate;
-            
-            // Render Service Logs
             const serviceDay = window.dashboardData.services.find(d => d.iso_date === targetDate);
             const logBody = $('serviceLogBody');
             logBody.innerHTML = '';
@@ -959,49 +918,39 @@ def update_html(header, days, stats, complexity_stats=None):
                 serviceDay.services.forEach(line => {{
                     const match = line.match(/^(\d+)\.(.*)/);
                     if (match) {{
-                        const row = `<tr><td>${{match[1]}}</td><td>${{match[2].trim()}}</td></tr>`;
-                        logBody.insertAdjacentHTML('beforeend', row);
+                        logBody.insertAdjacentHTML('beforeend', `<tr><td style="font-family: 'Orbitron'; color: var(--accent-primary); font-weight: 700;">${{match[1]}}</td><td>${{match[2].trim()}}</td></tr>`);
                     }}
                 }});
             }} else {{
-                logBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim);">No services recorded for this date</td></tr>';
+                logBody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:var(--text-dim); padding: 40px;">NO LOG ENTRIES DETECTED</td></tr>';
             }}
 
-            // Render Reflections
             const refEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
             const refList = $('reflectionList');
             refList.innerHTML = '';
-            
             if (refEntry && refEntry.reflections.length) {{
                 refEntry.reflections.forEach((text, idx) => {{
-                    const li = document.createElement('li');
-                    li.className = 'ref-item';
-                    li.innerHTML = `<span>${{text}}</span>
-                                   <div class="ref-actions">
-                                       <span class="ref-edit" onclick="window.editReflection(${{idx}})">EDIT</span>
-                                       <span class="ref-delete" onclick="window.deleteReflection(${{idx}})">DELETE</span>
-                                   </div>`;
-                    refList.appendChild(li);
+                    refList.insertAdjacentHTML('beforeend', `
+                        <li class="ref-item">
+                            <span>${{text}}</span>
+                            <div style="display: flex; gap: 10px;">
+                                <span onclick="window.editReflection(${{idx}})" style="color: var(--accent-primary); cursor: pointer; font-size: 0.7rem; font-weight: 800;">EDIT</span>
+                                <span onclick="window.deleteReflection(${{idx}})" style="color: var(--danger); cursor: pointer; font-size: 0.7rem; font-weight: 800;">DEL</span>
+                            </div>
+                        </li>
+                    `);
                 }});
             }} else {{
-                refList.innerHTML = '<li style="color:var(--text-dim); font-size:0.9rem;">No reflections yet. Add your first one above.</li>';
+                refList.innerHTML = '<li style="color:var(--text-dim); font-size:0.85rem; text-align:center; padding: 20px;">NO STRATEGIC OBSERVATIONS</li>';
             }}
         }};
 
         window.jumpToDate = (isoDate) => {{
             if (!isoDate) return;
             window.state.currentDate = isoDate;
-            
-            // Sync all jump inputs
-            $('dateJump').value = isoDate;
-            if ($('dateJumpTop')) $('dateJumpTop').value = isoDate;
-            $('logDateJump').value = isoDate;
-            $('pieDateJump').value = isoDate;
-            
-            // Update Header
+            $('dateJumpTop').value = isoDate;
             const serviceDay = window.dashboardData.services.find(d => d.iso_date === isoDate);
-            $('currentHeaderDate').innerText = serviceDay ? serviceDay.date : formatLongDate(isoDate);
-            
+            $('currentHeaderDate').innerText = serviceDay ? serviceDay.date : isoDate;
             window.renderCharts();
             window.renderLogsAndReflections();
         }};
@@ -1010,74 +959,16 @@ def update_html(header, days, stats, complexity_stats=None):
             const trendDays = window.dashboardData.services.filter(d => d.iso_date).sort((a,b) => a.iso_date.localeCompare(b.iso_date));
             const curIdx = trendDays.findIndex(d => d.iso_date === window.state.currentDate);
             let nextIdx = dir === 'prev' ? curIdx - 1 : curIdx + 1;
-            
-            if (nextIdx >= 0 && nextIdx < trendDays.length) {{
-                window.jumpToDate(trendDays[nextIdx].iso_date);
-            }}
-        }};
-
-        // --- GITHUB SYNC LOGIC ---
-        window.updateSyncStatus = (status) => {{
-            const el = $('syncStatus');
-            el.className = '';
-            if (status === 'syncing') {{ el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); }}
-            else if (status === 'error') {{ el.innerText = 'SYNC ERROR'; el.classList.add('status-error'); }}
-            else {{ el.innerText = 'READY'; el.classList.add('status-ready'); }}
-        }};
-
-        window.pushToGitHub = async (message) => {{
-            const token = localStorage.getItem('github_token');
-            if (!token) {{
-                const t = prompt("Enter GitHub PAT for Sync:");
-                if (t) localStorage.setItem('github_token', t);
-                else return false;
-            }}
-            
-            window.state.isSyncing = true;
-            window.updateSyncStatus('syncing');
-            $('saveBtn').disabled = true;
-
-            try {{
-                const response = await fetch("https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments", {{
-                    method: "POST",
-                    headers: {{ "Authorization": `token ${{token}}`, "Accept": "application/vnd.github.v3+json" }},
-                    body: JSON.stringify({{ body: message }})
-                }});
-                if (response.ok) {{
-                    window.updateSyncStatus('ready');
-                    return true;
-                }} else {{ throw new Error("API Failure"); }}
-            }} catch (e) {{
-                window.updateSyncStatus('error');
-                console.error(e);
-                return false;
-            }} finally {{
-                window.state.isSyncing = false;
-                $('saveBtn').disabled = false;
-            }}
-        }};
-
-        window.editReflection = (idx) => {{
-            const targetDate = window.state.currentDate;
-            const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
-            if (!logEntry) return;
-
-            $('reflectionInput').value = logEntry.reflections[idx];
-            $('saveBtn').innerText = 'UPDATE';
-            window.state.editingIdx = idx;
-            $('reflectionInput').focus();
+            if (nextIdx >= 0 && nextIdx < trendDays.length) window.jumpToDate(trendDays[nextIdx].iso_date);
         }};
 
         window.saveReflection = async () => {{
             const text = $('reflectionInput').value.trim();
             if (!text) return;
-            
             const targetDate = window.state.currentDate;
-            const logDateStr = targetDate.split('-').reverse().join('-'); // DD-MM-YYYY
+            const logDateStr = targetDate.split('-').reverse().join('-');
             const isEditing = window.state.editingIdx !== null;
-            const oldIdx = window.state.editingIdx;
-
-            // Optimistic Update
+            
             let logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
             if (!logEntry) {{
                 logEntry = {{ iso_date: targetDate, date: logDateStr, logs: [], reflections: [], total: 0 }};
@@ -1085,72 +976,66 @@ def update_html(header, days, stats, complexity_stats=None):
             }}
 
             if (isEditing) {{
-                // Delete old, then add new
-                const deleteCmd = `DELETE_REF: Date: ${{logDateStr}}, Index: ${{oldIdx}}`;
+                const oldIdx = window.state.editingIdx;
+                await window.pushToGitHub(`DELETE_REF: Date: ${{logDateStr}}, Index: ${{oldIdx}}`);
                 logEntry.reflections.splice(oldIdx, 1);
-                
-                // Add new at the same place or end? Let's add at end for simplicity
-                logEntry.reflections.push(text);
-                
-                window.renderLogsAndReflections();
-                $('reflectionInput').value = '';
-                $('saveBtn').innerText = 'SAVE';
                 window.state.editingIdx = null;
-
-                await window.pushToGitHub(deleteCmd);
-                const addCmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
-                await window.pushToGitHub(addCmd);
-            }} else {{
-                logEntry.reflections.push(text);
-                window.renderLogsAndReflections();
-                $('reflectionInput').value = '';
-
-                const cmd = `ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`;
-                await window.pushToGitHub(cmd);
+                $('saveBtn').innerText = 'SAVE';
             }}
+            
+            logEntry.reflections.push(text);
+            window.renderLogsAndReflections();
+            $('reflectionInput').value = '';
+            await window.pushToGitHub(`ADD_REF: Date: ${{logDateStr}}, Text: ${{text}}`);
+        }};
+
+        window.editReflection = (idx) => {{
+            const logEntry = window.dashboardData.logs.find(l => l.iso_date === window.state.currentDate);
+            $('reflectionInput').value = logEntry.reflections[idx];
+            $('saveBtn').innerText = 'UPDATE';
+            window.state.editingIdx = idx;
+            $('reflectionInput').focus();
         }};
 
         window.deleteReflection = async (idx) => {{
-            const targetDate = window.state.currentDate;
-            const logEntry = window.dashboardData.logs.find(l => l.iso_date === targetDate);
-            if (!logEntry) return;
-
-            const logDateStr = targetDate.split('-').reverse().join('-');
-            
-            // Optimistic Delete
+            const logEntry = window.dashboardData.logs.find(l => l.iso_date === window.state.currentDate);
+            const logDateStr = window.state.currentDate.split('-').reverse().join('-');
             logEntry.reflections.splice(idx, 1);
             window.renderLogsAndReflections();
-
-            // Remote Sync
-            const cmd = `DELETE_REF: Date: ${{logDateStr}}, Index: ${{idx}}`;
-            await window.pushToGitHub(cmd);
+            await window.pushToGitHub(`DELETE_REF: Date: ${{logDateStr}}, Index: ${{idx}}`);
         }};
 
-        // --- INITIALIZATION ---
+        window.pushToGitHub = async (message) => {{
+            const token = localStorage.getItem('github_token') || prompt("GITHUB PAT REQUIRED:");
+            if (!token) return;
+            localStorage.setItem('github_token', token);
+            $('syncStatus').className = 'status-syncing';
+            $('syncStatus').innerText = 'SYNCING';
+            try {{
+                const res = await fetch("https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments", {{
+                    method: "POST",
+                    headers: {{ "Authorization": `token ${{token}}`, "Accept": "application/vnd.github.v3+json" }},
+                    body: JSON.stringify({{ body: message }})
+                }});
+                if (res.ok) {{ $('syncStatus').className = 'status-ready'; $('syncStatus').innerText = 'NOMINAL'; return true; }}
+            }} catch(e) {{ $('syncStatus').className = 'status-error'; $('syncStatus').innerText = 'ERROR'; }}
+            return false;
+        }};
+
+        window.startTour = () => {{
+            const tour = new TourGuide([
+                {{ element: '.logo', title: 'MISSION CONTROL', content: 'Operational intelligence center. All telemetry data flows through here.' }},
+                {{ element: '.dashboard-grid', title: 'CORE METRICS', content: 'Real-time tracking of revenue, pace, and research volume.' }},
+                {{ element: '.heatmap-grid', title: 'MASTERY PROGRESS', content: 'Visual representation of technical breakthroughs and system research.' }},
+                {{ element: '.sidebar', title: 'NAVIGATION INTERFACE', content: 'Switch between overview and deep-dive APK intelligence views.' }}
+            ]);
+            tour.start();
+        }};
+
         window.addEventListener('DOMContentLoaded', () => {{
-            const today = window.dashboardData.today;
-            $('dateJump').value = today;
-            if ($('dateJumpTop')) $('dateJumpTop').value = today;
-            $('logDateJump').value = today;
-            $('pieDateJump').value = today;
-            
-            // Bind input changes
-            $('dateJump').onchange = (e) => window.jumpToDate(e.target.value);
-            if ($('dateJumpTop')) $('dateJumpTop').onchange = (e) => window.jumpToDate(e.target.value);
-            $('logDateJump').onchange = (e) => window.jumpToDate(e.target.value);
-            $('pieDateJump').onchange = (e) => window.jumpToDate(e.target.value);
-
-            window.showMasteryEvents(window.dashboardData.today);
+            $('dateJumpTop').onchange = (e) => window.jumpToDate(e.target.value);
             window.renderMasteryHeatmap();
-            window.jumpToDate(today);
-
-            // Initialize Tour Guide
-            window.startTour = () => {{
-                if (window.TourGuide) {{
-                    const tour = new TourGuide();
-                    tour.start();
-                }}
-            }};
+            window.jumpToDate(window.dashboardData.today);
         }});
     </script>
 </body>
