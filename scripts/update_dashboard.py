@@ -820,7 +820,7 @@ def update_html(header, days, stats, complexity_stats=None):
 
         <div class="main-layout">
             <div class="content-left">
-                <div class="chart-card">
+                <div class="chart-card" id="masteryCard">
                     <div class="card-header">
                         <div class="card-title">RE MASTERY HEATMAP (BHM)</div>
                     </div>
@@ -1153,12 +1153,12 @@ def update_html(header, days, stats, complexity_stats=None):
                     content: "This monitor tracks your global connectivity. \\\"NOMINAL\\\" means all local data feeds, GitHub sync, and research logs are perfectly synchronized. Red indicators signal a sync failure or missing data source." 
                 }},
                 {{ 
-                    element: ".nav-sidebar", 
+                    element: ".sidebar", 
                     title: "🛰️ NAVIGATION ARRAY", 
                     content: "This is your primary navigation hub. It contains specialized portals for different operational tasks. Let's explore them." 
                 }},
                 {{ 
-                    element: 'div[title="OVERVIEW"]', 
+                    element: ".sidebar-item:nth-child(1)", 
                     title: "📊 OVERVIEW HUB", 
                     content: "Your current location. Provides a high-level summary of earnings, recovery pace, and overall research momentum." 
                 }},
@@ -1178,7 +1178,7 @@ def update_html(header, days, stats, complexity_stats=None):
                     content: "Direct link to your local AI Agent interface. DroidPilot manages autonomous reconnaissance and background data gathering for the research board." 
                 }},
                 {{ 
-                    element: 'div[onclick="window.showSettings()"]', 
+                    element: ".sidebar-item:last-child", 
                     title: "⚙️ SYSTEM CONFIGURATION", 
                     content: "Critical settings hub. Here you can configure your GitHub PAT (Personal Access Token) for secure syncing and adjust ports for your local intelligence tools." 
                 }},
@@ -1198,7 +1198,7 @@ def update_html(header, days, stats, complexity_stats=None):
                     content: "The most critical metric. It tells you exactly how many services you need to complete PER DAY to hit your goals. This number turns green when you are ahead of schedule." 
                 }},
                 {{ 
-                    element: '.chart-card:has(.card-title:contains("MASTERY"))', 
+                    element: "#masteryCard", 
                     title: "🧠 RE MASTERY HEATMAP (BHM)", 
                     content: "Behavorial Heat Map of your technical analysis. Each node tracks 53 weeks of history. Darker green = Higher research output. CLICK A NODE below to see specific activity logs for that day." 
                 }},
