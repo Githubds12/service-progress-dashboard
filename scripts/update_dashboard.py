@@ -204,6 +204,9 @@ def parse_txt():
         if line.startswith('### Previous History'):
             is_history = True
             continue
+        if line.startswith('### 7th May') or line.startswith('### Current'):
+            is_history = False
+            continue
         if re.match(r'^\d+(st|nd|rd|th)\s+[a-zA-Z]+,\s+[a-zA-Z]+$', line):
             m_date = re.match(r'^(\d+)(?:st|nd|rd|th)\s+([a-zA-Z]+)', line)
             day_num = int(m_date.group(1))
