@@ -296,15 +296,34 @@ def calculate_complexity_stats():
         'counts': [len(comp_map[c]) for c in sorted_comp]
     }
 
-def calculate_stats(days):
+def calculate_stats(days, mastery_data=None):
     current_days = [d for d in days if not d.get('is_history', False)]
     total_services = sum(len(d['services']) for d in current_days)
     total_earnings = sum(d['earnings'] for d in current_days)
-    start_date = date(2026, 5, 7)
+    
+    # Operational Cycle: Starts 7th May 2026
+    cycle_start = date(2026, 5, 7)
     today_dt = date.today()
-    days_elapsed = max((today_dt - start_date).days, 1)
-    avg_daily = total_earnings / days_elapsed
-    avg_daily_services = total_services / days_elapsed
+    
+    # Days elapsed in cycle
+    days_elapsed = max((today_dt - cycle_start).days + 1, 1) 
+    days_remaining = max(31 - days_elapsed, 1) # 31 day cycle
+    
+    # Cycle Earnings
+    cycle_earnings = sum(d['earnings'] for d in current_days if datetime.strptime(d['iso_date'], '%Y-%m-%d').date() >= cycle_start)
+    
+    # Cycle Mastery Points
+    cycle_points = 0
+    if mastery_data:
+        for entry in mastery_data:
+            try:
+                entry_date = datetime.strptime(entry['date'], '%Y-%m-%d').date()
+                if entry_date >= cycle_start:
+                    cycle_points += entry['points']
+            except: continue
+
+    avg_daily = cycle_earnings / days_elapsed if days_elapsed > 0 else 0
+    avg_daily_services = total_services / days_elapsed if days_elapsed > 0 else 0
     
     # Calculate Total Claimed APKs
     apk_claimed_count = 0
@@ -313,7 +332,6 @@ def calculate_stats(days):
         try:
             with open(apk_data_path, 'r', encoding='utf-8') as f:
                 content = f.read()
-                # Find the JSON part: window.apkhunterData = [...]
                 match = re.search(r'window\.apkhunterData\s*=\s*(\[.*\])', content, re.DOTALL)
                 if match:
                     apk_list = json.loads(match.group(1))
@@ -321,29 +339,37 @@ def calculate_stats(days):
         except: pass
 
     target_total = 90000
-    remaining_target = target_total - total_earnings
-    days_remaining = max(30 - days_elapsed, 1)
+    remaining_target = target_total - cycle_earnings
     recovery_pace_services = remaining_target / 400 / days_remaining
-    projected_total = avg_daily * 30
+    projected_total = avg_daily * 31
     recommended_today = math.ceil(recovery_pace_services * 1.2)
     
     today_str_check = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B')}"
     completed_today = next((len(d['services']) for d in days if today_str_check in d['date']), 0)
 
-    explanation = f"Target: ₹90,000. Pace: {round(recovery_pace_services, 1)} services/day."
+    explanation = f"Target: ₹90,000. Cycle Day {days_elapsed}/31. Pace: {round(recovery_pace_services, 1)} services/day."
     try:
-        prompt = f"Analyze progress: {total_earnings}/90000. Completed today: {completed_today}/{recommended_today}. Write 1-2 sentence tip with Sanskrit header."
+        prompt = f"Analyze progress for Cycle (Start: May 7): {cycle_earnings}/90000. Points: {cycle_points}. Day {days_elapsed}/31. Write 1-2 sentence tip with Sanskrit header."
         response = client.models.generate_content(model='gemini-flash-latest', contents=prompt)
         if response and response.text: explanation = response.text.strip().replace('"', '')
     except: pass
 
     return {
-        'total_services': total_services, 'total_earnings': total_earnings,
+        'total_services': total_services, 
+        'total_earnings': total_earnings,
+        'cycle_earnings': cycle_earnings,
+        'cycle_points': cycle_points,
+        'cycle_day': days_elapsed,
+        'cycle_remaining': days_remaining,
         'apk_claimed': apk_claimed_count,
-        'avg_daily': round(avg_daily, 2), 'avg_daily_services': round(avg_daily_services, 2),
-        'days_elapsed': days_elapsed, 'recovery_pace_services': round(recovery_pace_services, 1),
-        'days_remaining': days_remaining, 'recommended_today': int(recommended_today),
-        'completed_today': completed_today, 'explanation': explanation,
+        'avg_daily': round(avg_daily, 2), 
+        'avg_daily_services': round(avg_daily_services, 2),
+        'days_elapsed': days_elapsed, 
+        'recovery_pace_services': round(recovery_pace_services, 1),
+        'days_remaining': days_remaining, 
+        'recommended_today': int(recommended_today),
+        'completed_today': completed_today, 
+        'explanation': explanation,
         'projected_total': round(projected_total, 2),
         'today_date': f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B, %Y')}",
         'today_date_raw': today_dt.strftime('%Y-%m-%d'),
@@ -818,7 +844,7 @@ def update_html(header, days, stats, complexity_stats=None):
     <div class="main-content-wrapper">
     <div class="container">
         <header>
-            <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[GOAL PERIOD: MAY 1st - 31st, 2026]</span></div>
+            <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[OPERATIONAL CYCLE: MAY 7th - JUNE 6th, 2026]</span></div>
             <div class="header-meta">
                 <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
                 <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">{datetime.now().strftime('%H:%M:%S')}</span></div>
@@ -864,6 +890,33 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="stat-label">APK Claims</div>
                 <div class="stat-value">{stats['apk_claimed']}</div>
                 <div class="stat-sub" style="color: var(--accent-primary)">ACTIVE RESEARCH TARGETS</div>
+            </div>
+        </div>
+
+        <div class="section-divider" style="margin: 40px 0 20px 0; border-bottom: 2px solid var(--accent-secondary); width: fit-content; padding-right: 20px;">
+            <h3 style="font-family: 'Orbitron'; color: var(--accent-primary); letter-spacing: 2px; font-size: 0.9rem;">OPERATIONAL CYCLE INTELLIGENCE (MTD)</h3>
+        </div>
+
+        <div class="dashboard-grid" style="margin-bottom: 30px;">
+            <div class="stat-card" style="border-color: var(--accent-secondary);">
+                <div class="stat-label">Cycle Progress</div>
+                <div class="stat-value">Day {stats['cycle_day']}</div>
+                <div class="stat-sub">{stats['cycle_remaining']} DAYS REMAINING</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent-secondary);">
+                <div class="stat-label">Cycle Revenue</div>
+                <div class="stat-value">₹{stats['cycle_earnings']:,}</div>
+                <div class="stat-sub">TARGET: ₹90,000</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent-secondary);">
+                <div class="stat-label">Cycle Mastery</div>
+                <div class="stat-value">{stats['cycle_points']} Pts</div>
+                <div class="stat-sub">RESEARCH INTENSITY</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent-secondary);">
+                <div class="stat-label">Survival Index</div>
+                <div class="stat-value">{{round((stats['cycle_earnings'] / (90000/31 * stats['cycle_day'])) * 100, 1) if stats['cycle_day'] > 0 else 0}}%</div>
+                <div class="stat-sub">OUTPUT VS PROJECTED</div>
             </div>
         </div>
 
@@ -1474,8 +1527,16 @@ def main():
     # Sync first to pick up any remote changes
     sync_github_commands()
     
+    # Load Mastery Data early for stats
+    mastery_data = []
+    if os.path.exists(MASTERY_LOG_PATH):
+        try:
+            with open(MASTERY_LOG_PATH, 'r', encoding='utf-8') as f:
+                mastery_data = json.load(f)
+        except: pass
+
     header, days, body, prev_avg, prev_pace = parse_txt()
-    stats = calculate_stats(days)
+    stats = calculate_stats(days, mastery_data)
     stats['prev_avg_services'] = prev_avg
     stats['prev_recovery_pace'] = prev_pace
     time_logs = parse_time_log()

@@ -191,7 +191,7 @@ Daily Summary: 0 services, 0 rs
 Dashboard Stats:
 - Total Services: 121
 - Total Earnings: 48200 rs
-- Average Daily Earning: 9640.0 rs/day
-- Average Daily Services: 24.2 services/day
-- Recovery Pace: 4.2 Services / day
-- Projected Monthly Total: ₹289200.0
+- Average Daily Earning: 866.67 rs/day
+- Average Daily Services: 20.17 services/day
+- Recovery Pace: 8.5 Services / day
+- Projected Monthly Total: ₹26866.67
