@@ -296,7 +296,7 @@
         @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .reminder-title { font-weight: 700; color: var(--red); font-size: 14px; text-transform: uppercase; }
         .reminder-text { font-size: 13px; color: var(--text); }
-    </style>
+    <script src="tour_guide.js"></script>
 </head>
 <body>
     <div class="sidebar">
@@ -306,6 +306,9 @@
         </div>
         <div class="sidebar-item" onclick="switchView('diagnostics', this)">
             <i>🛡️</i><span>SYSTEM HEALTH</span>
+        </div>
+        <div class="sidebar-item" onclick="startTour()" style="color: var(--yellow);">
+            <i>🎓</i><span>START TOUR</span>
         </div>
         <div style="margin-top: auto; width: 100%;">
             <a href="../index.html" class="sidebar-item" style="text-decoration: none;">
@@ -933,6 +936,17 @@ URL: ${i.urls.play}
         async function triggerADBReset() {
             logDiag('[ADB]', 'Triggering server restart...', 'info');
             alert("ADB Restart command issued.");
+        }
+
+        const portalTour = new TourGuide([
+            { element: '.sidebar', title: 'Mission Control', content: 'Use the sidebar to navigate between your research targets and system diagnostics.' },
+            { element: '.intel-bar', title: 'Intelligence Tools', content: 'Trigger AI-driven research via DroidPilot or access high-value HackerOne resources here.' },
+            { element: '.heatmap-card', title: 'Mastery Tracker', content: 'Track your technical wins. Each cell represents your research activity and security breakthroughs.' },
+            { element: '#diagnosticsView', title: 'System Health', content: 'Monitor your infrastructure. Ensure ADB and DroidPilot are operational.' }
+        ]);
+
+        function startTour() {
+            portalTour.start();
         }
 
         init();

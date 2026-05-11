@@ -7,6 +7,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="tour_guide.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -206,10 +207,50 @@
 
         #celebration { display: none; text-align: center; margin-top: 15px; }
         .trophy { width: 80px; filter: drop-shadow(0 0 20px var(--success)); margin: 10px 0; }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
+            background: rgba(10, 10, 10, 0.8); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden;
+        }
+        .sidebar:hover { width: 240px; }
+        .sidebar-item {
+            width: 100%; padding: 15px 25px; display: flex; align-items: center; gap: 20px;
+            color: #94a3b8; cursor: pointer; transition: 0.2s; white-space: nowrap;
+            text-decoration: none;
+        }
+        .sidebar-item i { font-size: 20px; min-width: 30px; text-align: center; font-style: normal; }
+        .sidebar-item span { opacity: 0; transition: 0.2s; font-weight: 600; font-size: 14px; }
+        .sidebar:hover .sidebar-item span { opacity: 1; }
+        .sidebar-item:hover, .sidebar-item.active { color: #6366f1; background: rgba(99, 102, 241, 0.05); }
+        .sidebar-item.active { border-right: 3px solid #6366f1; }
+
+        .main-content { margin-left: 80px; padding: 20px; transition: margin-left 0.3s; }
+        @media (max-width: 768px) {
+            .sidebar { display: none; }
+            .main-content { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="sidebar">
+        <div class="sidebar-item active">
+            <i>🏠</i><span>DASHBOARD</span>
+        </div>
+        <a href="apkhunter.html" class="sidebar-item">
+            <i>🎯</i><span>APK HUNTER</span>
+        </a>
+        <div class="sidebar-item" onclick="startTour()" style="color: var(--warning);">
+            <i>🎓</i><span>START TOUR</span>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
         <div class="header">
             <div class="live-indicator"><span class="live-dot"></span> LIVE</div>
             <h1 id="today-badge">Dashboard</h1>
@@ -440,6 +481,17 @@
         }
         refreshData();
         setInterval(refreshData, 3000);
+
+        const dashboardTour = new TourGuide([
+            { element: '.projection-card', title: 'Earnings Projection', content: 'Stay focused on the 90k goal. This card updates based on your current performance pace.' },
+            { element: '.progress-section', title: 'Daily Mission', content: 'Your daily quota. Completing this ensures you stay on track for your monthly milestone.' },
+            { element: '.stats-grid', title: 'Core Metrics', content: 'Track your total earnings, daily average, and recovery pace to ensure consistent growth.' },
+            { element: '.recent-activity', title: 'Audit Trail', content: 'A record of every service researched, synchronized across your entire technical stack.' }
+        ]);
+
+        function startTour() {
+            dashboardTour.start();
+        }
     </script>
 </body>
 </html>
