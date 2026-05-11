@@ -1150,7 +1150,7 @@ def update_html(header, days, stats, complexity_stats=None):
                 {{ 
                     element: ".header-meta", 
                     title: "📡 SYSTEM STATUS", 
-                    content: "This monitor tracks your global connectivity. \"NOMINAL\" means all local data feeds, GitHub sync, and research logs are perfectly synchronized. Red indicators signal a sync failure or missing data source." 
+                    content: "This monitor tracks your global connectivity. \\\"NOMINAL\\\" means all local data feeds, GitHub sync, and research logs are perfectly synchronized. Red indicators signal a sync failure or missing data source." 
                 }},
                 {{ 
                     element: ".nav-sidebar", 
