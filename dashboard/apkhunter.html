@@ -1006,10 +1006,41 @@ URL: ${i.urls.play}
         }
 
         const portalTour = new TourGuide([
-            { element: '.sidebar', title: 'Mission Control', content: 'Use the sidebar to navigate between your research targets and system diagnostics.' },
-            { element: '.intel-bar', title: 'Intelligence Tools', content: 'Trigger AI-driven research via DroidPilot or access high-value HackerOne resources here.' },
-            { element: '.heatmap-card', title: 'Mastery Tracker', content: 'Track your technical wins. Each cell represents your research activity and security breakthroughs.' },
-            { element: '#diagnosticsView', title: 'System Health', content: 'Monitor your infrastructure. Ensure ADB and DroidPilot are operational.' }
+            { 
+                element: '.sidebar', 
+                title: '🧭 SECTOR NAVIGATION', 
+                content: 'Your primary gateway. Switch between the high-level OVERVIEW, this target-rich APK HUNTER view, and SYSTEM HEALTH diagnostics.' 
+            },
+            { 
+                element: '.intel-bar', 
+                title: '🛸 INTELLIGENCE TOOLS', 
+                content: 'Force-multipliers for your research. Use DROIDPILOT for AI-assisted RE analysis or access our curated library of HackerOne RE resources.' 
+            },
+            { 
+                element: '.heatmap-card', 
+                title: '🔥 MASTERY TRACKER', 
+                content: 'Your technical legacy. This grid tracks your daily research breakthroughs. Darker cells represent days with multiple high-value RE technical wins.' 
+            },
+            { 
+                element: '.filter-group', 
+                title: '🏷️ TARGET FILTERS (TABS)', 
+                content: 'Refine your mission. Sort targets by difficulty (EASY, MODERATE, HARD) or status (CLAIMED/UNCLAIMED). "NEW" targets are highlighted in neon green for priority recon.' 
+            },
+            { 
+                element: '.search-box', 
+                title: '🔍 PRECISION SEARCH', 
+                content: 'Quickly locate targets by package name, internal ID, or even specific SMS verification content. Essential for rapid-fire intelligence retrieval.' 
+            },
+            { 
+                element: '.table-wrapper', 
+                title: '🎯 TARGET SERVICE GRID', 
+                content: 'The core mission list. Monitor claiming status, review reconnaissance intelligence, and access direct mirrors for target APKs.' 
+            },
+            { 
+                element: '#diagnosticsView', 
+                title: '🛡️ SYSTEM HEALTH', 
+                content: 'The infrastructure layer. Monitor background sync status, ADB connectivity, and the operational integrity of the research engine.' 
+            }
         ]);
 
         function startTour() {

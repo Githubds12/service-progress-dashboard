@@ -1051,13 +1051,49 @@ def update_html(header, days, stats, complexity_stats=None):
         }};
 
         window.startTour = () => {{
-            const tour = new TourGuide([
-                {{ element: '.logo', title: 'MISSION CONTROL', content: 'Operational intelligence center. All telemetry data flows through here.' }},
-                {{ element: '.dashboard-grid', title: 'CORE METRICS', content: 'Real-time tracking of revenue, pace, and research volume.' }},
-                {{ element: '.heatmap-grid', title: 'MASTERY PROGRESS', content: 'Visual representation of technical breakthroughs and system research.' }},
-                {{ element: '.sidebar', title: 'NAVIGATION INTERFACE', content: 'Switch between overview and deep-dive APK intelligence views.' }}
-            ]);
-            tour.start();
+            const steps = [
+                {{ 
+                    element: '.logo', 
+                    title: '🚀 APK HUNTER INTEL', 
+                    content: 'Welcome to your Command Center. This portal centralizes real-time intelligence from our APK research operations, tracking every bounty, technical win, and system pulse.' 
+                }},
+                {{ 
+                    element: '.dashboard-grid', 
+                    title: '📊 CORE METRICS', 
+                    content: 'Your high-level KPIs. REVENUE tracks total payouts, PACE monitors targets processed per day, and RESEARCH VOLUME shows the density of our current mission pipeline.' 
+                }},
+                {{ 
+                    element: '.main-layout > .chart-card:first-child', 
+                    title: '📈 REVENUE TRAJECTORY', 
+                    content: 'A visual history of our financial momentum. Use this to identify peak research periods and project future growth based on historical trends.' 
+                }},
+                {{ 
+                    element: '.heatmap-container', 
+                    title: '🔥 MASTERY HEATMAP', 
+                    content: 'This 53-week grid tracks our daily research consistency. Darker cells indicate high-intensity days where multiple technical wins were recorded.' 
+                }},
+                {{ 
+                    element: '.main-layout > .chart-card:last-child', 
+                    title: '📝 ACTIVITY & LOGS', 
+                    content: 'The pulse of the system. This feed captures live research milestones, system syncs, and manual technical wins as they happen.' 
+                }},
+                {{ 
+                    element: '.sidebar', 
+                    title: '🧭 NAVIGATION HUB', 
+                    content: 'Access all sectors here: 📊 OVERVIEW for this dashboard, 🎯 APK HUNTER for deep-dive intelligence, and 🛡️ SYSTEM HEALTH for diagnostic monitoring.' 
+                }},
+                {{ 
+                    element: '.sidebar-item:nth-child(2)', 
+                    title: '🎯 TARGET RESEARCH', 
+                    content: 'Clicking here takes you to the APK Hunter deep-dive page where you can manage individual service claims and technical documentation.' 
+                }},
+                {{ 
+                    element: '.sidebar-item:nth-child(3)', 
+                    title: '🛡️ SYSTEM DIAGNOSTICS', 
+                    content: 'Monitors the health of our background sync engines, API connectivity, and data integrity. Essential for ensuring the dashboard stays live.' 
+                }}
+            ];
+            new TourGuide(steps).start();
         }};
 
         window.addEventListener('DOMContentLoaded', () => {{
