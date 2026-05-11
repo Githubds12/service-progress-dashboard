@@ -1,0 +1,21 @@
+{
+    "timestamp": "2026-05-11T04:43:16.533495+00:00",
+    "droidpilot": {
+        "status": "offline"
+    },
+    "ollama": {
+        "status": "active",
+        "url": "http://localhost:11434"
+    },
+    "adb": {
+        "status": "no_devices",
+        "device_count": 0,
+        "devices": []
+    },
+    "listener": {
+        "status": "inactive"
+    },
+    "dashboard_sync": {
+        "last_sync": "2026-05-10T16:45:41.801002"
+    }
+}
