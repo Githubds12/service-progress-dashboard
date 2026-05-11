@@ -142,8 +142,26 @@
             transition: 0.3s; outline: none;
         }
         .search-box input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
+        .note-area:focus { outline: none; border-color: var(--accent); background: rgba(0,255,136,0.05); }
 
-        .filter-group { display: flex; gap: 10px; flex-wrap: wrap; }
+        .history-container { display: inline-block; margin-left: 12px; position: relative; }
+        .history-badge { font-size: 10px; color: var(--accent); cursor: pointer; opacity: 0.7; text-decoration: underline; }
+        .history-badge:hover { opacity: 1; }
+        .history-list { 
+            display: none; position: absolute; top: 20px; left: 0; 
+            background: #111; border: 1px solid var(--border); 
+            padding: 10px; border-radius: 4px; z-index: 100;
+            width: 350px; max-height: 200px; overflow-y: auto;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+        }
+        .history-item { 
+            font-size: 11px; padding: 5px 0; border-bottom: 1px solid rgba(255,255,255,0.05);
+            color: #ccc; line-height: 1.4;
+        }
+        .history-item:last-child { border-bottom: none; }
+        .history-item strong { color: var(--accent); }
+
+        .mir-btn-group { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
         .filter-btn {
             background: #111; border: 1px solid var(--border); color: var(--text-dim);
             padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
@@ -603,6 +621,34 @@
             render();
         }
 
+        async function captureSms(id, btn) {
+            const smsText = $(`sms-text-${id}`).innerText;
+            if (!smsText || smsText.includes('No sample message')) return;
+            
+            btn.innerText = "CAPTURING...";
+            btn.disabled = true;
+            
+            // Re-use syncUpdate mechanism with custom command format
+            const message = `APK_MSG_LOG: ID: ${id}, Message: ${smsText}`;
+            await pushToGitHub(message);
+            
+            btn.innerText = "CAPTURED!";
+            setTimeout(() => {
+                btn.innerText = "📸 CAPTURE";
+                btn.disabled = false;
+            }, 2000);
+        }
+
+        function toggleHistory(id) {
+            const el = $(`history-list-${id}`);
+            if (el) {
+                const isVisible = el.style.display === 'block';
+                // Close all others first
+                document.querySelectorAll('.history-list').forEach(l => l.style.display = 'none');
+                el.style.display = isVisible ? 'none' : 'block';
+            }
+        }
+
         async function pushToGitHub(message) {
             let token = localStorage.getItem('github_token') || window.GH_TOKEN_INJECTED;
             if (!token) {
@@ -747,7 +793,18 @@ URL: ${i.urls.play}
                             </div>
                             <div class="apk-id">${i.id}</div>
                             <div class="apk-reason">🧠 ${i.reason}</div>
-                            <div class="apk-sms">${i.sms || 'No sample message recorded.'}</div>
+                            <div class="apk-sms">
+                                <span id="sms-text-${i.id}">${i.sms || 'No sample message recorded.'}</span>
+                                <button class="btn btn-mir" style="display:inline-block; margin-left:8px; padding:2px 8px; font-size:10px; background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.2); color:#00ff88; width:auto;" onclick="captureSms(\`${i.id}\`, this)">📸 CAPTURE</button>
+                                ${i.history && i.history.length > 0 ? `
+                                    <div class="history-container">
+                                        <span class="history-badge" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</span>
+                                        <div id="history-list-${i.id}" class="history-list">
+                                            ${i.history.map(h => `<div class="history-item"><strong>${h.timestamp}</strong>: ${h.message}</div>`).join('')}
+                                        </div>
+                                    </div>
+                                ` : ''}
+                            </div>
                             <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate(\`${i.id}\`, 'note', this.value)">${i.note || ''}</textarea>
                         </td>
                         <td>

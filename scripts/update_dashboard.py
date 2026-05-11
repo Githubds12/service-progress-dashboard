@@ -73,6 +73,28 @@ def sync_github_commands():
                 processed_count += 1
                 continue
 
+            # --- HANDLE SMS HISTORY LOGS ---
+            if body.startswith("APK_MSG_LOG:"):
+                m_id = re.search(r'ID:\s*(.*?),', body)
+                m_msg = re.search(r'Message:\s*(.*)', body, re.DOTALL)
+                if m_id and m_msg:
+                    tid, msg = m_id.group(1).strip(), m_msg.group(2).strip() if m_msg.lastindex >= 2 else m_msg.group(1).strip()
+                    history_path = r"C:\HTB-Notes-Portal\sms_history.json"
+                    history = {}
+                    if os.path.exists(history_path):
+                        with open(history_path, 'r', encoding='utf-8') as f: history = json.load(f)
+                    
+                    logs = history.get(tid, [])
+                    # Avoid duplicates
+                    if not logs or logs[-1].get('message') != msg:
+                        logs.append({"timestamp": datetime.now().strftime("%Y-%m-%d %H:%M"), "message": msg})
+                        history[tid] = logs[-20:] # Keep last 20
+                        with open(history_path, 'w', encoding='utf-8') as f: json.dump(history, f, indent=4)
+                        apk_updated = True # Trigger regeneration to include history
+                requests.delete(comment['url'], headers=headers)
+                processed_count += 1
+                continue
+
             # --- HANDLE REFLECTION DELETIONS ---
             if body.startswith("DELETE_REF:"):
                 try:

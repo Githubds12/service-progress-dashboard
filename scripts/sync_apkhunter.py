@@ -70,12 +70,14 @@ def sync():
     # Load API Claims
     api_claims = fetch_api_claimed_ids()
 
-    # Load Local Claims/Notes/Root/NF
+    # Load Local Claims/Notes/Root/NF/History
     claims_dict = {}
     notes_dict = {}
     root_dict = {}
     nf_dict = {}
     updated_dict = {}
+    history_dict = {}
+    
     if os.path.exists(DB_PATH):
         with open(DB_PATH, 'r') as f:
             db = json.load(f)
@@ -84,7 +86,13 @@ def sync():
             root_dict = db.get('root_detected', {})
             nf_dict = db.get('not_found', {})
             updated_dict = db.get('last_updated', {})
-            print(f"[+] Loaded {len(claims_dict)} claims, {len(notes_dict)} notes from local DB.")
+            print(f"[+] Loaded {len(claims_dict)} claims from local DB.")
+
+    history_path = r"C:\HTB-Notes-Portal\sms_history.json"
+    if os.path.exists(history_path):
+        with open(history_path, 'r', encoding='utf-8') as f:
+            history_dict = json.load(f)
+            print(f"[+] Loaded history for {len(history_dict)} services.")
 
     final_data = []
     
@@ -204,6 +212,7 @@ def sync():
                 "tier": tier,
                 "reason": reason,
                 "triggers": triggers,
+                "history": history_dict.get(tid, []),
                 "last_updated": row.get("Last_Updated", "2024-05-09"),
                 "urls": {
                     "play": f"https://play.google.com/store/apps/details?id={tid}",
