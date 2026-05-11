@@ -238,10 +238,50 @@
             .ref-input-group { flex-direction: column; }
             .btn { width: 100%; justify-content: center; }
         }
+
+        /* --- SIDEBAR --- */
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
+            background: rgba(10, 10, 10, 0.9); backdrop-filter: blur(20px);
+            border-right: 1px solid var(--border-color); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; padding: 20px 0;
+            transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow: hidden; font-family: 'Outfit', sans-serif;
+        }
+        .sidebar:hover { width: 240px; }
+        .sidebar-item {
+            width: 100%; padding: 15px 25px; display: flex; align-items: center; gap: 20px;
+            color: var(--text-dim); cursor: pointer; transition: 0.2s; white-space: nowrap;
+            text-decoration: none;
+        }
+        .sidebar-item i { font-size: 20px; min-width: 30px; text-align: center; font-style: normal; }
+        .sidebar-item span { opacity: 0; transition: 0.2s; font-weight: 600; font-size: 14px; }
+        .sidebar:hover .sidebar-item span { opacity: 1; }
+        .sidebar-item:hover, .sidebar-item.active { color: var(--accent-primary); background: rgba(0, 242, 255, 0.05); }
+        .sidebar-item.active { border-right: 3px solid var(--accent-primary); color: var(--accent-primary); }
+
+        .main-content-wrapper { margin-left: 80px; transition: margin-left 0.3s; }
+        @media (max-width: 1000px) {
+            .sidebar { display: none; }
+            .main-content-wrapper { margin-left: 0; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
+    <div class="sidebar">
+        <div class="sidebar-item active">
+            <i>🏠</i><span>DASHBOARD</span>
+        </div>
+        <a href="dashboard/apkhunter.html" class="sidebar-item" style="text-decoration: none;">
+            <i>🎯</i><span>APK HUNTER</span>
+        </a>
+        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;">
+            <i>🎓</i><span>START TOUR</span>
+        </div>
+    </div>
+
+    <div class="main-content-wrapper">
+        <div class="container">
         <header>
             <div class="logo">Operational Intelligence <a href="dashboard/apkhunter.html" style="margin-left: 20px; font-size: 0.8rem; text-decoration: none; color: var(--accent-primary); border: 1px solid var(--accent-primary); padding: 4px 10px; border-radius: 4px; vertical-align: middle;">APK HUNTER</a></div>
             <div class="header-meta">
@@ -708,5 +748,6 @@
             window.jumpToDate(today);
         });
     </script>
+    </div> <!-- end main-content-wrapper -->
 </body>
 </html>
