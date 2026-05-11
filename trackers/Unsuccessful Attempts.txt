@@ -1,0 +1,3 @@
+Unsuccessful Attempts Log
+
+1. [2026-05-10] Plenty Of Fish (com.pof.android) - Reason: Unsuccessful capture, strong encryption and anti-automation measures encountered.

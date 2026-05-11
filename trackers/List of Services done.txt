@@ -180,9 +180,8 @@ Daily Summary: 0 services, 0 rs
 10th May, Sunday
 1. [22:00] AstroGlobal - com.astroglobal.app - 400rs
 2. [22:45] Naver - com.nhn.android.search - 400rs
-3. [23:15] Plenty Of Fish - com.pof.android - 400rs
-4. [23:45] PullAndBear - com.inditex.pullandbear - 400rs
-Daily Summary: 4 services, 1600 rs
+3. [23:45] PullAndBear - com.inditex.pullandbear - 400rs
+Daily Summary: 3 services, 1200 rs
 ----------
 11th May, Monday
 1. [12:05] inTaxi - it.ud.microtek.InTaxi - 400rs
