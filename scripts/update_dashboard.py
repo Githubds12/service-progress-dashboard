@@ -769,7 +769,7 @@ def update_html(header, days, stats, complexity_stats=None):
     <div class="main-content-wrapper">
     <div class="container">
         <header>
-            <div class="logo">OPERATIONAL INTELLIGENCE</div>
+            <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[GOAL PERIOD: MAY 1st - 31st, 2026]</span></div>
             <div class="header-meta">
                 <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
                 <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">{datetime.now().strftime('%H:%M:%S')}</span></div>
@@ -851,6 +851,10 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="chart-card">
                     <div class="card-header">
                         <div class="card-title">OPERATIONAL LOG</div>
+                        <div class="controls">
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                        </div>
                     </div>
                     <div class="log-table-wrapper" id="serviceLogContainer">
                         <table class="log-table">
@@ -882,6 +886,10 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="chart-card">
                     <div class="card-header">
                         <div class="card-title">STRATEGIC REFLECTIONS</div>
+                        <div class="controls">
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
+                            <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('next')">NEXT →</button>
+                        </div>
                     </div>
                     <div class="ref-input-group">
                         <input type="text" id="reflectionInput" class="ref-input" placeholder="RECORD OBSERVATION...">
