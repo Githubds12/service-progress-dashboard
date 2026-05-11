@@ -8,39 +8,50 @@ class TourGuide {
     }
 
     init() {
-        // Create overlay
-        this.overlay = document.createElement('div');
-        this.overlay.className = 'tour-overlay';
-        Object.assign(this.overlay.style, {
-            position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-            background: 'rgba(0,0,0,0.7)', zIndex: 9998, display: 'none',
-            transition: 'opacity 0.3s'
-        });
-        document.body.appendChild(this.overlay);
+        if (!document.body) {
+            window.addEventListener('DOMContentLoaded', () => this.init());
+            return;
+        }
+        // Create or find overlay
+        this.overlay = document.querySelector('.tour-overlay');
+        if (!this.overlay) {
+            this.overlay = document.createElement('div');
+            this.overlay.className = 'tour-overlay';
+            Object.assign(this.overlay.style, {
+                position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
+                background: 'rgba(0,0,0,0.7)', zIndex: 9998, display: 'none',
+                transition: 'opacity 0.3s'
+            });
+            document.body.appendChild(this.overlay);
+        }
 
-        // Create tooltip
-        this.tooltip = document.createElement('div');
-        this.tooltip.className = 'tour-tooltip';
-        Object.assign(this.tooltip.style, {
-            position: 'fixed', zIndex: 9999, display: 'none',
-            background: '#0c0c0c', border: '1px solid #00e5ff',
-            borderRadius: '12px', padding: '20px', width: '300px',
-            boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)',
-            color: '#fff', fontFamily: 'Outfit, sans-serif'
-        });
-        this.tooltip.innerHTML = `
-            <h4 id="tour-title" style="margin:0 0 10px 0; color:#00e5ff; font-size:14px; text-transform:uppercase; letter-spacing:1px;"></h4>
-            <p id="tour-content" style="font-size:13px; color:#aaa; line-height:1.5; margin-bottom:20px;"></p>
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <span id="tour-progress" style="font-size:11px; color:#555;"></span>
-                <div>
-                    <button id="tour-prev" style="background:none; border:none; color:#555; cursor:pointer; font-size:11px; margin-right:10px;">BACK</button>
-                    <button id="tour-next" style="background:#00e5ff; border:none; color:#000; padding:6px 15px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">NEXT</button>
+        // Create or find tooltip
+        this.tooltip = document.querySelector('.tour-tooltip');
+        if (!this.tooltip) {
+            this.tooltip = document.createElement('div');
+            this.tooltip.className = 'tour-tooltip';
+            Object.assign(this.tooltip.style, {
+                position: 'fixed', zIndex: 9999, display: 'none',
+                background: '#0c0c0c', border: '1px solid #00e5ff',
+                borderRadius: '12px', padding: '20px', width: '300px',
+                boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)',
+                color: '#fff', fontFamily: 'Outfit, sans-serif'
+            });
+            this.tooltip.innerHTML = `
+                <h4 id="tour-title" style="margin:0 0 10px 0; color:#00e5ff; font-size:14px; text-transform:uppercase; letter-spacing:1px;"></h4>
+                <p id="tour-content" style="font-size:13px; color:#aaa; line-height:1.5; margin-bottom:20px;"></p>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span id="tour-progress" style="font-size:11px; color:#555;"></span>
+                    <div>
+                        <button id="tour-prev" style="background:none; border:none; color:#555; cursor:pointer; font-size:11px; margin-right:10px;">BACK</button>
+                        <button id="tour-next" style="background:#00e5ff; border:none; color:#000; padding:6px 15px; border-radius:4px; font-weight:700; cursor:pointer; font-size:11px;">NEXT</button>
+                    </div>
                 </div>
-            </div>
-        `;
-        document.body.appendChild(this.tooltip);
+            `;
+            document.body.appendChild(this.tooltip);
+        }
 
+        // Re-bind buttons to current instance
         this.tooltip.querySelector('#tour-next').onclick = () => this.next();
         this.tooltip.querySelector('#tour-prev').onclick = () => this.prev();
     }
