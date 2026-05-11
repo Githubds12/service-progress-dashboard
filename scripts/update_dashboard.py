@@ -1037,7 +1037,6 @@ def update_html(header, days, stats, complexity_stats=None):
                         cutout: '75%'
                     }}
                 }});
-            }}
         }};
 
         window.renderLogsAndReflections = () => {{
