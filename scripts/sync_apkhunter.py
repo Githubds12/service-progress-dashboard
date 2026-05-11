@@ -29,36 +29,36 @@ TIER_MAP = {
     "Tier 3 (Hard/Secured)": "Hard (App Only/Pinning)"
 }
 
-def fetch_api_claimed_ids():
-    """Fetches unique claimed service IDs from the external API projects."""
+def fetch_api_claimed_mapping():
+    """Fetches mapping of claimed service IDs to project IDs from the external API."""
     try:
-        print("[*] API: Logging in to fetch claimed services...")
+        print("[*] API: Logging in to fetch claimed services mapping...")
         res = requests.post(f"{API_BASE}/auth/login", json={"email": EMAIL, "password": PASS}, timeout=5)
         if res.status_code != 200:
             print(f"[-] API: Login failed ({res.status_code})")
-            return set()
+            return {}
         
         token = res.json().get("access_token")
         headers = {"Authorization": f"Bearer {token}"}
         
-        print("[*] API: Fetching projects to determine claimed status...")
+        print("[*] API: Fetching projects for mapping...")
         res = requests.get(f"{API_BASE}/projects", headers=headers, timeout=10)
         if res.status_code != 200:
             print(f"[-] API: Failed to fetch projects ({res.status_code})")
-            return set()
+            return {}
             
         projects = res.json()
-        claimed_ids = set()
+        mapping = {}
         if isinstance(projects, list):
             for p in projects:
-                if isinstance(p, dict) and p.get('linked_service_id'):
-                    claimed_ids.add(p.get('linked_service_id'))
+                if isinstance(p, dict) and p.get('linked_service_id') and p.get('id'):
+                    mapping[p.get('linked_service_id').strip().lower()] = p.get('id')
         
-        print(f"[+] API: Found {len(claimed_ids)} claimed services via portal projects.")
-        return claimed_ids
+        print(f"[+] API: Found {len(mapping)} claimed services with portal IDs.")
+        return mapping
     except Exception as e:
-        print(f"[-] API: Error during sync: {e}")
-        return set()
+        print(f"[-] API: Error during mapping sync: {e}")
+        return {}
 
 def sync():
     print("[*] Starting APKHunter Sync...")
