@@ -1144,63 +1144,78 @@ def update_html(header, days, stats, complexity_stats=None):
             const steps = [
                 {{ 
                     element: '.logo', 
-                    title: '🚀 APK HUNTER INTEL', 
-                    content: 'Your primary command interface for APK research intelligence and operational tracking.' 
+                    title: '🛸 OPERATIONAL COMMAND', 
+                    content: 'Welcome to your primary intelligence hub. This dashboard aggregates telemetry from all active research sectors. The interface is optimized for high-density data visualization and rapid decision making.' 
                 }},
                 {{ 
-                    element: '.sidebar-item:nth-child(1)', 
-                    title: '📊 OVERVIEW', 
-                    content: 'The high-level command view. Provides a centralized snapshot of revenue, pace, and global research mastery.' 
+                    element: '.header-meta', 
+                    title: '📡 SYSTEM STATUS', 
+                    content: 'This monitor tracks your global connectivity. "NOMINAL" means all local data feeds, GitHub sync, and research logs are perfectly synchronized. Red indicators signal a sync failure or missing data source.' 
                 }},
                 {{ 
-                    element: '.sidebar-item:nth-child(2)', 
-                    title: '🎯 APK HUNTER', 
-                    content: 'The primary research sector. Access the target grid, manage claimed services, and perform deep-dive APK reconnaissance.' 
+                    element: '.nav-sidebar', 
+                    title: '🛰️ NAVIGATION ARRAY', 
+                    content: 'This is your primary navigation hub. It contains specialized portals for different operational tasks. Let\'s explore them.' 
                 }},
                 {{ 
-                    element: '.sidebar-item:nth-child(3)', 
-                    title: '🛡️ SYSTEM HEALTH', 
-                    content: 'Diagnostic monitoring sector. Tracks background engine status, ADB connectivity, and data synchronization integrity.' 
+                    element: 'div[title="OVERVIEW"]', 
+                    title: '📊 OVERVIEW HUB', 
+                    content: 'Your current location. Provides a high-level summary of earnings, recovery pace, and overall research momentum.' 
                 }},
                 {{ 
-                    element: '.sidebar-item:nth-child(5)', 
-                    title: '🎬 RESOURCES', 
-                    content: 'External intelligence library. Quick access to advanced HackerOne RE videos and technical training materials.' 
+                    element: 'a[href*="apkhunter"]', 
+                    title: '🛡️ APK HUNTER PORTAL', 
+                    content: 'Deep-dive into specific research targets. This portal handles thousands of services, categorizing them by complexity (Easy, Medium, Hard) and tracking claim status via UUID/Slug matching.' 
                 }},
                 {{ 
-                    element: '.sidebar-item:nth-child(6)', 
-                    title: '⚙️ SETTINGS', 
-                    content: 'Configuration layer for personalizing your research environment and managing secure access tokens.' 
+                    element: 'a[href*="diagnostics"]', 
+                    title: '🛸 SYSTEM HEALTH', 
+                    content: 'Diagnostic monitor for background services. Verifies that your data parsers, API endpoints, and Render deployment engines are running at peak performance.' 
                 }},
                 {{ 
-                    element: '.dashboard-grid', 
-                    title: '📊 CORE METRICS', 
-                    content: 'Real-time KPIs tracking total earnings vs. monthly goals, current research pace, and active APK claims.' 
+                    element: 'a[href*="7777"]', 
+                    title: '🎓 DROIDPILOT INTEL', 
+                    content: 'Direct link to your local AI Agent interface. DroidPilot manages autonomous reconnaissance and background data gathering for the research board.' 
                 }},
                 {{ 
-                    element: '.heatmap-container', 
-                    title: '🔥 MASTERY HEATMAP', 
-                    content: 'Visualizes your technical breakthroughs over 53 weeks. Select any node to view specific technical wins and RE milestones.' 
+                    element: 'div[onclick="window.showSettings()"]', 
+                    title: '⚙️ SYSTEM CONFIGURATION', 
+                    content: 'Critical settings hub. Here you can configure your GitHub PAT (Personal Access Token) for secure syncing and adjust ports for your local intelligence tools.' 
+                }},
+                {{ 
+                    element: '.stat-card:nth-child(1)', 
+                    title: '💰 REVENUE METRICS', 
+                    content: 'Real-time tracking of your total earnings (₹). The bottom indicator compares your current performance against the baseline from the previous sync period.' 
+                }},
+                {{ 
+                    element: '.stat-card:nth-child(2)', 
+                    title: '📈 RECOVERY PROJECTOR', 
+                    content: 'Calculates your trajectory toward the ₹90,000 monthly target. It projects your end-of-month earnings based on your current recovery pace.' 
+                }},
+                {{ 
+                    element: '.stat-card:nth-child(3)', 
+                    title: '🏃 RECOVERY PACE', 
+                    content: 'The most critical metric. It tells you exactly how many services you need to complete PER DAY to hit your goals. This number turns green when you are ahead of schedule.' 
+                }},
+                {{ 
+                    element: '.chart-card:has(.card-title:contains("MASTERY"))', 
+                    title: '🧠 RE MASTERY HEATMAP (BHM)', 
+                    content: 'Behavorial Heat Map of your technical analysis. Each node tracks 53 weeks of history. Darker green = Higher research output. CLICK A NODE below to see specific activity logs for that day.' 
                 }},
                 {{ 
                     element: '#revenueChart', 
-                    title: '📈 REVENUE TRAJECTORY', 
-                    content: 'An interactive trend analysis of your financial growth. Tracks your progress against the 90K mastery milestone.' 
+                    title: '📉 REVENUE TRAJECTORY', 
+                    content: 'Chronological trend of your financial growth. Use this to identify peak productivity patterns and research milestones over time.' 
                 }},
                 {{ 
-                    element: '#serviceLogContainer', 
-                    title: '📝 OPERATIONAL LOG', 
-                    content: 'A detailed activity specification feed. Each entry includes a unique ID and timestamped activity record.' 
-                }},
-                {{ 
-                    element: '#effortPieChart', 
-                    title: '🥧 EFFORT ALLOCATION', 
-                    content: 'Visualizes where your research energy is spent. Shows "NO TELEMETRY DATA" if the period is inactive.' 
+                    element: '.log-viewer', 
+                    title: '📋 OPERATIONAL LOG', 
+                    content: 'Granular view of daily activity. Includes time-stamped entries, activity specifications, and service IDs. This is the raw telemetry behind your revenue stats.' 
                 }},
                 {{ 
                     element: '.ref-input-group', 
                     title: '🧠 STRATEGIC REFLECTIONS', 
-                    content: 'Record critical technical observations here. Use the input to "RECORD OBSERVATION..." and hit SAVE to sync.' 
+                    content: 'Your professional journal. Record critical hurdles, breakthroughs, or technical observations here. These entries help train your research intuition over time.' 
                 }}
             ];
             new TourGuide(steps).start();
