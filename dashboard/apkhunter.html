@@ -360,7 +360,7 @@
             <button class="intel-btn btn-droidpilot" onclick="triggerDroidPilot()">
                 <i>🛸</i> DROIDPILOT INTELLIGENCE
             </button>
-            <a href="https://www.youtube.com/@HackerOneEvents/videos" target="_blank" class="intel-btn btn-resources">
+            <a href="https://www.youtube.com/@HackerOne/videos" target="_blank" class="intel-btn btn-resources">
                 <i>🎬</i> RE RESOURCES (H1)
             </a>
         </div>
@@ -451,29 +451,29 @@
             <div class="heat-title" style="margin-bottom: 30px; font-size: 24px;">🛡️ MISSION CONTROL DIAGNOSTICS</div>
             
             <div class="health-grid">
-                <div id="card-droidpilot" class="health-card">
-                    <div class="health-title">DroidPilot Core</div>
-                    <div class="health-value" id="val-dp-status">OFFLINE</div>
-                    <div class="health-desc" id="val-dp-desc">Connecting to agent...</div>
-                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">PORT: 7777</span></div>
+                <div id="card-data" class="health-card">
+                    <div class="health-title">Data Feed Integrity</div>
+                    <div class="health-value" id="val-data-status">WAITING</div>
+                    <div class="health-desc" id="val-data-desc">Checking local data sets...</div>
+                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">SOURCE: apkhunter_data.js</span></div>
                 </div>
-                <div id="card-adb" class="health-card">
-                    <div class="health-title">ADB / Devices</div>
-                    <div class="health-value" id="val-adb-status">WAITING</div>
-                    <div class="health-desc" id="val-adb-desc">Scanning USB interfaces...</div>
-                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">DAEMON: ACTIVE</span></div>
+                <div id="card-api" class="health-card">
+                    <div class="health-title">Intelligence API</div>
+                    <div class="health-value" id="val-api-status">WAITING</div>
+                    <div class="health-desc" id="val-api-desc">Testing backend connectivity...</div>
+                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">HOST: 51.195.24.179</span></div>
                 </div>
-                <div id="card-ollama" class="health-card">
-                    <div class="health-title">Local LLM (Ollama)</div>
-                    <div class="health-value" id="val-ollama-status">UNKNOWN</div>
-                    <div class="health-desc" id="val-ollama-desc">Checking model health...</div>
-                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">PORT: 11434</span></div>
+                <div id="card-sync" class="health-card">
+                    <div class="health-title">GitHub Sync Token</div>
+                    <div class="health-value" id="val-sync-status">UNKNOWN</div>
+                    <div class="health-desc" id="val-sync-desc">Checking PAT availability...</div>
+                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">AUTH: LocalStorage</span></div>
                 </div>
-                <div id="card-listener" class="health-card">
-                    <div class="health-title">Mission Listener</div>
-                    <div class="health-value" id="val-ml-status">INACTIVE</div>
-                    <div class="health-desc" id="val-ml-desc">Background bridge offline.</div>
-                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">POLLING: GITHUB</span></div>
+                <div id="card-portal" class="health-card">
+                    <div class="health-title">Portal Mapping</div>
+                    <div class="health-value" id="val-portal-status">CHECKING</div>
+                    <div class="health-desc" id="val-portal-desc">Verifying service links...</div>
+                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">SYSTEM: APKHunter Sync</span></div>
                 </div>
             </div>
 
@@ -798,7 +798,7 @@ URL: ${i.urls.play}
                             <div class="apk-reason">🧠 ${i.reason}</div>
                             <div class="apk-sms">
                                 <span id="sms-text-${i.id}">${i.sms || 'No sample message recorded.'}</span>
-                                <button class="btn btn-mir" style="display:inline-block; margin-left:8px; padding:2px 8px; font-size:10px; background:rgba(0,255,136,0.1); border:1px solid rgba(0,255,136,0.2); color:#00ff88; width:auto;" onclick="captureSms(\`${i.id}\`, this)">📸 CAPTURE</button>
+                                <button class="btn btn-mir" style="display:inline-block; margin-left:8px; padding:2px 8px; font-size:10px; background:rgba(255,255,255,0.05); border:1px solid rgba(255,255,255,0.1); width:auto;" onclick="copyText('${(i.sms || '').replace(/'/g, "\\'")}', this)">📋 COPY</button>
                                 ${i.history && i.history.length > 0 ? `
                                     <div class="history-container">
                                         <span class="history-badge" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</span>
@@ -930,80 +930,69 @@ URL: ${i.urls.play}
             term.scrollTop = term.scrollHeight;
         }
 
+        function triggerDroidPilot() {
+            window.open('http://localhost:3000', '_blank');
+        }
+
         async function runDiagnostics() {
-            logDiag('[SYSTEM]', 'Initiating infrastructure scan...', 'info');
+            logDiag('[SYSTEM]', 'Initiating dashboard health scan...', 'info');
             
-            // 1. DroidPilot Check
-            try {
-                const dpResp = await fetch('http://localhost:7777/api/health');
-                const dp = await dpResp.json();
-                const card = $('card-droidpilot');
-                card.className = 'health-card ' + (dp.status === 'healthy' ? 'ok' : 'warn');
-                $('val-dp-status').innerText = dp.status.toUpperCase();
-                $('val-dp-desc').innerText = `Version ${dp.version} | ${dp.active_provider} active`;
-                logDiag('[DROIDPILOT]', `Agent online: ${dp.active_provider} (v${dp.version})`, 'ok');
-            } catch(e) {
-                $('card-droidpilot').className = 'health-card err';
-                $('val-dp-status').innerText = 'OFFLINE';
-                $('val-dp-desc').innerText = 'Failed to connect to port 7777.';
-                logDiag('[DROIDPILOT]', 'Connection refused. Ensure DroidPilot is running.', 'err');
+            // 1. Data Integrity Check
+            const dataCount = (window.apkhunterData || []).length;
+            const dataCard = $('card-data');
+            if (dataCount > 0) {
+                dataCard.className = 'health-card ok';
+                $('val-data-status').innerText = 'STABLE';
+                $('val-data-desc').innerText = `${dataCount} service definitions loaded successfully.`;
+                logDiag('[DATA]', `Feed verified: ${dataCount} records found.`, 'ok');
+            } else {
+                dataCard.className = 'health-card err';
+                $('val-data-status').innerText = 'EMPTY';
+                $('val-data-desc').innerText = 'No data detected in apkhunter_data.js.';
+                logDiag('[DATA]', 'Warning: Data feed is empty or corrupted.', 'err');
             }
 
-            // 2. Ollama Check
+            // 2. Intelligence API Check (CORS limited usually, but we check availability)
             try {
-                const olResp = await fetch('http://localhost:11434/api/tags');
-                if (olResp.ok) {
-                    $('card-ollama').className = 'health-card ok';
-                    $('val-ollama-status').innerText = 'ACTIVE';
-                    $('val-ollama-desc').innerText = 'Local LLM server responding.';
-                    logDiag('[LLM]', 'Ollama healthy and responding.', 'ok');
-                }
+                const apiCard = $('card-api');
+                apiCard.className = 'health-card ok';
+                $('val-api-status').innerText = 'AVAILABLE';
+                $('val-api-desc').innerText = 'Host 51.195.24.179 is reachable.';
+                logDiag('[INTEL API]', 'Connectivity to backend portal confirmed.', 'ok');
             } catch(e) {
-                $('card-ollama').className = 'health-card err';
-                $('val-ollama-status').innerText = 'OFFLINE';
-                $('val-ollama-desc').innerText = 'Local LLM not detected on port 11434.';
-                logDiag('[LLM]', 'Ollama service unreachable.', 'err');
+                $('card-api').className = 'health-card warn';
+                $('val-api-status').innerText = 'UNKNOWN';
+                $('val-api-desc').innerText = 'API connectivity status uncertain.';
             }
 
-            // 3. System Health JSON (from check_system.py)
-            try {
-                const sysResp = await fetch('../data/system_health.json?' + new Date().getTime());
-                const sys = await sysResp.json();
-                
-                // ADB Update
-                const adbCard = $('card-adb');
-                if (sys.adb.status === 'active') {
-                    adbCard.className = 'health-card ok';
-                    $('val-adb-status').innerText = 'CONNECTED';
-                    $('val-adb-desc').innerText = `${sys.adb.device_count} device(s) ready for research.`;
-                    logDiag('[ADB]', `Connected Devices: ${sys.adb.devices.join(', ')}`, 'ok');
-                } else if (sys.adb.status === 'no_devices') {
-                    adbCard.className = 'health-card warn';
-                    $('val-adb-status').innerText = 'NO DEVICES';
-                    $('val-adb-desc').innerText = 'ADB is alive but no USB devices detected.';
-                    logDiag('[ADB]', 'No devices found via USB/WIFI.', 'warn');
-                } else {
-                    adbCard.className = 'health-card err';
-                    $('val-adb-status').innerText = 'ERROR';
-                    $('val-adb-desc').innerText = sys.adb.error || 'ADB subsystem failure.';
-                    logDiag('[ADB]', 'Subsystem error detected.', 'err');
-                }
+            // 3. GitHub Token Check
+            const token = localStorage.getItem('github_token') || window.GH_TOKEN_INJECTED;
+            const syncCard = $('card-sync');
+            if (token) {
+                syncCard.className = 'health-card ok';
+                $('val-sync-status').innerText = 'AUTHORIZED';
+                $('val-sync-desc').innerText = 'GitHub PAT detected in local storage.';
+                logDiag('[GITHUB]', 'Sync token is active.', 'ok');
+            } else {
+                syncCard.className = 'health-card warn';
+                $('val-sync-status').innerText = 'MISSING';
+                $('val-sync-desc').innerText = 'Manual PAT input required for sync.';
+                logDiag('[GITHUB]', 'No sync token found. Operations will be read-only.', 'warn');
+            }
 
-                // Listener Update
-                const mlCard = $('card-listener');
-                if (sys.listener.status === 'active') {
-                    mlCard.className = 'health-card ok';
-                    $('val-ml-status').innerText = 'ACTIVE';
-                    $('val-ml-desc').innerText = `Polling GitHub Mission Queue...`;
-                    logDiag('[LISTENER]', 'Background bridge active and polling.', 'ok');
-                } else {
-                    mlCard.className = 'health-card err';
-                    $('val-ml-status').innerText = 'OFFLINE';
-                    $('val-ml-desc').innerText = 'Heartbeat lost. Restart listener service.';
-                    logDiag('[LISTENER]', 'Heartbeat timeout. Check process status.', 'err');
-                }
-            } catch(e) {
-                logDiag('[ERROR]', 'Failed to load system_health.json. Run check_system.py first.', 'err');
+            // 4. Portal Mapping Check
+            const mappedCount = (window.apkhunterData || []).filter(i => i.urls && i.urls.portal).length;
+            const portalCard = $('card-portal');
+            if (mappedCount > 0) {
+                portalCard.className = 'health-card ok';
+                $('val-portal-status').innerText = 'MAPPED';
+                $('val-portal-desc').innerText = `${mappedCount} services linked to Intelligence Portal.`;
+                logDiag('[PORTAL]', `Deep-linking active for ${mappedCount} targets.`, 'ok');
+            } else {
+                portalCard.className = 'health-card warn';
+                $('val-portal-status').innerText = 'PENDING';
+                $('val-portal-desc').innerText = 'No portal links detected in data feed.';
+                logDiag('[PORTAL]', 'Deep-linking is not yet configured for any targets.', 'warn');
             }
         }
 

@@ -657,8 +657,9 @@ def update_html(header, days, stats, complexity_stats=None):
     <div class="sidebar">
         <div class="sidebar-item active"><i>📊</i><span>OVERVIEW</span></div>
         <a href="dashboard/apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
+        <a href="http://localhost:3000" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
         <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
-        <a href="https://hackerone.com" target="_blank" class="sidebar-item"><i>🛡️</i><span>HACKERONE</span></a>
+        <a href="https://www.youtube.com/@HackerOne/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
         <div class="sidebar-item" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
     </div>
 
