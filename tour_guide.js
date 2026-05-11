@@ -53,6 +53,11 @@ class TourGuide {
     }
 
     showStep() {
+        if (!this.steps || this.steps.length === 0) {
+            console.error('TourGuide: No steps defined');
+            this.finish();
+            return;
+        }
         const step = this.steps[this.currentStep];
         const el = document.querySelector(step.element);
         
