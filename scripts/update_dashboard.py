@@ -915,7 +915,7 @@ def update_html(header, days, stats, complexity_stats=None):
             </div>
             <div class="stat-card" style="border-color: var(--accent-secondary);">
                 <div class="stat-label">Survival Index</div>
-                <div class="stat-value">{{round((stats['cycle_earnings'] / (90000/31 * stats['cycle_day'])) * 100, 1) if stats['cycle_day'] > 0 else 0}}%</div>
+                <div class="stat-value">{round((stats['cycle_earnings'] / (90000/31 * stats['cycle_day'])) * 100, 1) if stats['cycle_day'] > 0 else 0}%</div>
                 <div class="stat-sub">OUTPUT VS PROJECTED</div>
             </div>
         </div>
