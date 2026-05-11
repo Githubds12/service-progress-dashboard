@@ -875,7 +875,7 @@ def update_html(header, days, stats, complexity_stats=None):
             <div class="content-right">
                 <div class="chart-card">
                     <div class="card-header">
-                        <div class="card-title">EFFORT ALLOCATION</div>
+                        <div class="card-title">EFFORT ALLOCATION <span id="localEffortDate" style="font-family: 'Orbitron'; font-size: 0.7rem; color: #f0f; margin-left: 10px; font-weight: 800; opacity: 0.8;"></span></div>
                     </div>
                     <div style="height: 300px; position: relative;">
                         <canvas id="effortPieChart"></canvas>
@@ -1042,6 +1042,7 @@ def update_html(header, days, stats, complexity_stats=None):
             const dateLabel = serviceDay ? serviceDay.date.split(',')[0].toUpperCase() : targetDate;
             if ($('localLogDate')) $('localLogDate').innerText = dateLabel;
             if ($('localRefDate')) $('localRefDate').innerText = dateLabel;
+            if ($('localEffortDate')) $('localEffortDate').innerText = '[ ' + dateLabel + ' ]';
 
             const logBody = $('serviceLogBody');
             logBody.innerHTML = '';
