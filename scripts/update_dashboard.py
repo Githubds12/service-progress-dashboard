@@ -402,7 +402,6 @@ def update_html(header, days, stats, complexity_stats=None):
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Operational Intelligence Dashboard</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="tour_guide.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
         :root {{
@@ -659,11 +658,11 @@ def update_html(header, days, stats, complexity_stats=None):
     
     <div class="sidebar">
         <div class="sidebar-item active"><i>📊</i><span>OVERVIEW</span></div>
-        <a href="dashboard/apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
-        <a href="dashboard/apkhunter.html#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
+        <a href="apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
+        <a href="apkhunter.html#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
         <a href="http://localhost:3000" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
         <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
-        <a href="https://www.youtube.com/@HackerOne/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
+        <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
         <div class="sidebar-item" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
     </div>
 
