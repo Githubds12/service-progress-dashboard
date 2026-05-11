@@ -898,25 +898,27 @@ def update_html(header, days, stats, complexity_stats=None):
         </div>
 
         <div class="dashboard-grid" style="margin-bottom: 30px;">
-            <div class="stat-card" style="border-color: var(--accent-secondary);">
+            <div class="stat-card" style="border-color: var(--accent-secondary);" title="Current day within the 31-day operational window (Starts May 7th).">
                 <div class="stat-label">Cycle Progress</div>
                 <div class="stat-value">Day {stats['cycle_day']}</div>
                 <div class="stat-sub">{stats['cycle_remaining']} DAYS REMAINING</div>
             </div>
-            <div class="stat-card" style="border-color: var(--accent-secondary);">
+            <div class="stat-card" style="border-color: var(--accent-secondary);" title="Total revenue generated since the May 7th reset.">
                 <div class="stat-label">Cycle Revenue</div>
                 <div class="stat-value">₹{stats['cycle_earnings']:,}</div>
                 <div class="stat-sub">TARGET: ₹90,000</div>
             </div>
-            <div class="stat-card" style="border-color: var(--accent-secondary);">
+            <div class="stat-card" style="border-color: var(--accent-secondary);" title="Total research intensity points earned since May 7th. Reflects volume of deep technical analysis.">
                 <div class="stat-label">Cycle Mastery</div>
                 <div class="stat-value">{stats['cycle_points']} Pts</div>
                 <div class="stat-sub">RESEARCH INTENSITY</div>
+                <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px; line-height: 1.2;">Cumulative research effort since cycle reset.</div>
             </div>
-            <div class="stat-card" style="border-color: var(--accent-secondary);">
+            <div class="stat-card" style="border-color: var(--accent-secondary);" title="Ratio of actual earnings vs. required earnings for the current day to hit ₹90k. 100% = On Track.">
                 <div class="stat-label">Survival Index</div>
                 <div class="stat-value">{round((stats['cycle_earnings'] / (90000/31 * stats['cycle_day'])) * 100, 1) if stats['cycle_day'] > 0 else 0}%</div>
                 <div class="stat-sub">OUTPUT VS PROJECTED</div>
+                <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px; line-height: 1.2;">Earnings vs. required pace for today.</div>
             </div>
         </div>
 
