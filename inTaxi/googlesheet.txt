@@ -2,7 +2,7 @@ Researcher: Deepanshu Singh
 Date: 2026-05-11
 it.ud.microtek.InTaxi 4.0.16
 Service: inTaxi
-Service ID: d6e81057-01ef-4171-873b-5517e06f97d5
+Service ID: c45e004a-0634-486a-9e1c-6ca6d044f95a
 Service SMS: SMS: +393720518803 code 25888
 Official Website: intaxi.it
 Google Play Store: inTaxi: prenotazione taxi
