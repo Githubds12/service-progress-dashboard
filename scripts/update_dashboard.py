@@ -474,7 +474,11 @@ def update_html(header, days, stats, complexity_stats=None):
         .down {{ color: var(--danger); }}
 
         /* Main Content Layout */
-        .main-layout {{ display: grid; grid-template-columns: 2fr 1fr; gap: 25px; }}
+        .main-layout {{ 
+            display: grid; 
+            grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); 
+            gap: 25px; 
+        }}
         .chart-card {{
             background: var(--card-bg);
             padding: 30px;
@@ -483,6 +487,7 @@ def update_html(header, days, stats, complexity_stats=None):
             margin-bottom: 25px;
             max-height: 700px;
             overflow-y: auto;
+            overflow-x: hidden; /* Prevent horizontal expansion */
             backdrop-filter: blur(15px);
             scrollbar-width: thin;
             scrollbar-color: var(--border-color) transparent;
@@ -657,7 +662,7 @@ def update_html(header, days, stats, complexity_stats=None):
         .status-syncing {{ background: rgba(112, 0, 255, 0.2); color: #a371f7; border: 1px solid #a371f7; }}
         .status-error {{ background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid #f85149; }}
 
-        @media (max-width: 1100px) {{
+        @media (max-width: 1300px) {{
             .main-layout {{ grid-template-columns: 1fr; }}
         }}
 
