@@ -22,8 +22,8 @@ class TourGuide {
 
         Object.assign(this.overlay.style, {
             position: 'fixed', top: 0, left: 0, width: '100%', height: '100%',
-            background: 'rgba(0,0,0,0.8)', zIndex: 10000, display: 'none',
-            transition: 'opacity 0.3s', backdropFilter: 'blur(4px)'
+            background: 'rgba(0,0,0,0.6)', zIndex: 10000, display: 'none',
+            transition: 'opacity 0.3s', backdropFilter: 'blur(2px)'
         });
 
         // Create or find tooltip
