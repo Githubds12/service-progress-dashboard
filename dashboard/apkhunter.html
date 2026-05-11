@@ -209,6 +209,31 @@
         .heat-title { font-size: 14px; font-weight: 700; color: var(--accent); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
         .heat-meta { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .heat-legend { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text-dim); }
+
+        .intel-bar {
+            display: flex; gap: 15px; margin-bottom: 20px; flex-wrap: wrap;
+        }
+        .intel-btn {
+            background: #111; border: 1px solid var(--border); color: #fff;
+            padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 12px;
+            font-weight: 700; display: flex; align-items: center; gap: 10px; transition: 0.3s;
+            text-decoration: none;
+        }
+        .intel-btn i { font-style: normal; font-size: 16px; }
+        .intel-btn:hover { border-color: var(--accent); background: rgba(0,229,255,0.05); transform: translateY(-2px); }
+        .btn-recommend { border-color: var(--yellow); color: var(--yellow); }
+        .btn-recommend:hover { background: rgba(255, 215, 0, 0.05); border-color: #ffea00; }
+        .btn-droidpilot { border-color: var(--accent); color: var(--accent); }
+        .btn-resources { border-color: #e91e63; color: #e91e63; }
+
+        .skill-reminder {
+            background: rgba(255, 82, 82, 0.1); border: 1px solid var(--red-glow);
+            padding: 15px; border-radius: 12px; margin-bottom: 30px; display: none;
+            align-items: center; gap: 15px; animation: slideIn 0.5s ease;
+        }
+        @keyframes slideIn { from { transform: translateX(50px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .reminder-title { font-weight: 700; color: var(--red); font-size: 14px; text-transform: uppercase; }
+        .reminder-text { font-size: 13px; color: var(--text); }
     </style>
 </head>
 <body>
@@ -230,6 +255,27 @@
                 <a href="../index.html" class="nav-btn">← MAIN DASHBOARD</a>
             </div>
         </header>
+
+        <div class="intel-bar">
+            <button class="intel-btn btn-recommend" onclick="showRecommendations()">
+                <i>🎯</i> SMART RECOMMENDATIONS (90K PATH)
+            </button>
+            <button class="intel-btn btn-droidpilot" onclick="triggerDroidPilot()">
+                <i>🛸</i> DROIDPILOT INTELLIGENCE
+            </button>
+            <a href="https://www.youtube.com/@HackerOneEvents/videos" target="_blank" class="intel-btn btn-resources">
+                <i>🎬</i> RE RESOURCES (H1)
+            </a>
+        </div>
+
+        <div id="skillReminder" class="skill-reminder">
+            <div style="font-size: 24px;">⚠️</div>
+            <div>
+                <div class="reminder-title">Technical Mastery Opportunity</div>
+                <div class="reminder-text">This target has <b>Root Detection</b> or <b>SSL Pinning</b>. Use DroidPilot to analyze these hurdles and gain high-value mastery points!</div>
+            </div>
+            <button class="btn" style="margin-left: auto;" onclick="$('skillReminder').style.display='none'">DISMISS</button>
+        </div>
 
         <div class="heatmap-card">
             <div class="heat-title">Technical Mastery Focus (BHM)</div>
@@ -550,6 +596,8 @@ URL: ${i.urls.play}
             let html = '';
             paginated.forEach(i => {
                 const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
+                if (i === paginated[0]) checkSkillFocus(i); // Check for skill focus on the top item
+
                 html += `
                     <tr class="${i.claimed ? 'row-claimed' : ''} ${i.root_detected ? 'row-root' : ''}">
                         <td>
@@ -655,6 +703,38 @@ URL: ${i.urls.play}
                 return;
             }
             el.innerHTML = `<b>${date}:</b> ` + events.map(e => `[${e.event_type}] ${e.details}`).join(' | ');
+        }
+
+        function showRecommendations() {
+            state.filter = 'recommendations';
+            state.page = 1;
+            
+            // Recommendation Heuristic: High Difficulty + Unclaimed
+            state.filteredData = window.apkhunterData.filter(item => {
+                return !item.claimed && item.difficulty >= 60;
+            }).sort((a, b) => b.difficulty - a.difficulty);
+            
+            render();
+            updateUrl();
+            alert("RECOMMENDATION: Focus on these high-difficulty targets to maximize earnings and reach your 90k goal quickly.");
+        }
+
+        async function triggerDroidPilot() {
+            const query = prompt("Enter Package Name or App Name for DroidPilot Research:");
+            if (!query) return;
+            
+            updateSyncStatus('syncing');
+            const cmd = `DROIDPILOT_RESEARCH: Target: ${query}`;
+            await pushToGitHub(cmd);
+            alert(`DROIDPILOT: Research command sent for ${query}. Searching Aptoide/Public sources first...`);
+        }
+
+        function checkSkillFocus(item) {
+            const hasHurdles = item.difficulty >= 70 || item.root_detected;
+            if (hasHurdles && !item.claimed) {
+                $('skillReminder').style.display = 'flex';
+                setTimeout(() => { $('skillReminder').style.display = 'none'; }, 8000);
+            }
         }
 
         init();
