@@ -13,8 +13,12 @@ start /min "" %PYTHON_EXE% dump\serve_dashboard.py
 echo [*] Running Initial Dashboard Update...
 %PYTHON_EXE% scripts\update_dashboard.py
 
-echo [*] Starting API Portal (Monitor Mode)...
-:: %PYTHON_EXE% scripts\api_portal.py --monitor
+echo [*] Starting DroidPilot Core Services...
+pushd "c:\Users\Gorri\Documents\Reports\DroidPilot"
+:: Start Web UI and Mission Listener
+start /min "DroidPilot Web" python -m droidpilot.main
+start /min "DroidPilot Listener" python src/droidpilot/mission_listener.py
+popd
 
 echo [!] Auto Servers are now running in the background.
 timeout /t 3 >nul
