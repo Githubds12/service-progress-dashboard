@@ -15,9 +15,10 @@ echo [*] Running Initial Dashboard Update...
 
 echo [*] Starting DroidPilot Core Services...
 pushd "c:\Users\Gorri\Documents\Reports\DroidPilot"
-:: Start Web UI and Mission Listener
-start /min "DroidPilot Web" python -m droidpilot.main
-start /min "DroidPilot Listener" python src/droidpilot/mission_listener.py
+:: Start Web UI (FastAPI via uvicorn) and Mission Listener
+set PYTHONPATH=src
+start /min "DroidPilot Web" .venv\Scripts\python -m uvicorn droidpilot.ui.web.app:app --host 127.0.0.1 --port 7777
+start /min "DroidPilot Listener" .venv\Scripts\python src/droidpilot/mission_listener.py
 popd
 
 echo [!] Auto Servers are now running in the background.
