@@ -4,9 +4,7 @@
 1. Hinge - 400rs
 2. Niimbot - 400rs
 3. VFS Global - 400rs
-4. yandexgo - 400rs
-5. yandexpro - 400rs
-Daily Summary: 5 services, 2000 rs
+Daily Summary: 3 services, 1200 rs
 ----------
 20th April, Monday
 6. Blink - 400rs
@@ -188,9 +186,9 @@ Daily Summary: 1 service, 400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 123
-- Total Earnings: 49000 rs
-- Average Daily Earning: 12250.0 rs/day
-- Average Daily Services: 30.75 services/day
-- Recovery Pace: 3.9 Services / day
-- Projected Monthly Total: ₹367500.0
+- Total Services: 121
+- Total Earnings: 48200 rs
+- Average Daily Earning: 12050.0 rs/day
+- Average Daily Services: 30.25 services/day
+- Recovery Pace: 4.0 Services / day
+- Projected Monthly Total: ₹361500.0
