@@ -1,4 +1,4 @@
-7th May to 7th June
+### Previous History (15th April to 6th May)
 
 15th April, Wednesday
 1. Hinge - 400rs
@@ -151,12 +151,13 @@ Daily Summary: 6 services, 2500 rs
 109. [16:40] KwikPay - com.kwikpay.transfers - 400rs
 Daily Summary: 5 services, 2000 rs
 ----------
-### Previous History (10th April to 10th May)
 
 6th May, Wednesday
 110. [17:15] JvSpinBet - org.jvspinbet.client - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
+### 7th May to 7th June
+
 7th May, Thursday
 1. [12:35] Utair - ru.utair.android - 400rs
 2. [14:15] Lyft - me.lyft.android - 400rs
@@ -187,9 +188,9 @@ Daily Summary: 1 service, 400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 109
-- Total Earnings: 43400 rs
-- Average Daily Earning: 10850.0 rs/day
-- Average Daily Services: 27.25 services/day
-- Recovery Pace: 4.5 Services / day
-- Projected Monthly Total: ₹325500.0
+- Total Services: 123
+- Total Earnings: 49000 rs
+- Average Daily Earning: 12250.0 rs/day
+- Average Daily Services: 30.75 services/day
+- Recovery Pace: 3.9 Services / day
+- Projected Monthly Total: ₹367500.0
