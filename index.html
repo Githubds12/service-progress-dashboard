@@ -298,7 +298,7 @@
             <div class="logo">OPERATIONAL INTELLIGENCE</div>
             <div class="header-meta">
                 <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
-                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">23:09:31</span></div>
+                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">23:13:25</span></div>
             </div>
         </header>
 
@@ -661,6 +661,31 @@
                     content: 'Your primary command interface for APK research intelligence and operational tracking.' 
                 },
                 { 
+                    element: '.sidebar-item:nth-child(1)', 
+                    title: '📊 OVERVIEW', 
+                    content: 'The high-level command view. Provides a centralized snapshot of revenue, pace, and global research mastery.' 
+                },
+                { 
+                    element: '.sidebar-item:nth-child(2)', 
+                    title: '🎯 APK HUNTER', 
+                    content: 'The primary research sector. Access the target grid, manage claimed services, and perform deep-dive APK reconnaissance.' 
+                },
+                { 
+                    element: '.sidebar-item:nth-child(3)', 
+                    title: '🛡️ SYSTEM HEALTH', 
+                    content: 'Diagnostic monitoring sector. Tracks background engine status, ADB connectivity, and data synchronization integrity.' 
+                },
+                { 
+                    element: '.sidebar-item:nth-child(5)', 
+                    title: '🎬 RESOURCES', 
+                    content: 'External intelligence library. Quick access to advanced HackerOne RE videos and technical training materials.' 
+                },
+                { 
+                    element: '.sidebar-item:nth-child(6)', 
+                    title: '⚙️ SETTINGS', 
+                    content: 'Configuration layer for personalizing your research environment and managing secure access tokens.' 
+                },
+                { 
                     element: '.dashboard-grid', 
                     title: '📊 CORE METRICS', 
                     content: 'Real-time KPIs tracking total earnings vs. monthly goals, current research pace, and active APK claims.' 
@@ -678,22 +703,17 @@
                 { 
                     element: '#serviceLogContainer', 
                     title: '📝 OPERATIONAL LOG', 
-                    content: 'A detailed activity specification feed. Each entry includes a unique ID and timestamped activity record (e.g., [12:05] inTaxi - 400rs).' 
+                    content: 'A detailed activity specification feed. Each entry includes a unique ID and timestamped activity record.' 
                 },
                 { 
                     element: '#effortPieChart', 
                     title: '🥧 EFFORT ALLOCATION', 
-                    content: 'Visualizes where your research energy is spent. If no activity is logged for the selected period, it will show "NO TELEMETRY DATA".' 
+                    content: 'Visualizes where your research energy is spent. Shows "NO TELEMETRY DATA" if the period is inactive.' 
                 },
                 { 
                     element: '.ref-input-group', 
                     title: '🧠 STRATEGIC REFLECTIONS', 
-                    content: 'Record critical technical observations here. Use the input to "RECORD OBSERVATION..." and hit SAVE to sync it to the secure technical ledger.' 
-                },
-                { 
-                    element: '.sidebar', 
-                    title: '🧭 NAVIGATION SECTORS', 
-                    content: 'Switch between the high-level OVERVIEW, target-rich APK HUNTER research view, and SYSTEM HEALTH diagnostics.' 
+                    content: 'Record critical technical observations here. Use the input to "RECORD OBSERVATION..." and hit SAVE to sync.' 
                 }
             ];
             new TourGuide(steps).start();
