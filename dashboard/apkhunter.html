@@ -1019,7 +1019,15 @@ ${i.sms || 'No message recorded.'}`;
                 rotView.style.display = 'block';
                 stdView.style.display = 'none';
                 
-                let rotHtml = '';
+                let rotHtml = `
+                    <div class="rot-nav" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(0,255,136,0.1);">
+                        <button class="btn" style="padding: 8px 25px; font-size: 14px; border-radius: 50px;" onclick="changePage(-1)" ${state.page === 1 ? 'disabled' : ''}>← PREVIOUS</button>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 1px;">
+                            TARGET ${state.page} <span style="color:#555; margin: 0 10px;">/</span> ${state.filteredData.length}
+                        </div>
+                        <button class="btn" style="padding: 8px 25px; font-size: 14px; border-radius: 50px;" onclick="changePage(1)" ${state.page === totalPages ? 'disabled' : ''}>NEXT →</button>
+                    </div>
+                `;
                 paginated.forEach(i => {
                     const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
                     rotHtml += `
@@ -1074,6 +1082,15 @@ ${i.sms || 'No message recorded.'}`;
                         </div>
                     `;
                 });
+                rotHtml += `
+                    <div class="rot-nav" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; background: rgba(0,0,0,0.2); padding: 10px 30px; border-radius: 50px; border: 1px solid #333;">
+                        <button class="btn" style="padding: 8px 25px; font-size: 12px; border-color: #444;" onclick="changePage(-1)" ${state.page === 1 ? 'disabled' : ''}>PREVIOUS</button>
+                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #666;">
+                            END OF TARGET ${state.page}
+                        </div>
+                        <button class="btn" style="padding: 8px 25px; font-size: 12px; border-color: #444;" onclick="changePage(1)" ${state.page === totalPages ? 'disabled' : ''}>NEXT</button>
+                    </div>
+                `;
                 rotView.innerHTML = rotHtml;
             } else {
                 rotView.style.display = 'none';
