@@ -1,0 +1,26 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-12
+
+com.grabtaxi.passenger 5.408.0
+
+Service: Grab - Taxi & Food Delivery
+Service ID: ed65e20e-4d64-4684-b9bd-ede11a19140c
+Service SMS: 333333 is your GRAB sign-in code.
+
+Flow: Init Challenge Session -> Solve Arkose Labs Captcha -> Send OTP (phone/otp) -> Verify OTP (phone/token)
+
+OTP Request (Send):
+- URL: https://api.grab.com/grabid/v1/phone/otp
+- Body: {"method":"SMS","countryCode":"IT","phoneNumber":"393720513142","templateID":"pax_android_production","numDigits":6,"deviceID":"3346dff226996b4a", ...}
+- Response: {"challengeID":"700a4967-985e-48d3-a82a-739563b154a7", ...}
+
+OTP Verify (Token):
+- URL: https://api.grab.com/grabid/v1/phone/token
+- Body: {"otp":"333333","countryCode":"IT","phoneNumber":"393720513142","challengeID":"700a4967-985e-48d3-a82a-739563b154a7","adrID":"3346dff226996b4a", ...}
+
+Captcha: Yes (Arkose Labs FunCaptcha)
+Rate Limits: Moderate
+Encryption: JWT based session tokens
+
+One-liner: Grab uses a high-security flow with Arkose Labs (FunCaptcha) mandatory for OTP requests and strict device-session binding.
+Service Description: Grab is a leading superapp in Southeast Asia, providing transportation, food delivery, and digital payment services.

@@ -185,13 +185,14 @@ Daily Summary: 3 services, 1200 rs
 Daily Summary: 1 service, 400 rs
 ----------
 12th May, Tuesday
-Daily Summary: 0 services, 0 rs
+1. [11:56] Grab - com.grabtaxi.passenger - 400rs
+Daily Summary: 1 service, 400 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 121
-- Total Earnings: 48200 rs
-- Average Daily Earning: 866.67 rs/day
-- Average Daily Services: 20.17 services/day
-- Recovery Pace: 8.5 Services / day
-- Projected Monthly Total: ₹26866.67
+- Total Services: 122
+- Total Earnings: 48600 rs
+- Average Daily Earning: 933.33 rs/day
+- Average Daily Services: 20.33 services/day
+- Recovery Pace: 8.4 Services / day
+- Projected Monthly Total: ₹28933.33
