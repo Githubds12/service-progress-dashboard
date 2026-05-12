@@ -840,7 +840,7 @@
                     matchesType = rotatoryIds.includes(item.id);
                 }
                 if (state.filter === 'recommendations') {
-                    matchesType = !item.claimed && item.difficulty >= 60;
+                    matchesType = !item.claimed && item.difficulty <= 40;
                 }
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
@@ -1230,7 +1230,7 @@ ${i.sms || 'No message recorded.'}`;
             
             render();
             updateUrl();
-            alert("RECOMMENDATION: Focus on these high-difficulty targets to maximize earnings and reach your 90k goal quickly.");
+            alert("RECOMMENDATION: Focus on these low-difficulty targets to maximize speed and reach your 90k goal quickly by accumulating rapid wins.");
         }
 
         function switchView(viewId, btn) {
