@@ -18,7 +18,7 @@ OTP Verify (Token):
 - URL: https://api.grab.com/grabid/v1/phone/token
 - Body: {"otp":"333333","countryCode":"IT","phoneNumber":"393720513142","challengeID":"700a4967-985e-48d3-a82a-739563b154a7","adrID":"3346dff226996b4a", ...}
 
-Captcha: Yes (Arkose Labs FunCaptcha)
+Captcha: Arkose Labs FunCaptcha
 Rate Limits: Moderate
 Encryption: JWT based session tokens
 

@@ -55,9 +55,14 @@ def find_mismatches():
 
     print(f"{'SERVICE':<15} | {'BRAND IN SMS':<15} | {'SAMPLE SMS'}")
     print("-" * 80)
-    for m in mismatches[:50]: # Limit output
-        sms_preview = m['sms'].replace('\n', ' ')[:50]
-        print(f"{m['name']:<15} | {m['brand_found']:<15} | {sms_preview}...")
+    for m in mismatches[:100]: # Increase limit
+        try:
+            sms_preview = m['sms'].replace('\n', ' ')[:80]
+            print(f"{m['name']:<15} | {m['brand_found']:<15} | {sms_preview}")
+        except:
+            # Fallback for unicode issues
+            safe_sms = m['sms'].encode('ascii', 'ignore').decode().replace('\n', ' ')[:80]
+            print(f"{m['name']:<15} | {m['brand_found']:<15} | {safe_sms}")
 
     print(f"\nTotal potential rotatory services found: {len(mismatches)}")
 

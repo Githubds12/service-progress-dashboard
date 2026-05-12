@@ -14,7 +14,7 @@ Grab (com.grabtaxi.passenger) implements a high-security authentication flow tha
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS + Arkose Captcha | SMS OTP is preceded by an Arkose Labs challenge |
-| **Captcha** | Yes (Arkose Labs) | Slider/Puzzle captcha required for OTP request |
+| **Captcha** | Arkose Labs | Slider/Puzzle captcha required for OTP request |
 | **Encryption** | Standard TLS | Payloads are JSON, but session tokens are JWT-based |
 | **Rate Limits** | Moderate | Enforced via Arkose Labs and server-side tracking |
 | **Endpoints Involved** | 4 | `/grabid/v1/phone/otp`, `/grabid/v1/phone/token`, `/v1/challengesession/challengeSession`, `/v1/challengesession/challengeSession/verifyChallenge` |
