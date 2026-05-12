@@ -224,6 +224,30 @@
         .score-easy { background: var(--green); color: #000; }
 
         .action-btns { display: flex; flex-direction: column; gap: 8px; }
+        
+        /* Rotatory Focus Mode */
+        .rotatory-focus thead { display: none; }
+        .rotatory-focus table { width: 100%; border: none; }
+        .rotatory-focus td { padding: 40px; }
+        .rotatory-focus .apk-name { font-size: 32px; margin-bottom: 20px; }
+        .rotatory-focus .apk-id { font-size: 16px; margin-bottom: 30px; }
+        .rotatory-focus .apk-sms { 
+            font-size: 20px; 
+            max-height: 400px; 
+            padding: 40px; 
+            border: 2px solid var(--accent);
+            box-shadow: 0 0 30px var(--accent-glow);
+            margin-bottom: 40px;
+        }
+        .rotatory-focus .history-container { top: 20px; right: 20px; }
+        .rotatory-focus .history-badge { font-size: 16px; padding: 10px 20px; }
+        .rotatory-focus .history-list { width: 800px; max-height: 600px; top: 60px; }
+        .rotatory-focus .history-item { font-size: 16px; padding: 15px 0; }
+        .rotatory-focus .action-btns { flex-direction: row; gap: 20px; align-items: center; }
+        .rotatory-focus .btn-claim { padding: 15px 30px; font-size: 18px; }
+        .rotatory-focus .score-badge { font-size: 20px; padding: 10px 20px; }
+        .rotatory-focus .last-update { font-size: 14px; }
+
         .btn {
             padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border);
             background: #111; color: #fff; font-size: 11px; font-weight: 700;
@@ -866,16 +890,24 @@ ${i.sms || 'No message recorded.'}`;
         }
 
         function render() {
-            const start = (state.page - 1) * state.pageSize;
-            const end = start + state.pageSize;
+            const currentPageSize = state.filter === 'rotatory' ? 1 : state.pageSize;
+            const start = (state.page - 1) * currentPageSize;
+            const end = start + currentPageSize;
             const paginated = state.filteredData.slice(start, end);
-            const totalPages = Math.ceil(state.filteredData.length / state.pageSize) || 1;
+            const totalPages = Math.ceil(state.filteredData.length / currentPageSize) || 1;
 
             $('pInfo').innerText = `PAGE ${state.page} / ${totalPages}`;
             $('prevBtn').disabled = state.page === 1;
             $('nextBtn').disabled = state.page === totalPages;
             if ($('prevBtnTop')) $('prevBtnTop').disabled = state.page === 1;
             if ($('nextBtnTop')) $('nextBtnTop').disabled = state.page === totalPages;
+
+            const contentEl = $('apkList');
+            if (state.filter === 'rotatory') {
+                contentEl.classList.add('rotatory-focus');
+            } else {
+                contentEl.classList.remove('rotatory-focus');
+            }
 
             // Update Total Claimed Count
             const totalClaimed = (window.apkhunterData || []).filter(i => i.claimed).length;
