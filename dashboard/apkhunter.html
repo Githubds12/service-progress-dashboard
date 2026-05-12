@@ -238,10 +238,9 @@
             background: linear-gradient(145deg, #0a0a0a, #111);
             border: 1px solid var(--accent);
             border-radius: 24px;
-            padding: 50px;
+            padding: 30px;
             box-shadow: 0 30px 100px rgba(0,0,0,0.9), 0 0 20px rgba(0,255,136,0.05);
             position: relative;
-            overflow: hidden;
         }
 
         .rot-card::before {
@@ -259,8 +258,8 @@
         }
 
         .rot-title-group { flex: 1; }
-        .rot-name { font-size: 64px; font-weight: 800; color: var(--accent); margin: 0; letter-spacing: -2px; line-height: 1; }
-        .rot-id { font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--text-dim); margin-top: 10px; }
+        .rot-name { font-size: 32px; font-weight: 800; color: var(--accent); margin: 0; letter-spacing: -1px; line-height: 1.1; }
+        .rot-id { font-family: 'JetBrains Mono', monospace; font-size: 14px; color: var(--text-dim); margin-top: 5px; }
         
         .rot-stats { display: flex; gap: 20px; align-items: center; }
         .rot-tag { background: rgba(255,255,255,0.05); padding: 8px 16px; border-radius: 8px; font-size: 14px; color: #fff; font-weight: 600; }
@@ -291,7 +290,7 @@
 
         .rot-sms-text {
             font-family: 'JetBrains Mono', monospace;
-            font-size: 36px;
+            font-size: 22px;
             color: var(--yellow);
             line-height: 1.4;
             max-width: 1000px;
@@ -306,10 +305,10 @@
         .rot-history-btn {
             background: var(--accent);
             color: #000;
-            padding: 12px 35px;
+            padding: 10px 25px;
             border-radius: 50px;
             font-weight: 800;
-            font-size: 18px;
+            font-size: 14px;
             cursor: pointer;
             box-shadow: 0 10px 30px var(--accent-glow);
             transition: 0.3s;
@@ -1025,38 +1024,38 @@ ${i.sms || 'No message recorded.'}`;
                     const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
                     rotHtml += `
                         <div class="rot-card">
-                            <div class="rot-header">
+                            <div class="rot-header" style="margin-bottom: 20px; padding-bottom: 15px;">
                                 <div class="rot-title-group">
-                                    <h1 class="rot-name" style="font-size: 36px;">${i.name}</h1>
-                                    <div class="rot-id" style="font-size: 14px;">${i.id}</div>
+                                    <h1 class="rot-name" style="font-size: 28px;">${i.name}</h1>
+                                    <div class="rot-id" style="font-size: 12px;">${i.id}</div>
                                 </div>
                                 <div class="rot-stats">
-                                    <div class="score-badge ${scoreClass}" style="font-size: 18px; padding: 10px 20px;">${i.difficulty}/100</div>
-                                    <div class="rot-tag">SYNC: ${i.last_updated}</div>
+                                    <div class="score-badge ${scoreClass}" style="font-size: 14px; padding: 5px 15px;">${i.difficulty}/100</div>
+                                    <div class="rot-tag" style="font-size: 12px;">SYNC: ${i.last_updated}</div>
                                 </div>
                             </div>
                             
-                            <div class="rot-reason" style="font-size: 16px; padding: 15px;">🧠 ${i.reason}</div>
+                            <div class="rot-reason" style="font-size: 14px; padding: 12px; margin-bottom: 20px;">🧠 ${i.reason}</div>
                             
-                            <div class="rot-sms-box" style="padding: 30px; margin: 20px 0;">
-                                <div class="rot-sms-text" id="sms-text-${i.id}" style="font-size: 22px;">${i.sms || 'No sample message recorded.'}</div>
+                            <div class="rot-sms-box" style="padding: 20px; margin: 15px 0; min-height: 120px;">
+                                <div class="rot-sms-text" id="sms-text-${i.id}" style="font-size: 18px;">${i.sms || 'No sample message recorded.'}</div>
                             </div>
 
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
-                                <div class="rot-mirrors" style="margin: 0; flex: 1;">
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
+                                <div class="rot-mirrors" style="margin: 0; flex: 1; display: flex; gap: 8px; flex-wrap: wrap;">
                                     ${Object.entries(i.urls || {}).filter(([name]) => ['pure', 'mirror', 'uptodown', 'aptoide', 'play'].includes(name)).map(([name, url]) => `
-                                        <a href="${url}" target="_blank" class="rot-mir-btn" style="border: 1px solid ${getMirrorColor(name)}; color:${getMirrorColor(name)}; background: rgba(0,0,0,0.3); padding: 8px 16px; font-size: 14px;">
+                                        <a href="${url}" target="_blank" class="rot-mir-btn" style="border: 1px solid ${getMirrorColor(name)}; color:${getMirrorColor(name)}; background: rgba(0,0,0,0.3); padding: 5px 12px; font-size: 12px; border-radius: 4px; text-decoration: none;">
                                             ${name.toUpperCase()}
                                         </a>
                                     `).join('')}
                                 </div>
 
-                                <div class="rot-history-btn-container" style="position: static; margin-left: 20px;">
+                                <div class="rot-history-btn-container" style="position: relative; margin-left: 20px;">
                                     ${i.history && i.history.length > 0 ? `
-                                        <button class="rot-history-btn" style="position: static; padding: 10px 25px; font-size: 14px;" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</button>
-                                        <div id="history-list-${i.id}" class="history-list" style="width: 600px; max-height: 400px; bottom: 60px; top: auto; right: 0;">
+                                        <button class="rot-history-btn" style="padding: 8px 20px; font-size: 12px;" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</button>
+                                        <div id="history-list-${i.id}" class="history-list" style="width: 500px; max-height: 300px; bottom: 45px; top: auto; right: 0; position: absolute; display: none;">
                                             ${i.history.map(h => `
-                                                <div class="history-item" style="font-size: 14px; padding: 10px 0;">
+                                                <div class="history-item" style="font-size: 12px; padding: 8px 0;">
                                                     <strong>${h.timestamp}</strong>: ${h.message}
                                                 </div>
                                             `).join('')}
@@ -1065,12 +1064,12 @@ ${i.sms || 'No message recorded.'}`;
                                 </div>
                             </div>
                             
-                            <div class="rot-actions" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #222;">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" style="padding:12px 25px; font-size:16px;" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
+                            <div class="rot-actions" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #222; display: flex; gap: 10px;">
+                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" style="padding:10px 20px; font-size:14px; flex: 1;" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
                                     ${i.claimed ? 'CLAIMED' : 'CLAIM'}
                                 </button>
-                                <button class="btn" style="padding:12px 25px; font-size:16px;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
-                                ${i.urls.portal ? `<a href="${i.urls.portal}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:12px 25px; font-size:16px;">INTEL PORTAL</a>` : ''}
+                                <button class="btn" style="padding:10px 20px; font-size:14px; flex: 1;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
+                                ${i.urls.portal ? `<a href="${i.urls.portal}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:10px 20px; font-size:14px; flex: 1; text-align:center; text-decoration:none;">INTEL PORTAL</a>` : ''}
                             </div>
                         </div>
                     `;
@@ -1375,6 +1374,13 @@ ${i.sms || 'No message recorded.'}`;
 
         function startTour() {
             portalTour.start();
+        }
+
+        function toggleHistory(id) {
+            const list = document.getElementById(`history-list-${id}`);
+            if (list) {
+                list.style.display = list.style.display === 'block' ? 'none' : 'block';
+            }
         }
 
         init();
