@@ -643,6 +643,16 @@
             const p = parseInt(params.get('page'));
             if (p) state.page = p;
 
+            const f = params.get('filter');
+            if (f) {
+                state.filter = f;
+                state.pageSize = (f === 'rotatory') ? 1 : 10;
+                // Update button active state
+                document.querySelectorAll('.filter-btn').forEach(b => {
+                    b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${f}'`));
+                });
+            }
+
             state.filteredData = data;
             applyFilters();
             render();
@@ -664,14 +674,17 @@
         function updateUrl() {
             const url = new URL(window.location);
             url.searchParams.set('page', state.page);
+            url.searchParams.set('filter', state.filter);
             window.history.pushState({}, '', url);
         }
 
         function setFilter(f, el) {
-            state.filter = f;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            if (el && el.tagName === 'BUTTON') el.classList.add('active');
+            el.classList.add('active');
+            state.filter = f;
             state.page = 1;
+            // Force pageSize to 1 for rotatory to ensure single-item view
+            state.pageSize = (f === 'rotatory') ? 1 : 10;
             updateUrl();
             applyFilters();
             render();
@@ -890,11 +903,10 @@ ${i.sms || 'No message recorded.'}`;
         }
 
         function render() {
-            const currentPageSize = state.filter === 'rotatory' ? 1 : state.pageSize;
-            const start = (state.page - 1) * currentPageSize;
-            const end = start + currentPageSize;
+            const start = (state.page - 1) * state.pageSize;
+            const end = start + state.pageSize;
             const paginated = state.filteredData.slice(start, end);
-            const totalPages = Math.ceil(state.filteredData.length / currentPageSize) || 1;
+            const totalPages = Math.ceil(state.filteredData.length / state.pageSize) || 1;
 
             $('pInfo').innerText = `PAGE ${state.page} / ${totalPages}`;
             $('prevBtn').disabled = state.page === 1;
