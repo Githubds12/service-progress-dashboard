@@ -1045,20 +1045,20 @@ ${i.sms || 'No message recorded.'}`;
                             
                             <div class="rot-reason" style="font-size: 14px; padding: 12px; margin-bottom: 20px;">🧠 ${i.reason}</div>
                             
-                            <div class="rot-sms-box" style="padding: 20px; margin: 15px 0; min-height: 120px;">
-                                <div class="rot-sms-text" id="sms-text-${i.id}" style="font-size: 18px;">${i.sms || 'No sample message recorded.'}</div>
-                                ${i.history && i.history.length > 0 ? `
-                                    <div class="rot-history-inline" style="margin-top: 20px; padding-top: 15px; border-top: 1px dashed #333;">
-                                        <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; font-weight: 800; letter-spacing: 1px;">📜 HISTORY (${i.history.length})</div>
-                                        <div style="max-height: 200px; overflow-y: auto; padding-right: 10px;">
-                                            ${i.history.map(h => `
-                                                <div class="history-item" style="font-size: 13px; padding: 6px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #aaa;">
-                                                    <strong style="color: var(--accent);">${h.timestamp}</strong>: ${h.message}
-                                                </div>
-                                            `).join('')}
+                            <div class="rot-sms-box" style="padding: 20px; margin: 15px 0; min-height: 120px; background: #050505; text-align: left;">
+                                <div class="rot-history-inline">
+                                    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; font-weight: 800; letter-spacing: 1px;">📜 MESSAGE LOG (${(i.history ? i.history.length : 0) + 1})</div>
+                                    <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
+                                        <div class="history-item" id="sms-text-${i.id}" style="font-size: 15px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; font-family: 'JetBrains Mono', monospace;">
+                                            <strong style="color: var(--green);">LATEST</strong>: ${i.sms || 'No sample message recorded.'}
                                         </div>
+                                        ${i.history ? i.history.map(h => `
+                                            <div class="history-item" style="font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #aaa; font-family: 'JetBrains Mono', monospace;">
+                                                <strong style="color: var(--accent);">${h.timestamp}</strong>: ${h.message}
+                                            </div>
+                                        `).join('') : ''}
                                     </div>
-                                ` : ''}
+                                </div>
                             </div>
 
                             <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
