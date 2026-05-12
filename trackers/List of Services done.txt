@@ -186,13 +186,14 @@ Daily Summary: 1 service, 400 rs
 ----------
 12th May, Tuesday
 1. [11:56] Grab - com.grabtaxi.passenger - 400rs
-Daily Summary: 1 service, 400 rs
+2. [15:02] Wallester - com.wallester.whitelabel - 400rs
+Daily Summary: 2 services, 800 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 122
-- Total Earnings: 48600 rs
-- Average Daily Earning: 933.33 rs/day
-- Average Daily Services: 20.33 services/day
+- Total Services: 123
+- Total Earnings: 49000 rs
+- Average Daily Earning: 1000.0 rs/day
+- Average Daily Services: 20.5 services/day
 - Recovery Pace: 8.4 Services / day
-- Projected Monthly Total: ₹28933.33
+- Projected Monthly Total: ₹31000.0

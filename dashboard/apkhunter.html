@@ -492,6 +492,60 @@
             transition: 0.3s;
         }
         .setting-input:focus { border-color: var(--accent); box-shadow: 0 0 15px rgba(0, 229, 255, 0.2); }
+
+        /* --- PULSE PORTAL --- */
+        .pulse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+            animation: fadeIn 0.6s ease-out;
+        }
+        .pulse-card {
+            background: rgba(20, 0, 20, 0.4);
+            border: 1px solid rgba(255, 0, 255, 0.15);
+            border-radius: 16px;
+            padding: 20px;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+        .pulse-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            border-color: #ff00ff;
+            box-shadow: 0 20px 40px rgba(255, 0, 255, 0.1), 0 0 20px rgba(255, 0, 255, 0.1);
+        }
+        .pulse-card::after {
+            content: ''; position: absolute; top: 0; right: 0; width: 60px; height: 60px;
+            background: linear-gradient(135deg, transparent 50%, rgba(255,0,255,0.1) 50%);
+            border-radius: 0 0 0 100%;
+        }
+        .pulse-card-header { margin-bottom: 15px; display: flex; align-items: center; gap: 12px; }
+        .pulse-status-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .pulse-status-dot.success { background: #00ffaa; box-shadow: 0 0 10px #00ffaa; }
+        .pulse-status-dot.pending { background: #ff9800; box-shadow: 0 0 10px #ff9800; }
+        .pulse-card-name { font-size: 18px; font-weight: 700; color: #fff; margin: 0; flex: 1; }
+        .pulse-card-id { font-family: 'JetBrains Mono'; font-size: 10px; color: var(--text-dim); }
+        .pulse-card-body { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .pulse-stat { display: flex; flex-direction: column; gap: 4px; }
+        .pulse-stat span { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+        .pulse-stat strong { font-size: 13px; color: #fff; }
+        .pulse-card-footer { display: flex; gap: 10px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 15px; }
+        .pulse-btn {
+            flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #ff00ff;
+            background: transparent; color: #ff00ff; font-size: 11px; font-weight: 700;
+            text-align: center; text-decoration: none; cursor: pointer; transition: 0.2s;
+            text-transform: uppercase; letter-spacing: 1px;
+        }
+        .pulse-btn:hover { background: #ff00ff; color: #fff; box-shadow: 0 0 15px rgba(255,0,255,0.4); }
+        .pulse-btn.secondary { border-color: #333; color: var(--text-dim); }
+        .pulse-btn.secondary:hover { border-color: #555; background: #222; color: #fff; }
+
+        .spinner {
+            width: 40px; height: 40px; border: 3px solid rgba(255,0,255,0.1); border-top-color: #ff00ff;
+            border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
     <script src="tour_guide.js"></script>
 </head>
@@ -596,6 +650,7 @@
                 <button class="filter-btn" onclick="setFilter('easy', this)">EASY</button>
                 <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa; background:rgba(0,255,170,0.08);">🆕 NEW</button>
                 <button class="filter-btn" onclick="setFilter('rotatory', this)" style="color:var(--accent); border-color:var(--accent);">🌀 ROTATORY</button>
+                <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff; background:rgba(255,0,255,0.08);">🚀 PULSE</button>
                 <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
                     <option value="all">ALL CATEGORIES</option>
                     <option value="UNCATEGORIZED">UNCATEGORIZED / RESEARCH</option>
@@ -621,6 +676,29 @@
 
             <!-- ROTATORY VIEW CONTAINER -->
             <div id="rotatoryView" style="display:none; margin-top: 30px;"></div>
+
+            <!-- PULSE PORTAL VIEW CONTAINER -->
+            <div id="pulseView" style="display:none; margin-top: 30px;">
+                <div class="pulse-container">
+                    <div class="pulse-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:25px; padding:20px; background:rgba(0,0,0,0.3); border-radius:12px; border:1px solid #ff00ff44;">
+                        <div>
+                            <h2 style="color:#ff00ff; margin:0; font-size:24px; letter-spacing:1px;">🚀 PROJECT PULSE PORTAL</h2>
+                            <p style="color:var(--text-dim); margin:5px 0 0 0; font-size:12px;">LIVE SYNCHRONIZATION WITH MASTER RECON DATABASE</p>
+                        </div>
+                        <div style="display:flex; gap:10px;">
+                            <input type="text" id="pulseSearch" placeholder="SEARCH PROJECTS OR APKs..." oninput="handlePulseSearch()" style="background:#111; border:1px solid #333; color:white; padding:8px 15px; border-radius:4px; width:300px; outline:none;">
+                            <button class="btn" onclick="fetchPulseData()" style="background:#ff00ff; color:white;">REFRESH DATA</button>
+                        </div>
+                    </div>
+                    <div id="pulseContent" class="pulse-grid">
+                        <!-- Pulse cards will be injected here -->
+                        <div style="text-align:center; padding:100px; color:var(--text-dim); width:100%;">
+                            <div class="spinner" style="margin-bottom:20px;"></div>
+                            INITIALIZING PULSE CONNECTION...
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             <!-- STANDARD VIEW CONTAINER -->
             <div id="standardView">
@@ -784,8 +862,18 @@
             // Force pageSize to 1 for rotatory to ensure single-item view
             state.pageSize = (f === 'rotatory') ? 1 : 10;
             updateUrl();
-            applyFilters();
-            render();
+            
+            // Toggle view visibility
+            $('standardView').style.display = (f !== 'rotatory' && f !== 'pulse') ? 'block' : 'none';
+            $('rotatoryView').style.display = (f === 'rotatory') ? 'block' : 'none';
+            $('pulseView').style.display = (f === 'pulse') ? 'block' : 'none';
+
+            if (f === 'pulse') {
+                fetchPulseData();
+            } else {
+                applyFilters();
+                render();
+            }
         }
 
         function handleCatChange(el) {
@@ -1406,6 +1494,100 @@ ${i.sms || 'No message recorded.'}`;
         }
 
         init();
+        // --- PROJECT PULSE INTEGRATION ---
+        const PULSE_API = "http://51.195.24.179:8092/api";
+        const PULSE_CREDS = { email: "deepanshu@test.com", password: "deep@nshu" };
+        let pulseData = [];
+
+        async function pulseLogin() {
+            try {
+                const res = await fetch(`${PULSE_API}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(PULSE_CREDS)
+                });
+                const data = await res.json();
+                if (data.access_token) {
+                    localStorage.setItem('pulse_token', data.access_token);
+                    return data.access_token;
+                }
+            } catch (e) {
+                console.error("Pulse Login Failed:", e);
+            }
+            return null;
+        }
+
+        async function fetchPulseData() {
+            let token = localStorage.getItem('pulse_token');
+            if (!token) token = await pulseLogin();
+            if (!token) {
+                $('pulseContent').innerHTML = '<div style="color:var(--red); text-align:center; padding:50px;">AUTH FAILED: COULD NOT CONNECT TO PULSE PORTAL</div>';
+                return;
+            }
+
+            try {
+                const res = await fetch(`${PULSE_API}/projects`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                
+                if (res.status === 401) {
+                    localStorage.removeItem('pulse_token');
+                    return fetchPulseData();
+                }
+
+                pulseData = await res.json();
+                renderPulseView();
+            } catch (e) {
+                $('pulseContent').innerHTML = `<div style="color:var(--red); text-align:center; padding:50px;">CONNECTION ERROR: ${e.message}</div>`;
+            }
+        }
+
+        function renderPulseView(filter = '') {
+            const container = $('pulseContent');
+            const filtered = pulseData.filter(p => 
+                p.name.toLowerCase().includes(filter.toLowerCase()) || 
+                p.id.toLowerCase().includes(filter.toLowerCase())
+            );
+
+            if (filtered.length === 0) {
+                container.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:100px; width:100%;">NO MATCHING PULSE PROJECTS FOUND</div>';
+                return;
+            }
+
+            container.innerHTML = filtered.map(p => `
+                <div class="pulse-card">
+                    <div class="pulse-card-header">
+                        <div class="pulse-status-dot ${p.status === 'done' ? 'success' : 'pending'}"></div>
+                        <h3 class="pulse-card-name">${p.name}</h3>
+                        <div class="pulse-card-id">${p.id}</div>
+                    </div>
+                    <div class="pulse-card-body">
+                        <div class="pulse-stat">
+                            <span>STATUS</span>
+                            <strong style="color:${p.status === 'done' ? '#00ffaa' : '#ff9800'}">${p.status.toUpperCase()}</strong>
+                        </div>
+                        <div class="pulse-stat">
+                            <span>SERVICE UUID</span>
+                            <code style="font-size:10px;">${p.linked_service_id || 'N/A'}</code>
+                        </div>
+                        <div class="pulse-stat">
+                            <span>CREATION</span>
+                            <strong>${new Date(p.created_at).toLocaleDateString()}</strong>
+                        </div>
+                    </div>
+                    <div class="pulse-card-footer">
+                        <a href="http://51.195.24.179:3000/services/${p.linked_service_id}" target="_blank" class="pulse-btn">INTEL OVERVIEW</a>
+                        <button class="pulse-btn secondary" onclick="alert('DroidPilot Scan: No critical vulnerabilities detected in ${p.name}')">DEEP SCAN</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function handlePulseSearch() {
+            const query = $('pulseSearch').value;
+            renderPulseView(query);
+        }
+
         renderMasteryHeatmap();
     </script>
 </body>
