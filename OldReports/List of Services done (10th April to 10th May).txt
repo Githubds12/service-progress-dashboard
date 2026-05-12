@@ -168,14 +168,16 @@ Daily Summary: 1 service, 400 rs
 114. [22:20] Coinstore - com.io.coinstore - 400rs
 Daily Summary: 3 services, 1200 rs
 ----------
+12th May, Tuesday
+115. [16:45] Kimi - com.moonshot.kimichat - 400rs
+Daily Summary: 1 service, 400 rs
+----------
 
 Dashboard Stats:
-- Total Services: 114
-- Total Earnings: 45400 rs
-- Average Daily Earning (over 28 days since Apr 10): 1607.14 rs/day
-- Average Daily Services: 4.04 services/day
+- Total Services: 115
+- Total Earnings: 45800 rs
+- Average Daily Earning (over 32 days since Apr 10): 1431.25 rs/day
+- Average Daily Services: 3.59 services/day
 - Target: 3000 rs / day
-- Recovery Pace: 35.5 -> 53.2 Services / day (21285.7 rs/day for 2 days)
-- Services Needed to Goal: 106.4
-- Recommended for Today (inc. buffer): 53 services
-- Projected Monthly Total: ₹48431.03
+- Services Needed to Goal: 110
+- Recommended for Today (inc. buffer): 20 services
