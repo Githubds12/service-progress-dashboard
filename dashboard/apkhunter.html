@@ -619,36 +619,40 @@
                     <option value="Tools/Security">TOOLS/SECURITY</option>
                 </select>
             </div>
-        </div>
 
-        <div class="pagination" style="margin-bottom: 20px; margin-top: 0;">
-            <button class="p-btn" onclick="changePage(-1)" id="prevBtnTop">PREVIOUS</button>
-            <button class="p-btn" onclick="changePage(1)" id="nextBtnTop">NEXT</button>
-        </div>
+            <!-- ROTATORY VIEW CONTAINER -->
+            <div id="rotatoryView" style="display:none; margin-top: 30px;"></div>
 
-        <div class="table-wrapper">
-            <table>
-                <thead>
-                    <tr>
-                        <th width="120">STATUS</th>
-                        <th>INTELLIGENCE & RECON</th>
-                        <th width="200">MIRRORS</th>
-                        <th width="150">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody id="apkList">
-                    <!-- Loaded dynamically -->
-                </tbody>
-            </table>
-        </div>
+            <!-- STANDARD VIEW CONTAINER -->
+            <div id="standardView">
+                <div class="pagination" style="margin-bottom: 20px; margin-top: 20px;">
+                    <button class="p-btn" onclick="changePage(-1)" id="prevBtnTop">PREVIOUS</button>
+                    <button class="p-btn" onclick="changePage(1)" id="nextBtnTop">NEXT</button>
+                </div>
 
-        <div class="pagination">
-            <button class="p-btn" id="prevBtn" onclick="changePage(-1)">PREVIOUS</button>
-            <div id="pInfo">PAGE 1 / 1</div>
-            <button class="p-btn" id="nextBtn" onclick="changePage(1)">NEXT</button>
-        </div>
-        </div>
-        </div> <!-- End standardView -->
+                <div class="table-wrapper">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="120">STATUS</th>
+                                <th>INTELLIGENCE & RECON</th>
+                                <th width="200">MIRRORS</th>
+                                <th width="150">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody id="apkList">
+                            <!-- Loaded dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="pagination">
+                    <button class="p-btn" id="prevBtn" onclick="changePage(-1)">PREVIOUS</button>
+                    <div id="pInfo">PAGE 1 / 1</div>
+                    <button class="p-btn" id="nextBtn" onclick="changePage(1)">NEXT</button>
+                </div>
+            </div> <!-- End standardView -->
+        </div> <!-- End intelligenceView -->
 
         <div id="diagnosticsView" class="diagnostics-view" style="max-width: 1200px; margin: 0 auto; padding-top: 20px;">
             <div class="heat-title" style="margin-bottom: 30px; font-size: 24px;">🛡️ MISSION CONTROL DIAGNOSTICS</div>
