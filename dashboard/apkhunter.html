@@ -1122,9 +1122,10 @@ ${i.sms || 'No message recorded.'}`;
                             <div class="apk-reason">🧠 ${i.reason}</div>
                             <div class="apk-sms">
                                 <span id="sms-text-${i.id}">${i.sms || 'No sample message recorded.'}</span>
+                                <button class="btn btn-recon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 120px;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
                                 ${i.history && i.history.length > 0 ? `
                                     <div class="history-container">
-                                        <span class="history-badge" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</span>
+                                        <span class="history-badge" onclick="toggleHistory(\`${i.id}\`)" style="margin-right: 130px;">📜 HISTORY (${i.history.length})</span>
                                         <div id="history-list-${i.id}" class="history-list">
                                             <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 12px;">
                                                 <strong style="color:var(--accent); font-size: 14px;">📜 HISTORY: ${i.name}</strong>
@@ -1150,7 +1151,6 @@ ${i.sms || 'No message recorded.'}`;
                             <div class="action-btns">
                                 <a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900;">INTEL PORTAL</a>
                                 <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
-                                <button class="btn btn-recon" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY</button>
                                 <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">
                                     ROOT
                                 </button>
