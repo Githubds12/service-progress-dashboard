@@ -42,7 +42,16 @@ ROTATORY_SERVICES = {
     'f5e5c9ad-b0b1-4b44-a80f-934946f9a097': 'mtsms',
     'f21f0bd8-65c7-4f72-9326-60f64e71af32': 'unsms',
     'f676831f-36d6-450c-9d9c-eed903ee3a43': 'ssosms',
-    '069a1a08-cd0d-4c06-af9f-7ed514994d04': 'shellotp'
+    '069a1a08-cd0d-4c06-af9f-7ed514994d04': 'shellotp',
+    'fe525436-57c7-4daf-9d6a-d2f023e1b717': 'cloudotp',
+    '587f6988-cc68-491d-8904-770e9ffa4c24': 'appie',
+    '7c6446d4-bdab-4615-8242-b3cd64637b2b': 'tamsg',
+    'f5037e17-906f-4656-ac11-6d2c28f5f2b2': 'blnance',
+    '0d314601-f322-4a23-84b5-f7f49dc8a690': 'infsoms',
+    '43945afe-0cc1-4d4b-a9d6-50e43a818209': 'hacher',
+    '9962429d-1dd1-4a5f-aef3-86089b3959f0': 'whitelist',
+    'b7ab99b2-14ee-4f85-80e4-b2a13be3a58c': 'carry1st',
+    '34c46101-4370-4abc-be0f-33d5f276db6e': 'sms'
 }
 
 def get_token():
