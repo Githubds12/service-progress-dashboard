@@ -540,9 +540,6 @@
     </div>
 
     <div class="main-content">
-        <div id="rotatoryView" style="display:none;"></div>
-        <div id="standardView">
-            <div class="table-wrapper">
         <div class="glow"></div>
         <header>
             <div class="logo"><i>APK</i> HUNTER <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTEL PORTAL v2.1</span></div>
@@ -555,41 +552,42 @@
         </header>
 
         <div id="intelligenceView">
-
-        <div class="intel-bar">
-            <button class="intel-btn btn-recommend" onclick="showRecommendations()">
-                <i>🎯</i> SMART RECOMMENDATIONS (90K PATH)
-            </button>
-            <button class="intel-btn btn-droidpilot" onclick="triggerDroidPilot()">
-                <i>🛸</i> DROIDPILOT INTELLIGENCE
-            </button>
-            <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="intel-btn btn-resources">
-                <i>🎬</i> RE RESOURCES (H1)
-            </a>
-        </div>
-
-        <div id="skillReminder" class="skill-reminder">
-            <div style="font-size: 24px;">⚠️</div>
-            <div>
-                <div class="reminder-title">Technical Mastery Opportunity</div>
-                <div class="reminder-text">This target has <b>Root Detection</b> or <b>SSL Pinning</b>. Use DroidPilot to analyze these hurdles and gain high-value mastery points!</div>
+            <div class="intel-bar">
+                <button class="intel-btn btn-recommend" onclick="showRecommendations()">
+                    <i>🎯</i> SMART RECOMMENDATIONS (90K PATH)
+                </button>
+                <button class="intel-btn btn-droidpilot" onclick="triggerDroidPilot()">
+                    <i>🛸</i> DROIDPILOT INTELLIGENCE
+                </button>
+                <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="intel-btn btn-resources">
+                    <i>🎬</i> RE RESOURCES (H1)
+                </a>
             </div>
-            <button class="btn" style="margin-left: auto;" onclick="$('skillReminder').style.display='none'">DISMISS</button>
-        </div>
 
-        <div class="heatmap-card">
-            <div class="heat-title">Technical Mastery Focus (BHM)</div>
-            <div id="masteryHeatmap" class="heatmap-grid"></div>
-            <div class="heat-meta">
-                <div id="selectedDateEvents" style="font-size: 12px; color: var(--text-dim);">Click a cell to see RE wins</div>
-                <div class="heat-legend">
-                    Less <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> More
+            <div id="skillReminder" class="skill-reminder">
+                <div style="font-size: 24px;">⚠️</div>
+                <div>
+                    <div class="reminder-title">Technical Mastery Opportunity</div>
+                    <div class="reminder-text">This target has <b>Root Detection</b> or <b>SSL Pinning</b>. Use DroidPilot to analyze these hurdles and gain high-value mastery points!</div>
+                </div>
+                <button class="btn" style="margin-left: auto;" onclick="$('skillReminder').style.display='none'">DISMISS</button>
+            </div>
+
+            <div class="heatmap-card">
+                <div class="heat-title">Technical Mastery Focus (BHM)</div>
+                <div id="masteryHeatmap" class="heatmap-grid"></div>
+                <div class="heat-meta">
+                    <div id="selectedDateEvents" style="font-size: 12px; color: var(--text-dim);">Click a cell to see RE wins</div>
+                    <div class="heat-legend">
+                        Less <div class="heat-cell"></div><div class="heat-cell heat-level-1"></div><div class="heat-cell heat-level-2"></div><div class="heat-cell heat-level-3"></div><div class="heat-cell heat-level-4"></div> More
+                    </div>
                 </div>
             </div>
-        </div>
+            
             <div class="search-box">
                 <input type="text" id="searchInput" placeholder="SEARCH PACKAGE NAME, ID OR SMS CONTENT..." oninput="handleSearch()">
             </div>
+            
             <div class="filter-group">
                 <button class="filter-btn active" onclick="setFilter('all', this)">ALL</button>
                 <button class="filter-btn" onclick="setFilter('unclaimed', this)">UNCLAIMED</button>
@@ -1025,44 +1023,50 @@ ${i.sms || 'No message recorded.'}`;
                         <div class="rot-card">
                             <div class="rot-header">
                                 <div class="rot-title-group">
-                                    <h1 class="rot-name">${i.name}</h1>
-                                    <div class="rot-id">${i.id}</div>
+                                    <h1 class="rot-name" style="font-size: 36px;">${i.name}</h1>
+                                    <div class="rot-id" style="font-size: 14px;">${i.id}</div>
                                 </div>
                                 <div class="rot-stats">
-                                    <div class="score-badge ${scoreClass}">${i.difficulty}/100</div>
+                                    <div class="score-badge ${scoreClass}" style="font-size: 18px; padding: 10px 20px;">${i.difficulty}/100</div>
                                     <div class="rot-tag">SYNC: ${i.last_updated}</div>
                                 </div>
                             </div>
                             
-                            <div class="rot-reason">🧠 ${i.reason}</div>
+                            <div class="rot-reason" style="font-size: 16px; padding: 15px;">🧠 ${i.reason}</div>
                             
-                            <div class="rot-sms-box">
-                                <div class="rot-history-btn-container">
+                            <div class="rot-sms-box" style="padding: 30px; margin: 20px 0;">
+                                <div class="rot-sms-text" id="sms-text-${i.id}" style="font-size: 22px;">${i.sms || 'No sample message recorded.'}</div>
+                            </div>
+
+                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 20px;">
+                                <div class="rot-mirrors" style="margin: 0; flex: 1;">
+                                    ${Object.entries(i.urls || {}).filter(([name]) => ['pure', 'mirror', 'uptodown', 'aptoide', 'play'].includes(name)).map(([name, url]) => `
+                                        <a href="${url}" target="_blank" class="rot-mir-btn" style="border: 1px solid ${getMirrorColor(name)}; color:${getMirrorColor(name)}; background: rgba(0,0,0,0.3); padding: 8px 16px; font-size: 14px;">
+                                            ${name.toUpperCase()}
+                                        </a>
+                                    `).join('')}
+                                </div>
+
+                                <div class="rot-history-btn-container" style="position: static; margin-left: 20px;">
                                     ${i.history && i.history.length > 0 ? `
-                                        <button class="rot-history-btn" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</button>
-                                        <div id="history-list-${i.id}" class="history-list">
+                                        <button class="rot-history-btn" style="position: static; padding: 10px 25px; font-size: 14px;" onclick="toggleHistory(\`${i.id}\`)">📜 HISTORY (${i.history.length})</button>
+                                        <div id="history-list-${i.id}" class="history-list" style="width: 600px; max-height: 400px; bottom: 60px; top: auto; right: 0;">
                                             ${i.history.map(h => `
-                                                <div class="history-item">
+                                                <div class="history-item" style="font-size: 14px; padding: 10px 0;">
                                                     <strong>${h.timestamp}</strong>: ${h.message}
                                                 </div>
                                             `).join('')}
                                         </div>
                                     ` : ''}
                                 </div>
-                                <div class="rot-sms-text" id="sms-text-${i.id}">${i.sms || 'No sample message recorded.'}</div>
                             </div>
                             
-                            <div class="rot-mirrors">
-                                ${Object.entries(i.mirrors || {}).map(([name, url]) => `
-                                    <a href="${url}" target="_blank" class="rot-mir-btn" style="border-color:${getMirrorColor(name)}; color:${getMirrorColor(name)};">${name}</a>
-                                `).join('')}
-                            </div>
-                            
-                            <div class="rot-actions">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" style="padding:15px 30px; font-size:18px;" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
+                            <div class="rot-actions" style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #222;">
+                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" style="padding:12px 25px; font-size:16px;" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
                                     ${i.claimed ? 'CLAIMED' : 'CLAIM'}
                                 </button>
-                                <button class="btn" style="padding:15px 30px; font-size:18px;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
+                                <button class="btn" style="padding:12px 25px; font-size:16px;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
+                                ${i.urls.portal ? `<a href="${i.urls.portal}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:12px 25px; font-size:16px;">INTEL PORTAL</a>` : ''}
                             </div>
                         </div>
                     `;
