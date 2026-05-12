@@ -1076,7 +1076,7 @@ ${i.sms || 'No message recorded.'}`;
                                     ${i.claimed ? 'CLAIMED' : 'CLAIM'}
                                 </button>
                                 <button class="btn" style="padding:10px 20px; font-size:14px; flex: 1;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
-                                ${i.urls.portal ? `<a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:10px 20px; font-size:14px; flex: 1; text-align:center; text-decoration:none;">INTEL PORTAL</a>` : ''}
+                                <a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:10px 20px; font-size:14px; flex: 1; text-align:center; text-decoration:none;">INTEL PORTAL</a>
                             </div>
                         </div>
                     `;
@@ -1144,7 +1144,7 @@ ${i.sms || 'No message recorded.'}`;
                         </td>
                         <td>
                             <div class="action-btns">
-                                ${i.urls.portal ? `<a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900;">INTEL PORTAL</a>` : ''}
+                                <a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900;">INTEL PORTAL</a>
                                 <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
                                 <button class="btn btn-recon" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY</button>
                                 <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">
