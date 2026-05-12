@@ -1,0 +1,4 @@
+qsms
+[d07ee58f-63b4-41ad-9d91-764988964ebd]
+Package Name: com.chagee.application
+Version: 3.33.0

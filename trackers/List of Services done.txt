@@ -187,13 +187,14 @@ Daily Summary: 1 service, 400 rs
 12th May, Tuesday
 1. [11:56] Grab - com.grabtaxi.passenger - 400rs
 2. [15:02] Wallester - com.wallester.whitelabel - 400rs
-Daily Summary: 2 services, 800 rs
+3. [16:50] Chagee - com.chagee.application - 400rs
+Daily Summary: 3 services, 1200 rs
 ----------
 
 Dashboard Stats:
-- Total Services: 123
-- Total Earnings: 49000 rs
-- Average Daily Earning: 1000.0 rs/day
-- Average Daily Services: 20.5 services/day
+- Total Services: 124
+- Total Earnings: 49400 rs
+- Average Daily Earning: 1066.67 rs/day
+- Average Daily Services: 20.67 services/day
 - Recovery Pace: 8.4 Services / day
-- Projected Monthly Total: ₹31000.0
+- Projected Monthly Total: ₹33066.67
