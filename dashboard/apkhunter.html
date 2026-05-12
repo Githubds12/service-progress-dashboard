@@ -853,7 +853,9 @@
             state.page += delta;
             updateUrl();
             render();
-            window.scrollTo(0, 0);
+            if (state.filter !== 'rotatory') {
+                window.scrollTo(0, 0);
+            }
         }
 
         async function syncUpdate(id, field, value, btnEl) {
