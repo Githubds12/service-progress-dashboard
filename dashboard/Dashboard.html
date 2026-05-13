@@ -409,7 +409,8 @@
     <div class="grid-bg"></div>
     
     <div class="sidebar">
-        <div class="sidebar-item active"><i>📊</i><span>OVERVIEW</span></div>
+        <div class="sidebar-item active" id="btn-standard" onclick="window.switchSection('standard', this)"><i>📊</i><span>OVERVIEW</span></div>
+        <div class="sidebar-item" id="btn-ai" onclick="window.switchSection('ai', this)" style="color: var(--accent-primary);"><i>🤖</i><span>AI ANALYST</span></div>
         <a href="apkhunter.html" class="sidebar-item"><i>🎯</i><span>APK HUNTER</span></a>
         <a href="apkhunter.html#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
         <a href="http://localhost:7777" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
@@ -420,6 +421,42 @@
 
     <div class="main-content-wrapper">
     <div class="container">
+        <!-- AI Analyst Section -->
+        <div id="section-ai" style="display: none;">
+            <div class="ai-header">
+                <div class="ai-title">STEALTH AI ANALYST</div>
+                <div class="controls">
+                    <button class="btn" onclick="window.toggleAiSidebar()">SESSIONS</button>
+                    <button class="btn" onclick="window.createNewAiSession()">NEW CASE</button>
+                    <button class="btn btn-primary" onclick="switchSection('standard')">EXIT CONSOLE</button>
+                </div>
+            </div>
+            
+            <div class="ai-container">
+                <div id="aiSidebar" class="ai-sidebar">
+                    <div class="sidebar-header">ACTIVE INVESTIGATIONS</div>
+                    <div id="sessionList"></div>
+                </div>
+                
+                <div class="ai-workspace">
+                    <div class="ai-session-header">
+                        <span id="currentSessionTitle">Investigative Lead #1</span>
+                        <div class="controls">
+                            <button class="btn-sm" onclick="window.renameCurrentSession()">RENAME</button>
+                            <button class="btn-sm" onclick="window.clearSession()" style="color: var(--danger);">PURGE</button>
+                        </div>
+                    </div>
+                    <div class="ai-messages" id="aiMessages">
+                        <div id="aiMessagesInner"></div>
+                    </div>
+                    <div class="ai-input-area">
+                        <input type="text" id="aiInput" placeholder="Enter tactical inquiry..." onkeydown="if(event.key==='Enter') window.sendAiMessage()">
+                        <button class="btn-primary" onclick="window.sendAiMessage()">SEND</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <header>
             <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[OPERATIONAL CYCLE: MAY 7th - JUNE 6th, 2026]</span></div>
             <div class="header-meta">
@@ -1046,7 +1083,7 @@
             localStorage.setItem('droidpilot_port', port);
             alert("Settings saved. Some changes may require page refresh.");
             window.closeSettings();
-            location.reload(); // Refresh to apply port changes etc
+            location.reload(); 
         };
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1054,6 +1091,113 @@
             window.renderMasteryHeatmap();
             window.jumpToDate(window.dashboardData.today);
         });
+
+        // --- AI ANALYST ENGINE ---
+        window.aiState = {
+            sessions: JSON.parse(localStorage.getItem('dashboard_ai_sessions') || '[]'),
+            currentId: localStorage.getItem('dashboard_current_session_id') || null,
+            sidebarCollapsed: false
+        };
+
+        function switchSection(id, el) {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
+            else if ($('btn-'+id)) $('btn-'+id).classList.add('active');
+
+            $('section-ai').style.display = (id === 'ai') ? 'block' : 'none';
+            document.querySelector('.main-content-wrapper').style.display = (id === 'ai') ? 'none' : 'block';
+            document.body.classList.toggle('ai-mode', id === 'ai');
+
+            if (id === 'ai') {
+                if (!window.aiState.sessions.length) createNewAiSession();
+                else loadSession(window.aiState.currentId || window.aiState.sessions[0].id);
+            }
+        }
+
+        window.toggleAiSidebar = () => {
+            window.aiState.sidebarCollapsed = !window.aiState.sidebarCollapsed;
+            $('aiSidebar').style.display = window.aiState.sidebarCollapsed ? 'none' : 'flex';
+        };
+
+        window.createNewAiSession = () => {
+            const id = 's_' + Date.now();
+            window.aiState.sessions.unshift({ id, title: 'Op-Intel Session', messages: [{ sender: 'bot', text: 'Operational intelligence uplink established. Awaiting target data analysis.' }] });
+            saveAi(); renderSessionList(); window.loadSession(id);
+        };
+
+        window.renameCurrentSession = () => {
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            const newTitle = prompt("Enter new session title:", s.title);
+            if (newTitle) {
+                s.title = newTitle;
+                saveAi(); renderSessionList();
+                $('currentSessionTitle').innerText = newTitle;
+            }
+        };
+
+        window.clearSession = () => {
+            if (confirm("Clear all operational research data for this session?")) {
+                const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+                s.messages = [{ sender: 'bot', text: 'History purged. Ready for fresh intelligence gathering.' }];
+                saveAi(); renderMessages();
+            }
+        };
+
+        const saveAi = () => {
+            localStorage.setItem('dashboard_ai_sessions', JSON.stringify(window.aiState.sessions));
+        };
+
+        const renderSessionList = () => {
+            const list = $('sessionList');
+            list.innerHTML = window.aiState.sessions.map(s => `
+                <div class="session-item ${window.aiState.currentId === s.id ? 'active' : ''}" onclick="window.loadSession('${s.id}')">
+                    <div class="session-title">${s.title}</div>
+                    <div class="session-meta">MTD RESEARCH SESSION</div>
+                </div>
+            `).join('');
+        };
+
+        window.loadSession = (id) => {
+            window.aiState.currentId = id; localStorage.setItem('dashboard_current_session_id', id);
+            const s = window.aiState.sessions.find(x => x.id === id);
+            if (!s) return;
+            $('currentSessionTitle').innerText = s.title;
+            renderMessages();
+            renderSessionList();
+        };
+
+        const renderMessages = () => {
+            const inner = $('aiMessagesInner');
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            inner.innerHTML = s.messages.map(m => `
+                <div class="ai-bubble ${m.sender}">
+                    <div class="sender-tag">${m.sender === 'user' ? 'OPERATOR' : 'INTELLIGENCE AGENT'}</div>
+                    ${m.text}
+                </div>
+            `).join('');
+            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
+        };
+
+        window.sendAiMessage = async () => {
+            const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            i.value = ''; s.messages.push({ sender: 'user', text: msg });
+            renderMessages();
+            
+            try {
+                const res = await fetch("https://service-progress-portal.onrender.com/api/agent/chat", {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const data = await res.json();
+                s.messages.push({ sender: 'bot', text: data.response });
+                saveAi(); renderMessages();
+            } catch (e) {
+                s.messages.push({ sender: 'bot', text: 'Error: Intelligence uplink failure. Check connectivity.' });
+                renderMessages();
+            }
+        };
     </script>
+    <!-- AI PERSISTENCE TEST -->
 </body>
 </html>
