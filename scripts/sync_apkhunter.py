@@ -192,6 +192,12 @@ def sync():
                 if "Tier 1" in tier: diff = 20
                 elif "Tier 2" in tier: diff = 50
                 else: diff = 80
+                
+                # Priority: OTP services are high success (Check for actual numeric codes 4-8 digits)
+                has_code = bool(re.search(r'\b\d{4,8}\b', row.get("Sample_Message", "")))
+                if has_code or "otp" in name.lower() or "otp" in row.get("Description", "").lower():
+                    diff = 10
+                    reason = f"Score 10: High Success (Active OTP Code/Keyword). ({cat})"
             
             triggers = []
             is_nf = nf_dict.get(tid, False) or "not found" in row.get("Description", "").lower()
