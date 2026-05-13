@@ -547,6 +547,139 @@
             border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;
         }
         @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* --- STEALTH AI MODE --- */
+        body.ai-mode { overflow: hidden; }
+        body.ai-mode .sidebar, 
+        body.ai-mode header { display: none !important; }
+        body.ai-mode .main-content { margin-left: 0 !important; padding: 0 !important; }
+        body.ai-mode .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+        .ai-workspace {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            background: #030508;
+            overflow: hidden;
+        }
+
+        .ai-sidebar {
+            width: 300px;
+            background: #0b0e14;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            flex-shrink: 0;
+        }
+        .ai-sidebar.collapsed { display: none; }
+
+        .ai-main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #030508;
+            min-width: 0;
+        }
+
+        .chat-header {
+            padding: 12px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #030508;
+            z-index: 10;
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+        
+        .ai-messages-inner {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .ai-input-area {
+            padding: 20px 30px 40px;
+            background: linear-gradient(to top, #030508 70%, transparent);
+        }
+        
+        .ai-input-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .ai-bubble {
+            padding: 20px 28px;
+            border-radius: 24px;
+            max-width: 85%;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        .ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 10px 30px var(--accent-glow); }
+        .ai-bubble.bot { background: rgba(255,255,255,0.04); color: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
+
+        .ai-input-area input {
+            flex: 1;
+            background: #0b0e14;
+            border: 1px solid var(--border);
+            color: #fff;
+            padding: 15px 25px;
+            border-radius: 12px;
+            outline: none;
+            font-size: 14px;
+        }
+        .ai-input-area button {
+            background: var(--accent);
+            border: none;
+            padding: 0 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            color: #000;
+            font-weight: 700;
+            font-size: 11px;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+
+        .ui-btn {
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border);
+            color: #fff; padding: 8px 15px; border-radius: 8px;
+            cursor: pointer; font-size: 10px; font-weight: 700;
+            display: flex; align-items: center; gap: 6px; transition: 0.2s;
+        }
+        .ui-btn:hover { background: rgba(255,255,255,0.1); border-color: var(--accent); }
+
+        .new-session-btn {
+            background: rgba(0,242,255,0.1); border: 1px dashed var(--accent);
+            color: var(--accent); padding: 12px; border-radius: 10px;
+            cursor: pointer; width: 100%; margin-bottom: 20px;
+            font-weight: 700; font-size: 10px; letter-spacing: 1px;
+        }
+
+        .session-item {
+            padding: 10px 12px; border-radius: 8px; cursor: pointer;
+            color: var(--text-dim); font-size: 12px; margin-bottom: 5px;
+        }
+        .session-item.active { background: rgba(0,242,255,0.1); color: var(--accent); }
+
+        #exitAi { display: none; }
+        /* De-confliction: Kill all old floating buttons */
+        #exitAi, .floating-btn, .exit-btn { display: none !important; visibility: hidden !important; pointer-events: none !important; }
     </style>
     <script src="tour_guide.js"></script>
 </head>
@@ -555,8 +688,8 @@
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>AH</i></div>
         <a href="Dashboard.html" class="sidebar-item"><i>📊</i><span>OVERVIEW</span></a>
         <div class="sidebar-item active"><i>🎯</i><span>APK HUNTER</span></div>
-        <a href="#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
-        <a href="agent_intel.html" class="sidebar-item"><i>🤖</i><span>AGENT INTEL</span></a>
+        <a href="#diagnostics" class="sidebar-item" onclick="switchSection('diagnostics', this)"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
+        <div class="sidebar-item" id="btn-ai" onclick="switchSection('ai', this)"><i>🤖</i><span>AI ANALYST</span></div>
         <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
         <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
         <div class="sidebar-item" onclick="location.reload()" style="margin-top: auto;"><i>⚙️</i><span>REFRESH</span></div>
@@ -687,6 +820,43 @@
             </div> <!-- End standardView -->
         </div> <!-- End intelligenceView -->
 
+        <div id="section-ai" class="content-section" style="display:none;">
+            <div class="ai-workspace">
+                <div class="ai-sidebar" id="aiSidebar">
+                    <button class="new-session-btn" onclick="window.createNewAiSession()">+ NEW SESSION</button>
+                    <div id="sessionList"></div>
+                </div>
+                <div class="ai-main-chat">
+                    <div class="chat-header">
+                        <div style="display: flex; align-items: center; gap: 15px;">
+                            <button class="ui-btn" onclick="window.toggleAiSidebar()">
+                                <i class='bx bx-menu-alt-left'></i> PANEL
+                            </button>
+                            <h2 id="currentSessionTitle" style="font-size: 14px; color: #fff;">Research Console</h2>
+                            <button class="ui-btn" onclick="window.renameCurrentSession()">
+                                <i class='bx bx-edit-alt'></i> RENAME
+                            </button>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <button class="ui-btn" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
+                            <button class="ui-btn" onclick="window.switchSection('standard')" style="background: var(--accent); color: #000; border: none;">
+                                <i class='bx bx-exit'></i> EXIT
+                            </button>
+                        </div>
+                    </div>
+                    <div id="aiMessages" class="ai-messages">
+                        <div class="ai-messages-inner" id="aiMessagesInner"></div>
+                    </div>
+                    <div class="ai-input-area">
+                        <div class="ai-input-container">
+                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Request intelligence analysis...">
+                            <button onclick="window.sendAiMessage()">Analyze</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div id="diagnosticsView" class="diagnostics-view" style="max-width: 1200px; margin: 0 auto; padding-top: 20px;">
             <div class="heat-title" style="margin-bottom: 30px; font-size: 24px;">🛡️ MISSION CONTROL DIAGNOSTICS</div>
             
@@ -757,6 +927,103 @@
     <script src="apkhunter_data.js?v=1.0.1"></script>
     <script>
         const $ = id => document.getElementById(id);
+        window.aiState = {
+            sessions: JSON.parse(localStorage.getItem('apkhunter_ai_sessions') || '[]'),
+            currentId: localStorage.getItem('apkhunter_current_session_id') || null,
+            sidebarCollapsed: false
+        };
+
+        function switchSection(id, el) {
+            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+            if (el) el.classList.add('active');
+            else if ($('btn-'+id)) $('btn-'+id).classList.add('active');
+
+            // Hide all views
+            $('intelligenceView').style.display = 'none';
+            $('diagnosticsView').style.display = 'none';
+            $('section-ai').style.display = 'none';
+
+            if (id === 'ai') {
+                $('section-ai').style.display = 'block';
+                document.body.classList.add('ai-mode');
+                if (!window.aiState.sessions.length) createNewAiSession();
+                else loadSession(window.aiState.currentId || window.aiState.sessions[0].id);
+            } else if (id === 'diagnostics') {
+                $('diagnosticsView').style.display = 'block';
+                document.body.classList.remove('ai-mode');
+            } else {
+                $('intelligenceView').style.display = 'block';
+                document.body.classList.remove('ai-mode');
+            }
+        }
+
+        window.toggleAiSidebar = () => {
+            window.aiState.sidebarCollapsed = !window.aiState.sidebarCollapsed;
+            $('aiSidebar').style.display = window.aiState.sidebarCollapsed ? 'none' : 'flex';
+        };
+
+        window.createNewAiSession = () => {
+            const id = 's_' + Date.now();
+            window.aiState.sessions.unshift({ id, title: 'APK Analysis', messages: [{ sender: 'bot', text: 'Targeting established. How can I assist with your APK research?' }] });
+            saveAi(); renderSessionList(); window.loadSession(id);
+        };
+
+        window.renameCurrentSession = () => {
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            const newTitle = prompt("Enter new session title:", s.title);
+            if (newTitle) {
+                s.title = newTitle;
+                saveAi(); renderSessionList();
+                $('currentSessionTitle').innerText = newTitle;
+            }
+        };
+
+        window.loadSession = (id) => {
+            window.aiState.currentId = id; localStorage.setItem('apkhunter_current_session_id', id);
+            const s = window.aiState.sessions.find(x => x.id === id);
+            if (!s) return;
+            $('currentSessionTitle').innerText = s.title;
+            renderMessages();
+            renderSessionList();
+        };
+
+        window.sendAiMessage = async () => {
+            const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            i.value = ''; s.messages.push({ sender: 'user', text: msg });
+            renderMessages();
+            
+            try {
+                const res = await fetch("https://service-progress-portal.onrender.com/api/agent/chat", {
+                    method: 'POST', headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: msg })
+                });
+                const d = await res.json();
+                const botMsg = d.candidates[0].content.parts[0].text;
+                s.messages.push({ sender: 'bot', text: botMsg });
+                saveAi(); renderMessages();
+            } catch (e) { 
+                s.messages.push({ sender: 'bot', text: "Error connecting to Intelligence Feed." });
+                renderMessages();
+            }
+        };
+
+        function renderMessages() {
+            const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+            $('aiMessagesInner').innerHTML = s.messages.map(m => `<div class="ai-bubble ${m.sender}">${m.text.replace(/\n/g, '<br>')}</div>`).join('');
+            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
+        }
+
+        function renderSessionList() {
+            $('sessionList').innerHTML = window.aiState.sessions.map(s => `
+                <div class="session-item ${s.id === window.aiState.currentId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+                    ${s.title}
+                </div>
+            `).join('');
+        }
+
+        function saveAi() { localStorage.setItem('apkhunter_ai_sessions', JSON.stringify(window.aiState.sessions)); }
+
         function getMirrorColor(name) {
             const colors = {
                 'APKPure': '#24b897',
@@ -1591,6 +1858,16 @@ ${i.sms || 'No message recorded.'}`;
             const query = $('pulseSearch').value;
             renderPulseView(query);
         }
+
+        function saveAi() { localStorage.setItem('apkhunter_ai_sessions', JSON.stringify(window.aiState.sessions)); }
+
+        window.clearSession = () => {
+            if (confirm("Clear current chat history?")) {
+                const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+                s.messages = [{ sender: 'bot', text: 'Chat history cleared. How can I assist with your APK research?' }];
+                saveAi(); renderMessages();
+            }
+        };
 
         renderMasteryHeatmap();
     </script>
