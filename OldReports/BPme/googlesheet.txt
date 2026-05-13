@@ -1,9 +1,0 @@
-Researcher: Deepanshu Singh
-Date: 2026-04-27
-com.bp.app.bpme.global.pl 2.4.3
-
-Service: BPme (Poland)
-Service ID: e630bbc7-5148-4288-8b2e-1176100b4354
-Service SMS: Twój kod weryfikacyjny bp to: 432740
-
-1. BPme (Poland) | com.bp.app.bpme.global.pl | 2.4.3 | https://energyid.bp.com/am/json/realms/root/realms/bravo/authenticate | {"authId": "...", "callbacks": [{"type": "StringAttributeInputCallback", "input": [{"name": "IDToken3", "value": "+918791267460"}]}]} | https://energyid.bp.com/am/json/realms/root/realms/bravo/authenticate | {"authId": "...", "callbacks": [{"type": "StringAttributeInputCallback", "input": [{"name": "IDToken4", "value": "548761"}]}]}

@@ -1,9 +1,0 @@
-ibi capital [2f06f5fa-e123-4b85-8e6a-5a122ecfe8a4]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Your verification code is: 355640
-
-IBI SMART
-Official Website: ibi.co.il
-Google Play Store: IBI SMART
-Package Name: com.ibidev.ibitrade
-Version: 3.1.9

@@ -1,5 +1,0 @@
-kwikpay [387aecc7-f534-405c-b0ec-3c294dc73514]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-8383 - код доступа в систему KWIKPAY
-Package Name: com.kwikpay.transfers
-Version: 3.31.0

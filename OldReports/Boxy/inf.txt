@@ -1,5 +1,0 @@
-boxy [3eb3f930-6815-4f60-b069-28828e0f99d2]
-Package Name: com.client.boxy
-Version: 1.0.6
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Your boxy verification code is 4599. This OTP will expire after 5 minutes.

@@ -1,5 +1,0 @@
-paybis [89041a1a-d926-43f3-b631-d1d659bb9289]
-Package Name: com.paybis
-Version: 1.6.20
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Paybis: 236416 is your code to send 0.74999859 LTC to ltc1qt2...fvs

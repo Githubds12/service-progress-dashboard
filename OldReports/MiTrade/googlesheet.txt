@@ -1,9 +1,0 @@
-Researcher: Deepanshu Singh
-Date: 25-04-2026
-com.mitrade.mobile (5.2.2)
-OTP Request: https://app.mokmoki.com/api/v1/misc/verification-codes
-OTP Verify: https://app.mokmoki.com/api/v1/customers/verification/submit
-Registration: https://app.mokmoki.com/api/v1/customers/signup
-Security: Google reCAPTCHA, hCaptcha, Adjustable Ticket System
-Automation: Moderate. Requires multi-captcha solving and session tracking.
-Status: Completed

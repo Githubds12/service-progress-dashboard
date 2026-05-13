@@ -1,6 +1,0 @@
-uo verify [fb9decb0-02d0-4fc3-b787-a35286180041]
-Service Name: Urban Outfitters
-Package Name: com.urbanoutfitters.android
-Version: 26.4.1
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Dein Urban Outfitters Sicherheitscode lautet: 00292. Teile diesen Code nicht mit anderen.

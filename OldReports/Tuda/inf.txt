@@ -1,5 +1,0 @@
-tuda [de398f1a-7372-4924-b54e-f9ea49c0c459]
-Package Name: com.tuda.android
-Version: 3.16.1
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-TUDA Kod 8370

@@ -1,7 +1,0 @@
-Tongcheng Analysis Notes:
-- App uses FengKongCloud (Shuidi) for security.
-- Trajectory and APM data is encrypted.
-- Captcha is selection-based (icon selection).
-- Organization ID for captcha: xQsKB7v2qSFLFxnvmjdO.
-- Automation is difficult due to professional-grade risk management.
-- Recommendation: Use real device automation (Appium) or specialized captcha services if further automation is required.

@@ -1,7 +1,0 @@
-shopapothek [179fed78-c519-425a-bd36-83c744b22229]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-Shop Apotheke: 423916 ist Ihr Bestätigungscode. Bitte teilen Sie den Code nicht mit einer anderen Person.
-
-
-
-flow : register -> redeem your e-prescription -> add phone number

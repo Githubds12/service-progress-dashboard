@@ -190,11 +190,14 @@ Daily Summary: 1 service, 400 rs
 3. [16:50] Chagee - com.chagee.application - 400rs
 Daily Summary: 3 services, 1200 rs
 ----------
+13th May, Wednesday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 124
 - Total Earnings: 49400 rs
-- Average Daily Earning: 1066.67 rs/day
-- Average Daily Services: 20.67 services/day
-- Recovery Pace: 8.4 Services / day
-- Projected Monthly Total: ₹33066.67
+- Average Daily Earning: 914.29 rs/day
+- Average Daily Services: 17.71 services/day
+- Recovery Pace: 8.7 Services / day
+- Projected Monthly Total: ₹28342.86

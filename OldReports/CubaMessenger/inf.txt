@@ -1,3 +1,0 @@
-smsbic [c04816b7-c58c-49bf-8ffb-b5f0c41ff79b] com.cubamessenger.cubamessengerapp 12.2
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-KYVgSPDKNU P1010271 Cuba Messenger nunca te solicitara este codigo por telefono, email o chat. EVITA EL FRAUDE. Tu codigo para acceder a la aplicacion es: 10272

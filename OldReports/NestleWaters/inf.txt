@@ -1,6 +1,0 @@
-nestlewater [a8f273cd-249e-41cc-86fa-194716390f17]
-Package: com.nestle.multibrandwaters.purelife
-Version: 2.0.69
-OTP: 789120
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-789120 is your verification code for nestlewater.

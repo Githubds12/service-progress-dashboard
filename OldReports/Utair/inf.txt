@@ -1,6 +1,0 @@
-Service: utair
-ID: [7fd31965-0477-48fc-82ee-ecf87e4b825e]
-Package: ru.utair.android
-Version: 5.11.0
-SMS: Рейс UT801 от 110426 изменен. Вылет 1400, прилет в 2010: ut0.ru/YMmVWe
-OTP received

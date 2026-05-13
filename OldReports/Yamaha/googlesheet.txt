@@ -1,9 +1,0 @@
-Researcher: Deepanshu Singh
-Date: 25-04-2026
-jp.co.yamahamotor.yamahamotorcycleconnect.sccu (2.6.1)
-OTP Request: https://www.c377768625-eu.com/sendotp
-OTP Verify: https://www.c377768625-eu.com/authotp
-Registration: https://www.c377768625-eu.com/register
-Security: Google reCAPTCHA Enterprise, API Key, Token-based session
-Automation: Moderate. Requires reCAPTCHA Enterprise solving and session token management.
-Status: Completed

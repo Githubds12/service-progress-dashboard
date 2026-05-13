@@ -1,7 +1,0 @@
-fordeal [c2a6588c-c7b4-4678-aefc-08be5e0420bf]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-[Yepexpress] verify code: [8566]
-Package Name: com.fordeal.android
-Version: 5.8.8
-Official Website: fordeal.com
-Google Play Store: Fordeal - Get your deals

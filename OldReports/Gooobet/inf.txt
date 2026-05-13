@@ -1,5 +1,0 @@
-gooobet [2c4493da-3a80-48fd-b44c-2b65c5f62edf]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-<#> رمز التحقق 99641 H4/pXZKWC1R
-Package Name: org.gooobet.client
-Version: gooobet-v253.0.1

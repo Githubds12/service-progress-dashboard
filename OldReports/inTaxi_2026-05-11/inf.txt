@@ -1,4 +1,0 @@
-intaxi [c45e004a-0634-486a-9e1c-6ca6d044f95a]
-inTaxi code 376181. INTAXI ti da il benvenuto.
-Package Name: it.ud.microtek.InTaxi
-Version: 4.0.16

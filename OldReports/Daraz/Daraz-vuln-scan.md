@@ -1,2 +1,0 @@
-# Daraz Vulnerability Scan
-No major vulnerabilities found on the `sendverificationsms` or `loginbyotp` endpoints. Both endpoints are strictly protected by the Alibaba `mtop` API gateway. The `x-sign` header ensures request integrity, while the `wua` payload provides strong anti-bot device fingerprinting. Without the Alibaba security SDK to generate valid signatures and tokens, exploiting or brute-forcing these endpoints is practically impossible.

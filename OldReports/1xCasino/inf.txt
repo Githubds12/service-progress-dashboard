@@ -1,5 +1,0 @@
-1xcasino [eb6513b1-510e-4f11-ab29-74066aa82c26]
-Package Name: org.xbet.casino
-Version: 34.0.0
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-رمز التحقق 14722

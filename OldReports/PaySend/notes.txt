@@ -1,8 +1,0 @@
-PaySend Analysis Notes:
-- App uses a mix of JSON and XML.
-- Registration starts with a JSON POST to /api/json/registration.
-- Headers are critical: Client-Software, sec_uuid, X-Phone-Country, and auth_type: ANONYMOUS.
-- Response provides balId and authKey.
-- OTP submission uses XML POST to /api/xml.jsp with request_type: submit_smsconfirm_code.
-- No Captcha or payload encryption observed in the flow.
-- Automation is straightforward if headers are correctly set.

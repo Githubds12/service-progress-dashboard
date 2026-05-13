@@ -1,6 +1,0 @@
-mitrade [44598358-ee23-4365-bb33-8db0cb75d3b0]
-Package: com.mitrade.mobile
-Version: 5.2.2
-OTP: 331112
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-[Mitrade] Verification code: 331112 ,valid for 10 minutes.

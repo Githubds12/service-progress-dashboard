@@ -1,6 +1,0 @@
-wallester Telecom/OTP
-[410f01a1-aa9b-4599-a910-368ea369cfc8]
-🧠 Easy (Public Flow)
-323769 is your verification code🔑. It will expire in 3 minutes⌛
-Package Name: com.wallester.whitelabel
-Version: 2.9.69

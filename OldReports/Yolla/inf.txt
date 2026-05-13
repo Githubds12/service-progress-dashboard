@@ -1,6 +1,0 @@
-yolla [4a68af03-734d-4a33-b47a-86aaa8a010a1]
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-<#> Your verification code: 5045 Kavl4EFPyTB
-
-Package Name: com.yollacalls
-Version: 4.81

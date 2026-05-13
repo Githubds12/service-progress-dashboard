@@ -1,6 +1,0 @@
-yamahamotor [552fe71c-d231-4b97-9805-561306c1bd12]
-Package: jp.co.yamahamotor.yamahamotorcycleconnect.sccu
-Version: 2.6.1
-OTP: 224003
-🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
-(YAMAHAMOTOR) This is your Yamaha Motor ID verification code: 224003
