@@ -627,6 +627,7 @@
                     <option value="Telecom/OTP">TELECOM/OTP</option>
                     <option value="Tools/Security">TOOLS/SECURITY</option>
                 </select>
+                <button class="filter-btn" id="unclaimedToggle" onclick="toggleUnclaimed()" style="margin-left: auto; border-style: dashed; border-color: #ffd700; color: #ffd700; min-width: 180px;">[ ] ONLY UNCLAIMED</button>
             </div>
 
             <!-- ROTATORY VIEW CONTAINER -->
@@ -776,8 +777,19 @@
             filteredData: [],
             isSyncing: false,
             localClaims: JSON.parse(localStorage.getItem('local_claims') || '{}'),
-            syncTimerInterval: null
+            syncTimerInterval: null,
+            onlyUnclaimed: false
         };
+
+        function toggleUnclaimed() {
+            state.onlyUnclaimed = !state.onlyUnclaimed;
+            const btn = $('unclaimedToggle');
+            btn.innerHTML = state.onlyUnclaimed ? '[X] ONLY UNCLAIMED' : '[ ] ONLY UNCLAIMED';
+            btn.style.background = state.onlyUnclaimed ? 'rgba(255, 215, 0, 0.1)' : 'transparent';
+            state.page = 1;
+            applyFilters();
+            render();
+        }
 
         function init() {
             if (window.GH_TOKEN_INJECTED && $('injectedStatus')) {
@@ -892,8 +904,9 @@
                 }
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
+                const matchesUnclaimed = !state.onlyUnclaimed || !item.claimed;
 
-                return matchesSearch && matchesType && matchesCat;
+                return matchesSearch && matchesType && matchesCat && matchesUnclaimed;
             });
         }
 
@@ -902,7 +915,7 @@
             updateUrl();
             render();
             if (state.filter !== 'rotatory') {
-                window.scrollTo(0, 0);
+                $('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' });
             }
         }
 
