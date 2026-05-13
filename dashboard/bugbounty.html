@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🛡️ BUG BOUNTY | Intelligence Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <style>
+        :root {
+            --bg: #030508;
+            --card: rgba(13, 17, 23, 0.7);
+            --accent: #00f2ff;
+            --accent-glow: rgba(0, 242, 255, 0.2);
+            --red: #ff5252;
+            --red-glow: rgba(255, 82, 82, 0.3);
+            --yellow: #ffd700;
+            --green: #00e676;
+            --border: #30363d;
+            --text: #e6edf3;
+            --text-dim: #8b949e;
+            --glass-bg: rgba(10, 10, 10, 0.8);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: var(--bg);
+            background-image: 
+                radial-gradient(circle at 50% 0%, rgba(0, 242, 255, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(112, 0, 255, 0.05) 0%, transparent 50%);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 30px; position: relative; z-index: 1; }
+
+        header {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 0; border-bottom: 1px solid var(--border);
+            margin-bottom: 40px; backdrop-filter: blur(10px);
+        }
+        .logo {
+            font-size: 24px; font-weight: 700; letter-spacing: 3px; color: var(--accent);
+            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
+        .logo i { font-style: normal; border: 2px solid var(--accent); padding: 4px 12px; border-radius: 8px; font-size: 18px; }
+
+        .sidebar {
+            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
+            background: var(--glass-bg); backdrop-filter: blur(30px);
+            border-right: 1px solid var(--border); z-index: 1000;
+            display: flex; flex-direction: column; align-items: center; padding: 30px 0;
+            transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+            overflow: hidden;
+        }
+        .sidebar:hover { width: 260px; box-shadow: 10px 0 50px rgba(0,0,0,0.5); }
+        .sidebar-item {
+            width: 100%; padding: 18px 30px; display: flex; align-items: center; gap: 25px;
+            color: var(--text-dim); cursor: pointer; transition: 0.3s; white-space: nowrap;
+            text-decoration: none; position: relative;
+        }
+        .sidebar-item i { font-size: 22px; min-width: 30px; text-align: center; }
+        .sidebar-item span { opacity: 0; transition: 0.3s; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
+        .sidebar:hover .sidebar-item span { opacity: 1; }
+        .sidebar-item:hover, .sidebar-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.08); }
+
+        .main-content { margin-left: 80px; padding: 20px; }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--card); border: 1px solid var(--border); border-radius: 16px;
+            padding: 30px; position: relative; backdrop-filter: blur(15px);
+            transition: 0.3s;
+        }
+        .stat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .stat-label { font-size: 12px; font-weight: 700; color: var(--text-dim); text-transform: uppercase; letter-spacing: 2px; }
+        .stat-value { font-size: 32px; font-weight: 700; color: #fff; margin: 10px 0; }
+
+        .glass-panel {
+            background: var(--card); border: 1px solid var(--border); border-radius: 20px;
+            padding: 30px; backdrop-filter: blur(20px); box-shadow: 0 15px 35px rgba(0,0,0,0.3);
+            margin-bottom: 30px;
+        }
+
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 25px; border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 15px;
+        }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 15px; font-size: 12px; color: var(--text-dim); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 14px; }
+
+        .badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge-danger { background: rgba(255, 82, 82, 0.2); color: var(--red); }
+        .badge-warning { background: rgba(255, 215, 0, 0.2); color: var(--yellow); }
+        .badge-success { background: rgba(0, 230, 118, 0.2); color: var(--green); }
+
+        .agent-grid {
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;
+        }
+        .agent-card {
+            background: rgba(255,255,255,0.03); border: 1px solid var(--border);
+            padding: 20px; border-radius: 12px; transition: 0.3s;
+        }
+        .agent-card:hover { border-color: var(--accent); background: rgba(0, 242, 255, 0.05); }
+        .agent-name { font-weight: 700; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+        .agent-desc { font-size: 12px; color: var(--text-dim); }
+
+    </style>
+</head>
+<body>
+    <div class="sidebar">
+        <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>BB</i></div>
+        <a href="../index.html" class="sidebar-item">
+            <i class='bx bx-home-alt'></i><span>OVERVIEW</span>
+        </a>
+        <div class="sidebar-item active">
+            <i class='bx bx-target-lock'></i><span>RECON</span>
+        </div>
+        <div class="sidebar-item">
+            <i class='bx bx-bot'></i><span>AGENT HUB</span>
+        </div>
+        <a href="apkhunter.html" class="sidebar-item">
+            <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div class="container">
+            <header>
+                <div class="logo"><i>BUG</i> BOUNTY <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTELLIGENCE PORTAL</span></div>
+                <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
+            </header>
+
+            <div class="dashboard-grid" id="statsGrid">
+                <!-- Stats populated by JS -->
+            </div>
+
+            <div class="glass-panel">
+                <div class="panel-header">
+                    <h2>🎯 Intelligence Briefing: High Value Targets</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="reconSearch" placeholder="Search targets..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                    </div>
+                </div>
+                <div style="overflow-x: auto;">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Priority</th>
+                                <th>Target</th>
+                                <th>Category</th>
+                                <th>Recommendation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reconTable">
+                            <!-- Populated by JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="panel-header">
+                <h2>🤖 Specialized Agent Hub</h2>
+            </div>
+            <div class="agent-grid">
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-target-lock'></i> Recon Advisor</div>
+                    <p class="agent-desc">Expert in parsing scan output and prioritizing targets for deep enumeration.</p>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-code-alt'></i> API Guardian</div>
+                    <p class="agent-desc">Specialized in REST/GraphQL security, IDOR testing, and auth bypass.</p>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-globe'></i> Web Hunter</div>
+                    <p class="agent-desc">Focuses on high-impact web vulnerabilities like XSS, SQLi, and SSRF.</p>
+                </div>
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-unite'></i> Exploit Architect</div>
+                    <p class="agent-desc">Chains multiple low-severity findings into high-impact exploit paths.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="bugbounty_data.js"></script>
+    <script>
+        const $ = id => document.getElementById(id);
+        
+        function init() {
+            const data = window.bugBountyData;
+            if (!data) return;
+
+            $('lastSyncTime').innerText = data.last_update.split(' ')[1];
+
+            // Stats
+            const fb = data.targets.find(t => t.name === "Facebook");
+            $('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Subdomains</div>
+                    <div class="stat-value">${fb.stats.total.toLocaleString()}</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent);">
+                    <div class="stat-label">High Value Targets</div>
+                    <div class="stat-value" style="color: var(--accent);">${fb.stats.high_value_count}</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--red);">
+                    <div class="stat-label">Critical Endpoints</div>
+                    <div class="stat-value" style="color: var(--red);">${fb.findings.filter(f => f.priority === 'Critical').length}</div>
+                </div>
+            `;
+
+            // Table
+            renderTable(fb.findings);
+        }
+
+        function renderTable(findings) {
+            $('reconTable').innerHTML = findings.map(f => `
+                <tr>
+                    <td><span class="badge ${f.priority === 'Critical' ? 'badge-danger' : 'badge-warning'}">${f.priority}</span></td>
+                    <td style="color: var(--accent); font-family: 'JetBrains Mono';">${f.target}</td>
+                    <td>${f.category}</td>
+                    <td style="font-size: 12px; color: var(--text-dim);"><i class='bx bx-brain'></i> ${f.recommendation}</td>
+                </tr>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
