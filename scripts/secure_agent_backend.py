@@ -36,7 +36,6 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                     v = cfg["ver"]
                     m = cfg["mod"]
                     gemini_url = f"https://generativelanguage.googleapis.com/{v}/models/{m}:generateContent?key={api_key}"
-                    print(f"[*] Trying: {v}/{m}")
                     
                     req = urllib.request.Request(
                         gemini_url,
@@ -55,28 +54,10 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                         self.wfile.write(res_data)
                         return 
 
-                except urllib.error.HTTPError as e:
-                    err_body = e.read().decode('utf-8')
-                    print(f"[!] Google API Error ({e.code}): {err_body}")
-                    last_error = f"Google_{e.code}: {err_body}"
-                    continue
-                except Exception as e:
-                    last_error = str(e)
-                    print(f"[!] System Error: {last_error}")
+                except Exception:
                     continue
             
-            # Loud Discovery: Get the models and send them in the error
-            disco_msg = ""
-            try:
-                discover_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
-                with urllib.request.urlopen(discover_url) as response:
-                    models_data = json.loads(response.read())
-                    allowed = [m.get('name').split('/')[-1] for m in models_data.get("models", [])]
-                    disco_msg = f"\n\n👉 YOUR KEY SUPPORTS THESE MODELS: {', '.join(allowed)}"
-            except Exception as e:
-                disco_msg = f"\n\n❌ Discovery Failed: {str(e)}"
-
-            self.send_error_msg(500, f"AI_GATEWAY_FAILURE: {last_error}{disco_msg}")
+            self.send_error_msg(500, "AI_GATEWAY_FAILURE: All models exhausted.")
         else:
             super().do_POST()
 
