@@ -22,14 +22,20 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_msg(500, "SYSTEM_ERROR: GEMINI_API_KEY not found on Render.")
                 return
 
-            # Try models in order of efficiency
-            models = ["gemini-1.5-flash", "gemini-pro"]
+            # Try models and versions in order
+            configs = [
+                {"ver": "v1beta", "mod": "gemini-1.5-flash"},
+                {"ver": "v1", "mod": "gemini-pro"},
+                {"ver": "v1", "mod": "gemini-1.5-flash"}
+            ]
             last_error = ""
 
-            for model in models:
+            for cfg in configs:
                 try:
-                    gemini_url = f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}"
-                    print(f"[*] Attempting AI Request using model: {model}")
+                    v = cfg["ver"]
+                    m = cfg["mod"]
+                    gemini_url = f"https://generativelanguage.googleapis.com/{v}/models/{m}:generateContent?key={api_key}"
+                    print(f"[*] Trying: {v}/{m}")
                     
                     req = urllib.request.Request(
                         gemini_url,
@@ -44,14 +50,14 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                         self.send_header('Access-Control-Allow-Origin', '*')
                         self.end_headers()
                         self.wfile.write(res_data)
-                        return # Success!
+                        return 
 
                 except Exception as e:
                     last_error = str(e)
-                    print(f"[!] Model {model} failed: {last_error}")
+                    print(f"[!] {cfg['mod']} failed: {last_error}")
                     continue
             
-            self.send_error_msg(500, f"AI_GATEWAY_FAILURE: Tried all models. Last error: {last_error}")
+            self.send_error_msg(500, f"AI_GATEWAY_FAILURE: Tried all endpoints. Last error: {last_error}")
         else:
             super().do_POST()
 
