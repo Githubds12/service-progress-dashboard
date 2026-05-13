@@ -22,12 +22,12 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_msg(500, "SYSTEM_ERROR: GEMINI_API_KEY not found on Render.")
                 return
 
-            # Try models and versions in order (Master Mapping)
+            # Try models and versions in order (Super-Account Mapping)
             configs = [
-                {"ver": "v1beta", "mod": "gemini-1.5-flash-latest"},
-                {"ver": "v1beta", "mod": "gemini-1.5-flash"},
-                {"ver": "v1", "mod": "gemini-1.5-pro"},
-                {"ver": "v1", "mod": "gemini-pro"}
+                {"ver": "v1beta", "mod": "gemini-2.5-flash"},
+                {"ver": "v1beta", "mod": "gemini-2.0-flash"},
+                {"ver": "v1beta", "mod": "gemini-pro-latest"},
+                {"ver": "v1", "mod": "gemini-pro-latest"}
             ]
             last_error = ""
 

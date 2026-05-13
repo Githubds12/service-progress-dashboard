@@ -189,9 +189,9 @@ def sync():
             else:
                 reason = TIER_MAP.get(tier, f"Base score {base_score}: {cat}.")
                 # Assign scores
-                if "Tier 1" in tier: diff = 50
+                if "Tier 1" in tier: diff = 20
                 elif "Tier 2" in tier: diff = 50
-                else: diff = 50
+                else: diff = 80
             
             triggers = []
             is_nf = nf_dict.get(tid, False) or "not found" in row.get("Description", "").lower()
