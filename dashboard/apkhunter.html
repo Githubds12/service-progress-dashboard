@@ -885,26 +885,7 @@
                 if (state.filter === 'easy') matchesType = item.difficulty < 40;
                 if (state.filter === 'new') matchesType = item.is_new === true;
                 if (state.filter === 'rotatory') {
-                    const rotatoryIds = [
-                        '49fbcfe1-b82d-41ad-a214-46a5e4b06310', '0aabd800-8891-40f3-b5af-2eac9085574f',
-                        '42fd3ec7-08a1-4cad-81cf-b2f669880c4f', 'd07ee58f-63b4-41ad-9d91-764988964ebd',
-                        '8d0926e7-5324-4d63-b049-3a3f5ab42e8c', 'd94e9010-0171-4305-8f47-c5e28cf8ec06',
-                        'dea9e292-dde0-4c86-9d36-1c54a9cbd2db', '89a73875-0246-4caf-b4b2-a14a9d506b5d',
-                        '2b2791af-2bd5-4627-9f24-cb7aa7b62e76', '34c46101-4370-4abc-be0f-33d5f276db6e',
-                        '678b53a7-f77f-428f-ad0f-fe826acd926f', '41201c51-5d64-448a-b7ab-f61c26677e72',
-                        'fbbaa989-6a1b-4037-baad-5f1288b132f9', '7f8ecc98-8c55-4fcd-8b56-a4ee04344ae0',
-                        'ef4f0634-5039-468c-b266-ee5b327771c4', '71a9373e-45ae-4113-af09-3e56d06a1e19',
-                        'e05e03a5-8e71-4028-88a4-3922863838f3', '430dde58-e96f-405f-89d1-91277ad095fd',
-                        'ed65e20e-4d64-4684-b9bd-ede11a19140c', 'dcf6658c-2536-4ab4-be0d-6da9d15bdd79',
-                        'f6fb02b3-7ef3-439d-b977-41e2a1fa0b57', 'f5e5c9ad-b0b1-4b44-a80f-934946f9a097',
-                        'f21f0bd8-65c7-4f72-9326-60f64e71af32', 'f676831f-36d6-450c-9d9c-eed903ee3a43',
-                        '069a1a08-cd0d-4c06-af9f-7ed514994d04', 'fe525436-57c7-4daf-9d6a-d2f023e1b717',
-                        '587f6988-cc68-491d-8904-770e9ffa4c24', '7c6446d4-bdab-4615-8242-b3cd64637b2b',
-                        'f5037e17-906f-4656-ac11-6d2c28f5f2b2', '0d314601-f322-4a23-84b5-f7f49dc8a690',
-                        '43945afe-0cc1-4d4b-a9d6-50e43a818209', '9962429d-1dd1-4a5f-aef3-86089b3959f0',
-                        'b7ab99b2-14ee-4f85-80e4-b2a13be3a58c', '34c46101-4370-4abc-be0f-33d5f276db6e'
-                    ];
-                    matchesType = rotatoryIds.includes(item.id);
+                    matchesType = item.is_rotatory === true;
                 }
                 if (state.filter === 'recommendations') {
                     matchesType = !item.claimed && item.difficulty <= 40;

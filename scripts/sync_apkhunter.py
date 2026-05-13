@@ -208,6 +208,10 @@ def sync():
                 latest_sms = latest_entry.get('message', latest_sms)
                 last_updated = latest_entry.get('timestamp', last_updated)
 
+            # Rotatory Logic: If it has history or matches rotatory keywords
+            rotatory_keywords = ['sms', 'otp', 'verify', 'code', 'auth', 'message', 'link', 'smsto', 'itcotp', 'msgdog', 'stripelink', 'sinchverify', 'authmsg', 'bilgimsj', 'iot sms', 'smsinfo', 'clickotp', 'tcloud', 'bipsms', 'vgsms', 'worldnettps', 'mxt', 'infobip', 'nxcomm', 'byteplus']
+            is_rotatory = bool(history) or any(k in name.lower() or k in row.get("Description", "").lower() or k in row.get("Sample_Message", "").lower() for k in rotatory_keywords)
+
             final_data.append({
                 "id": tid,
                 "name": name,
@@ -217,6 +221,7 @@ def sync():
                 "not_found": is_nf,
                 "note": note,
                 "is_new": tid not in claims_dict and tid not in notes_dict and tid not in root_dict and tid not in nf_dict and tid not in updated_dict,
+                "is_rotatory": is_rotatory,
                 "difficulty": diff,
                 "category": cat,
                 "tier": tier,
