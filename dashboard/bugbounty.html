@@ -215,13 +215,36 @@
             </header>
 
             <div id="section-recon" class="content-section active">
-                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-bottom: 30px;" id="statsGrid"></div>
-                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
-                    <h2 id="panelTitle">Intelligence Briefing</h2>
-                    <table id="reconTable">
-                        <thead><tr><th>Priority</th><th>Target</th><th>Finding</th></tr></thead>
-                        <tbody id="reconBody"></tbody>
-                    </table>
+                <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 25px;">
+                    <div>
+                        <h1 style="font-size: 24px; font-weight: 700; margin-bottom: 5px;">Reconnaissance Feed</h1>
+                        <p style="color: var(--text-dim); font-size: 13px;">Active Intelligence for <span id="currentDomainName" style="color: var(--accent);">...</span></p>
+                    </div>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="newDomainInput" placeholder="Enter new domain..." style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 8px; font-size: 12px; width: 200px;">
+                        <button class="ui-btn" onclick="window.addCustomDomain()" style="background: var(--accent); color: #000; border: none; padding: 10px 20px;">+ ADD DOMAIN</button>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 280px 1fr; gap: 30px;">
+                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                        <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
+                        <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 30px;">
+                        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px;" id="statsGrid"></div>
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <h2 id="panelTitle" style="font-size: 18px;">Intelligence Briefing</h2>
+                                <div id="targetMeta" style="font-size: 11px; color: var(--text-dim);"></div>
+                            </div>
+                            <table id="reconTable">
+                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th></tr></thead>
+                                <tbody id="reconBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -266,23 +289,75 @@
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
             currentSessionId: localStorage.getItem('current_session_id') || null,
-            sidebarCollapsed: false
+            sidebarCollapsed: false,
+            currentTargetIndex: 0
         };
 
         function init() {
-            const data = window.bugBountyData;
-            if (data) {
-                $('statsGrid').innerHTML = `
-                    <div class="stat-card"><div class="stat-value">${data.targets[0].stats.total}</div><div>SUBDOMAINS</div></div>
-                    <div class="stat-card"><div class="stat-value" style="color: var(--accent);">${data.targets[0].stats.high_value_count}</div><div>HIGH VALUE</div></div>
-                    <div class="stat-card"><div class="stat-value" style="color: var(--red);">${data.targets[0].findings.length}</div><div>FINDINGS</div></div>
-                `;
-                $('reconBody').innerHTML = data.targets[0].findings.map(f => `<tr><td>${f.priority}</td><td>${f.target}</td><td>${f.category}</td></tr>`).join('');
-            }
+            renderTargets();
+            switchTarget(0);
+            
             if (!window.state.aiSessions.length) window.createNewAiSession();
             else renderSessionList();
             if (window.state.currentSessionId) window.loadSession(window.state.currentSessionId);
         }
+
+        function renderTargets() {
+            const data = window.bugBountyData;
+            if (!data) return;
+            $('targetList').innerHTML = data.targets.map((t, i) => `
+                <div class="session-item ${i === window.state.currentTargetIndex ? 'active' : ''}" onclick="window.switchTarget(${i})">
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
+                        <span>${t.name}</span>
+                        <span style="font-size: 9px; opacity: 0.6;">${t.stats.total} SUBs</span>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        window.switchTarget = (index) => {
+            window.state.currentTargetIndex = index;
+            const target = window.bugBountyData.targets[index];
+            if (!target) return;
+
+            $('currentDomainName').innerText = target.name.toUpperCase();
+            $('panelTitle').innerText = `Intelligence Briefing: ${target.name}`;
+            $('targetMeta').innerText = `LAST SCANNED: ${window.bugBountyData.last_update}`;
+
+            $('statsGrid').innerHTML = `
+                <div class="stat-card"><div class="stat-value">${target.stats.total.toLocaleString()}</div><div>SUBDOMAINS</div></div>
+                <div class="stat-card"><div class="stat-value" style="color: var(--accent);">${target.stats.high_value_count.toLocaleString()}</div><div>HIGH VALUE</div></div>
+                <div class="stat-card"><div class="stat-value" style="color: var(--red);">${target.findings.length}</div><div>CRITICAL FINDINGS</div></div>
+            `;
+            
+            $('reconBody').innerHTML = target.findings.map(f => `
+                <tr>
+                    <td style="color: ${f.priority === 'Critical' ? 'var(--red)' : 'var(--yellow)'}; font-weight: 700;">${f.priority}</td>
+                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">${f.target}</td>
+                    <td><div style="color: #fff; margin-bottom: 4px;">${f.category}</div><div style="font-size: 11px; color: var(--text-dim);">${f.recommendation}</div></td>
+                </tr>
+            `).join('');
+            
+            renderTargets();
+        };
+
+        window.addCustomDomain = () => {
+            const input = $('newDomainInput');
+            const domain = input.value.trim();
+            if (!domain) return;
+
+            const newTarget = {
+                name: domain,
+                stats: { total: 0, high_value_count: 0 },
+                findings: [
+                    { priority: 'Info', target: domain, category: 'Initial Scoping', recommendation: 'Trigger active reconnaissance to populate intelligence.' }
+                ]
+            };
+
+            window.bugBountyData.targets.unshift(newTarget);
+            input.value = '';
+            window.switchTarget(0);
+        };
 
         window.toggleAiSidebar = () => {
             window.state.sidebarCollapsed = !window.state.sidebarCollapsed;
@@ -329,13 +404,19 @@
         window.sendAiMessage = async () => {
             const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
             const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
+            
+            // Inject context about current target
+            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
+            const context = target ? `[Target: ${target.name} | Stats: ${target.stats.total} subdomains, ${target.stats.high_value_count} high value targets] ` : "";
+            const fullPrompt = context + msg;
+
             i.value = ''; s.messages.push({ sender: 'user', text: msg });
             renderMessages();
             
             try {
                 const res = await fetch("https://service-progress-portal.onrender.com/api/agent/chat", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: msg })
+                    body: JSON.stringify({ message: fullPrompt })
                 });
                 const d = await res.json();
                 const botMsg = d.candidates[0].content.parts[0].text;
