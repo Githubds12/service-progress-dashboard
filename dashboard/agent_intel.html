@@ -316,12 +316,30 @@
     </div>
 
     <script>
+        // --- AUTO-SYNC FROM LOCAL BRIDGE ---
+        async function syncFromBridge() {
+            try {
+                const response = await fetch('http://localhost:9999/sync-keys');
+                const keys = await response.json();
+                if (keys.GEMINI_API_KEY) {
+                    localStorage.setItem('GEMINI_API_KEY', keys.GEMINI_API_KEY);
+                    localStorage.setItem('github_token', keys.GH_PAT);
+                    addMessage('agent', "✅ <strong>[BRIDGE SYNC SUCCESS]</strong> Authenticated using local .env configuration.");
+                    // Refresh current key in memory
+                    API_KEY = keys.GEMINI_API_KEY;
+                }
+            } catch (err) {
+                console.log("Local bridge not detected. Using stored credentials.");
+            }
+        }
+
         // Use the key from local storage or placeholder
-        const API_KEY = localStorage.getItem('GEMINI_API_KEY') || '';
+        let API_KEY = localStorage.getItem('GEMINI_API_KEY') || '';
         let currentSessionId = Date.now().toString();
         let chatSessions = JSON.parse(localStorage.getItem('agent_chat_sessions') || '{}');
 
-        // Initialize UI
+        // Initialize UI & Sync
+        syncFromBridge();
         renderHistory();
 
         function handleKey(e) {
