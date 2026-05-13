@@ -122,47 +122,114 @@
             padding: 20px; border-radius: 12px; transition: 0.3s;
         }
         .agent-card:hover { border-color: var(--accent); background: rgba(0, 242, 255, 0.05); }
-        .agent-name { font-weight: 700; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
-        .agent-desc { font-size: 12px; color: var(--text-dim); }
-
-        /* Integrated AI Section Styles */
-        .ai-chat-container {
-            height: calc(100vh - 180px);
+        /* Integrated AI Section Styles - Workspace Overhaul */
+        .ai-workspace {
+            height: calc(100vh - 200px);
             display: flex;
-            flex-direction: column;
             background: var(--card);
             border: 1px solid var(--border);
             border-radius: 24px;
             overflow: hidden;
+            backdrop-filter: blur(20px);
         }
-        .ai-messages {
+        
+        .ai-sidebar {
+            width: 280px;
+            background: rgba(0,0,0,0.3);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .new-chat-btn {
+            background: rgba(0,242,255,0.1);
+            border: 1px dashed var(--accent);
+            color: var(--accent);
+            padding: 12px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 700;
+            font-size: 12px;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+        }
+        .new-chat-btn:hover { background: var(--accent); color: #000; }
+
+        .session-list {
             flex: 1;
-            padding: 30px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 20px;
+            gap: 10px;
+        }
+
+        .session-item {
+            padding: 12px 15px;
+            background: rgba(255,255,255,0.03);
+            border: 1px solid transparent;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: 0.2s;
+        }
+        .session-item:hover, .session-item.active {
+            background: rgba(0,242,255,0.08);
+            border-color: var(--accent);
+        }
+        .session-item i { font-size: 16px; opacity: 0.6; }
+        .session-item:hover i { opacity: 1; }
+
+        .ai-main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .chat-header {
+            padding: 20px 30px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(255,255,255,0.02);
+        }
+
+        .ai-messages {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            scroll-behavior: smooth;
         }
         .ai-input-area {
-            padding: 30px;
-            border-top: 1px solid var(--border);
+            padding: 25px 40px 40px;
             display: flex;
             gap: 15px;
-            background: rgba(0,0,0,0.2);
         }
         .ai-bubble {
-            padding: 15px 20px;
-            border-radius: 18px;
-            max-width: 80%;
+            padding: 18px 24px;
+            border-radius: 20px;
+            max-width: 85%;
             font-size: 14px;
-            line-height: 1.6;
+            line-height: 1.7;
+            position: relative;
         }
         .ai-bubble.user {
             background: var(--accent);
             color: #000;
             align-self: flex-end;
             border-bottom-right-radius: 4px;
-            box-shadow: 0 5px 20px var(--accent-glow);
+            box-shadow: 0 10px 30px var(--accent-glow);
+            font-weight: 500;
         }
         .ai-bubble.bot {
             background: rgba(255,255,255,0.05);
@@ -254,25 +321,44 @@
 
             <!-- SECTION: AI ANALYST -->
             <div id="section-ai" class="content-section">
-                <div class="panel-header">
-                    <h2>🧠 Agent Intel: Advanced AI Research</h2>
-                    <div style="display: flex; align-items: center; gap: 10px;">
-                        <span class="badge badge-success">GEMINI-CORE v2.5</span>
-                        <span style="font-size: 10px; color: var(--text-dim);">SYNCED WITH RECON DATABASE</span>
-                    </div>
-                </div>
-                
-                <div class="ai-chat-container">
-                    <div id="aiMessages" class="ai-messages">
-                        <div class="ai-bubble bot">
-                            Welcome back, Specialist. I am synced with your Gemini API key and current reconnaissance data. How can I assist with your offensive research today?
+                <div class="ai-workspace">
+                    <!-- SESSION SIDEBAR -->
+                    <div class="ai-sidebar">
+                        <button class="new-chat-btn" onclick="window.createNewAiSession()">
+                            <i class='bx bx-plus'></i> NEW ANALYSIS SESSION
+                        </button>
+                        <div id="sessionList" class="session-list">
+                            <!-- Populated by JS -->
+                        </div>
+                        <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border);">
+                            <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px;">AI Model Status</div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <div style="width: 8px; height: 8px; background: var(--green); border-radius: 50%;"></div>
+                                <span style="font-size: 11px; font-weight: 700; color: var(--accent);">GEMINI 2.5 CORE</span>
+                            </div>
                         </div>
                     </div>
-                    <div class="ai-input-area">
-                        <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Analyze subdomains, suggest exploit vectors, or research targets..." style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 15px 20px; border-radius: 12px; outline: none;">
-                        <button onclick="window.sendAiMessage()" style="background: var(--accent); border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; color: #000; font-weight: 700;">
-                            ANALYZE
-                        </button>
+
+                    <!-- MAIN CHAT -->
+                    <div class="ai-main-chat">
+                        <div class="chat-header">
+                            <div style="display: flex; align-items: center; gap: 15px;">
+                                <h2 id="currentSessionTitle" style="font-size: 18px; color: #fff;">Active Analysis</h2>
+                                <button onclick="window.renameCurrentSession()" style="background: none; border: none; color: var(--text-dim); cursor: pointer;"><i class='bx bx-edit-alt'></i></button>
+                            </div>
+                            <button onclick="window.clearCurrentSession()" style="background: none; border: none; color: var(--red); cursor: pointer; font-size: 11px; font-weight: 700;">CLEAR SESSION</button>
+                        </div>
+                        
+                        <div id="aiMessages" class="ai-messages">
+                            <!-- Messages -->
+                        </div>
+
+                        <div class="ai-input-area">
+                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Analyze subdomains, suggest exploit vectors, or research targets..." style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 18px 25px; border-radius: 15px; outline: none; font-size: 14px;">
+                            <button onclick="window.sendAiMessage()" style="background: var(--accent); border: none; padding: 0 35px; border-radius: 15px; cursor: pointer; color: #000; font-weight: 700; transition: 0.3s; box-shadow: 0 5px 15px var(--accent-glow);">
+                                ANALYZE
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -291,8 +377,8 @@
         window.state = {
             currentTarget: null,
             agents: [],
-            chatOpen: false,
-            aiHistory: []
+            aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
+            currentSessionId: localStorage.getItem('current_session_id') || null
         };
 
         function init() {
@@ -309,51 +395,148 @@
             }
 
             renderAgents(window.state.agents);
+            
+            // AI Init
+            if (window.state.aiSessions.length === 0) {
+                window.createNewAiSession();
+            } else {
+                renderSessionList();
+                if (window.state.currentSessionId) {
+                    window.loadSession(window.state.currentSessionId);
+                } else {
+                    window.loadSession(window.state.aiSessions[0].id);
+                }
+            }
         }
 
+        // --- SESSION MANAGEMENT ---
+        window.createNewAiSession = () => {
+            const id = 'session_' + Date.now();
+            const newSession = {
+                id: id,
+                title: 'New Analysis Session',
+                messages: [
+                    { sender: 'bot', text: 'Welcome back, Specialist. I am synced with your Gemini API key and current reconnaissance data. How can I assist with your offensive research today?' }
+                ]
+            };
+            window.state.aiSessions.unshift(newSession);
+            window.saveSessions();
+            window.loadSession(id);
+            renderSessionList();
+        };
+
+        window.loadSession = (id) => {
+            window.state.currentSessionId = id;
+            localStorage.setItem('current_session_id', id);
+            const session = window.state.aiSessions.find(s => s.id === id);
+            if (!session) return;
+
+            $('currentSessionTitle').innerText = session.title;
+            $('aiMessages').innerHTML = '';
+            session.messages.forEach(m => {
+                const bubbleId = addAiBubble(m.text, m.sender, false, true);
+                if (m.sender === 'bot') updateAiBubble(bubbleId, m.text);
+            });
+            renderSessionList();
+        };
+
+        window.renameCurrentSession = () => {
+            const session = window.state.aiSessions.find(s => s.id === window.state.currentSessionId);
+            if (!session) return;
+            const newTitle = prompt('Rename Session:', session.title);
+            if (newTitle) {
+                session.title = newTitle;
+                $('currentSessionTitle').innerText = newTitle;
+                window.saveSessions();
+                renderSessionList();
+            }
+        };
+
+        window.deleteSession = (id, e) => {
+            if (e) e.stopPropagation();
+            if (!confirm('Delete this session?')) return;
+            window.state.aiSessions = window.state.aiSessions.filter(s => s.id !== id);
+            if (window.state.currentSessionId === id) {
+                window.state.currentSessionId = window.state.aiSessions.length ? window.state.aiSessions[0].id : null;
+            }
+            window.saveSessions();
+            if (window.state.aiSessions.length === 0) {
+                window.createNewAiSession();
+            } else {
+                window.loadSession(window.state.currentSessionId);
+            }
+        };
+
+        window.clearCurrentSession = () => {
+            if (!confirm('Clear all messages in this session?')) return;
+            const session = window.state.aiSessions.find(s => s.id === window.state.currentSessionId);
+            if (session) {
+                session.messages = [{ sender: 'bot', text: 'Session cleared. How can I help?' }];
+                window.saveSessions();
+                window.loadSession(session.id);
+            }
+        };
+
+        window.saveSessions = () => {
+            localStorage.setItem('ai_sessions', JSON.stringify(window.state.aiSessions));
+        };
+
+        function renderSessionList() {
+            $('sessionList').innerHTML = window.state.aiSessions.map(s => `
+                <div class="session-item ${s.id === window.state.currentSessionId ? 'active' : ''}" onclick="window.loadSession('${s.id}')">
+                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 180px;">${s.title}</span>
+                    <i class='bx bx-trash' onclick="window.deleteSession('${s.id}', event)" style="color: var(--red); font-size: 14px;"></i>
+                </div>
+            `).join('');
+        }
+
+        // --- TAB SWITCHING ---
         window.switchSection = (sectionId, el) => {
-            // Update Sidebar
             document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
             if (el) el.classList.add('active');
-
-            // Show Section
             document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
             $(`section-${sectionId}`).classList.add('active');
         };
 
+        // --- AI MESSAGING ---
         window.sendAiMessage = async () => {
             const input = $('aiInput');
             const message = input.value.trim();
             if (!message) return;
 
+            const session = window.state.aiSessions.find(s => s.id === window.state.currentSessionId);
+            if (!session) return;
+
             input.value = '';
             addAiBubble(message, 'user');
+            session.messages.push({ sender: 'user', text: message });
 
             const loadingId = addAiBubble('Analyzing intelligence feeds...', 'bot', true);
             
             try {
                 const response = await callGemini(message);
                 updateAiBubble(loadingId, response);
+                session.messages.push({ sender: 'bot', text: response });
+                window.saveSessions();
             } catch (err) {
                 updateAiBubble(loadingId, `❌ GATEWAY ERROR: ${err.message}`);
             }
         };
 
-        function addAiBubble(text, sender) {
-            const id = Date.now();
+        function addAiBubble(text, sender, isLoading = false, isBatch = false) {
+            const id = Date.now() + Math.random();
             const div = document.createElement('div');
             div.id = `ai-msg-${id}`;
             div.className = `ai-bubble ${sender}`;
             div.innerHTML = text.replace(/\n/g, '<br>');
             $('aiMessages').appendChild(div);
-            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
+            if (!isBatch) $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
             return id;
         }
 
         function updateAiBubble(id, text) {
             const el = $(`ai-msg-${id}`);
             if (el) {
-                // Parse markdown-ish
                 const formatted = text
                     .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
                     .replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.3);padding:2px 5px;border-radius:4px;font-family:monospace;">$1</code>')
@@ -368,34 +551,36 @@
                 `Current Target: ${window.state.currentTarget.name}. Stats: ${JSON.stringify(window.state.currentTarget.stats)}. Findings: ${JSON.stringify(window.state.currentTarget.findings.slice(0,10))}` : 
                 "No target selected.";
 
+            const session = window.state.aiSessions.find(s => s.id === window.state.currentSessionId);
+            const context = session ? session.messages.slice(-5).map(m => `${m.sender}: ${m.text}`).join('\n') : "";
+
             const systemPrompt = `You are the AGENT INTEL AI. You are a Bug Bounty Security Analyst.
 ${targetInfo}
+Recent Conversation:
+${context}
+
 Provide technical, actionable intelligence. Use markdown for code and strong tags for emphasis.`;
 
-            // 🛡️ POINT TO SECURE PORTAL
             const GATEWAY = "https://service-progress-portal.onrender.com/api/agent/chat";
 
             const response = await fetch(GATEWAY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    message: `${systemPrompt}\n\nUser: ${prompt}`
-                })
+                body: JSON.stringify({ message: `${systemPrompt}\n\nUser: ${prompt}` })
             });
 
             const data = await response.json();
             if (data.error) throw new Error(data.error);
-            
             if (data.candidates && data.candidates[0]) {
                 return data.candidates[0].content.parts[0].text;
             }
             return data.error || "Unknown Intelligence Error";
         }
 
+        // --- DASHBOARD FUNCTIONS ---
         window.switchTarget = (targetName) => {
             const data = window.bugBountyData.targets.find(t => t.name === targetName);
             if (!data) return;
-            
             window.state.currentTarget = data;
             $('panelTitle').innerText = `🎯 Intelligence Briefing: ${targetName.toUpperCase()}`;
             $('statsGrid').innerHTML = `
