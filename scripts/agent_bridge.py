@@ -36,8 +36,8 @@ def run_bridge():
     port = 9999
     server_address = ('', port)
     httpd = HTTPServer(server_address, SecretBridgeHandler)
-    print(f"🚀 INTELLIGENCE BRIDGE ACTIVE ON PORT {port}")
-    print("Dashboard will now automatically pull keys from your .env file.")
+    print(f"[*] INTELLIGENCE BRIDGE ACTIVE ON PORT {port}")
+    print("[*] Dashboard will now automatically pull keys from your .env file.")
     httpd.serve_forever()
 
 if __name__ == "__main__":

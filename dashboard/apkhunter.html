@@ -716,6 +716,57 @@
                     <div class="health-value" id="val-sync-status">UNKNOWN</div>
                     <div class="health-desc" id="val-sync-desc">Checking PAT availability...</div>
                     <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">AUTH: LocalStorage</span></div>
+                </div>
+                <div id="card-portal" class="health-card">
+                    <div class="health-title">Portal Mapping</div>
+                    <div class="health-value" id="val-portal-status">CHECKING</div>
+                    <div class="health-desc" id="val-portal-desc">Verifying service links...</div>
+                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">SYSTEM: APKHunter Sync</span></div>
+                </div>
+            </div>
+
+            <div class="heatmap-card" style="margin-top: 40px;">
+                <div class="heat-title">Live Sync Terminal</div>
+                <div id="diagTerminal" class="diag-terminal">
+                    <div class="diag-line"><span class="diag-ts">--:--:--</span> <span class="diag-tag info">SYSTEM</span> Initializing diagnostic engine...</div>
+                </div>
+            </div>
+
+            <div class="intel-bar" style="margin-top: 40px; justify-content: center;">
+                <button class="intel-btn" onclick="triggerADBReset()"><i>🔄</i> RESTART ADB SERVER</button>
+                <button class="intel-btn btn-droidpilot" onclick="triggerDroidPilot()"><i>🛸</i> LAUNCH DROIDPILOT</button>
+                <button class="intel-btn" onclick="window.showSettings()"><i>⚙️</i> PORTAL SETTINGS</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">PORTAL CONFIG</div>
+                <div class="close-modal" onclick="window.closeSettings()">&times;</div>
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">GitHub PAT (Sync)</label>
+                <input type="password" id="githubTokenInput" class="setting-input" placeholder="ghp_xxxxxxxxxxxx">
+            </div>
+            <div class="setting-row">
+                <label class="setting-label">DroidPilot Port</label>
+                <input type="text" id="droidPilotPortInput" class="setting-input" placeholder="7777">
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 30px;">
+                <button class="btn" style="flex: 1; padding: 12px; background: var(--accent); color: #000;" onclick="window.saveSettings()">SAVE CONFIG</button>
+                <button class="btn" style="flex: 1; padding: 12px;" onclick="window.closeSettings()">CANCEL</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="apkhunter_data.js?v=1.0.1"></script>
+    <script>
+        const $ = id => document.getElementById(id);
+        function getMirrorColor(name) {
+            const colors = {
                 'APKPure': '#24b897',
                 'Aptoide': '#fc7521',
                 'APKMirror': '#ff9800',
