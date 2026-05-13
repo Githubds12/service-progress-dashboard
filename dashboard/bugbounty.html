@@ -84,50 +84,80 @@
 
         .ai-sidebar {
             width: 300px;
-            background: rgba(0,0,0,0.8);
+            background: #0b0e14;
             border-right: 1px solid var(--border);
             display: flex;
             flex-direction: column;
-            padding: 30px;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            padding: 25px;
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), width 0.3s;
             z-index: 100;
+            flex-shrink: 0;
         }
-        .ai-sidebar.collapsed { width: 0; padding: 0; margin-left: -300px; opacity: 0; }
+        .ai-sidebar.collapsed { 
+            width: 0; 
+            padding: 0; 
+            margin-right: -1px;
+            transform: translateX(-300px);
+            overflow: hidden;
+        }
 
         .ai-main-chat {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: #030508;
-            position: relative;
+            min-width: 0; /* Critical for flex stability */
         }
 
         .chat-header {
-            padding: 15px 40px;
+            padding: 15px 30px;
             border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: rgba(255,255,255,0.02);
+            background: #030508;
+            z-index: 10;
         }
 
         .ai-messages {
             flex: 1;
-            padding: 40px 15%;
+            padding: 40px 20px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 25px;
         }
-        .ai-input-area {
-            padding: 20px 15% 40px;
+        
+        /* Centered message container */
+        .ai-messages-inner {
+            max-width: 1000px;
+            width: 100%;
+            margin: 0 auto;
             display: flex;
-            gap: 20px;
-            background: linear-gradient(to top, #030508, transparent);
+            flex-direction: column;
+            gap: 25px;
         }
 
-        /* --- UI COMPONENTS --- */
-        .ai-bubble { padding: 22px 30px; border-radius: 24px; max-width: 95%; font-size: 15px; }
+        .ai-input-area {
+            padding: 20px 30px 40px;
+            background: linear-gradient(to top, #030508 70%, transparent);
+        }
+        
+        .ai-input-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            align-items: stretch;
+        }
+
+        .ai-bubble { 
+            padding: 20px 28px; 
+            border-radius: 24px; 
+            max-width: 85%; 
+            font-size: 15px; 
+            line-height: 1.6;
+        }
         .ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 600; box-shadow: 0 10px 30px var(--accent-glow); }
         .ai-bubble.bot { background: rgba(255,255,255,0.04); color: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
 
@@ -221,10 +251,14 @@
                             </div>
                             <button class="ui-btn" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
                         </div>
-                        <div id="aiMessages" class="ai-messages"></div>
+                        <div id="aiMessages" class="ai-messages">
+                            <div class="ai-messages-inner" id="aiMessagesInner"></div>
+                        </div>
                         <div class="ai-input-area">
-                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Deep intelligence analysis..." style="flex: 1; background: #0b0e14; border: 1px solid var(--border); color: #fff; padding: 22px 30px; border-radius: 20px; outline: none; font-size: 15px;">
-                            <button onclick="window.sendAiMessage()" style="background: var(--accent); border: none; padding: 0 40px; border-radius: 20px; cursor: pointer; color: #000; font-weight: 700;">ANALYZE</button>
+                            <div class="ai-input-container">
+                                <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Deep intelligence analysis..." style="flex: 1; background: #0b0e14; border: 1px solid var(--border); color: #fff; padding: 22px 30px; border-radius: 20px; outline: none; font-size: 15px;">
+                                <button onclick="window.sendAiMessage()" style="background: var(--accent); border: none; padding: 0 40px; border-radius: 20px; cursor: pointer; color: #000; font-weight: 700;">ANALYZE</button>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -284,9 +318,7 @@
             const s = window.state.aiSessions.find(x => x.id === id);
             if (!s) return;
             $('currentSessionTitle').innerText = s.title;
-            $('aiMessages').innerHTML = s.messages.map(m => `
-                <div class="ai-bubble ${m.sender}">${m.text}</div>
-            `).join('');
+            renderMessages();
             renderSessionList();
         };
 
@@ -310,7 +342,7 @@
 
         function renderMessages() {
             const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
-            $('aiMessages').innerHTML = s.messages.map(m => `<div class="ai-bubble ${m.sender}">${m.text.replace(/\n/g, '<br>')}</div>`).join('');
+            $('aiMessagesInner').innerHTML = s.messages.map(m => `<div class="ai-bubble ${m.sender}">${m.text.replace(/\n/g, '<br>')}</div>`).join('');
             $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
         }
 
