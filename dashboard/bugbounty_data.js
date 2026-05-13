@@ -1,5 +1,5 @@
 window.bugBountyData = {
-    "last_update": "2026-05-13 09:54:29",
+    "last_update": "2026-05-13 10:06:54",
     "targets": [
         {
             "name": "Facebook",
@@ -4146,6 +4146,218 @@ window.bugBountyData = {
                     "recommendation": "Run Staging specific probes & Check for Auth Bypass"
                 }
             ]
+        }
+    ],
+    "agents": [
+        {
+            "id": "ad-attacker.md",
+            "name": "Ad Attacker",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "api-security.md",
+            "name": "Api Security",
+            "description": "### OWASP API Security Top 10 (2023)"
+        },
+        {
+            "id": "attack-planner.md",
+            "name": "Attack Planner",
+            "description": "### Attack Chain Construction"
+        },
+        {
+            "id": "binary-exploit.md",
+            "name": "Binary Exploit",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "bizlogic-hunter.md",
+            "name": "Bizlogic Hunter",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "bug-bounty.md",
+            "name": "Bug Bounty",
+            "description": "### Target Selection and Scoping"
+        },
+        {
+            "id": "cicd-redteam.md",
+            "name": "Cicd Redteam",
+            "description": "### Pipeline Integration"
+        },
+        {
+            "id": "cloud-security.md",
+            "name": "Cloud Security",
+            "description": "- **S3**: Bucket enumeration, ACL misconfiguration, policy analysis, object-level permissions, pre-signed URL abuse"
+        },
+        {
+            "id": "container-escape.md",
+            "name": "Container Escape",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "credential-tester.md",
+            "name": "Credential Tester",
+            "description": "### Online Password Attacks"
+        },
+        {
+            "id": "crypto-analyst.md",
+            "name": "Crypto Analyst",
+            "description": "Before any active testing:"
+        },
+        {
+            "id": "ctf-solver.md",
+            "name": "Ctf Solver",
+            "description": "### Web Exploitation"
+        },
+        {
+            "id": "detection-engineer.md",
+            "name": "Detection Engineer",
+            "description": "### Rule Formats"
+        },
+        {
+            "id": "engagement-planner.md",
+            "name": "Engagement Planner",
+            "description": "- Design phased engagement plans: Scoping \u2192 Reconnaissance \u2192 Enumeration \u2192 Vulnerability Analysis \u2192 Exploitation \u2192 Post-Exploitation \u2192 Reporting"
+        },
+        {
+            "id": "exploit-chainer.md",
+            "name": "Exploit Chainer",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "exploit-guide.md",
+            "name": "Exploit Guide",
+            "description": "### Network Attacks"
+        },
+        {
+            "id": "forensics-analyst.md",
+            "name": "Forensics Analyst",
+            "description": "You are a digital forensics and incident response (DFIR) specialist. You guide users through evidence acquisition, analysis, and reporting while maint..."
+        },
+        {
+            "id": "graphql-hunter.md",
+            "name": "Graphql Hunter",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "hardware-hacker.md",
+            "name": "Hardware Hacker",
+            "description": "Before any physical or logical interaction with a device:"
+        },
+        {
+            "id": "jwt-cracker.md",
+            "name": "Jwt Cracker",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "llm-redteam.md",
+            "name": "Llm Redteam",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "malware-analyst.md",
+            "name": "Malware Analyst",
+            "description": "1. Always start with static analysis before executing anything dynamically."
+        },
+        {
+            "id": "mobile-pentester.md",
+            "name": "Mobile Pentester",
+            "description": "### Static Analysis"
+        },
+        {
+            "id": "osint-collector.md",
+            "name": "Osint Collector",
+            "description": "Every technique falls into one of two categories. You must always label which category applies:"
+        },
+        {
+            "id": "payload-crafter.md",
+            "name": "Payload Crafter",
+            "description": "1. Every payload you help craft is built to be **caught**. Your job is to model what real adversaries do so blue teams can detect it. Generation, deto..."
+        },
+        {
+            "id": "phishing-operator.md",
+            "name": "Phishing Operator",
+            "description": "Before generating any live-target infrastructure configuration, confirm:"
+        },
+        {
+            "id": "poc-validator.md",
+            "name": "Poc Validator",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "privesc-advisor.md",
+            "name": "Privesc Advisor",
+            "description": "### Enumeration Methodology"
+        },
+        {
+            "id": "purple-team.md",
+            "name": "Purple Team",
+            "description": "Before any exercise:"
+        },
+        {
+            "id": "recon-advisor.md",
+            "name": "Recon Advisor",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "red-team-operator.md",
+            "name": "Red Team Operator",
+            "description": "Before any operational activity:"
+        },
+        {
+            "id": "report-generator.md",
+            "name": "Report Generator",
+            "description": "You generate reports following this structure:"
+        },
+        {
+            "id": "reverse-engineer.md",
+            "name": "Reverse Engineer",
+            "description": "1. Static first. Run nothing until you have read enough to know what it would do."
+        },
+        {
+            "id": "social-engineer.md",
+            "name": "Social Engineer",
+            "description": "### 1. Phishing Campaigns (Authorized Testing Only)"
+        },
+        {
+            "id": "ssrf-hunter.md",
+            "name": "Ssrf Hunter",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "stig-analyst.md",
+            "name": "Stig Analyst",
+            "description": "### STIG Families"
+        },
+        {
+            "id": "subdomain-takeover.md",
+            "name": "Subdomain Takeover",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "swarm-orchestrator.md",
+            "name": "Swarm Orchestrator",
+            "description": "You are the manager agent. You do not execute scans, write exploits, or crack hashes. You:"
+        },
+        {
+            "id": "threat-modeler.md",
+            "name": "Threat Modeler",
+            "description": "- Always start by understanding the system architecture before identifying threats. Ask clarifying questions about components, data flows, trust bound..."
+        },
+        {
+            "id": "vuln-scanner.md",
+            "name": "Vuln Scanner",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "web-hunter.md",
+            "name": "Web Hunter",
+            "description": "### Session Initialization"
+        },
+        {
+            "id": "wireless-pentester.md",
+            "name": "Wireless Pentester",
+            "description": "**ATT&CK**: T1595.002 (Active Scanning: Vulnerability Scanning), T1040 (Network Sniffing)"
         }
     ]
 };

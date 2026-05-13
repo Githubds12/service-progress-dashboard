@@ -182,26 +182,14 @@
                 </div>
             </div>
 
-            <div class="panel-header">
+            <div class="panel-header" id="agentHub">
                 <h2>🤖 Specialized Agent Hub</h2>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="agentSearch" onkeyup="window.filterAgents(this.value)" placeholder="Search agents..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                </div>
             </div>
-            <div class="agent-grid">
-                <div class="agent-card">
-                    <div class="agent-name"><i class='bx bx-target-lock'></i> Recon Advisor</div>
-                    <p class="agent-desc">Expert in parsing scan output and prioritizing targets for deep enumeration.</p>
-                </div>
-                <div class="agent-card">
-                    <div class="agent-name"><i class='bx bx-code-alt'></i> API Guardian</div>
-                    <p class="agent-desc">Specialized in REST/GraphQL security, IDOR testing, and auth bypass.</p>
-                </div>
-                <div class="agent-card">
-                    <div class="agent-name"><i class='bx bx-globe'></i> Web Hunter</div>
-                    <p class="agent-desc">Focuses on high-impact web vulnerabilities like XSS, SQLi, and SSRF.</p>
-                </div>
-                <div class="agent-card">
-                    <div class="agent-name"><i class='bx bx-unite'></i> Exploit Architect</div>
-                    <p class="agent-desc">Chains multiple low-severity findings into high-impact exploit paths.</p>
-                </div>
+            <div class="agent-grid" id="agentGrid">
+                <!-- Populated by JS -->
             </div>
         </div>
     </div>
@@ -211,21 +199,26 @@
         const $ = id => document.getElementById(id);
         
         window.state = {
-            currentTarget: null
+            currentTarget: null,
+            agents: []
         };
 
         function init() {
             const data = window.bugBountyData;
-            if (!data || !data.targets.length) return;
+            if (!data) return;
 
             $('lastSyncTime').innerText = data.last_update.split(' ')[1];
+            window.state.agents = data.agents || [];
 
             // Populate selector
-            const selector = $('targetSelector');
-            selector.innerHTML = data.targets.map(t => `<option value="${t.name}">${t.name.toUpperCase()}</option>`).join('');
+            if (data.targets && data.targets.length) {
+                const selector = $('targetSelector');
+                selector.innerHTML = data.targets.map(t => `<option value="${t.name}">${t.name.toUpperCase()}</option>`).join('');
+                window.switchTarget(data.targets[0].name);
+            }
 
-            // Initial render
-            window.switchTarget(data.targets[0].name);
+            // Initial Agent Render
+            renderAgents(window.state.agents);
         }
 
         window.switchTarget = (targetName) => {
@@ -266,6 +259,14 @@
             renderTable(filtered);
         };
 
+        window.filterAgents = (query) => {
+            const filtered = window.state.agents.filter(a => 
+                a.name.toLowerCase().includes(query.toLowerCase()) || 
+                a.description.toLowerCase().includes(query.toLowerCase())
+            );
+            renderAgents(filtered);
+        };
+
         function renderTable(findings) {
             $('reconTable').innerHTML = findings.map(f => `
                 <tr>
@@ -274,6 +275,19 @@
                     <td style="font-size: 12px; font-weight: 600;">${f.category}</td>
                     <td style="font-size: 11px; color: var(--text-dim);"><i class='bx bx-brain'></i> ${f.recommendation}</td>
                 </tr>
+            `).join('');
+        }
+
+        function renderAgents(agents) {
+            $('agentGrid').innerHTML = agents.map(a => `
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-bot'></i> ${a.name}</div>
+                    <p class="agent-desc">${a.description}</p>
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 10px; color: var(--accent); font-family: 'JetBrains Mono';">${a.id}</span>
+                        <button class="badge badge-success" style="border: none; cursor: pointer; background: rgba(0,230,118,0.1);">DEPLOYS</button>
+                    </div>
+                </div>
             `).join('');
         }
 
