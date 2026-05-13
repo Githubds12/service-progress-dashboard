@@ -27,9 +27,15 @@ jobs:
           pip install requests
 
       - name: Run Cloud Rotatory Sync
+        env:
+          PULSE_EMAIL: ${{ secrets.PULSE_EMAIL }}
+          PULSE_PASS: ${{ secrets.PULSE_PASS }}
+          GH_PAT: ${{ secrets.GH_PAT }}
         run: python scripts/cloud_rotatory_sync.py
 
       - name: Commit and Push changes
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"

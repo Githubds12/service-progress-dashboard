@@ -21,7 +21,7 @@ TIME_LOG_FILE = os.path.join(REPORT_DIR, "trackers", "Time Log.txt")
 HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
 
 def sync_github_commands():
-    token = os.getenv("GITHUB_TOKEN")
+    token = os.getenv("GH_PAT")
     if not token: return
     
     url = "https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments"
