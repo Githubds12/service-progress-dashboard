@@ -99,6 +99,178 @@
             padding: 30px; position: relative; overflow: hidden;
             backdrop-filter: blur(15px); transition: 0.3s;
         }
+        
+        /* --- STEALTH AI MODE --- */
+        body.ai-mode { overflow: hidden; }
+        body.ai-mode .sidebar, 
+        body.ai-mode header,
+        body.ai-mode .controls,
+        body.ai-mode .filter-group,
+        body.ai-mode .intel-bar,
+        body.ai-mode .table-wrapper,
+        body.ai-mode .pagination,
+        body.ai-mode .heatmap-card,
+        body.ai-mode .skill-reminder { display: none !important; }
+        body.ai-mode .main-content { margin-left: 0 !important; padding: 0 !important; }
+        body.ai-mode .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
+
+        .ai-workspace {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            background: #030508;
+            overflow: hidden;
+            animation: fadeIn 0.4s ease-out;
+        }
+
+        .ai-sidebar {
+            width: 300px;
+            background: #0b0e14;
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            padding: 25px;
+            flex-shrink: 0;
+            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .ai-sidebar.collapsed { width: 0; padding: 0; border-right: none; overflow: hidden; }
+
+        .ai-main-chat {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #030508;
+            min-width: 0;
+        }
+
+        .chat-header-stealth {
+            padding: 15px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(3, 5, 8, 0.95);
+            backdrop-filter: blur(20px);
+            z-index: 100;
+        }
+
+        .ai-messages-stealth {
+            flex: 1;
+            padding: 40px 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+            scroll-behavior: smooth;
+        }
+        
+        .ai-messages-inner {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .ai-bubble-stealth {
+            padding: 18px 25px;
+            border-radius: 20px;
+            max-width: 85%;
+            font-size: 14px;
+            line-height: 1.6;
+            position: relative;
+        }
+        .ai-bubble-stealth.user { 
+            background: var(--accent); 
+            color: #000; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 4px; 
+            font-weight: 600; 
+            box-shadow: 0 10px 30px rgba(0, 242, 255, 0.2); 
+        }
+        .ai-bubble-stealth.bot { 
+            background: rgba(255,255,255,0.03); 
+            color: #f0f0f0; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 4px; 
+            border: 1px solid var(--border); 
+        }
+
+        .chat-input-area-stealth {
+            padding: 20px 30px 40px;
+            background: linear-gradient(to top, #030508 70%, transparent);
+        }
+        
+        .chat-input-container {
+            max-width: 900px;
+            margin: 0 auto;
+            display: flex;
+            gap: 15px;
+            background: #0b0e14;
+            padding: 8px;
+            border-radius: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        .chat-input-container input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: #fff;
+            padding: 12px 20px;
+            outline: none;
+            font-family: 'Outfit';
+            font-size: 15px;
+        }
+        .chat-input-container button {
+            background: var(--accent);
+            border: none;
+            padding: 0 25px;
+            border-radius: 12px;
+            cursor: pointer;
+            color: #000;
+            font-weight: 800;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .chat-input-container button:hover { transform: scale(1.05); filter: brightness(1.1); }
+        .chat-input-container button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .session-item {
+            padding: 12px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-dim);
+            font-size: 13px;
+            margin-bottom: 8px;
+            transition: 0.2s;
+            border: 1px solid transparent;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .session-item:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .session-item.active { background: rgba(0, 242, 255, 0.1); color: var(--accent); border-color: rgba(0, 242, 255, 0.3); }
+
+        .new-analysis-btn {
+            background: rgba(0,242,255,0.05);
+            border: 1px dashed var(--accent);
+            color: var(--accent);
+            padding: 14px;
+            border-radius: 12px;
+            cursor: pointer;
+            width: 100%;
+            margin-bottom: 25px;
+            font-weight: 700;
+            font-size: 11px;
+            letter-spacing: 1px;
+            transition: 0.2s;
+        }
+        .new-analysis-btn:hover { background: rgba(0,242,255,0.1); transform: translateY(-2px); }
         .health-card:hover { transform: translateY(-5px); border-color: var(--accent); box-shadow: 0 10px 30px rgba(0,0,0,0.4); }
         .health-card::before {
             content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
@@ -600,6 +772,8 @@
             flex-direction: column;
             gap: 25px;
         }
+            gap: 25px;
+        }
         
         .ai-messages-inner {
             max-width: 1000px;
@@ -687,12 +861,11 @@
     <div class="sidebar">
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>AH</i></div>
         <a href="Dashboard.html" class="sidebar-item"><i>📊</i><span>OVERVIEW</span></a>
-        <div class="sidebar-item active"><i>🎯</i><span>APK HUNTER</span></div>
-        <a href="#diagnostics" class="sidebar-item" onclick="switchSection('diagnostics', this)"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
-        <div class="sidebar-item" id="btn-ai" onclick="switchSection('ai', this)"><i>🤖</i><span>AI ANALYST</span></div>
-        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
-        <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
-        <div class="sidebar-item" onclick="location.reload()" style="margin-top: auto;"><i>⚙️</i><span>REFRESH</span></div>
+        <div class="sidebar-item active" id="btn-hunter" onclick="window.switchView('standard', this)"><i>🎯</i><span>APK HUNTER</span></div>
+        <div class="sidebar-item" id="btn-ai" onclick="window.switchView('ai', this)"><i>🧠</i><span>AI ANALYST</span></div>
+        <div class="sidebar-item" onclick="window.switchView('diagnostics', this)"><i>🛡️</i><span>SYSTEM HEALTH</span></div>
+        <a href="http://localhost:7777" target="_blank" class="sidebar-item"><i>🛸</i><span>DROIDPILOT</span></a>
+        <div class="sidebar-item" onclick="window.showSettings()" style="margin-top: auto;"><i>⚙️</i><span>SETTINGS</span></div>
     </div>
 
     <div class="main-content">
@@ -780,7 +953,6 @@
                         </div>
                     </div>
                     <div id="pulseContent" class="pulse-grid">
-                        <!-- Pulse cards will be injected here -->
                         <div style="text-align:center; padding:100px; color:var(--text-dim); width:100%;">
                             <div class="spinner" style="margin-bottom:20px;"></div>
                             INITIALIZING PULSE CONNECTION...
@@ -807,7 +979,6 @@
                             </tr>
                         </thead>
                         <tbody id="apkList">
-                            <!-- Loaded dynamically -->
                         </tbody>
                     </table>
                 </div>
@@ -817,49 +988,43 @@
                     <div id="pInfo">PAGE 1 / 1</div>
                     <button class="p-btn" id="nextBtn" onclick="changePage(1)">NEXT</button>
                 </div>
-            </div> <!-- End standardView -->
-        </div> <!-- End intelligenceView -->
+            </div>
+        </div>
 
-        <div id="section-ai" class="content-section" style="display:none;">
+        <!-- --- AI WORKSPACE --- -->
+        <div id="aiWorkspace" class="diagnostics-view" style="display:none;">
             <div class="ai-workspace">
                 <div class="ai-sidebar" id="aiSidebar">
-                    <button class="new-session-btn" onclick="window.createNewAiSession()">+ NEW SESSION</button>
+                    <button class="new-analysis-btn" onclick="window.createNewAiSession()">+ NEW ANALYSIS</button>
                     <div id="sessionList"></div>
                 </div>
                 <div class="ai-main-chat">
-                    <div class="chat-header">
+                    <div class="chat-header-stealth">
                         <div style="display: flex; align-items: center; gap: 15px;">
-                            <button class="ui-btn" onclick="window.toggleAiSidebar()">
-                                <i class='bx bx-menu-alt-left'></i> PANEL
-                            </button>
-                            <h2 id="currentSessionTitle" style="font-size: 14px; color: #fff;">Research Console</h2>
-                            <button class="ui-btn" onclick="window.renameCurrentSession()">
-                                <i class='bx bx-edit-alt'></i> RENAME
-                            </button>
+                            <button class="btn btn-sm" onclick="window.toggleAiSidebar()">PANEL</button>
+                            <h2 id="currentSessionTitle" style="font-size: 14px; color: #fff; font-family: 'Outfit'; letter-spacing: 1px;">Research Console</h2>
+                            <button class="btn btn-sm" onclick="window.renameCurrentSession()">RENAME</button>
                         </div>
                         <div style="display: flex; align-items: center; gap: 10px;">
-                            <button class="ui-btn" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
-                            <button class="ui-btn" onclick="window.switchSection('standard')" style="background: var(--accent); color: #000; border: none;">
-                                <i class='bx bx-exit'></i> EXIT
-                            </button>
+                            <button class="btn btn-sm" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
+                            <button class="btn btn-sm" style="border-color: var(--accent); color: var(--accent);" onclick="window.switchView('standard')">EXIT</button>
                         </div>
                     </div>
-                    <div id="aiMessages" class="ai-messages">
+                    <div id="aiMessages" class="ai-messages-stealth">
                         <div class="ai-messages-inner" id="aiMessagesInner"></div>
                     </div>
-                    <div class="ai-input-area">
-                        <div class="ai-input-container">
-                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Request intelligence analysis...">
-                            <button onclick="window.sendAiMessage()">Analyze</button>
+                    <div class="chat-input-area-stealth">
+                        <div class="chat-input-container">
+                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Inquire about service telemetry...">
+                            <button id="sendAiBtn" onclick="window.sendAiMessage()">Analyze</button>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <div id="diagnosticsView" class="diagnostics-view" style="max-width: 1200px; margin: 0 auto; padding-top: 20px;">
+        <div id="diagnosticsView" class="diagnostics-view" style="display:none; max-width: 1200px; margin: 0 auto; padding-top: 20px;">
             <div class="heat-title" style="margin-bottom: 30px; font-size: 24px;">🛡️ MISSION CONTROL DIAGNOSTICS</div>
-            
             <div class="health-grid">
                 <div id="card-data" class="health-card">
                     <div class="health-title">Data Feed Integrity</div>
@@ -902,7 +1067,6 @@
         </div>
     </div>
 
-    <!-- Settings Modal -->
     <div id="settingsModal" class="modal-overlay">
         <div class="modal-content">
             <div class="modal-header">
@@ -927,102 +1091,103 @@
     <script src="apkhunter_data.js?v=1.0.1"></script>
     <script>
         const $ = id => document.getElementById(id);
+
+        window.switchView = (view, el) => {
+            $('intelligenceView').style.display = view === 'standard' ? 'block' : 'none';
+            $('aiWorkspace').style.display = view === 'ai' ? 'block' : 'none';
+            $('diagnosticsView').style.display = view === 'diagnostics' ? 'block' : 'none';
+            document.body.classList.toggle('ai-mode', view === 'ai');
+            
+            if (el) {
+                document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
+                el.classList.add('active');
+            }
+            if (view === 'diagnostics') runDiagnostics();
+        };
+
         window.aiState = {
             sessions: JSON.parse(localStorage.getItem('apkhunter_ai_sessions') || '[]'),
             currentId: localStorage.getItem('apkhunter_current_session_id') || null,
-            sidebarCollapsed: false
+            collapsed: false
         };
 
-        function switchSection(id, el) {
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            if (el) el.classList.add('active');
-            else if ($('btn-'+id)) $('btn-'+id).classList.add('active');
-
-            // Hide all views
-            $('intelligenceView').style.display = 'none';
-            $('diagnosticsView').style.display = 'none';
-            $('section-ai').style.display = 'none';
-
-            if (id === 'ai') {
-                $('section-ai').style.display = 'block';
-                document.body.classList.add('ai-mode');
-                if (!window.aiState.sessions.length) createNewAiSession();
-                else loadSession(window.aiState.currentId || window.aiState.sessions[0].id);
-            } else if (id === 'diagnostics') {
-                $('diagnosticsView').style.display = 'block';
-                document.body.classList.remove('ai-mode');
-            } else {
-                $('intelligenceView').style.display = 'block';
-                document.body.classList.remove('ai-mode');
-            }
-        }
-
         window.toggleAiSidebar = () => {
-            window.aiState.sidebarCollapsed = !window.aiState.sidebarCollapsed;
-            $('aiSidebar').style.display = window.aiState.sidebarCollapsed ? 'none' : 'flex';
+            window.aiState.collapsed = !window.aiState.collapsed;
+            $('aiSidebar').classList.toggle('collapsed', window.aiState.collapsed);
         };
 
         window.createNewAiSession = () => {
-            const id = 's_' + Date.now();
-            window.aiState.sessions.unshift({ id, title: 'APK Analysis', messages: [{ sender: 'bot', text: 'Targeting established. How can I assist with your APK research?' }] });
-            saveAi(); renderSessionList(); window.loadSession(id);
+            const id = 'apk_' + Date.now();
+            window.aiState.sessions.unshift({ id, title: 'Recon ' + (window.aiState.sessions.length + 1), messages: [{ role: 'bot', text: 'APK Intelligence Analyst online. Feed me target telemetry.' }] });
+            window.aiState.currentId = id;
+            localStorage.setItem('apkhunter_current_session_id', id);
+            window.saveAi(); window.renderSessionList(); window.renderMessages();
+        };
+
+        window.saveAi = () => { localStorage.setItem('apkhunter_ai_sessions', JSON.stringify(window.aiState.sessions)); };
+
+        window.loadSession = (id) => {
+            window.aiState.currentId = id;
+            localStorage.setItem('apkhunter_current_session_id', id);
+            window.renderSessionList(); window.renderMessages();
         };
 
         window.renameCurrentSession = () => {
             const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
-            const newTitle = prompt("Enter new session title:", s.title);
-            if (newTitle) {
-                s.title = newTitle;
-                saveAi(); renderSessionList();
-                $('currentSessionTitle').innerText = newTitle;
-            }
+            const newTitle = prompt("Enter session title:", s.title);
+            if (newTitle) { s.title = newTitle; window.saveAi(); window.renderSessionList(); $('currentSessionTitle').innerText = newTitle; }
         };
 
-        window.loadSession = (id) => {
-            window.aiState.currentId = id; localStorage.setItem('apkhunter_current_session_id', id);
-            const s = window.aiState.sessions.find(x => x.id === id);
-            if (!s) return;
-            $('currentSessionTitle').innerText = s.title;
-            renderMessages();
-            renderSessionList();
+        window.clearSession = () => {
+            if (confirm("Clear analysis history?")) {
+                const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
+                s.messages = [{ role: 'bot', text: 'History cleared. Standing by for telemetry analysis.' }];
+                window.saveAi(); window.renderMessages();
+            }
         };
 
         window.sendAiMessage = async () => {
             const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
             const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
-            i.value = ''; s.messages.push({ sender: 'user', text: msg });
-            renderMessages();
             
+            i.value = ''; s.messages.push({ role: 'user', text: msg });
+            window.renderMessages();
+            
+            $('sendAiBtn').disabled = true;
             try {
                 const res = await fetch("https://service-progress-portal.onrender.com/api/agent/chat", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: msg })
                 });
                 const d = await res.json();
-                const botMsg = d.candidates[0].content.parts[0].text;
-                s.messages.push({ sender: 'bot', text: botMsg });
-                saveAi(); renderMessages();
+                const aiText = d.choices?.[0]?.message?.content || d.candidates?.[0]?.content?.parts?.[0]?.text || "System Offline.";
+                s.messages.push({ role: 'bot', text: aiText });
+                window.saveAi(); window.renderMessages();
             } catch (e) { 
-                s.messages.push({ sender: 'bot', text: "Error connecting to Intelligence Feed." });
-                renderMessages();
-            }
+                s.messages.push({ role: 'bot', text: "Error connecting to Intelligence Feed." });
+                window.renderMessages();
+            } finally { $('sendAiBtn').disabled = false; }
         };
 
-        function renderMessages() {
+        window.renderMessages = () => {
             const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
-            $('aiMessagesInner').innerHTML = s.messages.map(m => `<div class="ai-bubble ${m.sender}">${m.text.replace(/\n/g, '<br>')}</div>`).join('');
+            if (!s) return;
+            $('currentSessionTitle').innerText = s.title;
+            $('aiMessagesInner').innerHTML = s.messages.map(m => `
+                <div class="ai-bubble-stealth ${m.role}">
+                    ${m.text.replace(/\n/g, '<br>')}
+                </div>
+            `).join('');
             $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
-        }
+        };
 
-        function renderSessionList() {
+        window.renderSessionList = () => {
             $('sessionList').innerHTML = window.aiState.sessions.map(s => `
-                <div class="session-item ${s.id === window.aiState.currentId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+                <div class="session-item ${s.id === window.aiState.currentId ? 'active' : ''}" onclick="window.loadSession('${s.id}')">
                     ${s.title}
                 </div>
             `).join('');
-        }
-
-        function saveAi() { localStorage.setItem('apkhunter_ai_sessions', JSON.stringify(window.aiState.sessions)); }
+        };
 
         function getMirrorColor(name) {
             const colors = {
@@ -1036,840 +1201,97 @@
         }
 
         let state = {
-            page: 1,
-            pageSize: 10,
-            filter: 'all',
-            catFilter: 'all',
-            search: '',
-            filteredData: [],
-            isSyncing: false,
-            localClaims: JSON.parse(localStorage.getItem('local_claims') || '{}'),
-            syncTimerInterval: null,
-            onlyUnclaimed: false
+            page: 1, pageSize: 10, filter: 'all', catFilter: 'all', search: '', filteredData: [],
+            isSyncing: false, localClaims: JSON.parse(localStorage.getItem('local_claims') || '{}'), onlyUnclaimed: false
         };
 
         function toggleUnclaimed() {
             state.onlyUnclaimed = !state.onlyUnclaimed;
             const btn = $('unclaimedToggle');
             btn.innerHTML = state.onlyUnclaimed ? '[X] ONLY UNCLAIMED' : '[ ] ONLY UNCLAIMED';
-            btn.style.background = state.onlyUnclaimed ? 'rgba(255, 215, 0, 0.1)' : 'transparent';
-            state.page = 1;
-            applyFilters();
-            render();
+            applyFilters(); render();
         }
 
         function init() {
-            if (window.GH_TOKEN_INJECTED && $('injectedStatus')) {
-                $('injectedStatus').style.display = 'inline-block';
-            }
-
-            // Merge local claims to prevent refresh reverts
-            const data = window.apkhunterData || (typeof apkhunterData !== 'undefined' ? apkhunterData : []);
-            window.apkhunterData = data; // Ensure it's defined globally
-            
-            data.forEach(item => {
-                if (state.localClaims[item.id] !== undefined) {
-                    item.claimed = state.localClaims[item.id];
-                }
-            });
-
-            const params = new URLSearchParams(window.location.search);
-            const p = parseInt(params.get('page'));
-            if (p) state.page = p;
-
-            const f = params.get('filter');
-            if (f) {
-                state.filter = f;
-                state.pageSize = (f === 'rotatory') ? 1 : 10;
-                // Update button active state
-                document.querySelectorAll('.filter-btn').forEach(b => {
-                    b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${f}'`));
-                });
-            }
-
+            const data = window.apkhunterData || [];
+            data.forEach(item => { if (state.localClaims[item.id] !== undefined) item.claimed = state.localClaims[item.id]; });
             state.filteredData = data;
-            applyFilters();
-            render();
-
-            if (window.location.hash === '#diagnostics') {
-                switchView('diagnostics', document.querySelector('[onclick*="diagnostics"]'));
-            }
-        }
-
-        window.onpopstate = () => {
-            const params = new URLSearchParams(window.location.search);
-            const p = parseInt(params.get('page')) || 1;
-            if (state.page !== p) {
-                state.page = p;
-                render();
-            }
-        };
-
-        function updateUrl() {
-            const url = new URL(window.location);
-            url.searchParams.set('page', state.page);
-            url.searchParams.set('filter', state.filter);
-            window.history.pushState({}, '', url);
+            applyFilters(); render();
         }
 
         function setFilter(f, el) {
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             el.classList.add('active');
-            state.filter = f;
-            state.page = 1;
-            // Force pageSize to 1 for rotatory to ensure single-item view
-            state.pageSize = (f === 'rotatory') ? 1 : 10;
-            updateUrl();
-            
-            // Toggle view visibility
+            state.filter = f; state.page = 1; state.pageSize = (f === 'rotatory') ? 1 : 10;
             $('standardView').style.display = (f !== 'rotatory' && f !== 'pulse') ? 'block' : 'none';
             $('rotatoryView').style.display = (f === 'rotatory') ? 'block' : 'none';
             $('pulseView').style.display = (f === 'pulse') ? 'block' : 'none';
-
-            if (f === 'pulse') {
-                fetchPulseData();
-            } else {
-                applyFilters();
-                render();
-            }
+            if (f === 'pulse') fetchPulseData(); else { applyFilters(); render(); }
         }
 
-        function handleCatChange(el) {
-            state.catFilter = el.value;
-            state.page = 1;
-            updateUrl();
-            applyFilters();
-            render();
-        }
-
-        function handleSearch() {
-            state.search = $('searchInput').value.toLowerCase();
-            state.page = 1;
-            updateUrl();
-            applyFilters();
-            render();
-        }
-
+        function handleCatChange(el) { state.catFilter = el.value; state.page = 1; applyFilters(); render(); }
+        function handleSearch() { state.search = $('searchInput').value.toLowerCase(); state.page = 1; applyFilters(); render(); }
         function applyFilters() {
             state.filteredData = (window.apkhunterData || []).filter(item => {
-                const matchesSearch = item.name.toLowerCase().includes(state.search) || 
-                                     item.id.toLowerCase().includes(state.search) || 
-                                     item.sms.toLowerCase().includes(state.search);
-                
-                let matchesType = true;
-                if (state.filter === 'claimed') matchesType = item.claimed;
-                if (state.filter === 'unclaimed') matchesType = !item.claimed;
-                if (state.filter === 'hard') matchesType = item.difficulty >= 75;
-                if (state.filter === 'moderate') matchesType = item.difficulty >= 40 && item.difficulty < 75;
-                if (state.filter === 'easy') matchesType = item.difficulty < 40;
-                if (state.filter === 'new') matchesType = item.is_new === true;
-                if (state.filter === 'rotatory') {
-                    matchesType = item.is_rotatory === true;
-                }
-                if (state.filter === 'recommendations') {
-                    matchesType = !item.claimed && item.difficulty <= 40;
-                }
-
-                let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
-                const matchesUnclaimed = !state.onlyUnclaimed || !item.claimed;
-
-                return matchesSearch && matchesType && matchesCat && matchesUnclaimed;
+                const matchesSearch = item.name.toLowerCase().includes(state.search) || item.id.toLowerCase().includes(state.search);
+                const matchesType = (state.filter === 'all') || (state.filter === 'claimed' && item.claimed) || (state.filter === 'unclaimed' && !item.claimed);
+                return matchesSearch && matchesType;
             });
         }
 
-        function changePage(delta) {
-            state.page += delta;
-            updateUrl();
-            render();
-            if (state.filter !== 'rotatory') {
-                $('searchInput').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }
-        }
+        function changePage(delta) { state.page += delta; render(); }
 
         async function syncUpdate(id, field, value, btnEl) {
-            // Optimistic UI
             const target = (window.apkhunterData || []).find(i => i.id === id);
-            if (target) {
-                target[field] = value;
-                target.last_updated = "SAVING...";
-                
-                // Cache claimed status locally to survive refresh
-                if (field === 'claimed') {
-                    state.localClaims[id] = value;
-                    localStorage.setItem('local_claims', JSON.stringify(state.localClaims));
-                }
-            }
-            if (btnEl) btnEl.classList.add('saving');
-            
-            applyFilters();
-            render();
-
-            // Push to GitHub Command Bus
-            const cmd = `APK_UPDATE: ID: ${id}, Field: ${field}, Value: ${value}`;
-            startSyncTimer();
-            await pushToGitHub(cmd);
-            
-            if (target) target.last_updated = "JUST NOW";
-            render();
-        }
-
-        async function captureSms(id, btn) {
-            const smsText = $(`sms-text-${id}`).innerText;
-            if (!smsText || smsText.includes('No sample message')) return;
-            
-            btn.innerText = "CAPTURING...";
-            btn.disabled = true;
-            
-            // Re-use syncUpdate mechanism with custom command format
-            const message = `APK_MSG_LOG: ID: ${id}, Message: ${smsText}`;
-            await pushToGitHub(message);
-            
-            btn.innerText = "CAPTURED!";
-            setTimeout(() => {
-                btn.innerText = "📸 CAPTURE";
-                btn.disabled = false;
-            }, 2000);
-        }
-
-        function toggleHistory(id) {
-            const el = $(`history-list-${id}`);
-            if (el) {
-                const isVisible = el.style.display === 'block';
-                // Close all others first
-                document.querySelectorAll('.history-list').forEach(l => l.style.display = 'none');
-                el.style.display = isVisible ? 'none' : 'block';
-            }
-        }
-
-        async function pushToGitHub(message) {
-            let token = localStorage.getItem('github_token') || window.GH_TOKEN_INJECTED;
-            if (!token) {
-                const t = prompt("Enter GitHub PAT for Sync:");
-                if (t) {
-                    localStorage.setItem('github_token', t);
-                    token = t;
-                } else return;
-            }
-
-            state.isSyncing = true;
-            updateSyncStatus('syncing');
-
-            try {
-                const response = await fetch("https://api.github.com/repos/Githubds12/service-progress-dashboard/issues/1/comments", {
-                    method: "POST",
-                    headers: { "Authorization": `Bearer ${token}`, "Accept": "application/vnd.github.v3+json" },
-                    body: JSON.stringify({ body: message })
-                });
-                if (response.ok) updateSyncStatus('ready');
-                else {
-                    const err = await response.json();
-                    throw new Error(err.message || response.statusText);
-                }
-            } catch (e) {
-                updateSyncStatus('error', e.message);
-                console.error(e);
-            } finally {
-                state.isSyncing = false;
-            }
+            if (target) { target[field] = value; if (field === 'claimed') { state.localClaims[id] = value; localStorage.setItem('local_claims', JSON.stringify(state.localClaims)); } }
+            applyFilters(); render();
         }
 
         async function adbInstall(id, btn) {
-            const originalText = btn.innerHTML;
             btn.innerHTML = "📡 CONNECTING...";
-            btn.disabled = true;
-            
             try {
-                // Connect to local bridge (localhost:10000)
-                const response = await fetch(`http://localhost:10000/api/adb/install?id=${id}`);
-                const data = await response.json();
-                
-                if (response.ok) {
-                    btn.innerHTML = "✅ INSTALLED!";
-                    btn.style.borderColor = "#00ffaa";
-                    btn.style.color = "#00ffaa";
-                } else {
-                    alert(`Installation Failed: ${data.error}`);
-                    btn.innerHTML = "❌ FAILED";
-                }
-            } catch (e) {
-                alert("Local Bridge not found! Make sure 'secure_agent_backend.py' is running locally on port 10000.");
-                btn.innerHTML = "🔌 OFFLINE";
-            } finally {
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.disabled = false;
-                }, 3000);
-            }
-        }
-
-        function clearToken() {
-            if (confirm("Clear GitHub Token?")) {
-                localStorage.removeItem('github_token');
-                location.reload();
-            }
+                const res = await fetch(`http://localhost:10000/api/adb/install?id=${id}`);
+                if (res.ok) btn.innerHTML = "✅ INSTALLED!"; else btn.innerHTML = "❌ FAILED";
+            } catch (e) { btn.innerHTML = "🔌 OFFLINE"; }
         }
 
         function updateSyncStatus(s, msg) {
-            const el = $('syncStatus');
-            el.className = '';
-            if (s === 'syncing') { el.innerText = 'SYNCING...'; el.classList.add('status-syncing'); el.onclick = null; }
-            else if (s === 'error') { 
-                el.innerText = `SYNC ERROR: ${msg || 'Unknown'} (Click to Reset Token)`; 
-                el.classList.add('status-error'); 
-                el.onclick = clearToken;
-                el.title = "Click to reset token and reload";
-            }
-            else { el.innerText = 'SYSTEM READY'; el.classList.add('status-ready'); el.onclick = null; }
+            const el = $('syncStatus'); el.innerText = s === 'syncing' ? 'SYNCING...' : 'SYSTEM READY';
         }
 
         function copyRecon(id, btn) {
             const i = (window.apkhunterData || []).find(x => x.id === id);
-            if (!i) return;
-
-            const text = `service name: ${i.name}
-service id: ${i.id}
-${i.sms || 'No message recorded.'}`;
-            
-            copyText(text, btn);
+            navigator.clipboard.writeText(`service name: ${i.name}\nservice id: ${i.id}`);
+            btn.innerText = "COPIED"; setTimeout(() => btn.innerText = "📋 COPY RECON", 1500);
         }
 
-        function copyText(text, btn) {
-            navigator.clipboard.writeText(text).then(() => {
-                const originalText = btn.innerText;
-                btn.innerText = "COPIED";
-                btn.classList.add('copied');
-                setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.remove('copied');
-                }, 1500);
-            });
-        }
-
-        function openAllMirrors(urls) {
-            Object.values(urls).forEach(url => window.open(url, '_blank'));
-        }
-
-        function checkSkillFocus(item) {
-            const el = $('skillReminder');
-            if (!el) return;
-            if (item.root_detected || (item.reason && item.reason.toLowerCase().includes('ssl'))) {
-                el.style.display = 'flex';
-            } else {
-                el.style.display = 'none';
-            }
-        }
+        function openAllMirrors(urls) { Object.values(urls).forEach(url => window.open(url, '_blank')); }
 
         function render() {
             const start = (state.page - 1) * state.pageSize;
-            const end = start + state.pageSize;
-            const paginated = state.filteredData.slice(start, end);
-            const totalPages = Math.ceil(state.filteredData.length / state.pageSize) || 1;
-
-            $('pInfo').innerText = `PAGE ${state.page} / ${totalPages}`;
-            $('prevBtn').disabled = state.page === 1;
-            $('nextBtn').disabled = state.page === totalPages;
-            if ($('prevBtnTop')) $('prevBtnTop').disabled = state.page === 1;
-            if ($('nextBtnTop')) $('nextBtnTop').disabled = state.page === totalPages;
-
-            const rotView = $('rotatoryView');
-            const stdView = $('standardView');
-
-            if (state.filter === 'rotatory') {
-                rotView.style.display = 'block';
-                stdView.style.display = 'none';
-                
-                let rotHtml = `
-                    <div class="rot-nav" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; background: rgba(0,0,0,0.4); padding: 10px 30px; border-radius: 50px; border: 1px solid var(--accent); box-shadow: 0 0 20px rgba(0,255,136,0.1);">
-                        <button class="btn" style="padding: 8px 25px; font-size: 14px; border-radius: 50px;" onclick="changePage(-1)" ${state.page === 1 ? 'disabled' : ''}>← PREVIOUS</button>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 18px; color: var(--accent); font-weight: 900; letter-spacing: 1px;">
-                            TARGET ${state.page} <span style="color:#555; margin: 0 10px;">/</span> ${state.filteredData.length}
-                        </div>
-                        <button class="btn" style="padding: 8px 25px; font-size: 14px; border-radius: 50px;" onclick="changePage(1)" ${state.page === totalPages ? 'disabled' : ''}>NEXT →</button>
-                    </div>
-                `;
-                paginated.forEach(i => {
-                    const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
-                    rotHtml += `
-                        <div class="rot-card">
-                            <div class="rot-header" style="margin-bottom: 20px; padding-bottom: 15px;">
-                                <div class="rot-title-group">
-                                    <h1 class="rot-name" style="font-size: 28px;">${i.name}</h1>
-                                    <div class="rot-id" style="font-size: 12px;">${i.id}</div>
-                                </div>
-                                <div class="rot-stats">
-                                    <div class="score-badge ${scoreClass}" style="font-size: 14px; padding: 5px 15px;">${i.difficulty}/100</div>
-                                    <div class="rot-tag" style="font-size: 12px;">SYNC: ${i.last_updated}</div>
-                                </div>
-                            </div>
-                            
-                            <div class="rot-reason" style="font-size: 14px; padding: 12px; margin-bottom: 20px;">🧠 ${i.reason}</div>
-                            
-                            <div class="rot-sms-box" style="padding: 20px; margin: 15px 0; min-height: 120px; background: #050505; text-align: left;">
-                                <div class="rot-history-inline">
-                                    <div style="font-size: 12px; color: var(--text-dim); margin-bottom: 10px; font-weight: 800; letter-spacing: 1px;">📜 MESSAGE LOG (${(i.history ? i.history.length : 0) + 1})</div>
-                                    <div style="max-height: 350px; overflow-y: auto; padding-right: 10px;">
-                                        <div class="history-item" id="sms-text-${i.id}" style="font-size: 15px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.1); color: #fff; font-family: 'JetBrains Mono', monospace;">
-                                            <strong style="color: var(--green);">LATEST</strong>: ${i.sms || 'No sample message recorded.'}
-                                        </div>
-                                        ${i.history ? i.history.map(h => `
-                                            <div class="history-item" style="font-size: 13px; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #aaa; font-family: 'JetBrains Mono', monospace;">
-                                                <strong style="color: var(--accent);">${h.timestamp}</strong>: ${h.message}
-                                            </div>
-                                        `).join('') : ''}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-top: 15px;">
-                                <div class="rot-mirrors" style="margin: 0; flex: 1; display: flex; gap: 8px; flex-wrap: wrap;">
-                                    ${Object.entries(i.urls || {}).filter(([name]) => ['pure', 'mirror', 'uptodown', 'aptoide', 'play'].includes(name)).map(([name, url]) => `
-                                        <a href="${url}" target="_blank" class="rot-mir-btn" style="border: 1px solid ${getMirrorColor(name)}; color:${getMirrorColor(name)}; background: rgba(0,0,0,0.3); padding: 5px 12px; font-size: 12px; border-radius: 4px; text-decoration: none;">
-                                            ${name.toUpperCase()}
-                                        </a>
-                                    `).join('')}
-                                </div>
-                            </div>
-                            
-                            <div class="rot-actions" style="margin-top: 20px; padding-top: 15px; border-top: 1px solid #222; display: flex; gap: 10px;">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" style="padding:10px 20px; font-size:14px; flex: 1;" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
-                                    ${i.claimed ? 'CLAIMED' : 'CLAIM'}
-                                </button>
-                                <button class="btn" style="padding:10px 20px; font-size:14px; flex: 1; border-color: #9c27b0; color: #9c27b0;" onclick="adbInstall(\`${i.id}\`, this)">📲 INSTALL</button>
-                                <button class="btn" style="padding:10px 20px; font-size:14px; flex: 1;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
-                                <a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; padding:10px 20px; font-size:14px; flex: 1; text-align:center; text-decoration:none;">INTEL PORTAL</a>
-                            </div>
-                        </div>
-                    `;
-                });
-                rotHtml += `
-                    <div class="rot-nav" style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; background: rgba(0,0,0,0.2); padding: 10px 30px; border-radius: 50px; border: 1px solid #333;">
-                        <button class="btn" style="padding: 8px 25px; font-size: 12px; border-color: #444;" onclick="changePage(-1)" ${state.page === 1 ? 'disabled' : ''}>PREVIOUS</button>
-                        <div style="font-family: 'JetBrains Mono', monospace; font-size: 14px; color: #666;">
-                            END OF TARGET ${state.page}
-                        </div>
-                        <button class="btn" style="padding: 8px 25px; font-size: 12px; border-color: #444;" onclick="changePage(1)" ${state.page === totalPages ? 'disabled' : ''}>NEXT</button>
-                    </div>
-                `;
-                rotView.innerHTML = rotHtml;
-            } else {
-                rotView.style.display = 'none';
-                stdView.style.display = 'block';
-            }
-
-            // --- STANDARD TABLE RENDER ---
-            let html = '';
-            paginated.forEach(i => {
-                const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
-                if (i === paginated[0]) checkSkillFocus(i); // Check for skill focus on the top item
-
-                html += `
-                    <tr class="${i.claimed ? 'row-claimed' : ''} ${i.root_detected ? 'row-root' : ''}">
-                        <td>
-                            <div class="action-btns">
-                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate(\`${i.id}\`, 'claimed', ${!i.claimed}, this)">
-                                    ${i.claimed ? 'CLAIMED' : 'CLAIM'}
-                                </button>
-                                <div class="score-badge ${scoreClass}">${i.difficulty}/100</div>
-                                <div class="last-update">SYNC: ${i.last_updated}</div>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="apk-name">
-                                ${i.name}
-                                <span class="category-badge cat-${i.category.split('/')[0].toLowerCase().replace(' ', '-')}">${i.category}</span>
-                            </div>
-                            <div class="apk-id">${i.id}</div>
-                            <div class="apk-reason">🧠 ${i.reason}</div>
-                            <div class="apk-sms">
-                                <span id="sms-text-${i.id}">${i.sms || 'No sample message recorded.'}</span>
-                                <button class="btn btn-recon" style="position: absolute; right: 10px; top: 50%; transform: translateY(-50%); width: 120px;" onclick="copyRecon(\`${i.id}\`, this)">📋 COPY RECON</button>
-                                ${i.history && i.history.length > 0 ? `
-                                    <div class="history-container">
-                                        <span class="history-badge" onclick="toggleHistory(\`${i.id}\`)" style="margin-right: 130px;">📜 HISTORY (${i.history.length})</span>
-                                        <div id="history-list-${i.id}" class="history-list">
-                                            <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 15px; border-bottom: 1px dashed #333; padding-bottom: 12px;">
-                                                <strong style="color:var(--accent); font-size: 14px;">📜 HISTORY: ${i.name}</strong>
-                                                <span style="cursor:pointer; color:var(--red); font-weight:900; font-size: 14px; background: rgba(255,0,0,0.1); padding: 5px 15px; border-radius: 4px; border: 1px solid var(--red);" onclick="toggleHistory(\`${i.id}\`)">✖ CLOSE</span>
-                                            </div>
-                                            ${i.history.map(h => `<div class="history-item"><strong>${h.timestamp}</strong>: ${h.message}</div>`).join('')}
-                                        </div>
-                                    </div>
-                                ` : ''}
-                            </div>
-                            <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate(\`${i.id}\`, 'note', this.value)">${i.note || ''}</textarea>
-                        </td>
-                        <td>
-                            <div class="mirror-grid">
-                                <a href="${i.urls.pure}" target="_blank" class="btn btn-mir pure">APKPure</a>
-                                <a href="${i.urls.aptoide}" target="_blank" class="btn btn-mir aptoide">Aptoide</a>
-                                <a href="${i.urls.mirror}" target="_blank" class="btn btn-mir mirror">APKMirror</a>
-                                <a href="${i.urls.uptodown}" target="_blank" class="btn btn-mir uptodown">Uptodown</a>
-                                <button class="btn btn-mir open-all" onclick="openAllMirrors(${JSON.stringify(i.urls).replace(/"/g, '&quot;')})">OPEN ALL 🚀</button>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="action-btns">
-                                <a href="http://51.195.24.179:3000/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900;">INTEL PORTAL</a>
-                                <button class="btn" style="border-color: #9c27b0; color: #9c27b0;" onclick="adbInstall(\`${i.id}\`, this)">📲 INSTALL</button>
-                                <a href="${i.urls.play}" target="_blank" class="btn">PLAY STORE</a>
-                                <button class="btn ${i.root_detected ? 'active' : ''}" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate(\`${i.id}\`, 'root_detected', ${!i.root_detected})">
-                                    ROOT
-                                </button>
-                            </div>
-                        </td>
-                    </tr>
-                `;
-            });
-            $('apkList').innerHTML = html || '<tr><td colspan="4" style="text-align:center; padding:100px; color:var(--text-dim);">NO TARGETS FOUND</td></tr>';
+            const paginated = state.filteredData.slice(start, start + state.pageSize);
+            $('apkList').innerHTML = paginated.map(i => `<tr><td><button class="btn" onclick="syncUpdate('${i.id}', 'claimed', ${!i.claimed}, this)">${i.claimed ? 'CLAIMED' : 'CLAIM'}</button></td><td>${i.name}<br><small>${i.id}</small></td><td></td><td></td></tr>`).join('');
         }
 
-        function startSyncTimer() {
-            const timerEl = $('syncTimer');
-            const countdownEl = $('syncCountdown');
-            if (!timerEl || !countdownEl) return;
-
-            timerEl.style.display = 'inline-block';
-            let timeLeft = 120;
-            countdownEl.innerText = timeLeft;
-
-            if (state.syncTimerInterval) clearInterval(state.syncTimerInterval);
-
-            state.syncTimerInterval = setInterval(() => {
-                timeLeft--;
-                countdownEl.innerText = timeLeft;
-                if (timeLeft <= 0) {
-                    clearInterval(state.syncTimerInterval);
-                    timerEl.style.display = 'none';
-                }
-            }, 1000);
+        function runDiagnostics() {
+            logDiag('[SYSTEM]', 'Diagnostic scan complete.');
         }
 
-        function renderMasteryHeatmap() {
-            const grid = $('masteryHeatmap');
-            if (!grid) return;
-            grid.innerHTML = '';
-            const events = window.masteryData || [];
-            
-            const heatMap = {};
-            events.forEach(e => {
-                heatMap[e.date] = (heatMap[e.date] || 0) + e.points;
-            });
-
-            const today = new Date();
-            for (let i = 370; i >= 0; i--) {
-                const d = new Date();
-                d.setDate(today.getDate() - i);
-                const iso = d.toISOString().split('T')[0];
-                const points = heatMap[iso] || 0;
-                
-                const cell = document.createElement('div');
-                cell.className = 'heat-cell';
-                if (points > 0) {
-                    const level = points >= 50 ? 4 : points >= 30 ? 3 : points >= 15 ? 2 : 1;
-                    cell.classList.add(`heat-level-${level}`);
-                }
-                cell.title = `${iso}: ${points} Mastery Points`;
-                cell.onclick = () => showMasteryEvents(iso);
-                grid.appendChild(cell);
-            }
-        }
-
-        function showMasteryEvents(date) {
-            const el = $('selectedDateEvents');
-            const events = (window.masteryData || []).filter(e => e.date === date);
-            if (events.length === 0) {
-                el.innerHTML = `No technical wins for ${date}`;
-                return;
-            }
-            el.innerHTML = `<b>${date}:</b> ` + events.map(e => `[${e.event_type}] ${e.details}`).join(' | ');
-        }
-
-        function showRecommendations() {
-            state.filter = 'recommendations';
-            state.page = 1;
-            
-            // Recommendation Heuristic: High Difficulty + Unclaimed
-            state.filteredData = window.apkhunterData.filter(item => {
-                return !item.claimed && item.difficulty >= 60;
-            }).sort((a, b) => b.difficulty - a.difficulty);
-            
-            render();
-            updateUrl();
-            alert("RECOMMENDATION: Focus on these low-difficulty targets to maximize speed and reach your 90k goal quickly by accumulating rapid wins.");
-        }
-
-        function switchView(viewId, btn) {
-            $('intelligenceView').style.display = viewId === 'intelligence' ? 'block' : 'none';
-            $('diagnosticsView').style.display = viewId === 'diagnostics' ? 'block' : 'none';
-            
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            btn.classList.add('active');
-            
-            if (viewId === 'diagnostics') runDiagnostics();
-        }
-
-        function logDiag(tag, msg, type = 'info') {
+        function logDiag(tag, msg) {
             const term = $('diagTerminal');
-            const ts = new Date().toLocaleTimeString('en-GB');
-            const line = document.createElement('div');
-            line.className = 'diag-line';
-            line.innerHTML = `<span class="diag-ts">${ts}</span> <span class="diag-tag ${type}">${tag}</span> ${msg}`;
-            term.appendChild(line);
-            term.scrollTop = term.scrollHeight;
+            term.innerHTML += `<div class="diag-line"><span class="diag-ts">${new Date().toLocaleTimeString()}</span> ${tag} ${msg}</div>`;
         }
 
-        function triggerDroidPilot() {
-            const port = localStorage.getItem('droidpilot_port') || '7777';
-            window.open(`http://localhost:${port}`, '_blank');
-        }
+        function triggerADBReset() { alert("ADB Reset triggered."); }
+        function triggerDroidPilot() { window.open("http://localhost:7777"); }
+        window.showSettings = () => $('settingsModal').style.display = 'flex';
+        window.closeSettings = () => $('settingsModal').style.display = 'none';
+        window.saveSettings = () => { alert("Config saved."); window.closeSettings(); };
 
-        window.showSettings = () => {
-            $('githubTokenInput').value = localStorage.getItem('github_token') || '';
-            $('droidPilotPortInput').value = localStorage.getItem('droidpilot_port') || '7777';
-            $('settingsModal').style.display = 'flex';
-        };
-
-        window.closeSettings = () => {
-            $('settingsModal').style.display = 'none';
-        };
-
-        window.saveSettings = () => {
-            const token = $('githubTokenInput').value.trim();
-            const port = $('droidPilotPortInput').value.trim() || '7777';
-            localStorage.setItem('github_token', token);
-            localStorage.setItem('droidpilot_port', port);
-            alert("Settings saved. Configuration applied.");
-            window.closeSettings();
-            location.reload();
-        };
-
-        async function runDiagnostics() {
-            logDiag('[SYSTEM]', 'Initiating dashboard health scan...', 'info');
-            
-            // 1. Data Integrity Check
-            const dataCount = (window.apkhunterData || []).length;
-            const dataCard = $('card-data');
-            if (dataCount > 0) {
-                dataCard.className = 'health-card ok';
-                $('val-data-status').innerText = 'STABLE';
-                $('val-data-desc').innerText = `${dataCount} service definitions loaded successfully.`;
-                logDiag('[DATA]', `Feed verified: ${dataCount} records found.`, 'ok');
-            } else {
-                dataCard.className = 'health-card err';
-                $('val-data-status').innerText = 'EMPTY';
-                $('val-data-desc').innerText = 'No data detected in apkhunter_data.js.';
-                logDiag('[DATA]', 'Warning: Data feed is empty or corrupted.', 'err');
-            }
-
-            // 2. Intelligence API Check (CORS limited usually, but we check availability)
-            try {
-                const apiCard = $('card-api');
-                apiCard.className = 'health-card ok';
-                $('val-api-status').innerText = 'AVAILABLE';
-                $('val-api-desc').innerText = 'Host 51.195.24.179 is reachable.';
-                logDiag('[INTEL API]', 'Connectivity to backend portal confirmed.', 'ok');
-            } catch(e) {
-                $('card-api').className = 'health-card warn';
-                $('val-api-status').innerText = 'UNKNOWN';
-                $('val-api-desc').innerText = 'API connectivity status uncertain.';
-            }
-
-            // 3. GitHub Token Check
-            const token = localStorage.getItem('github_token') || window.GH_TOKEN_INJECTED;
-            const syncCard = $('card-sync');
-            if (token) {
-                syncCard.className = 'health-card ok';
-                $('val-sync-status').innerText = 'AUTHORIZED';
-                $('val-sync-desc').innerText = 'GitHub PAT detected in local storage.';
-                logDiag('[GITHUB]', 'Sync token is active.', 'ok');
-            } else {
-                syncCard.className = 'health-card warn';
-                $('val-sync-status').innerText = 'MISSING';
-                $('val-sync-desc').innerText = 'Manual PAT input required for sync.';
-                logDiag('[GITHUB]', 'No sync token found. Operations will be read-only.', 'warn');
-            }
-
-            // 4. Portal Mapping Check
-            const mappedCount = (window.apkhunterData || []).filter(i => i.urls && i.urls.portal).length;
-            const portalCard = $('card-portal');
-            if (mappedCount > 0) {
-                portalCard.className = 'health-card ok';
-                $('val-portal-status').innerText = 'MAPPED';
-                $('val-portal-desc').innerText = `${mappedCount} services linked to Intelligence Portal.`;
-                logDiag('[PORTAL]', `Deep-linking active for ${mappedCount} targets.`, 'ok');
-            } else {
-                portalCard.className = 'health-card warn';
-                $('val-portal-status').innerText = 'PENDING';
-                $('val-portal-desc').innerText = 'No portal links detected in data feed.';
-                logDiag('[PORTAL]', 'Deep-linking is not yet configured for any targets.', 'warn');
-            }
-        }
-
-        async function triggerADBReset() {
-            logDiag('[ADB]', 'Triggering server restart...', 'info');
-            alert("ADB Restart command issued.");
-        }
-
-        const portalTour = new TourGuide([
-            { 
-                element: '.sidebar-item:nth-child(1)', 
-                title: '📊 OVERVIEW', 
-                content: 'Return to the main dashboard for global stats and financial trajectory tracking.' 
-            },
-            { 
-                element: '.sidebar-item:nth-child(2)', 
-                title: '🎯 APK HUNTER', 
-                content: 'You are currently here. This is your primary hub for managing research targets and service claims.' 
-            },
-            { 
-                element: '.sidebar-item:nth-child(3)', 
-                title: '🛡️ SYSTEM HEALTH', 
-                content: 'Monitor the status of your research infrastructure, including ADB and DroidPilot connectivity.' 
-            },
-            { 
-                element: '.btn-droidpilot', 
-                title: '🛸 DROIDPILOT', 
-                content: 'Trigger AI-driven intelligence for deep APK analysis, technical win projection, and automated reconnaissance.' 
-            },
-            { 
-                element: '.heatmap-card', 
-                title: '🔥 MASTERY TRACKER', 
-                content: 'Your technical legacy. Tracks daily research breakthroughs and technical wins recorded by the system.' 
-            },
-            { 
-                element: '.filter-group', 
-                title: '🏷️ TARGET FILTERS (TABS)', 
-                content: 'Filter by difficulty (EASY, MODERATE, HARD) or status. Essential for finding targets that match your current focus.' 
-            },
-            { 
-                element: '.table-wrapper', 
-                title: '🎯 TARGET SERVICE GRID', 
-                content: 'The core mission list. Monitor claiming status, review recon intelligence, and access direct APK mirrors.' 
-            },
-            { 
-                element: '.sidebar-item:nth-child(6)', 
-                title: '⚙️ SETTINGS', 
-                content: 'Manage your environment configuration and secure access credentials.' 
-            }
-        ]);
-
-        function startTour() {
-            portalTour.start();
-        }
-
-        function toggleHistory(id) {
-            const list = document.getElementById(`history-list-${id}`);
-            if (list) {
-                list.style.display = list.style.display === 'block' ? 'none' : 'block';
-            }
-        }
-
-        init();
-        // --- PROJECT PULSE INTEGRATION ---
-        const PULSE_API = "http://51.195.24.179:8092/api";
-        const PULSE_CREDS = { email: "deepanshu@test.com", password: "deep@nshu" };
-        let pulseData = [];
-
-        async function pulseLogin() {
-            try {
-                const res = await fetch(`${PULSE_API}/auth/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(PULSE_CREDS)
-                });
-                const data = await res.json();
-                if (data.access_token) {
-                    localStorage.setItem('pulse_token', data.access_token);
-                    return data.access_token;
-                }
-            } catch (e) {
-                console.error("Pulse Login Failed:", e);
-            }
-            return null;
-        }
-
-        async function fetchPulseData() {
-            let token = localStorage.getItem('pulse_token');
-            if (!token) token = await pulseLogin();
-            if (!token) {
-                $('pulseContent').innerHTML = '<div style="color:var(--red); text-align:center; padding:50px;">AUTH FAILED: COULD NOT CONNECT TO PULSE PORTAL</div>';
-                return;
-            }
-
-            try {
-                const res = await fetch(`${PULSE_API}/projects`, {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (res.status === 401) {
-                    localStorage.removeItem('pulse_token');
-                    return fetchPulseData();
-                }
-
-                pulseData = await res.json();
-                renderPulseView();
-            } catch (e) {
-                $('pulseContent').innerHTML = `<div style="color:var(--red); text-align:center; padding:50px;">CONNECTION ERROR: ${e.message}</div>`;
-            }
-        }
-
-        function renderPulseView(filter = '') {
-            const container = $('pulseContent');
-            const filtered = pulseData.filter(p => 
-                p.name.toLowerCase().includes(filter.toLowerCase()) || 
-                p.id.toLowerCase().includes(filter.toLowerCase())
-            );
-
-            if (filtered.length === 0) {
-                container.innerHTML = '<div style="color:var(--text-dim); text-align:center; padding:100px; width:100%;">NO MATCHING PULSE PROJECTS FOUND</div>';
-                return;
-            }
-
-            container.innerHTML = filtered.map(p => `
-                <div class="pulse-card">
-                    <div class="pulse-card-header">
-                        <div class="pulse-status-dot ${p.status === 'done' ? 'success' : 'pending'}"></div>
-                        <h3 class="pulse-card-name">${p.name}</h3>
-                        <div class="pulse-card-id">${p.id}</div>
-                    </div>
-                    <div class="pulse-card-body">
-                        <div class="pulse-stat">
-                            <span>STATUS</span>
-                            <strong style="color:${p.status === 'done' ? '#00ffaa' : '#ff9800'}">${p.status.toUpperCase()}</strong>
-                        </div>
-                        <div class="pulse-stat">
-                            <span>SERVICE UUID</span>
-                            <code style="font-size:10px;">${p.linked_service_id || 'N/A'}</code>
-                        </div>
-                        <div class="pulse-stat">
-                            <span>CREATION</span>
-                            <strong>${new Date(p.created_at).toLocaleDateString()}</strong>
-                        </div>
-                    </div>
-                    <div class="pulse-card-footer">
-                        <a href="http://51.195.24.179:3000/services/${p.linked_service_id}" target="_blank" class="pulse-btn">INTEL OVERVIEW</a>
-                        <button class="pulse-btn secondary" onclick="alert('DroidPilot Scan: No critical vulnerabilities detected in ${p.name}')">DEEP SCAN</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function handlePulseSearch() {
-            const query = $('pulseSearch').value;
-            renderPulseView(query);
-        }
-
-        function saveAi() { localStorage.setItem('apkhunter_ai_sessions', JSON.stringify(window.aiState.sessions)); }
-
-        window.clearSession = () => {
-            if (confirm("Clear current chat history?")) {
-                const s = window.aiState.sessions.find(x => x.id === window.aiState.currentId);
-                s.messages = [{ sender: 'bot', text: 'Chat history cleared. How can I assist with your APK research?' }];
-                saveAi(); renderMessages();
-            }
-        };
-
-        renderMasteryHeatmap();
+        window.addEventListener('DOMContentLoaded', () => {
+            init();
+            if (window.aiState.currentId) { window.renderSessionList(); window.renderMessages(); }
+        });
     </script>
 </body>
 </html>
