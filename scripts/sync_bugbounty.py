@@ -136,23 +136,6 @@ def main():
     with open(DASHBOARD_DATA_PATH, "w", encoding="utf-8") as f:
         f.write(f"window.bugBountyData = {json.dumps(all_data, indent=4)};")
     
-    # Handle Secrets (config.js)
-    try:
-        env_path = os.path.join(REPORTS_ROOT, ".env")
-        gemini_key = ""
-        if os.path.exists(env_path):
-            with open(env_path, 'r') as f:
-                for line in f:
-                    if line.startswith("GEMINI_API_KEY="):
-                        gemini_key = line.split("=")[1].strip()
-        
-        config_path = os.path.join(REPORTS_ROOT, "dashboard", "config.js")
-        with open(config_path, "w", encoding="utf-8") as f:
-            f.write(f"window.CONFIG = {{ GEMINI_API_KEY: '{gemini_key}' }};")
-        print(f"[+] Config generated with Gemini Key.")
-    except Exception as e:
-        print(f"[!] Error generating config.js: {e}")
-    
     print(f"[+] Sync Complete! Data saved to {DASHBOARD_DATA_PATH}")
 
 if __name__ == "__main__":

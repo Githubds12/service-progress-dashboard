@@ -71,11 +71,11 @@
         /* --- SIDEBAR --- */
         .sidebar {
             position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
-            background: var(--glass-bg); backdrop-filter: blur(30px);
-            border-right: 1px solid var(--border); z-index: 1000;
+            background: var(--card); border-right: 1px solid var(--border); z-index: 1000;
             display: flex; flex-direction: column; align-items: center; padding: 30px 0;
             transition: width 0.4s cubic-bezier(0.19, 1, 0.22, 1);
             overflow: hidden;
+            backdrop-filter: blur(30px);
         }
         .sidebar:hover { width: 260px; box-shadow: 10px 0 50px rgba(0,0,0,0.5); }
         .sidebar-item {
@@ -83,11 +83,11 @@
             color: var(--text-dim); cursor: pointer; transition: 0.3s; white-space: nowrap;
             text-decoration: none; position: relative;
         }
-        .sidebar-item i { font-size: 22px; min-width: 30px; text-align: center; font-style: normal; opacity: 0.7; }
+        .sidebar-item i { font-size: 20px; min-width: 30px; text-align: center; font-style: normal; }
         .sidebar-item span { opacity: 0; transition: 0.3s; font-weight: 700; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; }
         .sidebar:hover .sidebar-item span { opacity: 1; }
-        .sidebar-item:hover, .sidebar-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.08); }
-        .sidebar-item.active::after { content: ''; position: absolute; left: 0; width: 4px; height: 60%; top: 20%; background: var(--accent); border-radius: 0 4px 4px 0; box-shadow: 0 0 15px var(--accent-glow); }
+        .sidebar-item:hover, .sidebar-item.active { color: var(--accent); background: rgba(0, 255, 136, 0.08); }
+        .sidebar-item.active::after { content: ''; position: absolute; left: 0; width: 4px; height: 60%; top: 20%; background: var(--accent); border-radius: 0 4px 4px 0; box-shadow: 0 0 15px var(--accent); }
 
         .main-content { margin-left: 80px; padding: 20px; transition: margin-left 0.4s; }
         
@@ -553,24 +553,13 @@
 <body>
     <div class="sidebar">
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>AH</i></div>
-        <a href="Dashboard.html" class="sidebar-item">
-            <i class='bx bx-home-alt'></i><span>OVERVIEW</span>
-        </a>
-        <div class="sidebar-item active">
-            <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
-        </div>
-        <a href="bugbounty.html" class="sidebar-item">
-            <i class='bx bx-target-lock'></i><span>RECON</span>
-        </a>
-        <a href="bugbounty.html#agentHub" class="sidebar-item">
-            <i class='bx bx-bot'></i><span>AGENT HUB</span>
-        </a>
-        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;">
-            <i class='bx bx-graduation'></i><span>SITE TOUR</span>
-        </div>
-        <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item">
-            <i>🎬</i><span>RESOURCES</span>
-        </a>
+        <a href="Dashboard.html" class="sidebar-item"><i>📊</i><span>OVERVIEW</span></a>
+        <div class="sidebar-item active"><i>🎯</i><span>APK HUNTER</span></div>
+        <a href="#diagnostics" class="sidebar-item"><i>🛡️</i><span>SYSTEM HEALTH</span></a>
+        <a href="agent_intel.html" class="sidebar-item"><i>🤖</i><span>AGENT INTEL</span></a>
+        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;"><i>🎓</i><span>SITE TOUR</span></div>
+        <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item"><i>🎬</i><span>RESOURCES</span></a>
+        <div class="sidebar-item" onclick="location.reload()" style="margin-top: auto;"><i>⚙️</i><span>REFRESH</span></div>
     </div>
 
     <div class="main-content">
@@ -578,6 +567,7 @@
             <header>
                 <div class="logo"><i>APK</i> HUNTER <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTELLIGENCE PORTAL</span></div>
                 <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="injectedStatus" style="display: none; background: rgba(0, 255, 136, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid var(--accent); letter-spacing: 1px;">TOKEN ACTIVE</div>
                     <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
                 </div>
             </header>
