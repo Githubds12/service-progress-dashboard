@@ -143,7 +143,15 @@
         <div class="container">
             <header>
                 <div class="logo"><i>BUG</i> BOUNTY <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTELLIGENCE PORTAL</span></div>
-                <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 10px; background: rgba(0,242,255,0.05); padding: 5px 15px; border-radius: 12px; border: 1px solid var(--border);">
+                        <span style="font-size: 10px; font-weight: 700; color: var(--text-dim); text-transform: uppercase;">Current Scope:</span>
+                        <select id="targetSelector" onchange="window.switchTarget(this.value)" style="background: transparent; border: none; color: var(--accent); font-family: 'Outfit'; font-weight: 700; outline: none; cursor: pointer;">
+                            <!-- Populated by JS -->
+                        </select>
+                    </div>
+                    <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
+                </div>
             </header>
 
             <div class="dashboard-grid" id="statsGrid">
@@ -152,9 +160,9 @@
 
             <div class="glass-panel">
                 <div class="panel-header">
-                    <h2>🎯 Intelligence Briefing: High Value Targets</h2>
+                    <h2 id="panelTitle">🎯 Intelligence Briefing: High Value Targets</h2>
                     <div style="display: flex; gap: 10px;">
-                        <input type="text" id="reconSearch" placeholder="Search targets..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                        <input type="text" id="reconSearch" onkeyup="window.filterFindings(this.value)" placeholder="Search targets..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
                     </div>
                 </div>
                 <div style="overflow-x: auto;">
@@ -202,40 +210,69 @@
     <script>
         const $ = id => document.getElementById(id);
         
+        window.state = {
+            currentTarget: null
+        };
+
         function init() {
             const data = window.bugBountyData;
-            if (!data) return;
+            if (!data || !data.targets.length) return;
 
             $('lastSyncTime').innerText = data.last_update.split(' ')[1];
 
+            // Populate selector
+            const selector = $('targetSelector');
+            selector.innerHTML = data.targets.map(t => `<option value="${t.name}">${t.name.toUpperCase()}</option>`).join('');
+
+            // Initial render
+            window.switchTarget(data.targets[0].name);
+        }
+
+        window.switchTarget = (targetName) => {
+            const data = window.bugBountyData.targets.find(t => t.name === targetName);
+            if (!data) return;
+            
+            window.state.currentTarget = data;
+            
+            // Update Title
+            $('panelTitle').innerText = `🎯 Intelligence Briefing: ${targetName.toUpperCase()}`;
+
             // Stats
-            const fb = data.targets.find(t => t.name === "Facebook");
             $('statsGrid').innerHTML = `
                 <div class="stat-card">
                     <div class="stat-label">Total Subdomains</div>
-                    <div class="stat-value">${fb.stats.total.toLocaleString()}</div>
+                    <div class="stat-value">${data.stats.total.toLocaleString()}</div>
                 </div>
                 <div class="stat-card" style="border-color: var(--accent);">
                     <div class="stat-label">High Value Targets</div>
-                    <div class="stat-value" style="color: var(--accent);">${fb.stats.high_value_count}</div>
+                    <div class="stat-value" style="color: var(--accent);">${data.stats.high_value_count}</div>
                 </div>
                 <div class="stat-card" style="border-color: var(--red);">
                     <div class="stat-label">Critical Endpoints</div>
-                    <div class="stat-value" style="color: var(--red);">${fb.findings.filter(f => f.priority === 'Critical').length}</div>
+                    <div class="stat-value" style="color: var(--red);">${data.findings.filter(f => f.priority === 'Critical').length}</div>
                 </div>
             `;
 
             // Table
-            renderTable(fb.findings);
-        }
+            renderTable(data.findings);
+        };
+
+        window.filterFindings = (query) => {
+            if (!window.state.currentTarget) return;
+            const filtered = window.state.currentTarget.findings.filter(f => 
+                f.target.toLowerCase().includes(query.toLowerCase()) || 
+                f.category.toLowerCase().includes(query.toLowerCase())
+            );
+            renderTable(filtered);
+        };
 
         function renderTable(findings) {
             $('reconTable').innerHTML = findings.map(f => `
                 <tr>
                     <td><span class="badge ${f.priority === 'Critical' ? 'badge-danger' : 'badge-warning'}">${f.priority}</span></td>
-                    <td style="color: var(--accent); font-family: 'JetBrains Mono';">${f.target}</td>
-                    <td>${f.category}</td>
-                    <td style="font-size: 12px; color: var(--text-dim);"><i class='bx bx-brain'></i> ${f.recommendation}</td>
+                    <td style="color: var(--accent); font-family: 'JetBrains Mono'; font-size: 13px;">${f.target}</td>
+                    <td style="font-size: 12px; font-weight: 600;">${f.category}</td>
+                    <td style="font-size: 11px; color: var(--text-dim);"><i class='bx bx-brain'></i> ${f.recommendation}</td>
                 </tr>
             `).join('');
         }
