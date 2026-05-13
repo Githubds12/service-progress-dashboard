@@ -382,16 +382,10 @@ def update_txt(body, stats):
         f.write(body + "\n\n" + new_stats.strip() + "\n")
 
 def update_html(header, days, stats, complexity_stats=None):
-    # Load .env manually if not in environment
+    # Load token from environment
     token = os.getenv("GITHUB_TOKEN", "")
     if not token:
-        env_path = os.path.join(os.getcwd(), ".env")
-        if os.path.exists(env_path):
-            with open(env_path, 'r') as f:
-                for line in f:
-                    if line.startswith("GITHUB_TOKEN="):
-                        token = line.split("=", 1)[1].strip()
-                        os.environ["GITHUB_TOKEN"] = token
+        print("[!] Warning: GITHUB_TOKEN not found. Remote sync features will be disabled.")
     time_logs = parse_time_log()
     
     # Sort days by date for charts

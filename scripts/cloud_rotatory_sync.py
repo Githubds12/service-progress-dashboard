@@ -3,10 +3,14 @@ import json
 import time
 from datetime import datetime
 import requests
+from dotenv import load_dotenv
+
+# Load environment variables
+load_dotenv()
 
 API_BASE = "http://51.195.24.179:8092/api"
-EMAIL = "deepanshu@test.com"
-PASS = "deep@nshu"
+EMAIL = os.getenv("PULSE_EMAIL", "deepanshu@test.com")
+PASS = os.getenv("PULSE_PASS", "deep@nshu")
 JS_FILE_PATH = "dashboard/apkhunter_data.js"
 
 ROTATORY_SERVICES = {
