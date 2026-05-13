@@ -149,13 +149,14 @@
         .ai-input-area button {
             background: var(--accent);
             border: none;
-            padding: 0 30px;
-            border-radius: 12px;
+            padding: 0 20px;
+            border-radius: 8px;
             cursor: pointer;
             color: #000;
             font-weight: 700;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
+            white-space: nowrap;
         }
 
         /* --- UI COMPONENTS --- */
@@ -180,7 +181,8 @@
         }
         .session-item.active { background: rgba(0,242,255,0.1); color: var(--accent); }
 
-        #exitAi { display: none; }
+        /* De-confliction: Kill all old floating buttons */
+        #exitAi, .floating-btn, .exit-btn { display: none !important; visibility: hidden !important; pointer-events: none !important; }
 
         /* --- TABLES --- */
         .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; }
