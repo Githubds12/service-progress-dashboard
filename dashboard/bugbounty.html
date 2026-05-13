@@ -245,6 +245,9 @@
                                     <i class='bx bx-menu-alt-left'></i> PANEL
                                 </button>
                                 <h2 id="currentSessionTitle" style="font-size: 14px; color: #fff;">Research Console</h2>
+                                <button class="ui-btn" onclick="window.renameCurrentSession()">
+                                    <i class='bx bx-edit-alt'></i> RENAME
+                                </button>
                             </div>
                             <button class="ui-btn" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
                         </div>
@@ -304,6 +307,16 @@
             const id = 's_' + Date.now();
             window.state.aiSessions.unshift({ id, title: 'New Analysis', messages: [{ sender: 'bot', text: 'Welcome back Specialist.' }] });
             save(); renderSessionList(); window.loadSession(id);
+        };
+
+        window.renameCurrentSession = () => {
+            const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
+            const newTitle = prompt("Enter new session title:", s.title);
+            if (newTitle) {
+                s.title = newTitle;
+                save(); renderSessionList();
+                $('currentSessionTitle').innerText = newTitle;
+            }
         };
 
         window.loadSession = (id) => {
