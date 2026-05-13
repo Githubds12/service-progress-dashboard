@@ -71,6 +71,11 @@
         .sidebar-item:hover, .sidebar-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.08); }
 
         .main-content { margin-left: 80px; padding: 20px; }
+        
+        .content-section { display: none; }
+        .content-section.active { display: block; animation: fadeIn 0.4s ease-out; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 
         .dashboard-grid {
             display: grid;
@@ -120,6 +125,52 @@
         .agent-name { font-weight: 700; color: var(--accent); margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
         .agent-desc { font-size: 12px; color: var(--text-dim); }
 
+        /* Integrated AI Section Styles */
+        .ai-chat-container {
+            height: calc(100vh - 180px);
+            display: flex;
+            flex-direction: column;
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            overflow: hidden;
+        }
+        .ai-messages {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .ai-input-area {
+            padding: 30px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            gap: 15px;
+            background: rgba(0,0,0,0.2);
+        }
+        .ai-bubble {
+            padding: 15px 20px;
+            border-radius: 18px;
+            max-width: 80%;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .ai-bubble.user {
+            background: var(--accent);
+            color: #000;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+            box-shadow: 0 5px 20px var(--accent-glow);
+        }
+        .ai-bubble.bot {
+            background: rgba(255,255,255,0.05);
+            color: #fff;
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+            border: 1px solid var(--border);
+        }
     </style>
 </head>
 <body>
@@ -128,11 +179,14 @@
         <a href="../index.html" class="sidebar-item">
             <i class='bx bx-home-alt'></i><span>OVERVIEW</span>
         </a>
-        <div class="sidebar-item active">
+        <div class="sidebar-item active" onclick="switchSection('recon', this)">
             <i class='bx bx-target-lock'></i><span>RECON</span>
         </div>
-        <div class="sidebar-item">
+        <div class="sidebar-item" onclick="switchSection('agents', this)">
             <i class='bx bx-bot'></i><span>AGENT HUB</span>
+        </div>
+        <div class="sidebar-item" onclick="switchSection('ai', this)">
+            <i class='bx bx-brain'></i><span>AI ANALYST</span>
         </div>
         <a href="apkhunter.html" class="sidebar-item">
             <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
@@ -154,70 +208,80 @@
                 </div>
             </header>
 
-            <div class="dashboard-grid" id="statsGrid">
-                <!-- Stats populated by JS -->
-            </div>
+            <!-- SECTION: RECON -->
+            <div id="section-recon" class="content-section active">
+                <div class="dashboard-grid" id="statsGrid">
+                    <!-- Stats populated by JS -->
+                </div>
 
-            <div class="glass-panel">
-                <div class="panel-header">
-                    <h2 id="panelTitle">🎯 Intelligence Briefing: High Value Targets</h2>
-                    <div style="display: flex; gap: 10px;">
-                        <input type="text" id="reconSearch" onkeyup="window.filterFindings(this.value)" placeholder="Search targets..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                <div class="glass-panel">
+                    <div class="panel-header">
+                        <h2 id="panelTitle">🎯 Intelligence Briefing: High Value Targets</h2>
+                        <div style="display: flex; gap: 10px;">
+                            <input type="text" id="reconSearch" onkeyup="window.filterFindings(this.value)" placeholder="Search targets..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                        </div>
+                    </div>
+                    <div style="overflow-x: auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Priority</th>
+                                    <th>Target</th>
+                                    <th>Category</th>
+                                    <th>Recommendation</th>
+                                </tr>
+                            </thead>
+                            <tbody id="reconTable">
+                                <!-- Populated by JS -->
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-                <div style="overflow-x: auto;">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Priority</th>
-                                <th>Target</th>
-                                <th>Category</th>
-                                <th>Recommendation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="reconTable">
-                            <!-- Populated by JS -->
-                        </tbody>
-                    </table>
+            </div>
+
+            <!-- SECTION: AGENT HUB -->
+            <div id="section-agents" class="content-section">
+                <div class="panel-header">
+                    <h2>🤖 Specialized Agent Hub</h2>
+                    <div style="display: flex; gap: 10px;">
+                        <input type="text" id="agentSearch" onkeyup="window.filterAgents(this.value)" placeholder="Search agents..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+                    </div>
+                </div>
+                <div class="agent-grid" id="agentGrid">
+                    <!-- Populated by JS -->
                 </div>
             </div>
 
-            <div class="panel-header" id="agentHub">
-                <h2>🤖 Specialized Agent Hub</h2>
-                <div style="display: flex; gap: 10px;">
-                    <input type="text" id="agentSearch" onkeyup="window.filterAgents(this.value)" placeholder="Search agents..." style="background: #000; border: 1px solid var(--border); color: #fff; padding: 5px 15px; border-radius: 8px; outline: none;">
+            <!-- SECTION: AI ANALYST -->
+            <div id="section-ai" class="content-section">
+                <div class="panel-header">
+                    <h2>🧠 Agent Intel: Advanced AI Research</h2>
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <span class="badge badge-success">GEMINI-CORE v2.5</span>
+                        <span style="font-size: 10px; color: var(--text-dim);">SYNCED WITH RECON DATABASE</span>
+                    </div>
+                </div>
+                
+                <div class="ai-chat-container">
+                    <div id="aiMessages" class="ai-messages">
+                        <div class="ai-bubble bot">
+                            Welcome back, Specialist. I am synced with your Gemini API key and current reconnaissance data. How can I assist with your offensive research today?
+                        </div>
+                    </div>
+                    <div class="ai-input-area">
+                        <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Analyze subdomains, suggest exploit vectors, or research targets..." style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 15px 20px; border-radius: 12px; outline: none;">
+                        <button onclick="window.sendAiMessage()" style="background: var(--accent); border: none; padding: 0 25px; border-radius: 12px; cursor: pointer; color: #000; font-weight: 700;">
+                            ANALYZE
+                        </button>
+                    </div>
                 </div>
             </div>
-            <div class="agent-grid" id="agentGrid">
-                <!-- Populated by JS -->
-            </div>
+
         </div>
     </div>
 
-    <div id="chatToggle" onclick="window.toggleChat()" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); z-index: 10000; transition: 0.3s;">
-        <i class='bx bx-message-square-dots' style="font-size: 30px; color: #000;"></i>
-    </div>
-
-    <div id="chatWindow" style="position: fixed; bottom: 100px; right: 30px; width: 400px; height: 550px; background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 20px; z-index: 10000; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
-        <div style="padding: 20px; background: rgba(0,242,255,0.1); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
-            <div style="display: flex; align-items: center; gap: 10px;">
-                <div style="width: 10px; height: 10px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green);"></div>
-                <span style="font-weight: 700; letter-spacing: 1px; font-size: 14px;">AI SECURITY ANALYST</span>
-            </div>
-            <i class='bx bx-chevron-down' onclick="window.toggleChat()" style="cursor: pointer; font-size: 24px;"></i>
-        </div>
-        <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scrollbar-width: thin; scrollbar-color: var(--border) transparent;">
-            <div style="background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 15px 15px 15px 0; max-width: 85%; font-size: 13px;">
-                Hello! I am your **Gemini-powered Security Analyst**. I have access to your current recon data. How can I assist with your research today?
-            </div>
-        </div>
-        <div style="padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
-            <input type="text" id="chatInput" onkeypress="if(event.key === 'Enter') window.sendMessage()" placeholder="Ask about targets, exploits..." style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; outline: none; font-size: 13px;">
-            <button onclick="window.sendMessage()" style="background: var(--accent); border: none; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
-                <i class='bx bxs-send' style="color: #000; font-size: 18px;"></i>
-            </button>
-        </div>
-    </div>
+    <!-- Legacy Floating Chat (Optional, hidden for now) -->
+    <div id="chatToggle" onclick="window.toggleChat()" style="display: none;"></div>
 
     <script src="bugbounty_data.js"></script>
     <script src="config.js"></script>
@@ -228,7 +292,7 @@
             currentTarget: null,
             agents: [],
             chatOpen: false,
-            chatHistory: []
+            aiHistory: []
         };
 
         function init() {
@@ -247,67 +311,71 @@
             renderAgents(window.state.agents);
         }
 
-        window.toggleChat = () => {
-            window.state.chatOpen = !window.state.chatOpen;
-            $('chatWindow').style.display = window.state.chatOpen ? 'flex' : 'none';
+        window.switchSection = (sectionId, el) => {
+            // Update Sidebar
+            document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+            if (el) el.classList.add('active');
+
+            // Show Section
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active'));
+            $(`section-${sectionId}`).classList.add('active');
         };
 
-        window.sendMessage = async () => {
-            const input = $('chatInput');
+        window.sendAiMessage = async () => {
+            const input = $('aiInput');
             const message = input.value.trim();
             if (!message) return;
 
             input.value = '';
-            addMessage(message, 'user');
+            addAiBubble(message, 'user');
 
-            const loadingId = addMessage('Analyzing...', 'ai', true);
+            const loadingId = addAiBubble('Analyzing intelligence feeds...', 'bot', true);
             
             try {
                 const response = await callGemini(message);
-                updateMessage(loadingId, response);
+                updateAiBubble(loadingId, response);
             } catch (err) {
-                updateMessage(loadingId, `Error: ${err.message}`);
+                updateAiBubble(loadingId, `❌ GATEWAY ERROR: ${err.message}`);
             }
         };
 
-        function addMessage(text, sender, isLoading = false) {
+        function addAiBubble(text, sender) {
             const id = Date.now();
             const div = document.createElement('div');
-            div.id = `msg-${id}`;
-            const isUser = sender === 'user';
-            
-            div.style.cssText = `
-                background: ${isUser ? 'var(--accent)' : 'rgba(255,255,255,0.05)'};
-                color: ${isUser ? '#000' : '#fff'};
-                padding: 12px 15px;
-                border-radius: ${isUser ? '15px 15px 0 15px' : '15px 15px 15px 0'};
-                max-width: 85%;
-                align-self: ${isUser ? 'flex-end' : 'flex-start'};
-                font-size: 13px;
-                box-shadow: ${isUser ? '0 5px 15px var(--accent-glow)' : 'none'};
-            `;
+            div.id = `ai-msg-${id}`;
+            div.className = `ai-bubble ${sender}`;
             div.innerHTML = text.replace(/\n/g, '<br>');
-            $('chatMessages').appendChild(div);
-            $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+            $('aiMessages').appendChild(div);
+            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
             return id;
         }
 
-        function updateMessage(id, text) {
-            const el = $(`msg-${id}`);
-            if (el) el.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
-            $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+        function updateAiBubble(id, text) {
+            const el = $(`ai-msg-${id}`);
+            if (el) {
+                // Parse markdown-ish
+                const formatted = text
+                    .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                    .replace(/`(.*?)`/g, '<code style="background:rgba(0,0,0,0.3);padding:2px 5px;border-radius:4px;font-family:monospace;">$1</code>')
+                    .replace(/\n/g, '<br>');
+                el.innerHTML = formatted;
+            }
+            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
         }
 
         async function callGemini(prompt) {
             const targetInfo = window.state.currentTarget ? 
-                `Current Target: ${window.state.currentTarget.name}. Total subdomains: ${window.state.currentTarget.stats.total}. Top findings: ${JSON.stringify(window.state.currentTarget.findings.slice(0,5))}` : 
+                `Current Target: ${window.state.currentTarget.name}. Stats: ${JSON.stringify(window.state.currentTarget.stats)}. Findings: ${JSON.stringify(window.state.currentTarget.findings.slice(0,10))}` : 
                 "No target selected.";
 
-            const systemPrompt = `You are a Bug Bounty Security Analyst. You help research vulnerabilities.
+            const systemPrompt = `You are the AGENT INTEL AI. You are a Bug Bounty Security Analyst.
 ${targetInfo}
-Respond concisely and technically. Use markdown for code.`;
+Provide technical, actionable intelligence. Use markdown for code and strong tags for emphasis.`;
 
-            const response = await fetch('/api/agent/chat', {
+            // 🛡️ POINT TO SECURE PORTAL
+            const GATEWAY = "https://service-progress-portal.onrender.com/api/agent/chat";
+
+            const response = await fetch(GATEWAY, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -318,12 +386,80 @@ Respond concisely and technically. Use markdown for code.`;
             const data = await response.json();
             if (data.error) throw new Error(data.error);
             
-            // Check if it's the raw Google response or our error format
             if (data.candidates && data.candidates[0]) {
                 return data.candidates[0].content.parts[0].text;
             }
-            return data.error || "Unknown Error";
+            return data.error || "Unknown Intelligence Error";
         }
+
+        window.switchTarget = (targetName) => {
+            const data = window.bugBountyData.targets.find(t => t.name === targetName);
+            if (!data) return;
+            
+            window.state.currentTarget = data;
+            $('panelTitle').innerText = `🎯 Intelligence Briefing: ${targetName.toUpperCase()}`;
+            $('statsGrid').innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">Total Subdomains</div>
+                    <div class="stat-value">${data.stats.total.toLocaleString()}</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--accent);">
+                    <div class="stat-label">High Value Targets</div>
+                    <div class="stat-value" style="color: var(--accent);">${data.stats.high_value_count}</div>
+                </div>
+                <div class="stat-card" style="border-color: var(--red);">
+                    <div class="stat-label">Critical Endpoints</div>
+                    <div class="stat-value" style="color: var(--red);">${data.findings.filter(f => f.priority === 'Critical').length}</div>
+                </div>
+            `;
+            renderTable(data.findings);
+        };
+
+        window.filterFindings = (query) => {
+            if (!window.state.currentTarget) return;
+            const filtered = window.state.currentTarget.findings.filter(f => 
+                f.target.toLowerCase().includes(query.toLowerCase()) || 
+                f.category.toLowerCase().includes(query.toLowerCase())
+            );
+            renderTable(filtered);
+        };
+
+        window.filterAgents = (query) => {
+            const filtered = window.state.agents.filter(a => 
+                a.name.toLowerCase().includes(query.toLowerCase()) || 
+                a.description.toLowerCase().includes(query.toLowerCase())
+            );
+            renderAgents(filtered);
+        };
+
+        function renderTable(findings) {
+            $('reconTable').innerHTML = findings.map(f => `
+                <tr>
+                    <td><span class="badge ${f.priority === 'Critical' ? 'badge-danger' : 'badge-warning'}">${f.priority}</span></td>
+                    <td style="color: var(--accent); font-family: 'JetBrains Mono'; font-size: 13px;">${f.target}</td>
+                    <td style="font-size: 12px; font-weight: 600;">${f.category}</td>
+                    <td style="font-size: 11px; color: var(--text-dim);"><i class='bx bx-brain'></i> ${f.recommendation}</td>
+                </tr>
+            `).join('');
+        }
+
+        function renderAgents(agents) {
+            $('agentGrid').innerHTML = agents.map(a => `
+                <div class="agent-card">
+                    <div class="agent-name"><i class='bx bx-bot'></i> ${a.name}</div>
+                    <p class="agent-desc">${a.description}</p>
+                    <div style="margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                        <span style="font-size: 10px; color: var(--accent); font-family: 'JetBrains Mono';">${a.id}</span>
+                        <button class="badge badge-success" style="border: none; cursor: pointer; background: rgba(0,230,118,0.1);">DEPLOYS</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        document.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
 
         window.switchTarget = (targetName) => {
             const data = window.bugBountyData.targets.find(t => t.name === targetName);
