@@ -66,6 +66,17 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                     continue
             
             self.send_error_msg(500, f"AI_GATEWAY_FAILURE: {last_error}")
+            
+            # Discovery: List available models to the logs
+            try:
+                discover_url = f"https://generativelanguage.googleapis.com/v1beta/models?key={api_key}"
+                with urllib.request.urlopen(discover_url) as response:
+                    models_data = json.loads(response.read())
+                    print("[*] DISCOVERY: Available models for this key:")
+                    for m in models_data.get("models", []):
+                        print(f"  - {m.get('name')}")
+            except Exception as e:
+                print(f"[!] Discovery failed: {str(e)}")
         else:
             super().do_POST()
 
