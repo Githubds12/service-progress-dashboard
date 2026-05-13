@@ -110,8 +110,8 @@ def monitor():
             
             if msg != last_msg:
                 timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                # Handle potential encoding issues in console output
-                safe_msg = msg.encode('ascii', 'ignore').decode('ascii')
+                # Support full UTF-8 for international characters
+                safe_msg = msg
                 print(f"[+] NEW MESSAGE for {name} ({sid}): {safe_msg[:50]}...")
                 s_history.append({
                     "timestamp": timestamp,

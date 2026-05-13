@@ -198,10 +198,20 @@ def sync():
             if is_nf: 
                 diff, triggers = 100, ["Binary Not Found"]
             
+            # Use history for latest SMS and timestamp if available
+            history = history_dict.get(tid, [])
+            latest_sms = row.get("Sample_Message", "")
+            last_updated = row.get("Last_Updated", "2024-05-09")
+            
+            if history:
+                latest_entry = history[-1]
+                latest_sms = latest_entry.get('message', latest_sms)
+                last_updated = latest_entry.get('timestamp', last_updated)
+
             final_data.append({
                 "id": tid,
                 "name": name,
-                "sms": row.get("Sample_Message", ""),
+                "sms": latest_sms,
                 "claimed": claimed,
                 "root_detected": root_dict.get(tid, False),
                 "not_found": is_nf,
@@ -212,8 +222,8 @@ def sync():
                 "tier": tier,
                 "reason": reason,
                 "triggers": triggers,
-                "history": history_dict.get(tid, []),
-                "last_updated": row.get("Last_Updated", "2024-05-09"),
+                "history": history,
+                "last_updated": last_updated,
                 "urls": {
                     "portal": f"http://51.195.24.179:3000/services/{portal_id}" if portal_id else None,
                     "play": f"https://play.google.com/store/apps/details?id={tid}",
