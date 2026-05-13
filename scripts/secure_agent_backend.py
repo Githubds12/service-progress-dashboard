@@ -52,12 +52,17 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                         self.wfile.write(res_data)
                         return 
 
+                except urllib.error.HTTPError as e:
+                    err_body = e.read().decode('utf-8')
+                    print(f"[!] Google API Error ({e.code}): {err_body}")
+                    last_error = f"Google_{e.code}: {err_body}"
+                    continue
                 except Exception as e:
                     last_error = str(e)
-                    print(f"[!] {cfg['mod']} failed: {last_error}")
+                    print(f"[!] System Error: {last_error}")
                     continue
             
-            self.send_error_msg(500, f"AI_GATEWAY_FAILURE: Tried all endpoints. Last error: {last_error}")
+            self.send_error_msg(500, f"AI_GATEWAY_FAILURE: {last_error}")
         else:
             super().do_POST()
 
