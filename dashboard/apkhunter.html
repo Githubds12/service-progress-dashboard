@@ -550,10 +550,36 @@
     <script src="tour_guide.js"></script>
 </head>
 <body>
-    <!-- Settings Modal -->
-                    <i>🎬</i> RE RESOURCES (H1)
-                </a>
-            </div>
+    <div class="sidebar">
+        <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>AH</i></div>
+        <a href="Dashboard.html" class="sidebar-item">
+            <i class='bx bx-home-alt'></i><span>OVERVIEW</span>
+        </a>
+        <div class="sidebar-item active">
+            <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
+        </div>
+        <a href="bugbounty.html" class="sidebar-item">
+            <i class='bx bx-target-lock'></i><span>RECON</span>
+        </a>
+        <a href="bugbounty.html#agentHub" class="sidebar-item">
+            <i class='bx bx-bot'></i><span>AGENT HUB</span>
+        </a>
+        <div class="sidebar-item" onclick="window.startTour()" style="color: #ffd700;">
+            <i class='bx bx-graduation'></i><span>SITE TOUR</span>
+        </div>
+        <a href="https://www.youtube.com/@HackerOneTV/videos" target="_blank" class="sidebar-item">
+            <i>🎬</i><span>RESOURCES</span>
+        </a>
+    </div>
+
+    <div class="main-content">
+        <div id="intelligenceView" class="container">
+            <header>
+                <div class="logo"><i>APK</i> HUNTER <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTELLIGENCE PORTAL</span></div>
+                <div style="display: flex; align-items: center; gap: 20px;">
+                    <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
+                </div>
+            </header>
 
             <div id="skillReminder" class="skill-reminder">
                 <div style="font-size: 24px;">⚠️</div>
@@ -561,7 +587,7 @@
                     <div class="reminder-title">Technical Mastery Opportunity</div>
                     <div class="reminder-text">This target has <b>Root Detection</b> or <b>SSL Pinning</b>. Use DroidPilot to analyze these hurdles and gain high-value mastery points!</div>
                 </div>
-                <button class="btn" style="margin-left: auto;" onclick="$('skillReminder').style.display='none'">DISMISS</button>
+                <button class="btn" style="margin-left: auto;" onclick="document.getElementById('skillReminder').style.display='none'">DISMISS</button>
             </div>
 
             <div class="heatmap-card">
@@ -690,17 +716,6 @@
                     <div class="health-value" id="val-sync-status">UNKNOWN</div>
                     <div class="health-desc" id="val-sync-desc">Checking PAT availability...</div>
                     <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">AUTH: LocalStorage</span></div>
-                </div>
-                <div id="card-portal" class="health-card">
-                    <div class="health-title">Portal Mapping</div>
-                    <div class="health-value" id="val-portal-status">CHECKING</div>
-                    <div class="health-desc" id="val-portal-desc">Verifying service links...</div>
-                    <div style="margin-top: 15px;"><span class="health-status-dot"></span> <span style="font-size: 11px; color: var(--text-dim);">SYSTEM: APKHunter Sync</span></div>
-    <script src="apkhunter_data.js?v=1.0.1"></script>
-    <script>
-        const $ = id => document.getElementById(id);
-        function getMirrorColor(name) {
-            const colors = {
                 'APKPure': '#24b897',
                 'Aptoide': '#fc7521',
                 'APKMirror': '#ff9800',
