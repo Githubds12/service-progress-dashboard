@@ -1,5 +1,5 @@
 window.bugBountyData = {
-    "last_update": "2026-05-13 10:06:54",
+    "last_update": "2026-05-13 10:30:06",
     "targets": [
         {
             "name": "Facebook",

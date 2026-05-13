@@ -194,13 +194,41 @@
         </div>
     </div>
 
+    <div id="chatToggle" onclick="window.toggleChat()" style="position: fixed; bottom: 30px; right: 30px; width: 60px; height: 60px; background: var(--accent); border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; box-shadow: 0 0 20px var(--accent-glow); z-index: 10000; transition: 0.3s;">
+        <i class='bx bx-message-square-dots' style="font-size: 30px; color: #000;"></i>
+    </div>
+
+    <div id="chatWindow" style="position: fixed; bottom: 100px; right: 30px; width: 400px; height: 550px; background: var(--glass-bg); backdrop-filter: blur(25px); border: 1px solid var(--border); border-radius: 20px; z-index: 10000; display: none; flex-direction: column; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5);">
+        <div style="padding: 20px; background: rgba(0,242,255,0.1); border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+                <div style="width: 10px; height: 10px; background: var(--green); border-radius: 50%; box-shadow: 0 0 10px var(--green);"></div>
+                <span style="font-weight: 700; letter-spacing: 1px; font-size: 14px;">AI SECURITY ANALYST</span>
+            </div>
+            <i class='bx bx-chevron-down' onclick="window.toggleChat()" style="cursor: pointer; font-size: 24px;"></i>
+        </div>
+        <div id="chatMessages" style="flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 15px; scrollbar-width: thin; scrollbar-color: var(--border) transparent;">
+            <div style="background: rgba(255,255,255,0.05); padding: 12px 15px; border-radius: 15px 15px 15px 0; max-width: 85%; font-size: 13px;">
+                Hello! I am your **Gemini-powered Security Analyst**. I have access to your current recon data. How can I assist with your research today?
+            </div>
+        </div>
+        <div style="padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+            <input type="text" id="chatInput" onkeypress="if(event.key === 'Enter') window.sendMessage()" placeholder="Ask about targets, exploits..." style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 10px 15px; border-radius: 10px; outline: none; font-size: 13px;">
+            <button onclick="window.sendMessage()" style="background: var(--accent); border: none; padding: 10px; border-radius: 10px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                <i class='bx bxs-send' style="color: #000; font-size: 18px;"></i>
+            </button>
+        </div>
+    </div>
+
     <script src="bugbounty_data.js"></script>
+    <script src="config.js"></script>
     <script>
         const $ = id => document.getElementById(id);
         
         window.state = {
             currentTarget: null,
-            agents: []
+            agents: [],
+            chatOpen: false,
+            chatHistory: []
         };
 
         function init() {
@@ -210,15 +238,89 @@
             $('lastSyncTime').innerText = data.last_update.split(' ')[1];
             window.state.agents = data.agents || [];
 
-            // Populate selector
             if (data.targets && data.targets.length) {
                 const selector = $('targetSelector');
                 selector.innerHTML = data.targets.map(t => `<option value="${t.name}">${t.name.toUpperCase()}</option>`).join('');
                 window.switchTarget(data.targets[0].name);
             }
 
-            // Initial Agent Render
             renderAgents(window.state.agents);
+        }
+
+        window.toggleChat = () => {
+            window.state.chatOpen = !window.state.chatOpen;
+            $('chatWindow').style.display = window.state.chatOpen ? 'flex' : 'none';
+        };
+
+        window.sendMessage = async () => {
+            const input = $('chatInput');
+            const message = input.value.trim();
+            if (!message) return;
+
+            input.value = '';
+            addMessage(message, 'user');
+
+            const loadingId = addMessage('Analyzing...', 'ai', true);
+            
+            try {
+                const response = await callGemini(message);
+                updateMessage(loadingId, response);
+            } catch (err) {
+                updateMessage(loadingId, `Error: ${err.message}`);
+            }
+        };
+
+        function addMessage(text, sender, isLoading = false) {
+            const id = Date.now();
+            const div = document.createElement('div');
+            div.id = `msg-${id}`;
+            const isUser = sender === 'user';
+            
+            div.style.cssText = `
+                background: ${isUser ? 'var(--accent)' : 'rgba(255,255,255,0.05)'};
+                color: ${isUser ? '#000' : '#fff'};
+                padding: 12px 15px;
+                border-radius: ${isUser ? '15px 15px 0 15px' : '15px 15px 15px 0'};
+                max-width: 85%;
+                align-self: ${isUser ? 'flex-end' : 'flex-start'};
+                font-size: 13px;
+                box-shadow: ${isUser ? '0 5px 15px var(--accent-glow)' : 'none'};
+            `;
+            div.innerHTML = text.replace(/\n/g, '<br>');
+            $('chatMessages').appendChild(div);
+            $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+            return id;
+        }
+
+        function updateMessage(id, text) {
+            const el = $(`msg-${id}`);
+            if (el) el.innerHTML = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br>');
+            $('chatMessages').scrollTop = $('chatMessages').scrollHeight;
+        }
+
+        async function callGemini(prompt) {
+            const apiKey = window.CONFIG?.GEMINI_API_KEY;
+            if (!apiKey) throw new Error("API Key missing. Run sync script.");
+
+            const targetInfo = window.state.currentTarget ? 
+                `Current Target: ${window.state.currentTarget.name}. Total subdomains: ${window.state.currentTarget.stats.total}. Top findings: ${JSON.stringify(window.state.currentTarget.findings.slice(0,5))}` : 
+                "No target selected.";
+
+            const systemPrompt = `You are a Bug Bounty Security Analyst. You help research vulnerabilities.
+${targetInfo}
+Respond concisely and technically. Use markdown for code.`;
+
+            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: `${systemPrompt}\n\nUser: ${prompt}` }] }]
+                })
+            });
+
+            const data = await response.json();
+            if (data.error) throw new Error(data.error.message);
+            return data.candidates[0].content.parts[0].text;
         }
 
         window.switchTarget = (targetName) => {
@@ -226,11 +328,7 @@
             if (!data) return;
             
             window.state.currentTarget = data;
-            
-            // Update Title
             $('panelTitle').innerText = `🎯 Intelligence Briefing: ${targetName.toUpperCase()}`;
-
-            // Stats
             $('statsGrid').innerHTML = `
                 <div class="stat-card">
                     <div class="stat-label">Total Subdomains</div>
@@ -245,8 +343,6 @@
                     <div class="stat-value" style="color: var(--red);">${data.findings.filter(f => f.priority === 'Critical').length}</div>
                 </div>
             `;
-
-            // Table
             renderTable(data.findings);
         };
 

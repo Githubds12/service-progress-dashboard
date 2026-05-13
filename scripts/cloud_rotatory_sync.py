@@ -115,7 +115,7 @@ def main():
         # So if msg != target['sms'], we have a new message.
         if msg != target.get('sms'):
             timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-            safe_msg = msg.encode('ascii', 'ignore').decode('ascii')
+            safe_msg = msg
             print(f"[+] NEW MESSAGE for {name} ({sid}): {safe_msg[:50]}...")
             
             # The *old* sms becomes history
