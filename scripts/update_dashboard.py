@@ -19,6 +19,22 @@ REPORT_DIR = r"c:\Users\Gorri\Documents\Reports"
 TXT_FILE = os.path.join(REPORT_DIR, "trackers", "List of Services done.txt")
 TIME_LOG_FILE = os.path.join(REPORT_DIR, "trackers", "Time Log.txt")
 HTML_FILE = os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")
+INDEX_FILE = os.path.join(REPORT_DIR, "index.html")
+
+def atomic_write(path, content):
+    """Writes content to a file atomically using a temporary file."""
+    temp_path = path + ".tmp"
+    try:
+        with open(temp_path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        if os.path.exists(path):
+            os.replace(temp_path, path)
+        else:
+            os.rename(temp_path, path)
+    except Exception as e:
+        print(f"[!] Atomic write failed for {path}: {e}")
+        if os.path.exists(temp_path):
+            os.remove(temp_path)
 
 def sync_github_commands():
     token = os.getenv("GH_PAT")
@@ -1477,19 +1493,18 @@ def update_html(header, days, stats, complexity_stats=None):
     
     # Save files
     # Save dashboard files
-    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), os.path.join(REPORT_DIR, "dashboard", "Dashboard.html")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(html_content)
+    # Save dashboard files
+    for f_path in [os.path.join(REPORT_DIR, "dashboard", "Dashboard_Live.html"), HTML_FILE]:
+        atomic_write(f_path, html_content)
     
     # Save root index file with adjusted path
-    index_path = os.path.join(REPORT_DIR, "index.html")
-    with open(index_path, 'w', encoding='utf-8') as f:
-        content = html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"')
-        content = content.replace('href="apkhunter.html#diagnostics"', 'href="dashboard/apkhunter.html#diagnostics"')
-        f.write(content)
+    content_index = html_content.replace('href="apkhunter.html"', 'href="dashboard/apkhunter.html"')
+    content_index = content_index.replace('href="apkhunter.html#diagnostics"', 'href="dashboard/apkhunter.html#diagnostics"')
+    atomic_write(INDEX_FILE, content_index)
     
     data_js = f"window.GH_TOKEN_INJECTED = '';\nwindow.dashboardData = {json.dumps(data_dict)};"
     for f_path in [os.path.join(REPORT_DIR, "dashboard", "dashboard_data.js"), os.path.join(REPORT_DIR, "dashboard_data.js")]:
-        with open(f_path, 'w', encoding='utf-8') as f: f.write(data_js)
+        atomic_write(f_path, data_js)
 
 def update_readme(stats, time_logs):
     path = os.path.join(REPORT_DIR, 'README.md')
@@ -1522,6 +1537,15 @@ def update_github():
 def main():
     # Sync first to pick up any remote changes
     sync_github_commands()
+    
+    # Run APK Hunter Sync to update apkhunter_data.js
+    print("[*] Triggering APK Hunter Data Sync...")
+    try:
+        import sys
+        sync_script = os.path.join(REPORT_DIR, "scripts", "sync_apkhunter.py")
+        subprocess.run([sys.executable, sync_script], check=True)
+    except Exception as e:
+        print(f"[!] APK Hunter Sync failed: {e}")
     
     # Load Mastery Data early for stats
     mastery_data = []

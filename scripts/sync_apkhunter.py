@@ -236,8 +236,20 @@ def sync():
 
     # Preserve original CSV order (do NOT sort - order comes from fresh_detailed.csv)
     
-    with open(OUTPUT_JS, "w", encoding="utf-8") as f:
-        f.write(f"window.apkhunterData = {json.dumps(final_data, indent=4)};")
+    temp_output = OUTPUT_JS + ".tmp"
+    try:
+        with open(temp_output, "w", encoding="utf-8") as f:
+            f.write(f"window.apkhunterData = {json.dumps(final_data, indent=4)};")
+        
+        # Atomic swap
+        if os.path.exists(OUTPUT_JS):
+            os.replace(temp_output, OUTPUT_JS)
+        else:
+            os.rename(temp_output, OUTPUT_JS)
+    except Exception as e:
+        print(f"[-] Error writing output JS: {e}")
+        if os.path.exists(temp_output):
+            os.remove(temp_output)
     
     print(f"[*] Processed {len(final_data)} targets.")
     print(f"[+] Sync Complete: {OUTPUT_JS}")

@@ -184,6 +184,7 @@
         .history-item strong { color: var(--accent); }
 
         .mir-btn-group { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
+        .filter-group { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; align-items: center; margin-top: 15px; }
         .filter-btn {
             background: #111; border: 1px solid var(--border); color: var(--text-dim);
             padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 13px;
@@ -789,8 +790,8 @@
         };
 
         function init() {
-            if (window.GH_TOKEN_INJECTED) {
-                document.getElementById('injectedStatus').style.display = 'inline-block';
+            if (window.GH_TOKEN_INJECTED && $('injectedStatus')) {
+                $('injectedStatus').style.display = 'inline-block';
             }
 
             // Merge local claims to prevent refresh reverts
