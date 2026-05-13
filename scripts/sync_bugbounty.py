@@ -70,15 +70,51 @@ def analyze_subdomains(file_path):
         "high_value": sorted_hv[:500] # Increased limit
     }
 
+def discover_agents():
+    agents_dir = os.path.join(BUG_BOUNTY_ROOT, "agents")
+    if not os.path.exists(agents_dir):
+        return []
+    
+    found = []
+    for item in os.listdir(agents_dir):
+        if item.endswith(".md") and not item.startswith("_") and item not in ["README.md", "LICENSE", "AGENTS.md", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md"]:
+            name = item.replace(".md", "").replace("-", " ").title()
+            path = os.path.join(agents_dir, item)
+            
+            # Try to get first line or a short description
+            desc = "Specialized AI Security Agent"
+            try:
+                with open(path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                    # Look for a paragraph after the first header
+                    lines = content.split('\n')
+                    for i, line in enumerate(lines):
+                        if line.startswith("#") and i + 2 < len(lines):
+                            desc = lines[i+2].strip()
+                            if desc and len(desc) > 10:
+                                break
+            except:
+                pass
+                
+            found.append({
+                "id": item,
+                "name": name,
+                "description": desc[:150] + ("..." if len(desc) > 150 else "")
+            })
+    return sorted(found, key=lambda x: x["name"])
+
 def main():
     print("[*] Syncing Bug Bounty Data (Universal Mode)...")
     
     targets = discover_targets()
+    agents = discover_agents()
     print(f"[*] Discovered {len(targets)} targets: {[t['name'] for t in targets]}")
+    print(f"[*] Discovered {len(agents)} agents.")
 
     all_data = {
         "last_update": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "targets": []
+        "targets": [],
+        "agents": agents
     }
     
     for target in targets:
