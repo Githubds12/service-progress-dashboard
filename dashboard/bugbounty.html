@@ -45,25 +45,23 @@
         .logo { font-size: 14px; font-weight: 800; color: var(--accent); text-transform: uppercase; letter-spacing: 3px; opacity: 0.8; }
 
         .sidebar {
-            position: fixed; left: 0; top: 0; bottom: 0; width: 80px;
+            position: fixed; left: 0; top: 0; bottom: 0; width: 260px;
             background: var(--glass-bg); backdrop-filter: blur(30px);
             border-right: 1px solid var(--border); z-index: 1000;
             display: flex; flex-direction: column; align-items: center; padding: 30px 0;
             transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             overflow: hidden;
         }
-        .sidebar:hover { width: 260px; }
         .sidebar-item {
             width: 100%; padding: 18px 30px; display: flex; align-items: center; gap: 25px;
             color: var(--text-dim); cursor: pointer; transition: 0.3s; white-space: nowrap;
             text-decoration: none;
         }
         .sidebar-item i { font-size: 22px; min-width: 30px; }
-        .sidebar-item span { opacity: 0; font-weight: 700; font-size: 13px; text-transform: uppercase; }
-        .sidebar:hover .sidebar-item span { opacity: 1; }
+        .sidebar-item span { opacity: 1; font-weight: 700; font-size: 13px; text-transform: uppercase; }
         .sidebar-item:hover, .sidebar-item.active { color: var(--accent); background: rgba(0, 242, 255, 0.08); }
 
-        .main-content { margin-left: 80px; transition: 0.3s; }
+        .main-content { margin-left: 260px; transition: 0.3s; }
         .content-section { display: none; }
         .content-section.active { display: block; }
 
@@ -261,7 +259,7 @@
                                 <div id="targetMeta" style="font-size: 11px; color: var(--text-dim);"></div>
                             </div>
                             <table id="reconTable">
-                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th></tr></thead>
+                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
                                 <tbody id="reconBody"></tbody>
                             </table>
                         </div>
@@ -365,7 +363,7 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
-        const BASE_URL = window.location.hostname === "" || window.location.hostname === "localhost" ? "http://localhost:10000" : "";
+        const BASE_URL = window.location.hostname === "service-progress-dashboard.onrender.com" ? "https://service-progress-portal.onrender.com" : "http://localhost:10000";
 
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
@@ -422,6 +420,15 @@
                     <td style="color: ${f.priority === 'Critical' ? 'var(--red)' : 'var(--yellow)'}; font-weight: 700;">${f.priority}</td>
                     <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">${f.target}</td>
                     <td><div style="color: #fff; margin-bottom: 4px;">${f.category}</div><div style="font-size: 11px; color: var(--text-dim);">${f.recommendation}</div></td>
+                    <td>
+                        <select onchange="if(this.value) { window.runSecurityTool(this.value, '${f.target}'); this.value=''; }" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--accent); padding: 5px; border-radius: 4px; font-size: 10px; cursor: pointer;">
+                            <option value="">DEPLOY...</option>
+                            <option value="subfinder">SUBFINDER</option>
+                            <option value="dnsx">DNSX</option>
+                            <option value="httpx">HTTPX</option>
+                            <option value="katana">KATANA</option>
+                        </select>
+                    </td>
                 </tr>
             `).join('');
             
@@ -529,25 +536,28 @@
             `).join('');
         }
 
-        window.runSecurityTool = async (tool) => {
-            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
-            if (!target) return alert("Select a target first.");
+        window.runSecurityTool = async (tool, targetOverride = null) => {
+            const targetName = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex]?.name;
+            if (!targetName) return alert("Select a target first.");
+            
+            // Switch to console section to show results
+            window.switchSection('agents');
             
             const term = $('terminalContent');
-            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] Deploying agent: ${tool.toUpperCase()} on ${target.name}...`;
+            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] Deploying agent: ${tool.toUpperCase()} on ${targetName}...`;
             term.scrollTop = term.scrollHeight;
 
             try {
-                const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${target.name}`);
+                const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${targetName}`);
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    term.innerHTML += `\n<span style="color: #00ff00;">> Execution complete. Output received.</span>\n${data.output}`;
+                    term.innerHTML += `\n<span style="color: #00ff00;">> Execution complete. Output received:</span>\n${data.output}`;
                 } else {
                     term.innerHTML += `\n<span style="color: #ff0000;">> Agent failed: ${data.output}</span>`;
                 }
             } catch (e) {
-                term.innerHTML += `\n<span style="color: #ff0000;">> System Error: Unable to reach tool gateway.</span>`;
+                term.innerHTML += `\n<span style="color: #ff0000;">> System Error: Unable to reach tool gateway at ${BASE_URL}. Check if backend is running.</span>`;
             }
             term.scrollTop = term.scrollHeight;
         };
