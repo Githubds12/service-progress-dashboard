@@ -1166,7 +1166,9 @@
             
             // Sync UI state for filter buttons
             document.querySelectorAll('.filter-btn').forEach(btn => {
-                if (btn.innerText.toLowerCase() === state.filter.toLowerCase()) {
+                const btnText = btn.innerText.replace(/[^\w]/g, '').toLowerCase();
+                const filterMatch = state.filter.toLowerCase();
+                if (btnText === filterMatch || (filterMatch === 'new' && btnText.includes('new'))) {
                     document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
                     btn.classList.add('active');
                 }
@@ -1211,8 +1213,7 @@
                 else if (state.filter === 'hard') matchesType = (item.difficulty || 10) >= 75;
                 else if (state.filter === 'moderate') matchesType = (item.difficulty || 10) >= 40 && (item.difficulty || 10) < 75;
                 else if (state.filter === 'easy') {
-                    // Show EASY targets OR UNCLAIMED targets
-                    matchesType = (item.difficulty || 10) < 40 || !item.claimed;
+                    matchesType = (item.difficulty || 10) < 40;
                 }
                 else if (state.filter === 'rotatory') {
                     const rotatoryIds = [
@@ -1235,6 +1236,11 @@
                         'b7ab99b2-14ee-4f85-80e4-b2a13be3a58c', '34c46101-4370-4abc-be0f-33d5f276db6e'
                     ];
                     matchesType = rotatoryIds.includes(item.id);
+                }
+                else if (state.filter === 'new') {
+                    // Simple heuristic for "new" - recently updated
+                    const updateDate = new Date(item.last_updated || '2024-05-01');
+                    matchesType = updateDate > new Date('2024-05-01');
                 }
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
