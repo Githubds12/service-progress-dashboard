@@ -119,6 +119,21 @@ WebMoney Keeper (Android) utilizes a SOAP-based XML protocol over HTTPS for its 
       <code>25252</code>
     </SetMobilePhoneNumberEndWithConfirmation>
     ```
+- **Response Body**:
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+      <soap:Body>
+        <SetMobilePhoneNumberEndWithConfirmationResponse xmlns="http://mini.webmoney.ru/api">
+          <SetMobilePhoneNumberEndWithConfirmationResult>189</SetMobilePhoneNumberEndWithConfirmationResult>
+          <confirmation>
+            <Id>0</Id><Tag /><IconUrl /><Methods /><Properties /><Meta />
+          </confirmation>
+        </SetMobilePhoneNumberEndWithConfirmationResponse>
+      </soap:Body>
+    </soap:Envelope>
+    ```
+- **Analysis**: The response code `189` corresponds to an "Incorrect Value" error as per the `ErrorsApi.asmx` lookup.
 
 ## 4. Security & Reversing Notes
 
