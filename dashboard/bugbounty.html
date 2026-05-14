@@ -202,6 +202,9 @@
         <div class="sidebar-item" id="btn-ai" onclick="switchSection('ai', this)">
             <i class='bx bx-brain'></i><span>AI ANALYST</span>
         </div>
+        <div class="sidebar-item" id="btn-agents" onclick="switchSection('agents', this)">
+            <i class='bx bx-terminal'></i><span>AGENT HUB</span>
+        </div>
         <a href="apkhunter.html" class="sidebar-item">
             <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
         </a>
@@ -227,24 +230,9 @@
                 </div>
 
                 <div style="display: grid; grid-template-columns: 280px 1fr; gap: 30px;">
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-                            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
-                            <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
-                        </div>
-
-                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-                            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Agent Hub (Tools)</h3>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="font-size: 9px; padding: 6px 10px;">SUBFINDER</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="font-size: 9px; padding: 6px 10px;">DNSX</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="font-size: 9px; padding: 6px 10px;">AMASS</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="font-size: 9px; padding: 6px 10px;">ASSETFINDER</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="font-size: 9px; padding: 6px 10px;">NAABU</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="font-size: 9px; padding: 6px 10px;">HTTPX</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="grid-column: span 2; font-size: 9px; padding: 6px 10px;">KATANA</button>
-                            </div>
-                        </div>
+                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                        <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
+                        <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 30px;">
@@ -259,17 +247,66 @@
                                 <tbody id="reconBody"></tbody>
                             </table>
                         </div>
-
-                        <!-- TERMINAL OUTPUT -->
-                        <div style="background: #000; border: 1px solid var(--border); border-radius: 12px; padding: 15px; font-family: 'JetBrains Mono', monospace; min-height: 200px; display: flex; flex-direction: column;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
-                                <span style="font-size: 10px; color: var(--accent); font-weight: 700;">COMMAND CONSOLE</span>
-                                <button onclick="$('terminalContent').innerText = '> Console cleared.'" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 10px;">CLEAR</button>
-                            </div>
-                            <div id="terminalContent" style="font-size: 11px; color: #0f0; line-height: 1.4; overflow-y: auto; max-height: 300px; white-space: pre-wrap;">> Ready for agent deployment...</div>
-                        </div>
                     </div>
                 </div>
+            </div>
+
+            <div id="section-agents" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h1 style="font-size: 24px; font-weight: 700;">Agent Deployment Center</h1>
+                    <div style="color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace;">GATEWAY: /api/tools/run</div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px; height: calc(100vh - 200px);">
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px;">
+                            <h3 style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">Active Agents</h3>
+                            <div style="display: flex; flex-direction: column; gap: 10px;">
+                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-search-alt'></i> SUBFINDER
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-globe'></i> DNSX
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-map-alt'></i> AMASS
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-list-ul'></i> ASSETFINDER
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-radar'></i> NAABU
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="justify-content: flex-start; padding: 12px 20px;">
+                                    <i class='bx bx-link-external'></i> HTTPX
+                                </button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="justify-content: flex-start; padding: 12px 20px; border-color: var(--accent);">
+                                    <i class='bx bx-bug'></i> KATANA (SPIDER)
+                                </button>
+                            </div>
+                        </div>
+                        <div style="background: rgba(255,82,82,0.05); border: 1px solid rgba(255,82,82,0.2); border-radius: 15px; padding: 15px;">
+                            <p style="font-size: 11px; color: var(--red); font-weight: 700; margin-bottom: 5px;">WAR ROOM ADVISORY</p>
+                            <p style="font-size: 10px; color: var(--text-dim);">Agents consume significant resources. Deploy sequentially for maximum precision.</p>
+                        </div>
+                    </div>
+
+                    <div style="background: #000; border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden;">
+                        <div style="background: #161b22; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--red);"></div>
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--yellow);"></div>
+                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--green);"></div>
+                                <span style="font-size: 11px; color: var(--text-dim); margin-left: 10px; font-family: 'JetBrains Mono';">root@specialist:~/recon_ops</span>
+                            </div>
+                            <button onclick="$('terminalContent').innerText = '> Console cleared.'" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 10px; font-weight: 700;">FLUSH LOGS</button>
+                        </div>
+                        <div id="terminalContent" style="flex: 1; padding: 25px; font-size: 12px; color: #0f0; font-family: 'JetBrains Mono', monospace; line-height: 1.5; overflow-y: auto; white-space: pre-wrap;">> Initializing secure toolchain...
+> Agents standby.
+> Ready for deployment.</div>
+                    </div>
+                </div>
+            </div>
             </div>
 
             <div id="section-ai" class="content-section">
@@ -310,6 +347,8 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
+        const BASE_URL = window.location.hostname === "" || window.location.hostname === "localhost" ? "http://localhost:10000" : "";
+
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
             currentSessionId: localStorage.getItem('current_session_id') || null,
@@ -324,6 +363,12 @@
             if (!window.state.aiSessions.length) window.createNewAiSession();
             else renderSessionList();
             if (window.state.currentSessionId) window.loadSession(window.state.currentSessionId);
+
+            // Visibility Hack: Show notification
+            setTimeout(() => {
+                const term = $('terminalContent');
+                term.innerHTML += `\n<span style="color: var(--accent);">> [SYSTEM] New Feature: Agent Hub now active. Access via Sidebar.</span>`;
+            }, 1000);
         }
 
         function renderTargets() {
@@ -438,7 +483,7 @@
             renderMessages();
             
             try {
-                const res = await fetch("https://service-progress-portal.onrender.com/api/agent/chat", {
+                const res = await fetch(BASE_URL + "/api/agent/chat", {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ message: fullPrompt })
                 });
@@ -475,7 +520,7 @@
             term.scrollTop = term.scrollHeight;
 
             try {
-                const res = await fetch(`https://service-progress-portal.onrender.com/api/tools/run?tool=${tool}&target=${target.name}`);
+                const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${target.name}`);
                 const data = await res.json();
                 
                 if (data.status === 'success') {
