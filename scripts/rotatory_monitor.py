@@ -10,7 +10,7 @@ if hasattr(sys.stdout, 'reconfigure'):
     sys.stdout.reconfigure(encoding='utf-8')
 
 # --- CONFIGURATION ---
-API_BASE = "http://51.195.24.179:8092/api"
+API_BASE = "http://51.195.24.179:3000/api"
 EMAIL = "deepanshu@test.com"
 PASS = "deep@nshu"
 HISTORY_PATH = r"C:\HTB-Notes-Portal\sms_history.json"

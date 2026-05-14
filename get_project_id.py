@@ -1,7 +1,7 @@
 import requests
 import json
 
-API_BASE = "http://51.195.24.179:8092/api"
+API_BASE = "http://51.195.24.179:3000/api"
 EMAIL = "deepanshu@test.com"
 PASS = "deep@nshu"
 SERVICE_UUID = "c34dfb4d-3d83-4176-ba7d-3919b5f07e73"

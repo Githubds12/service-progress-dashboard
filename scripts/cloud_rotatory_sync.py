@@ -47,7 +47,7 @@ ROTATORY_SERVICES = {
     '43945afe-0cc1-4d4b-a9d6-50e43a818209': 'hacher',
     '9962429d-1dd1-4a5f-aef3-86089b3959f0': 'whitelist',
     'b7ab99b2-14ee-4f85-80e4-b2a13be3a58c': 'carry1st',
-    '34c46101-4370-4abc-be0f-33d5f276db6e': 'sms'
+    'c61cc81d-a387-4c71-8612-dcd0260c201c': 'gm-sms'
 }
 
 def get_token():
