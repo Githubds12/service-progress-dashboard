@@ -360,20 +360,21 @@
 
         .mir-btn-group { display: flex; gap: 4px; margin-top: 10px; flex-wrap: wrap; }
         .filter-group { 
-            display: flex; justify-content: space-between; align-items: center; 
-            gap: 15px; margin-bottom: 25px; flex-wrap: wrap; margin-top: 15px; 
-            padding: 15px; background: rgba(255,255,255,0.02); border-radius: 12px; 
-            border: 1px solid var(--border); 
+            display: flex; align-items: center; gap: 8px; margin-bottom: 20px; 
+            flex-wrap: wrap; padding: 10px; background: rgba(255,255,255,0.03); 
+            border-radius: 8px; border: 1px solid var(--border); 
         }
-        .filter-main { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
-        .filter-utils { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
         .filter-btn {
             background: #111; border: 1px solid var(--border); color: var(--text-dim);
-            padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px;
-            font-weight: 600; transition: 0.2s; white-space: nowrap;
+            padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 11px;
+            font-weight: 700; transition: 0.2s; white-space: nowrap;
+            text-transform: uppercase;
         }
-        .filter-btn:hover { border-color: var(--text-dim); color: #fff; }
+        .filter-btn:hover { border-color: var(--accent); color: #fff; }
         .filter-btn.active { background: var(--accent); color: #000; border-color: var(--accent); }
+        #catFilter { height: 31px; font-size: 11px; padding: 0 10px; }
+        #unclaimedToggle { border-style: dashed; border-color: #ffd700; color: #ffd700; background: rgba(255,215,0,0.05); }
+        #unclaimedToggle.active { background: #ffd700; color: #000; }
 
         /* --- TABLE --- */
         .table-wrapper {
@@ -827,41 +828,40 @@
             </div>
             
             <div class="filter-group">
-                <div class="filter-main">
-                    <button class="filter-btn active" onclick="setFilter('all', this)">ALL</button>
-                    <button class="filter-btn" onclick="setFilter('unclaimed', this)">UNCLAIMED</button>
-                    <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
-                    <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
-                    <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
-                    <button class="filter-btn" onclick="filterByEasy()" id="easyFilterBtn" style="border-color: var(--green); color: var(--green);">EASY UNCLAIMED</button>
-                    <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa;">🆕 NEW</button>
-                    <button class="filter-btn" onclick="setFilter('rotatory', this)" style="color:var(--accent); border-color:var(--accent);">🌀 ROTATORY</button>
-                    <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff;">🚀 PULSE</button>
-                </div>
-                <div class="filter-utils">
-                    <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none; height: 35px;">
-                        <option value="all">ALL CATEGORIES</option>
-                        <option value="UNCATEGORIZED">UNCATEGORIZED / RESEARCH</option>
-                        <option value="Banking/Fintech">BANKING/FINTECH</option>
-                        <option value="E-Commerce">E-COMMERCE</option>
-                        <option value="Social/Media">SOCIAL/MEDIA</option>
-                        <option value="Lifestyle/Travel">LIFESTYLE/TRAVEL</option>
-                        <option value="Logistics/Transport">LOGISTICS/TRANSPORT</option>
-                        <option value="Gaming/Entertainment">GAMING</option>
-                        <option value="Betting/Gambling">BETTING/GAMBLING</option>
-                        <option value="Health/Fitness">HEALTH/FITNESS</option>
-                        <option value="Education/Learning">EDUCATION</option>
-                        <option value="Government/Public">GOVERNMENT</option>
-                        <option value="Navigation/Maps">NAVIGATION/MAPS</option>
-                        <option value="Music/Audio">MUSIC/AUDIO</option>
-                        <option value="Photography/Video">PHOTO/VIDEO</option>
-                        <option value="News/Books">NEWS/BOOKS</option>
-                        <option value="Business/Work">BUSINESS/WORK</option>
-                        <option value="Telecom/OTP">TELECOM/OTP</option>
-                        <option value="Tools/Security">TOOLS/SECURITY</option>
-                    </select>
-                    <button class="filter-btn" id="unclaimedToggle" onclick="toggleUnclaimed()" style="border-style: dashed; border-color: #ffd700; color: #ffd700; min-width: 160px;">[ ] ONLY UNCLAIMED</button>
-                </div>
+                <button class="filter-btn active" onclick="setFilter('all', this)">ALL</button>
+                <button class="filter-btn" onclick="setFilter('unclaimed', this)">UNCLAIMED</button>
+                <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
+                <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
+                <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
+                <button class="filter-btn" onclick="filterByEasy(this)" id="easyFilterBtn" style="border-color: var(--green); color: var(--green);">EASY</button>
+                <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa;">🆕 NEW</button>
+                <button class="filter-btn" onclick="setFilter('rotatory', this)" style="color:var(--accent); border-color:var(--accent);">🌀 ROTATORY</button>
+                <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff;">🚀 PULSE</button>
+                
+                <div style="flex: 1;"></div>
+
+                <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
+                    <option value="all">ALL CATEGORIES</option>
+                    <option value="UNCATEGORIZED">UNCATEGORIZED / RESEARCH</option>
+                    <option value="Banking/Fintech">BANKING/FINTECH</option>
+                    <option value="E-Commerce">E-COMMERCE</option>
+                    <option value="Social/Media">SOCIAL/MEDIA</option>
+                    <option value="Lifestyle/Travel">LIFESTYLE/TRAVEL</option>
+                    <option value="Logistics/Transport">LOGISTICS/TRANSPORT</option>
+                    <option value="Gaming/Entertainment">GAMING</option>
+                    <option value="Betting/Gambling">BETTING/GAMBLING</option>
+                    <option value="Health/Fitness">HEALTH/FITNESS</option>
+                    <option value="Education/Learning">EDUCATION</option>
+                    <option value="Government/Public">GOVERNMENT</option>
+                    <option value="Navigation/Maps">NAVIGATION/MAPS</option>
+                    <option value="Music/Audio">MUSIC/AUDIO</option>
+                    <option value="Photography/Video">PHOTO/VIDEO</option>
+                    <option value="News/Books">NEWS/BOOKS</option>
+                    <option value="Business/Work">BUSINESS/WORK</option>
+                    <option value="Telecom/OTP">TELECOM/OTP</option>
+                    <option value="Tools/Security">TOOLS/SECURITY</option>
+                </select>
+                <button class="filter-btn" id="unclaimedToggle" onclick="toggleUnclaimed()">[ ] ONLY UNCLAIMED</button>
             </div>
 
             <!-- ROTATORY VIEW CONTAINER -->
@@ -1233,25 +1233,13 @@
             } catch (e) { btn.innerHTML = "🔌 OFFLINE"; }
         }
 
-        function filterByEasy() {
+        function filterByEasy(btn) {
             state.filter = 'easy';
-            state.catFilter = 'all';
             state.page = 1;
-            
-            // Handle active button state
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            const btn = document.getElementById('easyFilterBtn');
             if (btn) btn.classList.add('active');
-
             applyFilters();
-            
-            // Further narrow to UNCLAIMED specifically for the "Easy" request
-            state.filteredData = state.filteredData.filter(item => {
-                return !item.claimed && (item.difficulty || 10) <= 40;
-            }).sort((a, b) => (a.difficulty || 10) - (b.difficulty || 10));
-            
             render();
-            alert("RECOMMENDATION: Focus on these low-difficulty targets to maximize speed and reach your 90k goal quickly by accumulating rapid wins.");
         }
 
         function copyRecon(id, btn) {
