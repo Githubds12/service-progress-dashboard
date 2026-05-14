@@ -53,11 +53,11 @@
             padding: 20px 0; border-bottom: 1px solid var(--border);
             margin-bottom: 40px; backdrop-filter: blur(10px);
         }
-            <div class="logo">
-                <i>AH</i>
-                APK HUNTER INTEL
-                <div id="syncStatus" style="margin-left: 20px; font-size: 10px; color: #555; border: 1px solid #222; padding: 4px 10px; border-radius: 4px; font-family: monospace; letter-spacing: 1px;">📡 SYNC: INITIALIZING...</div>
-            </div>
+        .logo {
+            font-size: 24px; font-weight: 700; letter-spacing: 3px; color: var(--accent);
+            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
+            text-shadow: 0 0 10px var(--accent-glow);
+        }
         .logo i { font-style: normal; border: 2px solid var(--accent); padding: 4px 12px; border-radius: 8px; font-size: 18px; }
 
         .nav-links { display: flex; gap: 20px; }
@@ -779,11 +779,12 @@
     <div class="main-content">
         <div id="intelligenceView" class="container">
             <header>
-                <div class="logo"><i>APK</i> HUNTER <span style="font-size: 10px; color: var(--text-dim); margin-left: 10px; font-weight: 400; letter-spacing: 1px;">INTELLIGENCE PORTAL</span></div>
-                <div style="display: flex; align-items: center; gap: 20px;">
-                    <div id="injectedStatus" style="display: none; background: rgba(0, 255, 136, 0.1); color: var(--accent); padding: 4px 10px; border-radius: 4px; font-size: 10px; font-weight: 700; border: 1px solid var(--accent); letter-spacing: 1px;">TOKEN ACTIVE</div>
-                    <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
+                <div class="logo">
+                    <i>AH</i>
+                    APK HUNTER INTEL
+                    <div id="syncStatus" style="margin-left: 20px; font-size: 10px; color: #555; border: 1px solid #222; padding: 4px 10px; border-radius: 4px; font-family: monospace; letter-spacing: 1px;">📡 SYNC: INITIALIZING...</div>
                 </div>
+                <div id="syncStatusOld" style="font-size: 12px; font-weight: 700; color: var(--green); display: none;">LAST SYNC: <span id="lastSyncTime">--:--:--</span></div>
             </header>
 
             <div id="skillReminder" class="skill-reminder">
@@ -816,7 +817,7 @@
                 <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
                 <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
                 <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
-                <button class="filter-btn" onclick="setFilter('easy', this)">EASY</button>
+                <button class="filter-btn" onclick="filterByEasy()" id="easyFilterBtn" style="border-color: var(--green); color: var(--green);">EASY (VIEW UNCLAIMED)</button>
                 <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa; background:rgba(0,255,170,0.08);">🆕 NEW</button>
                 <button class="filter-btn" onclick="setFilter('rotatory', this)" style="color:var(--accent); border-color:var(--accent);">🌀 ROTATORY</button>
                 <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff; background:rgba(255,0,255,0.08);">🚀 PULSE</button>
@@ -1132,15 +1133,14 @@
         }
 
         async function updateSyncStatus() {
-            const timeEl = document.getElementById('lastSyncTime');
             const statusEl = document.getElementById('syncStatus');
-            if (!timeEl || !statusEl) return;
+            if (!statusEl) return;
             try {
                 const response = await fetch('last_sync.json?v=' + Date.now());
                 if (response.ok) {
                     const data = await response.json();
-                    timeEl.innerText = data.last_sync;
-                    statusEl.style.color = data.status === 'SUCCESS' ? '#00ffaa' : '#ff4444';
+                    const statusColor = data.status === 'SUCCESS' ? '#00ffaa' : '#ff4444';
+                    statusEl.innerHTML = `📡 SYNC: <span style="color:${statusColor}">${data.last_sync} [${data.status}]</span>`;
                     statusEl.title = data.message;
                 }
             } catch (e) {}
@@ -1182,8 +1182,25 @@
             } catch (e) { btn.innerHTML = "🔌 OFFLINE"; }
         }
 
-        function updateSyncStatus(s, msg) {
-            const el = $('syncStatus'); el.innerText = s === 'syncing' ? 'SYNCING...' : 'SYSTEM READY';
+        function filterByEasy() {
+            state.filter = 'easy';
+            state.catFilter = 'all';
+            state.page = 1;
+            
+            // Handle active button state
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            const btn = document.getElementById('easyFilterBtn');
+            if (btn) btn.classList.add('active');
+
+            applyFilters();
+            
+            // Further narrow to UNCLAIMED specifically for the "Easy" request
+            state.filteredData = state.filteredData.filter(item => {
+                return !item.claimed && (item.difficulty || 10) <= 40;
+            }).sort((a, b) => (a.difficulty || 10) - (b.difficulty || 10));
+            
+            render();
+            alert("RECOMMENDATION: Focus on these low-difficulty targets to maximize speed and reach your 90k goal quickly by accumulating rapid wins.");
         }
 
         function copyRecon(id, btn) {
@@ -1197,7 +1214,75 @@
         function render() {
             const start = (state.page - 1) * state.pageSize;
             const paginated = state.filteredData.slice(start, start + state.pageSize);
-            $('apkList').innerHTML = paginated.map(i => `<tr><td><button class="btn" onclick="syncUpdate('${i.id}', 'claimed', ${!i.claimed}, this)">${i.claimed ? 'CLAIMED' : 'CLAIM'}</button></td><td>${i.name}<br><small>${i.id}</small></td><td></td><td></td></tr>`).join('');
+            const totalPages = Math.ceil(state.filteredData.length / state.pageSize);
+
+            let html = '';
+            paginated.forEach(i => {
+                const scoreClass = i.difficulty >= 75 ? 'score-hard' : (i.difficulty >= 40 ? 'score-med' : 'score-easy');
+                
+                html += `
+                    <tr class="${i.claimed ? 'row-claimed' : ''} ${i.root_detected ? 'row-root' : ''}">
+                        <td>
+                            <div class="action-btns">
+                                <button class="btn btn-claim ${i.claimed ? 'active' : ''}" onclick="syncUpdate('${i.id}', 'claimed', ${!i.claimed}, this)">
+                                    ${i.claimed ? 'CLAIMED' : 'CLAIM'}
+                                </button>
+                                <div class="score-badge ${scoreClass}">${i.difficulty || 10}/100</div>
+                                <div class="last-update">SYNC: ${i.last_updated || '2024-05-09'}</div>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="apk-name">
+                                ${i.name}
+                                <span class="category-badge">${i.category || 'RECON'}</span>
+                            </div>
+                            <div class="apk-id">${i.id}</div>
+                            <div class="apk-reason">🧠 Score 10: High Success (Active OTP Code/Keyword). (${i.category || 'RECON'})</div>
+                            <div class="apk-sms" style="background: rgba(255, 215, 0, 0.1); border: 1px solid rgba(255, 215, 0, 0.3); padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                <span id="sms-text-${i.id}" style="color: #ffd700; font-weight: 700; font-family: 'JetBrains Mono';">${i.sms || 'No sample message recorded.'}</span>
+                                <button class="btn btn-recon" onclick="copyRecon('${i.id}', this)" style="padding: 5px 15px; font-size: 11px;">📋 COPY RECON</button>
+                            </div>
+                            <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate('${i.id}', 'note', this.value)" style="width: 100%; margin-top: 15px; background: #000; border: 1px solid #222; color: #888; padding: 10px; border-radius: 4px; font-size: 12px; height: 60px;">${i.note || ''}</textarea>
+                        </td>
+                        <td>
+                            <div class="mirror-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                <a href="${i.urls?.pure || '#'}" target="_blank" class="btn btn-mir pure" style="background: #24b897; color: #fff; font-size: 11px; text-align: center; text-decoration: none; padding: 8px;">APKPure</a>
+                                <a href="${i.urls?.aptoide || '#'}" target="_blank" class="btn btn-mir aptoide" style="background: #fc7521; color: #fff; font-size: 11px; text-align: center; text-decoration: none; padding: 8px;">Aptoide</a>
+                                <a href="${i.urls?.mirror || '#'}" target="_blank" class="btn btn-mir mirror" style="background: #ff9800; color: #fff; font-size: 11px; text-align: center; text-decoration: none; padding: 8px;">APKMirror</a>
+                                <a href="${i.urls?.uptodown || '#'}" target="_blank" class="btn btn-mir uptodown" style="background: #1a96e9; color: #fff; font-size: 11px; text-align: center; text-decoration: none; padding: 8px;">Uptodown</a>
+                                <button class="btn open-all" onclick="openAllMirrors(${JSON.stringify(i.urls).replace(/"/g, '&quot;')})" style="grid-column: span 2; background: #00f2ff; color: #000; font-weight: 800; font-size: 11px;">OPEN ALL 🚀</button>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="action-btns">
+                                <a href="https://service-progress-portal.onrender.com/services/${i.id}" target="_blank" class="btn" style="background:#00e5ff; color:#000; font-weight:900; text-align: center; text-decoration: none;">INTEL PORTAL</a>
+                                <button class="btn" style="color:#ff00ff; border-color:#ff00ff;" onclick="adbInstall('${i.id}', this)">📲 INSTALL</button>
+                                <a href="${i.urls?.play || '#'}" target="_blank" class="btn" style="text-align: center; text-decoration: none;">PLAY STORE</a>
+                                <button class="btn" style="border-color:var(--red); color:var(--red);" onclick="syncUpdate('${i.id}', 'root_detected', ${!i.root_detected})">ROOT</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            });
+
+            $('apkList').innerHTML = html || '<tr><td colspan="4" style="text-align:center; padding:100px; color:var(--text-dim);">NO TARGETS FOUND</td></tr>';
+            
+            // Render Pagination
+            renderPagination(totalPages);
+        }
+
+        function renderPagination(totalPages) {
+            const paginationHtml = `
+                <div class="rot-nav" style="display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 40px;">
+                    <button class="btn" onclick="changePage(-1)" ${state.page === 1 ? 'disabled' : ''}>PREVIOUS</button>
+                    <div style="font-family: 'JetBrains Mono'; font-size: 12px; color: #444;">PAGE ${state.page} / ${totalPages}</div>
+                    <button class="btn" onclick="changePage(1)" ${state.page === totalPages ? 'disabled' : ''}>NEXT</button>
+                </div>
+            `;
+            // Add pagination after the table
+            const existingNav = document.querySelector('.rot-nav');
+            if (existingNav) existingNav.remove();
+            $('standardView').insertAdjacentHTML('beforeend', paginationHtml);
         }
 
         function runDiagnostics() {
