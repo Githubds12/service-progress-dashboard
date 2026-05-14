@@ -1218,8 +1218,7 @@
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
                 
-                // If we are in 'easy' mode, we use the combined matchesType which already includes unclaimed logic
-                let matchesUnclaimed = (state.filter === 'easy') ? true : (!state.onlyUnclaimed || !item.claimed);
+                let matchesUnclaimed = !state.onlyUnclaimed || !item.claimed;
 
                 return matchesSearch && matchesType && matchesCat && matchesUnclaimed;
             });
