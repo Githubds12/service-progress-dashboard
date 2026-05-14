@@ -1238,7 +1238,25 @@
 
         async function syncUpdate(id, field, value, btnEl) {
             const target = (window.apkhunterData || []).find(i => i.id === id);
-            if (target) { target[field] = value; if (field === 'claimed') { state.localClaims[id] = value; localStorage.setItem('local_claims', JSON.stringify(state.localClaims)); } }
+            if (target) { 
+                target[field] = value; 
+                if (field === 'claimed') { 
+                    state.localClaims[id] = value; 
+                    localStorage.setItem('local_claims', JSON.stringify(state.localClaims)); 
+                } 
+                
+                // Track activity for dashboard charts
+                const activityLog = JSON.parse(localStorage.getItem('activity_log') || '[]');
+                activityLog.push({
+                    timestamp: new Date().toISOString(),
+                    id: id,
+                    name: target.name,
+                    field: field,
+                    value: value
+                });
+                if (activityLog.length > 1000) activityLog.shift();
+                localStorage.setItem('activity_log', JSON.stringify(activityLog));
+            }
             applyFilters(); render();
         }
 
