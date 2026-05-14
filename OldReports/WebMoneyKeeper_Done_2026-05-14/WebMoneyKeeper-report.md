@@ -15,9 +15,9 @@ WebMoney Keeper (Android) utilizes a SOAP-based XML protocol over HTTPS for its 
 | Feature | Status | Details |
 | :--- | :--- | :--- |
 | **Verification Type** | SMS | Polling-based verification with GetSmsStatus |
-| **Captcha** | No | Not observed in the captured flow |
-| **Encryption** | Yes | SOAP XML payloads, custom authHash for login |
-| **Rate Limits** | Observed | Polling frequency for SMS status is approx. 1-2 seconds |
+| **Captcha** | undefined | No captcha challenge was triggered during the flow |
+| **Encryption** | SOAP XML | Payloads use XML structure with session-bound authHash |
+| **Rate Limits** | Unknown | No rate limiting behavior (429/Cooldown) was observed |
 | **Endpoints Involved** | 4 | NewSession, AuthenticateWithOptions, SetMobilePhoneNumberBeginEx, SetMobilePhoneNumberEndWithConfirmation |
 
 ## 3. Flow Details
