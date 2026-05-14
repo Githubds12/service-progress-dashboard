@@ -11,7 +11,7 @@ IP = "62.238.2.204"
 ACCESS_PORT = "3666"
 API_PORT = "8090"
 TOKEN = "Scxfqcsgg"
-DB_FILE = r"C:\Users\Gorri\Documents\Reports\operator_database_clean.json"
+DB_FILE = r"C:\HTB-Notes-Portal\operator_database_clean.json"
 MASTER_DB_FILE = r"C:\HTB-Notes-Portal\full_live_operators_db.json"
 
 ACCESS_INFO_URL = f"http://{IP}:{ACCESS_PORT}/accessinfo"
@@ -36,7 +36,7 @@ COUNTRY_DIAL_CODES = {
     "MS": "+1", "MT": "+356", "MU": "+230", "MV": "+960", "MW": "+265", "MX": "+52", "MY": "+60", "MZ": "+258", "NA": "+264", "NC": "+687",
     "NE": "+227", "NF": "+672", "NG": "+234", "NI": "+505", "NL": "+31", "NO": "+47", "NP": "+977", "NR": "+674", "NU": "+683", "NZ": "+64",
     "OM": "+968", "PA": "+507", "PE": "+51", "PF": "+689", "PG": "+675", "PH": "+63", "PK": "+92", "PL": "+48", "PM": "+508", "PR": "+1",
-    "PS": "+970", "PT": "+351", "PW": "+680", "PY": "+595", "QA": "+974", "RE": "+262", "RO": "+40", "RS": "+381", "RU": "+7", "RW": "+250",
+    "PS": "+970", "PT": "+351", "PW": "+680", "PY": "+595", "QA": "+974", "RE": "+262", "RO": "+40", "RS": "+381", "RU": "+7", "RU": "+7", "RW": "+250",
     "SA": "+966", "SB": "+677", "SC": "+248", "SD": "+249", "SE": "+46", "SG": "+65", "SH": "+290", "SI": "+386", "SK": "+421", "SL": "+232",
     "SM": "+378", "SN": "+221", "SO": "+252", "SR": "+597", "SS": "+211", "ST": "+239", "SV": "+503", "SX": "+1", "SY": "+963", "SZ": "+268",
     "TC": "+1", "TD": "+235", "TG": "+228", "TH": "+66", "TJ": "+992", "TK": "+690", "TL": "+670", "TM": "+993", "TN": "+216", "TO": "+676",
@@ -97,6 +97,15 @@ class SMSAutomationApp:
         self.selected_operator = None
         self.current_number = None
         self.history_items = {}
+        self.offline_data = self.load_offline_db()
+
+    def load_offline_db(self):
+        if os.path.exists(DB_FILE):
+            try:
+                with open(DB_FILE, "r", encoding="utf-8") as f:
+                    return json.load(f)
+            except: pass
+        return {}
 
     def setup_live_tab(self):
         top = ttk.Frame(self.tab_live)
@@ -143,6 +152,7 @@ class SMSAutomationApp:
         tree.column("high_success", width=120)
         
         tree.tag_configure("high", foreground="#10b981", font=("Segoe UI", 10, "bold"))
+        tree.tag_configure("offline", foreground="#94a3b8")
         tree.pack(fill="both", expand=True, padx=15, pady=5)
         return tree
 
@@ -223,10 +233,13 @@ class SMSAutomationApp:
             self.tree_live.delete(item)
             
         def fetch():
+            found_live = False
             try:
-                res = requests.get(ACCESS_INFO_URL, params={"interval": "10min", "service": service, "token": TOKEN}, timeout=15)
+                # Increased interval to 24h for better reach
+                res = requests.get(ACCESS_INFO_URL, params={"interval": "24h", "service": service, "token": TOKEN}, timeout=15)
                 data = res.json()
                 if data.get("status") == "Data retrieved successfully" and data.get("data"):
+                    found_live = True
                     for item in data["data"]:
                         raw_ccode = item.get("ccode")
                         raw_op = item.get("operator")
@@ -236,15 +249,35 @@ class SMSAutomationApp:
                         
                         is_high = ccode in HIGH_SUCCESS_OPERATORS and op in HIGH_SUCCESS_OPERATORS[ccode]
                         display_op = f"*** {op.upper()} ***" if is_high else op
-                        rating = "BEST RATE" if is_high else ""
+                        rating = "LIVE RATE" if is_high else "LIVE"
                         tag = "high" if is_high else ""
                         
                         country_name = item.get("country") or "Unknown"
                         self.tree_live.insert("", "end", values=(ccode, country_name, display_op, item.get("access_count", 0), rating), tags=(tag,))
             except Exception as e:
-                messagebox.showerror("Error", str(e))
-                
-        threading.Thread(target=fetch, daemon=True).start()
+                print(f"API Error: {e}")
+
+            # Fallback to Offline Database
+            if service in self.offline_data:
+                for item in self.offline_data[service]:
+                    ccode = item.get("ccode", "").upper()
+                    op = item.get("operator", "").lower()
+                    
+                    # Avoid duplicates if already found in live
+                    exists = False
+                    for child in self.tree_live.get_children():
+                        if self.tree_live.item(child)["values"][0] == ccode and self.tree_live.item(child)["values"][2].replace("*", "").strip().lower() == op:
+                            exists = True
+                            break
+                    
+                    if not exists:
+                        is_high = ccode in HIGH_SUCCESS_OPERATORS and op in HIGH_SUCCESS_OPERATORS[ccode]
+                        display_op = f"{op.upper()}"
+                        rating = "OFFLINE"
+                        self.tree_live.insert("", "end", values=(ccode, item.get("country", "Unknown"), display_op, item.get("access_count", "N/A"), rating), tags=("offline",))
+            
+            if not self.tree_live.get_children():
+                self.root.after(0, lambda: messagebox.showinfo("No Data", f"No live or offline providers found for '{service}'."))
 
     def search_country(self):
         query = self.country_entry.get().strip().upper()

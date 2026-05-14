@@ -8,7 +8,7 @@ IP = "62.238.2.204"
 ACCESS_PORT = "3666"        # Port for the dynamic provider list
 API_PORT = "8090"           # Port for the core SMS API
 TOKEN = "Scxfqcsgg"
-DB_FILE = "operator_database_clean.json" # Your local offline database
+DB_FILE = r"C:\HTB-Notes-Portal\operator_database_clean.json" # Your local offline database
 
 # --- Dial Code Mapping ---
 COUNTRY_DIAL_CODES = {

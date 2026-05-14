@@ -42,14 +42,16 @@ def get_app_details(folder_path):
     return source_val
 
 def parse_report(folder_path, source_val):
-    report_files = glob.glob(os.path.join(folder_path, "*report.md"))
-    report_file = None
-    for r in report_files:
-        if "automation" not in r.lower() and "vulnerability" not in r.lower():
-            report_file = r
-            break
-    if not report_file and report_files:
-        report_file = report_files[0]
+    report_file = os.path.join(folder_path, "report.md")
+    if not os.path.exists(report_file):
+        report_files = glob.glob(os.path.join(folder_path, "*report.md"))
+        report_file = None
+        for r in report_files:
+            if "automation" not in r.lower() and "vulnerability" not in r.lower():
+                report_file = r
+                break
+        if not report_file and report_files:
+            report_file = report_files[0]
 
     if not report_file: 
         return None
@@ -268,8 +270,10 @@ def mark_message_received(folder_path, project_id, headers):
                     print("   [-] Details:", res.text)
 
 def sync_research(folder_path, project_id, headers):
-    report_files = glob.glob(os.path.join(folder_path, "*report.md"))
-    report_file = next((r for r in report_files if "automation" not in r.lower() and "vulnerability" not in r.lower()), None)
+    report_file = os.path.join(folder_path, "report.md")
+    if not os.path.exists(report_file):
+        report_files = glob.glob(os.path.join(folder_path, "*report.md"))
+        report_file = next((r for r in report_files if "automation" not in r.lower() and "vulnerability" not in r.lower()), None)
     
     har_files = glob.glob(os.path.join(folder_path, "*.har"))
     # Exclude SubmitNumber.har or SubmitOTP.har to only upload the main company.har
