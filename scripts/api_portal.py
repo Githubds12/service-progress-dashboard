@@ -6,7 +6,7 @@ import re
 import argparse
 import glob
 
-API_BASE = "http://51.195.24.179:3000/api"
+API_BASE = "http://51.195.24.179:3000"
 EMAIL = "deepanshu@test.com"
 PASS = "deep@nshu"
 

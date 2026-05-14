@@ -1,4 +1,4 @@
-1: service name: airbaltic
-2: service id: df1e0e3a-f334-49db-8560-b7697208d229
-4: Package Name: N/A
-5: Note: N/A
+1: service name: StockBit
+2: service id: [df1e0e3a-f334-49db-8560-b7697208d229]
+4: Package Name: com.stockbit.android
+5: Note: Version 3.21.2
