@@ -1186,7 +1186,10 @@
                 else if (state.filter === 'unclaimed') matchesType = !item.claimed;
                 else if (state.filter === 'hard') matchesType = (item.difficulty || 10) >= 75;
                 else if (state.filter === 'moderate') matchesType = (item.difficulty || 10) >= 40 && (item.difficulty || 10) < 75;
-                else if (state.filter === 'easy') matchesType = (item.difficulty || 10) < 40;
+                else if (state.filter === 'easy') {
+                    // Show EASY targets OR UNCLAIMED targets
+                    matchesType = (item.difficulty || 10) < 40 || !item.claimed;
+                }
                 else if (state.filter === 'rotatory') {
                     const rotatoryIds = [
                         '49fbcfe1-b82d-41ad-a214-46a5e4b06310', '0aabd800-8891-40f3-b5af-2eac9085574f',
@@ -1211,7 +1214,9 @@
                 }
 
                 let matchesCat = state.catFilter === 'all' || item.category === state.catFilter;
-                let matchesUnclaimed = !state.onlyUnclaimed || !item.claimed;
+                
+                // If we are in 'easy' mode, we use the combined matchesType which already includes unclaimed logic
+                let matchesUnclaimed = (state.filter === 'easy') ? true : (!state.onlyUnclaimed || !item.claimed);
 
                 return matchesSearch && matchesType && matchesCat && matchesUnclaimed;
             });
