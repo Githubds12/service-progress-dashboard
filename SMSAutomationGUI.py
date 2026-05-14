@@ -232,6 +232,8 @@ class SMSAutomationApp:
         for item in self.tree_live.get_children():
             self.tree_live.delete(item)
             
+        self.update_raw_output(f"[*] Searching for '{service}'...")
+            
         def fetch():
             found_live = False
             try:
@@ -240,6 +242,7 @@ class SMSAutomationApp:
                 data = res.json()
                 if data.get("status") == "Data retrieved successfully" and data.get("data"):
                     found_live = True
+                    self.root.after(0, lambda: self.update_raw_output(f"[+] Found {len(data['data'])} live providers."))
                     for item in data["data"]:
                         raw_ccode = item.get("ccode")
                         raw_op = item.get("operator")
@@ -253,31 +256,39 @@ class SMSAutomationApp:
                         tag = "high" if is_high else ""
                         
                         country_name = item.get("country") or "Unknown"
-                        self.tree_live.insert("", "end", values=(ccode, country_name, display_op, item.get("access_count", 0), rating), tags=(tag,))
+                        count = item.get("access_count", 0)
+                        self.root.after(0, lambda c=ccode, cn=country_name, d=display_op, ct=count, r=rating, t=tag: 
+                                       self.tree_live.insert("", "end", values=(c, cn, d, ct, r), tags=(t,)))
             except Exception as e:
-                print(f"API Error: {e}")
+                self.root.after(0, lambda err=str(e): self.update_raw_output(f"[-] API Error: {err}"))
 
             # Fallback to Offline Database
             if service in self.offline_data:
-                for item in self.offline_data[service]:
+                offline_items = self.offline_data[service]
+                self.root.after(0, lambda: self.update_raw_output(f"[*] Checking offline DB... found {len(offline_items)} entries."))
+                for item in offline_items:
                     ccode = item.get("ccode", "").upper()
                     op = item.get("operator", "").lower()
                     
-                    # Avoid duplicates if already found in live
-                    exists = False
-                    for child in self.tree_live.get_children():
-                        if self.tree_live.item(child)["values"][0] == ccode and self.tree_live.item(child)["values"][2].replace("*", "").strip().lower() == op:
-                            exists = True
-                            break
+                    # Check for duplicates on main thread or keep track here
+                    is_high = ccode in HIGH_SUCCESS_OPERATORS and op in HIGH_SUCCESS_OPERATORS[ccode]
+                    display_op = f"{op.upper()}"
+                    rating = "OFFLINE"
+                    country = item.get("country", "Unknown")
+                    count = item.get("access_count", "N/A")
                     
-                    if not exists:
-                        is_high = ccode in HIGH_SUCCESS_OPERATORS and op in HIGH_SUCCESS_OPERATORS[ccode]
-                        display_op = f"{op.upper()}"
-                        rating = "OFFLINE"
-                        self.tree_live.insert("", "end", values=(ccode, item.get("country", "Unknown"), display_op, item.get("access_count", "N/A"), rating), tags=("offline",))
+                    self.root.after(0, lambda c=ccode, cn=country, d=display_op, ct=count, r=rating: 
+                                   self.tree_live.insert("", "end", values=(c, cn, d, ct, r), tags=("offline",)))
+            else:
+                self.root.after(0, lambda: self.update_raw_output(f"[-] No offline data for '{service}'."))
             
-            if not self.tree_live.get_children():
-                self.root.after(0, lambda: messagebox.showinfo("No Data", f"No live or offline providers found for '{service}'."))
+            def check_empty():
+                if not self.tree_live.get_children():
+                    messagebox.showinfo("No Data", f"No live or offline providers found for '{service}'.\n\nTry searching for common services like 'whatsapp', 'telegram', or 'tiktok'.")
+            
+            self.root.after(500, check_empty)
+                
+        threading.Thread(target=fetch, daemon=True).start()
 
     def search_country(self):
         query = self.country_entry.get().strip().upper()
