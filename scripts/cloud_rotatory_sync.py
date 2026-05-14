@@ -143,7 +143,17 @@ def main():
             target['history'] = history
             updated = True
             
-    # 3. Write back if updated
+    # 3. Always update last_sync.json for the dashboard
+    status_file = "dashboard/last_sync.json"
+    status_data = {
+        "last_sync": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "status": "SUCCESS",
+        "message": "Cloud sync complete." if updated else "No new messages."
+    }
+    with open(status_file, "w") as f:
+        json.dump(status_data, f, indent=4)
+
+    # 4. Write back if updated
     if updated:
         with open(JS_FILE_PATH, 'w', encoding='utf-8') as f:
             f.write(f"window.apkhunterData = {json.dumps(data, indent=4, ensure_ascii=False)};\n")

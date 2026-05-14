@@ -39,12 +39,12 @@ jobs:
         run: |
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
-          git add dashboard/apkhunter_data.js
+          git add dashboard/apkhunter_data.js dashboard/last_sync.json
           
-          # Only commit if there are changes
+          # Commit and push (always push last_sync.json)
           if git diff --staged --quiet; then
-            echo "No new messages found. Skipping commit."
+            echo "No changes to commit."
           else
-            git commit -m "Data: Auto-sync latest Rotatory SMS messages [GitHub Actions]"
+            git commit -m "Sync: Automated SMS Intelligence Update [GitHub Actions]"
             git push origin main
           fi

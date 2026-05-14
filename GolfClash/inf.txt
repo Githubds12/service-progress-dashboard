@@ -1,0 +1,3 @@
+service name: golfclash
+service id: c81a0f61-f580-49fe-b650-ab54aea72b15
+Playdemic - Your Golf Clash code is: 6197
