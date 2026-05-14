@@ -121,6 +121,8 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
 
     def run_tool(self, tool, target):
         import shutil
+        import os
+        
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
             "dnsx": ["dnsx", "-d", target, "-silent"],
@@ -135,8 +137,24 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             return False, f"UNKNOWN_TOOL: Agent '{tool}' is not registered in the gateway."
             
         binary = commands[tool][0]
-        if not shutil.which(binary):
-            return False, f"BINARY_MISSING: '{binary}' is not installed or not in PATH on the server environment (Render/Linux). Please ensure the tool is available."
+        binary_path = shutil.which(binary)
+        
+        # Search in common Go binary locations if not in PATH
+        if not binary_path:
+            alt_paths = [
+                os.path.expanduser(f"~/bin/{binary}"),
+                os.path.expanduser(f"~/go/bin/{binary}"),
+                f"/usr/local/bin/{binary}",
+                f"/usr/bin/{binary}"
+            ]
+            for p in alt_paths:
+                if os.path.exists(p):
+                    binary_path = p
+                    commands[tool][0] = p
+                    break
+        
+        if not binary_path:
+            return False, f"BINARY_MISSING: '{binary}' is not installed or not in PATH on the server environment (Render/Linux). Please ensure 'bash build.sh' was run."
 
         try:
             print(f"[*] Executing {tool} on {target}...")
