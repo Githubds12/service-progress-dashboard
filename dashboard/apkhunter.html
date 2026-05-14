@@ -1222,6 +1222,15 @@
 
                 return matchesSearch && matchesType && matchesCat && matchesUnclaimed;
             });
+
+            if (state.filter === 'easy') {
+                state.filteredData.sort((a, b) => {
+                    if (a.claimed !== b.claimed) return a.claimed ? 1 : -1;
+                    return (a.difficulty || 10) - (b.difficulty || 10);
+                });
+            } else if (state.filter !== 'rotatory') {
+                state.filteredData.sort((a, b) => (a.difficulty || 10) - (b.difficulty || 10));
+            }
         }
 
         function changePage(delta) { state.page += delta; render(); }
