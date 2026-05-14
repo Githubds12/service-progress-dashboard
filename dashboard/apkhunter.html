@@ -53,11 +53,11 @@
             padding: 20px 0; border-bottom: 1px solid var(--border);
             margin-bottom: 40px; backdrop-filter: blur(10px);
         }
-        .logo {
-            font-size: 24px; font-weight: 700; letter-spacing: 3px; color: var(--accent);
-            text-transform: uppercase; display: flex; align-items: center; gap: 15px;
-            text-shadow: 0 0 10px var(--accent-glow);
-        }
+            <div class="logo">
+                <i>AH</i>
+                APK HUNTER INTEL
+                <div id="syncStatus" style="margin-left: 20px; font-size: 10px; color: #555; border: 1px solid #222; padding: 4px 10px; border-radius: 4px; font-family: monospace; letter-spacing: 1px;">📡 SYNC: INITIALIZING...</div>
+            </div>
         .logo i { font-style: normal; border: 2px solid var(--accent); padding: 4px 12px; border-radius: 8px; font-size: 18px; }
 
         .nav-links { display: flex; gap: 20px; }
@@ -1124,7 +1124,26 @@
             const data = window.apkhunterData || [];
             data.forEach(item => { if (state.localClaims[item.id] !== undefined) item.claimed = state.localClaims[item.id]; });
             state.filteredData = data;
+            
+            updateSyncStatus();
+            setInterval(updateSyncStatus, 60000);
+            
             applyFilters(); render();
+        }
+
+        async function updateSyncStatus() {
+            const timeEl = document.getElementById('lastSyncTime');
+            const statusEl = document.getElementById('syncStatus');
+            if (!timeEl || !statusEl) return;
+            try {
+                const response = await fetch('last_sync.json?v=' + Date.now());
+                if (response.ok) {
+                    const data = await response.json();
+                    timeEl.innerText = data.last_sync;
+                    statusEl.style.color = data.status === 'SUCCESS' ? '#00ffaa' : '#ff4444';
+                    statusEl.title = data.message;
+                }
+            } catch (e) {}
         }
 
         function setFilter(f, el) {
