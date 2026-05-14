@@ -88,14 +88,11 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 return
             
             success, message = self.install_package(tid)
-            if success:
-                self.send_response(200)
-                self.send_header('Content-type', 'application/json')
-                self.send_header('Access-Control-Allow-Origin', '*')
-                self.end_headers()
-                self.wfile.write(json.dumps({"status": "success", "message": message}).encode())
-            else:
-                self.send_error_msg(500, message)
+            self.send_response(200)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "success" if success else "error", "message": message}).encode())
             return
 
         elif self.path.startswith('/api/tools/run'):
@@ -108,8 +105,13 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_msg(400, "Tool and Target are required")
                 return
             
-            success, output = self.run_tool(tool, target)
-            self.send_response(200 if success else 500)
+            # Normalize target: lower() and check if it's a label like 'Facebook'
+            domain = target.lower()
+            if domain == 'facebook': domain = 'facebook.com'
+            if domain == 'google': domain = 'google.com'
+            
+            success, output = self.run_tool(tool, domain)
+            self.send_response(200) # Always 200 to let UI handle the error message
             self.send_header('Content-type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
@@ -118,6 +120,7 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         return super().do_GET()
 
     def run_tool(self, tool, target):
+        import shutil
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
             "dnsx": ["dnsx", "-d", target, "-silent"],
@@ -129,17 +132,23 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         }
         
         if tool not in commands:
-            return False, f"Unknown tool: {tool}"
+            return False, f"UNKNOWN_TOOL: Agent '{tool}' is not registered in the gateway."
             
+        binary = commands[tool][0]
+        if not shutil.which(binary):
+            return False, f"BINARY_MISSING: '{binary}' is not installed or not in PATH on the server environment (Render/Linux). Please ensure the tool is available."
+
         try:
-            print(f"[*] Running {tool} on {target}...")
+            print(f"[*] Executing {tool} on {target}...")
             result = subprocess.run(commands[tool], capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
-                return True, result.stdout
+                return True, result.stdout if result.stdout.strip() else f"Execution finished. No results found for {target}."
             else:
-                return False, result.stderr or result.stdout
+                return False, f"TOOL_ERROR: {result.stderr or result.stdout}"
+        except subprocess.TimeoutExpired:
+            return False, "TIMEOUT: The agent execution exceeded the 300s limit."
         except Exception as e:
-            return False, f"Execution Error: {str(e)}"
+            return False, f"SYSTEM_ERROR: {str(e)}"
 
     def install_package(self, tid):
         try:

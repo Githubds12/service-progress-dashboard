@@ -230,9 +230,27 @@
                 </div>
 
                 <div style="display: grid; grid-template-columns: 280px 1fr; gap: 30px;">
-                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-                        <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
-                        <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
+                            <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
+
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Agent Hub</h3>
+                                <button onclick="window.switchSection('agents')" style="background: none; border: none; color: var(--accent); font-size: 10px; cursor: pointer;">FULL CONSOLE</button>
+                            </div>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="font-size: 9px; padding: 6px 10px;">SUBFINDER</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="font-size: 9px; padding: 6px 10px;">DNSX</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="font-size: 9px; padding: 6px 10px;">AMASS</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="font-size: 9px; padding: 6px 10px;">ASSETFINDER</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="font-size: 9px; padding: 6px 10px;">NAABU</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="font-size: 9px; padding: 6px 10px;">HTTPX</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="grid-column: span 2; font-size: 9px; padding: 6px 10px; border-color: var(--accent);">KATANA SPIDER</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 30px;">
