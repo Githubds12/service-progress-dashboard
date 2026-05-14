@@ -227,9 +227,24 @@
                 </div>
 
                 <div style="display: grid; grid-template-columns: 280px 1fr; gap: 30px;">
-                    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-                        <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
-                        <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
+                            <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
+                        </div>
+
+                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
+                            <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Agent Hub (Tools)</h3>
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="font-size: 9px; padding: 6px 10px;">SUBFINDER</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="font-size: 9px; padding: 6px 10px;">DNSX</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="font-size: 9px; padding: 6px 10px;">AMASS</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="font-size: 9px; padding: 6px 10px;">ASSETFINDER</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="font-size: 9px; padding: 6px 10px;">NAABU</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="font-size: 9px; padding: 6px 10px;">HTTPX</button>
+                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="grid-column: span 2; font-size: 9px; padding: 6px 10px;">KATANA</button>
+                            </div>
+                        </div>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 30px;">
@@ -243,6 +258,15 @@
                                 <thead><tr><th>Priority</th><th>Target</th><th>Finding</th></tr></thead>
                                 <tbody id="reconBody"></tbody>
                             </table>
+                        </div>
+
+                        <!-- TERMINAL OUTPUT -->
+                        <div style="background: #000; border: 1px solid var(--border); border-radius: 12px; padding: 15px; font-family: 'JetBrains Mono', monospace; min-height: 200px; display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                                <span style="font-size: 10px; color: var(--accent); font-weight: 700;">COMMAND CONSOLE</span>
+                                <button onclick="$('terminalContent').innerText = '> Console cleared.'" style="background: none; border: none; color: var(--text-dim); cursor: pointer; font-size: 10px;">CLEAR</button>
+                            </div>
+                            <div id="terminalContent" style="font-size: 11px; color: #0f0; line-height: 1.4; overflow-y: auto; max-height: 300px; white-space: pre-wrap;">> Ready for agent deployment...</div>
                         </div>
                     </div>
                 </div>
@@ -441,6 +465,29 @@
                 </div>
             `).join('');
         }
+
+        window.runSecurityTool = async (tool) => {
+            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
+            if (!target) return alert("Select a target first.");
+            
+            const term = $('terminalContent');
+            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] Deploying agent: ${tool.toUpperCase()} on ${target.name}...`;
+            term.scrollTop = term.scrollHeight;
+
+            try {
+                const res = await fetch(`https://service-progress-portal.onrender.com/api/tools/run?tool=${tool}&target=${target.name}`);
+                const data = await res.json();
+                
+                if (data.status === 'success') {
+                    term.innerHTML += `\n<span style="color: #00ff00;">> Execution complete. Output received.</span>\n${data.output}`;
+                } else {
+                    term.innerHTML += `\n<span style="color: #ff0000;">> Agent failed: ${data.output}</span>`;
+                }
+            } catch (e) {
+                term.innerHTML += `\n<span style="color: #ff0000;">> System Error: Unable to reach tool gateway.</span>`;
+            }
+            term.scrollTop = term.scrollHeight;
+        };
 
         function save() { localStorage.setItem('ai_sessions', JSON.stringify(window.state.aiSessions)); }
         document.addEventListener('DOMContentLoaded', init);

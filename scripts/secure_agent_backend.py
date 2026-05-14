@@ -97,7 +97,49 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             else:
                 self.send_error_msg(500, message)
             return
+
+        elif self.path.startswith('/api/tools/run'):
+            query = urllib.parse.urlparse(self.path).query
+            params = urllib.parse.parse_qs(query)
+            tool = params.get('tool', [None])[0]
+            target = params.get('target', [None])[0]
+            
+            if not tool or not target:
+                self.send_error_msg(400, "Tool and Target are required")
+                return
+            
+            success, output = self.run_tool(tool, target)
+            self.send_response(200 if success else 500)
+            self.send_header('Content-type', 'application/json')
+            self.send_header('Access-Control-Allow-Origin', '*')
+            self.end_headers()
+            self.wfile.write(json.dumps({"status": "success" if success else "error", "output": output}).encode())
+            return
         return super().do_GET()
+
+    def run_tool(self, tool, target):
+        commands = {
+            "subfinder": ["subfinder", "-d", target, "-silent"],
+            "dnsx": ["dnsx", "-d", target, "-silent"],
+            "amass": ["amass", "enum", "-d", target, "-passive"],
+            "assetfinder": ["assetfinder", "--subs-only", target],
+            "naabu": ["naabu", "-host", target, "-silent"],
+            "httpx": ["httpx", "-u", target, "-silent"],
+            "katana": ["katana", "-u", target, "-silent"]
+        }
+        
+        if tool not in commands:
+            return False, f"Unknown tool: {tool}"
+            
+        try:
+            print(f"[*] Running {tool} on {target}...")
+            result = subprocess.run(commands[tool], capture_output=True, text=True, timeout=300)
+            if result.returncode == 0:
+                return True, result.stdout
+            else:
+                return False, result.stderr or result.stdout
+        except Exception as e:
+            return False, f"Execution Error: {str(e)}"
 
     def install_package(self, tid):
         try:
