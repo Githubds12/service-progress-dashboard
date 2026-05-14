@@ -606,6 +606,16 @@
 
                 <div class="chart-card">
                     <div class="card-header">
+                        <div class="card-title">TIME SPENT (USER ACTIVITY)</div>
+                    </div>
+                    <div style="height: 250px; position: relative;">
+                        <canvas id="activityChart"></canvas>
+                    </div>
+                    <div id="noActivityMessage" style="display:none; text-align:center; padding: 40px; color: var(--text-dim); font-size: 0.8rem;">NO ACTIVITY LOGGED FOR THIS PERIOD</div>
+                </div>
+
+                <div class="chart-card">
+                    <div class="card-header">
                         <div class="card-title">STRATEGIC REFLECTIONS</div>
                         <div class="controls">
                             <button class="btn btn-sm" style="padding: 4px 10px; font-size: 0.6rem;" onclick="window.navTrajectory('prev')">← PREV</button>
