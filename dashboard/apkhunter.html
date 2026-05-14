@@ -1145,13 +1145,33 @@
         }
 
         function init() {
+            const params = new URLSearchParams(window.location.search);
+            if (params.has('filter')) state.filter = params.get('filter');
+            if (params.has('page')) state.page = parseInt(params.get('page'));
+
             const data = window.apkhunterData || [];
-            data.forEach(item => { if (state.localClaims[item.id] !== undefined) item.claimed = state.localClaims[item.id]; });
+            data.forEach(item => { 
+                const claimData = state.localClaims[item.id];
+                if (claimData !== undefined) {
+                    item.claimed = !!claimData;
+                    item.claimed_at = typeof claimData === 'number' ? claimData : (claimData ? 1 : 0);
+                } else {
+                    item.claimed_at = 0;
+                }
+            });
             state.filteredData = data;
             
             updateSyncStatus();
             setInterval(updateSyncStatus, 60000);
             
+            // Sync UI state for filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.innerText.toLowerCase() === state.filter.toLowerCase()) {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                }
+            });
+
             applyFilters(); render();
         }
 
@@ -1229,6 +1249,11 @@
                     if (a.claimed !== b.claimed) return a.claimed ? 1 : -1;
                     return (a.difficulty || 10) - (b.difficulty || 10);
                 });
+            } else if (state.filter === 'claimed') {
+                state.filteredData.sort((a, b) => {
+                    // Sort by claimed_at descending
+                    return (b.claimed_at || 0) - (a.claimed_at || 0);
+                });
             } else if (state.filter !== 'rotatory') {
                 state.filteredData.sort((a, b) => (a.difficulty || 10) - (b.difficulty || 10));
             }
@@ -1241,7 +1266,9 @@
             if (target) { 
                 target[field] = value; 
                 if (field === 'claimed') { 
-                    state.localClaims[id] = value; 
+                    const ts = value ? Date.now() : false;
+                    target.claimed_at = ts || 0;
+                    state.localClaims[id] = ts; 
                     localStorage.setItem('local_claims', JSON.stringify(state.localClaims)); 
                 } 
                 
