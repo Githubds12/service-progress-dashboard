@@ -1,0 +1,23 @@
+Researcher: Deepanshu Singh
+Date: 07 May, 2026
+ru.utair.android 5.11.0
+Official Website: utair.ru
+Google Play Store: Utair: авиабилеты и регистрация
+Package Name: ru.utair.android
+APKPure: Utair (apkpure.com)
+
+Service: utair
+Service ID: 7fd31965-0477-48fc-82ee-ecf87e4b825e
+Service SMS: Рейс UT801 от 110426 изменен. Вылет 1400, прилет в 2010: ut0.ru/YMmVWe
+
+Flow: The application uses a multi-step login flow. First, an OAuth token is obtained via /oauth/token. Then, the device is registered at /api/v1/devices/. Finally, a login attempt is initiated at /api/v1/login/ with confirmation_type='standard', returning an attempt_id. Note: The first OTP request typically does not trigger an SMS; a second request after a 5-minute cooldown is required for successful delivery. The user then submits the SMS code at /api/v1/login/confirm/.
+
+Proofs:
+1. SMS Request: POST https://b.utair.ru/api/v1/login/ with body {"login_type":"phone","login":"+39 351 739 9395","confirmation_type":"standard"}
+2. SMS Submission: POST https://b.utair.ru/api/v1/login/confirm/ with body {"attempt_id":"aa4f6163-3a79-487e-95f3-6dafeaa2f185","code":"2555"}
+
+Captcha: undefined
+Rate Limits: 5-minute cooldown required for successful SMS delivery on second attempt.
+Encryption: Standard HTTPS with Bearer Token and Custom Headers (timestamph)
+Bot Protection: Internal (Session and Device ID tracking)
+Endpoints Involved: 5

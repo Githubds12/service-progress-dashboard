@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-26
+ru.foodfox.client 26.15.0
+
+Service: yandex.eda
+Service ID: 93bdc7b4-a9d4-47ae-ab03-c0413e4295e1
+Service SMS: <#>Your confirmation code: 356532. +yTutpMBdnm
+
+1. YandexEats
+YandexEats is a major food and grocery delivery service in Russia and CIS countries.
+Official Website: eda.yandex.ru
+Google Play Store: Yandex Eats
+Package Name: ru.foodfox.client
+
+Proof of Captcha: Yandex SmartCaptcha (standard Passport flow)
+Proof of Rate Limits: High (Standard Yandex Passport policy)
+Proof of Encryption: None observed (standard TLS)
+Flow: POST /bundle/auth/password/submit/ -> POST /track/check-phone-confirmation

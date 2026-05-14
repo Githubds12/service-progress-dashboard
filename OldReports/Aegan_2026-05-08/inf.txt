@@ -1,0 +1,5 @@
+aegean [81d591bf-1cae-4ec3-bedd-8b81fa52bb15]
+Package Name: com.aegean.airlines.prod
+Version: 102
+Official Website: en.aegeanair.com
+Google Play Store: Aegean Airlines

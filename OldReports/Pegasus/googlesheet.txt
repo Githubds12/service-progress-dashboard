@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-28
+com.pozitron.pegasus 3.69.0
+
+Service: pegasus
+Service ID: bfd9a59d-473e-473d-9803-016d002f0de3
+Service SMS: Dear Dami , Please enter the Verification Code 716999 to change your e-mail address in your Pegasus BolBol membership, do not share this code with anyone else.
+
+1. Pegasus Airlines
+Pegasus is a Turkish low-cost airline.
+Official Website: flypgs.com
+Google Play Store: Pegasus: Cheap Flight Tickets
+Package Name: com.pozitron.pegasus
+
+Proof of Captcha: Akamai Bot Manager Sensor Data required via X-acf-sensor-data header
+Proof of Rate Limits: Unknown
+Proof of Encryption: None observed (standard TLS)
+Flow: POST /registration -> POST /registration/validate-member-code

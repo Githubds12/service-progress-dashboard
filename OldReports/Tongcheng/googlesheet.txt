@@ -1,0 +1,23 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.tongcheng.android 11.2.1.1
+
+Service: Tongcheng (同程旅行)
+Service ID: 4bfdb1cd-185e-4d59-9df7-ffb00c800a18
+Service SMS: 【同程旅行】登机口提醒：FD1042航班登机口是3...
+
+Official Website: ly.com
+Google Play Store: 同程旅行
+
+Flow: 
+1. Captcha Initialization: GET/POST to fengkongcloud.cn (Shuidi Risk Control)
+2. Risk Verification: https://shuidi.tc.com/risk/verify (observed in related flows)
+3. SMS Request: Typically involves passport.ly.com or passport.17u.cn (stealthy/encrypted in capture)
+
+Captcha: selection-set (FengKongCloud)
+Rate Limits: Unknown
+Encryption: Strong (Encrypted payloads observed in APM and Trajectory logs)
+Bot Protection: FengKongCloud (Shuidi)
+Endpoints Involved: 5+
+
+Service Description: Tongcheng Travel is a leading travel service provider in China, offering flight bookings, hotel reservations, and travel packages.

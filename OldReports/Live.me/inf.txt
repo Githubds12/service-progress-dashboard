@@ -1,0 +1,5 @@
+connect [eaccb63a-baa3-4306-8822-88a606266bb8]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+[LiveMe+] "6889" is your confirmation code
+Package Name: com.cmcm.live
+Version: 4.9.25

@@ -1,0 +1,5 @@
+lc waikiki [dfa2a296-c993-473d-953d-8801a818cb90]
+Package Name: com.lcwaikiki.android
+Version: 4.0.41
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+رمز التحقق الخاص بك لتأكيد رقم هاتفك هو: 76738 :LC WAIKIKI

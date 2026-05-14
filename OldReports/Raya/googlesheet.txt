@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-26
+com.raya_app 22004
+
+Service: Raya
+Service ID: 575ee484-c51f-4ea5-9f05-ab2fe9b58454
+Service SMS: Ваш код перевірки Raya: 70797
+
+1. Raya
+Raya is a private, membership-based community app for people in creative industries.
+Official Website: rayaculture.com
+Google Play Store: Raya
+Package Name: com.raya_app
+
+Proof of Captcha: https://captcha.rayaculture.com/raya_culture_turnstile?sitekey=0x4AAAAAABkppCfyyAI73w03 (Cloudflare Turnstile Managed)
+Proof of Rate Limits: Unknown (No rate limits observed in HAR trace)
+Proof of Encryption: None observed (standard TLS)
+Flow: POST /auth/signup (Phone + Captcha) -> POST /auth/verify-otp (Phone + Token)

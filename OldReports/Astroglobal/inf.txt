@@ -1,0 +1,5 @@
+globalastro [7dda598d-2fd3-4f67-9217-f812488e41e9]
+Package Name: com.astroglobal.app
+Version: 1.0.0
+Official Website: astroglobal.com
+Google Play Store: AstroGlobal

@@ -1,0 +1,3 @@
+pullandbear [d6b7c201-82e2-441f-976a-0ada18844b4a]
+Package Name: com.inditex.pullandbear
+Version: 2604.1.0

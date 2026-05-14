@@ -1,0 +1,21 @@
+E-GetS Automation Notes
+----------------------
+Package: com.egets.takeaways
+Version: 4.6.5
+Endpoints:
+- POST /api/user/app/1.0/mobile/sign/app (Step 1: Number Submit)
+- GET /api/user/app/1.3/captcha/send (Step 2: SMS Send)
+- POST /api/magic/client/1.1/user/login/1/register (Step 3: OTP Submit)
+
+Security:
+- E1 Encryption: Encrypts 'data' field.
+- S2 Signature: 'x-sign' header required.
+- Dynamic Token: 'verify' param in SMS send.
+
+Test Results:
+- Replay with current time: Failed (sign_type miss / sign mismatch)
+- Replay with old time: Failed (Request timestamp is invalid)
+
+Next Steps:
+- Extract APK and reverse E1/S2 logic.
+- Implement signing in Python to enable automation.

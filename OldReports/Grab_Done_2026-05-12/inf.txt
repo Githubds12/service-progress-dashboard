@@ -1,0 +1,11 @@
+service name: grab
+service id: ed65e20e-4d64-4684-b9bd-ede11a19140c
+UUID: [ed65e20e-4d64-4684-b9bd-ede11a19140c]
+Sample OTP: 333333 is your GRAB sign-in code.
+
+Package Name: com.grabtaxi.passenger
+Version: 5.408.0
+Verification Type: SMS + Arkose Labs Captcha
+Official Website: grab.com
+Google Play: Grab - Taxi & Food Delivery
+APKPure: Grab APK for Android Download (apkpure.com)

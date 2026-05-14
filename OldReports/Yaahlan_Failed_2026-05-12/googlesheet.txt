@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-12
+
+com.immomo.biz.yaahlan 2.4.8
+
+Service: Yaahlan: Voice Chat Party & Games
+Service ID: dea9e292-dde0-4c86-9d36-1c54a9cbd2db
+Service SMS: Your code is 310499
+
+Flow: Phone -> Send Verify Code (sendVerifyCode) -> UpVerify (Send SMS to Number) -> Login (loginWeb)
+
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: Encrypted mdata payload
+
+Status: Unsuccessful (Encrypted Payload)
+One-liner: The app uses an encrypted mdata payload (Immomo Security) which prevents automated interaction and API extraction.
+Service Description: Yaahlan is a voice chat party app with encrypted communication layers and UpVerify (SMS sending) verification.

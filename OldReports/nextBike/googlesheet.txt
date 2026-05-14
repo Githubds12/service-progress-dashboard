@@ -1,0 +1,14 @@
+Researcher: Deepanshu Singh
+Date: April 26, 2026
+de.nextbike v5.2.25
+Service: nextBike
+Service ID: nextbike
+Service SMS: <#> Welcome to WienMobil Rad! Your phone number: +359884173319. Your PIN: 519806. Login at https://www.wienmobilrad.at/ GbHsVs75zIp
+Official Website: nextbike.net
+Google Play Store: nextbike – official app
+Flow: User requests registration -> GET request to register.json -> PIN sent via SMS -> User logs in -> GET request to login.json with PIN.
+Captcha: None
+Rate Limits: Unknown
+Encryption: Standard
+Endpoints: https://api2.nextbike.net/api/v1.1/register.json, https://api2.nextbike.net/api/v1.1/login.json
+Description: nextbike is a smart bike-sharing system with thousands of bikes in over 300 cities across 25 countries.

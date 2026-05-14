@@ -1,0 +1,21 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-08
+
+com.soul.android.international 2.73.1
+
+Service: Soul
+Service ID: abd614a1-b2f1-4fd1-89c3-1f327f95d5af
+Service SMS: Your code is 2555
+Official Website: soulwonderland.com
+Google Play Store: Soul - Chat, Match, Party
+Package Name: com.soul.android.international
+Service Description: Soul is a global social networking application developed by SOUL EGG HOLDINGS LIMITED that allows users to chat, match, and party in a virtual wonderland.
+
+Flow: validate/register -> smsCode/deliver -> smsCode/validate
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: Custom api-sign v7
+Bot Protection: Request Signing and Device Fingerprinting
+Endpoints Involved: 3
+Automation Feasibility: Low < 40%
+Proof: https://api-global.soulapp.me/account/smsCode/validate?area=39&code=2555&phone=3720517396&type=REGISTER

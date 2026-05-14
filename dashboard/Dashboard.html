@@ -424,7 +424,7 @@
             <div class="logo">OPERATIONAL INTELLIGENCE <span style="font-size: 0.7rem; color: var(--accent-secondary); vertical-align: middle; margin-left: 10px; opacity: 0.8;">[OPERATIONAL CYCLE: MAY 7th - JUNE 6th, 2026]</span></div>
             <div class="header-meta">
                 <div>SYSTEM STATUS: <span id="syncStatus" class="status-ready">NOMINAL</span></div>
-                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">11:21:38</span></div>
+                <div style="margin-top: 8px; opacity: 0.8;">LAST SYNC: <span id="lastSyncTime">11:26:14</span></div>
             </div>
         </header>
 
@@ -602,16 +602,6 @@
                         <canvas id="effortPieChart"></canvas>
                     </div>
                     <div id="noDataMessage" style="display:none; text-align:center; padding: 40px; color: var(--text-dim); font-size: 0.9rem;">NO TELEMETRY DATA FOR THIS PERIOD</div>
-                </div>
-
-                <div class="chart-card">
-                    <div class="card-header">
-                        <div class="card-title">TIME SPENT (USER ACTIVITY)</div>
-                    </div>
-                    <div style="height: 250px; position: relative;">
-                        <canvas id="activityChart"></canvas>
-                    </div>
-                    <div id="noActivityMessage" style="display:none; text-align:center; padding: 40px; color: var(--text-dim); font-size: 0.8rem;">NO ACTIVITY LOGGED FOR THIS PERIOD</div>
                 </div>
 
                 <div class="chart-card">
@@ -813,6 +803,8 @@
             const finalColors = (logEntry && logEntry.logs.length) ? ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'] : ['rgba(255, 255, 255, 0.05)'];
 
             $('effortPieChart').style.display = 'block';
+            $('noDataMessage').style.display = 'none';
+
             window.pieChartInst = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
@@ -824,60 +816,15 @@
                         hoverOffset: (logEntry && logEntry.logs.length) ? 20 : 0
                     }]
                 },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: { 
-                        legend: { position: 'bottom', labels: { color: '#e6edf3', font: { family: 'Outfit', size: 11 }, padding: 15 } }
-                    },
-                    cutout: '75%'
-                }
-            });
-
-            // Activity Bar Chart
-            const activityCtx = $('activityChart').getContext('2d');
-            if (window.activityChartInst) window.activityChartInst.destroy();
-            
-            const activityLog = JSON.parse(localStorage.getItem('activity_log') || '[]');
-            const todayActions = activityLog.filter(a => a.timestamp.startsWith(targetDate));
-            
-            if (todayActions.length === 0) {
-                $('activityChart').style.display = 'none';
-                $('noActivityMessage').style.display = 'block';
-            } else {
-                $('activityChart').style.display = 'block';
-                $('noActivityMessage').style.display = 'none';
-                
-                const hourlyData = new Array(24).fill(0);
-                todayActions.forEach(a => {
-                    const hour = new Date(a.timestamp).getHours();
-                    hourlyData[hour]++;
-                });
-
-                window.activityChartInst = new Chart(activityCtx, {
-                    type: 'bar',
-                    data: {
-                        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
-                        datasets: [{
-                            label: 'ACTIONS',
-                            data: hourlyData,
-                            backgroundColor: 'rgba(112, 0, 255, 0.4)',
-                            borderColor: '#7000ff',
-                            borderWidth: 2,
-                            borderRadius: 4
-                        }]
-                    },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { legend: { display: false } },
-                        scales: {
-                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { family: 'Orbitron', size: 9 }, stepSize: 1 } },
-                            x: { grid: { display: false }, ticks: { color: '#8b949e', font: { family: 'Orbitron', size: 8 } } }
-                        }
+                        plugins: { 
+                            legend: { position: 'bottom', labels: { color: '#e6edf3', font: { family: 'Outfit', size: 11 }, padding: 15 } }
+                        },
+                        cutout: '75%'
                     }
                 });
-            }
         };
 
         window.renderLogsAndReflections = () => {

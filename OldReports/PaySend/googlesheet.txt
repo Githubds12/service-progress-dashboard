@@ -1,0 +1,22 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-29
+com.paysend.app 4.9.10
+
+Service: PaySend
+Service ID: 1d5a45f4-17d7-40a6-bb70-0a7e0f2b966a
+Service SMS: Paysend: 810852 is your security code for registration. It expires in 10 minutes.
+
+Official Website: paysend.com
+Google Play Store: Paysend: Send Money Abroad
+
+Flow: 
+1. Phone Submission: POST https://api.paysend.com/api/json/registration (JSON Payload)
+2. OTP Submission: POST https://api.paysend.com/api/xml.jsp (XML Payload with request_type: submit_smsconfirm_code)
+
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: None
+Bot Protection: Cloudflare
+Endpoints Involved: 2
+
+Service Description: Paysend is a global fintech company that offers international money transfers, multi-currency accounts, and payment solutions.

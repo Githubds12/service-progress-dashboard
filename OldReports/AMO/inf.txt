@@ -1,0 +1,9 @@
+amo [07b4ab2f-d362-4611-8b2a-5ecc0835c9e3]
+Package Name: com.xiaoyu.amo
+Version: 2.30.0
+Official Website: https://amo.co
+Google Play Store: AMO: New Friends & Chat
+APKPure: AMO: New Friends & Chat (apkpure.com)
+
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+¡Hola! Ya son amigos con Yair Huerta en Bump. Mira lo que hace: amo.co/bump

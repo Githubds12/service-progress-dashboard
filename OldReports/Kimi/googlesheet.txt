@@ -1,0 +1,19 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-12
+com.moonshot.kimichat 2.7.0
+
+Service: Kimi
+Service ID: 0544f808-f404-4632-a56c-03d987d655f0
+Service SMS: [Moonshot AI] 123456 is your verification code. Valid for 10 minutes.
+Official Website: kimi.com
+Google Play Store: Kimi - Your AI Assistant
+Package Name: com.moonshot.kimichat
+
+One-liner flow: Launch -> Config -> Device Register -> SMS Verify -> Submit OTP
+Proofs: /api/user/sms/verify-code and /api/user/register/trial endpoints identified.
+Rate Limits: Unknown
+Encryption: Standard HTTPS (JWT)
+Bot Protection: Custom Captcha (captcha_output required)
+Service Description: Kimi is a smart AI assistant from Moonshot AI, capable of reading long texts, browsing the web, and creative writing.
+Automation Feasibility: Low (30%)
+Detailed Conclusion: The registration flow is protected by a mandatory captcha challenge in the SMS delivery request. Automation requires solving this captcha. The flow also involves device registration and gateway configuration fetching.

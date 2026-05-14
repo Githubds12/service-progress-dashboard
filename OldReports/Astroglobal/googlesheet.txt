@@ -1,0 +1,12 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-10
+com.astroglobal.app 1.0.0
+Service: AstroGlobal
+Service ID: 7dda598d-2fd3-4f67-9217-f812488e41e9
+Service SMS: Your OTP is 3625
+Service Description: AstroGlobal is an astrology platform providing consultation and horoscope services.
+One-liner Flow: Submit phone number to check-user endpoint (triggers SMS) -> Submit OTP to verify-otp endpoint.
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: None
+Proof: https://api.astroglobal.com/account/check-user/ (Request/Response in report)

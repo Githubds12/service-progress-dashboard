@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-28
+com.daraz.android 9.34.0
+
+Service: daraz
+Service ID: 5dd3a22d-ba38-4e42-97a0-edc96199582f
+Service SMS: 555381 is your Daraz verification code. For your security, do not share this code.
+
+1. Daraz
+Daraz is an e-commerce platform in South Asia.
+Official Website: daraz.com.bd
+Google Play Store: Daraz Online Shopping App
+Package Name: com.daraz.android
+
+Proof of Captcha: Invisible device fingerprinting via Alibaba wua token
+Proof of Rate Limits: Unknown
+Proof of Encryption: x-sign request signing and epss/wua encryption
+Flow: POST /mtop.lazada.member.user.biz.sendverificationsms -> POST /mtop.lazada.member.user.loginbyotp

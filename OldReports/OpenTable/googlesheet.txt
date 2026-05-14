@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-03
+com.opentable 26.13.2
+
+Service: OpenTable
+Service ID: c34dfb4d-3d83-4176-ba7d-3919b5f07e73
+Service SMS: Dein OpenTable Sicherheitscode lautet: 255522
+Official Website: opentable.com
+Google Play Store: OpenTable: Restaurants Near Me
+Package Name: com.opentable
+APKPure: OpenTable (apkpure.com)
+
+One-liner Flow: SMS OTP verification via /2fa/start and /2fa/confirm endpoints.
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: Standard TLS with OAuth2 (bearer token)
+Service Description: Online restaurant-reservation service company.
+Status: Completed

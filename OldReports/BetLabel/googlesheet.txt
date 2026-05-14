@@ -1,0 +1,18 @@
+Researcher: Deepanshu Singh
+Date: 2026-04-26
+org.betlabel.client 253.0.3
+
+Service: betlabel
+Service ID: 720aff4a-1fb4-4563-804a-02d61dd91780
+Service SMS: Do not share your confirmation code with anyone: 92617
+
+1. BetLabel
+BetLabel is an online betting and casino platform.
+Official Website: betlabel.com
+Google Play Store: BetLabel
+Package Name: org.betlabel.client
+
+Proof of Captcha: Image Captcha on Registration
+Proof of Rate Limits: 300s retry timeout (RAS: 300)
+Proof of Encryption: None observed (standard TLS)
+Flow: POST /Registration -> POST /SendCode -> POST /CheckCode

@@ -1,0 +1,20 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-01
+com.urbanoutfitters.android 26.4.1
+
+Service: Urban Outfitters
+Service ID: UrbanOutFit
+Service SMS: Dein Urban Outfitters Sicherheitscode lautet: 00292. Teile diesen Code nicht mit anderen.
+
+Official Website: urbanoutfitters.com
+Google Play Store: Urban Outfitters
+Package Name: com.urbanoutfitters.android
+
+Flow: /profiles/verifications (Get referenceId) -> /profiles (Verify OTP)
+Captcha: PerimeterX (v3.3.6)
+Encryption: HTTPS
+Rate Limits: undefined
+Bot Protection: PerimeterX
+Endpoints: /api/profile/v0/uo-us/profiles/verifications, /api/profile/v1/uo-us/profiles
+Automation Feasibility: Medium (55%)
+Description: Urban Outfitters uses a two-step verification flow. Bot protection is handled by PerimeterX, which requires valid x-px headers. The verification involves a stateful referenceId.

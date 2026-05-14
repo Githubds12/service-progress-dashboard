@@ -1,0 +1,7 @@
+bitdeer [fdb7d9cc-48f0-4dd2-8e0c-f2012430cf30]
+Official Website: bitdeer.com
+Google Play Store: Bitdeer
+Package Name: com.bitdeer.cloud.android
+Version: 3.10.0
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+【BITDEER】Your verify code is 128735, valid for 180 seconds.

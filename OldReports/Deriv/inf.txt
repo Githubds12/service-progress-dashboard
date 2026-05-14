@@ -1,0 +1,7 @@
+deriv [683517d2-2707-489f-ba33-0ecda77c1d99]
+🧠 Base score 50: Standard service (Unknown). No specific security hurdles recorded yet.
+Deriv : 820046 is your Deriv verification code
+Package Name: com.deriv.home
+Version: 1.5.0
+Official Website: deriv.com
+Google Play Store: Deriv: Online Trading

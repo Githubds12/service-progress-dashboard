@@ -1,0 +1,21 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-02
+de.jameda 5.271.0
+
+Service: jameda
+Service ID: 56d60b16-2f63-4025-b759-aa25f448e936
+Service SMS: Geben Sie den Code ein: 5976
+
+Official Website: jameda.de
+Google Play Store: jameda - Arzttermine buchen
+Package Name: de.jameda
+
+Flow: PUT /users/verification (Send OTP) -> POST /users/verification (Verify OTP with Captcha)
+Captcha: reCAPTCHA v2 Invisible (Google)
+Rate Limits: Unknown
+Encryption: None
+Endpoints: /public-token, /users/verification
+Bot Protection: Google reCAPTCHA
+Description: Jameda is Germany's largest physician search and booking platform, connecting patients with healthcare providers.
+Valuation: 500rs
+Status: Received OTP on API

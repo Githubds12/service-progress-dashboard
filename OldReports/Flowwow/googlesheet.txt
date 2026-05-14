@@ -1,0 +1,17 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-02
+com.flowwow 5.3.2
+
+Service: Flowwow
+Service ID: flowwow
+Service SMS: [Flowwow]: 7471 es tu código de acceso. NO LE DES A NADIE EL CÓDIGO
+
+Description: Marketplace for flowers, gifts, and confectionery.
+Flow: Phone (smsCode) -> OTP (login)
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: Custom MD5 Hash
+Endpoints: 2
+Bot Protection: Custom Hash signing
+Automation Feasibility: High (75%)
+Proof: See Flowwow-report.md for request/response traces.

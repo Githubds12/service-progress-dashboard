@@ -1,0 +1,12 @@
+com.bitdeer.cloud.android 2026-04-26
+Application Name: Bitdeer
+Package Name: com.bitdeer.cloud.android
+Version: 3.10.0
+Official Website: bitdeer.com
+Google Play Store: Bitdeer
+Security Level: Medium (GeeTest v4 Bot Protection)
+Authentication Flow: Phone OTP (GeeTest Verified)
+API Host: galaxy.bitdeer.tech
+Vulnerability Found: OTP request requires GeeTest challenge, but final registration only requires the OTP.
+Report Date: 2026-04-26
+Status: Completed
