@@ -1,5 +1,6 @@
 1: service name: digimoney
 2: service id: 2590040d-faf6-4bf9-8441-b484b98afa9f
-3: 0815 - code for application "WebMoney [Android]".
-4: Package Name: N/A
-5: Note: N/A
+3: 3: 0815 - code for application "WebMoney [Android]".
+4: Package Name: com.webmoney.my
+5: Version: 5.4.72
+6: Note: N/A
