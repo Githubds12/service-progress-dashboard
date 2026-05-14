@@ -833,13 +833,11 @@
                 <button class="filter-btn" onclick="setFilter('claimed', this)">CLAIMED</button>
                 <button class="filter-btn" onclick="setFilter('hard', this)">HARD</button>
                 <button class="filter-btn" onclick="setFilter('moderate', this)">MODERATE</button>
-                <button class="filter-btn" onclick="filterByEasy(this)" id="easyFilterBtn" style="border-color: var(--green); color: var(--green);">EASY</button>
-                <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa;">🆕 NEW</button>
+                <button class="filter-btn" onclick="setFilter('easy', this)" style="border-color: var(--green); color: var(--green);">EASY</button>
+                <button class="filter-btn" onclick="setFilter('new', this)" style="color:#00ffaa; border-color:#00ffaa; background:rgba(0,255,170,0.05);">🆕 NEW</button>
                 <button class="filter-btn" onclick="setFilter('rotatory', this)" style="color:var(--accent); border-color:var(--accent);">🌀 ROTATORY</button>
-                <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff;">🚀 PULSE</button>
+                <button class="filter-btn" onclick="setFilter('pulse', this)" style="color:#ff00ff; border-color:#ff00ff; background:rgba(255,0,255,0.05);">🚀 PULSE</button>
                 
-                <div style="flex: 1;"></div>
-
                 <select class="filter-btn" id="catFilter" onchange="handleCatChange(this)" style="background:#111; color:var(--text-dim); outline:none;">
                     <option value="all">ALL CATEGORIES</option>
                     <option value="UNCATEGORIZED">UNCATEGORIZED / RESEARCH</option>
@@ -1238,8 +1236,8 @@
             } catch (e) { btn.innerHTML = "🔌 OFFLINE"; }
         }
 
-        function filterByEasy(btn) {
-            state.filter = 'easy';
+        function setFilter(type, btn) {
+            state.filter = type;
             state.page = 1;
             document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
             if (btn) btn.classList.add('active');
