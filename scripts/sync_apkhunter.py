@@ -215,7 +215,7 @@ def sync():
                 last_updated = latest_entry.get('timestamp', last_updated)
 
             # Rotatory Logic: If it has history or matches rotatory keywords
-            rotatory_keywords = ['sms', 'otp', 'verify', 'code', 'auth', 'message', 'link', 'smsto', 'itcotp', 'msgdog', 'stripelink', 'sinchverify', 'authmsg', 'bilgimsj', 'iot sms', 'smsinfo', 'clickotp', 'tcloud', 'bipsms', 'vgsms', 'worldnettps', 'mxt', 'infobip', 'nxcomm', 'byteplus']
+            rotatory_keywords = ['sms', 'otp', 'verify', 'code', 'auth', 'message', 'link', 'smsto', 'itcotp', 'msgdog', 'stripelink', 'sinchverify', 'authmsg', 'bilgimsj', 'iot sms', 'smsinfo', 'clickotp', 'tcloud', 'bipsms', 'vgsms', 'worldnettps', 'mxt', 'infobip', 'nxcomm', 'byteplus', 'servicesms']
             is_rotatory = bool(history) or any(k in name.lower() or k in row.get("Description", "").lower() or k in row.get("Sample_Message", "").lower() for k in rotatory_keywords)
 
             final_data.append({
