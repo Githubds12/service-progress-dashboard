@@ -1,0 +1,12 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-14
+com.webmoney.my 5.4.72
+Service: WebMoney Keeper
+Service ID: 2590040d-faf6-4bf9-8441-b484b98afa9f
+Service SMS: 0815 - code for application "WebMoney [Android]".
+Service Description: WebMoney is a global settlement system and environment for online business activities.
+Flow: NewSession -> AuthenticateWithOptions -> SetMobilePhoneNumberBeginEx -> Polling GetSmsStatus -> SetMobilePhoneNumberEndWithConfirmation
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: SOAP XML
+Googlesheet Proof: SMS verification via AccountApi.asmx/SetMobilePhoneNumberEndWithConfirmation
