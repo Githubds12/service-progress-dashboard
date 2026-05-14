@@ -363,7 +363,7 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
-        const BASE_URL = window.location.hostname === "service-progress-dashboard.onrender.com" ? "https://service-progress-portal.onrender.com" : "http://localhost:10000";
+        const BASE_URL = "https://service-progress-portal.onrender.com"; // Hardcoded to bypass caching issues
 
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
@@ -540,24 +540,26 @@
             const targetName = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex]?.name;
             if (!targetName) return alert("Select a target first.");
             
-            // Switch to console section to show results
             window.switchSection('agents');
-            
             const term = $('terminalContent');
-            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] Deploying agent: ${tool.toUpperCase()} on ${targetName}...`;
+            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
             term.scrollTop = term.scrollHeight;
+
+            console.log(`[DEBUG] Calling ${BASE_URL}/api/tools/run for ${tool} on ${targetName}`);
 
             try {
                 const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${targetName}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    term.innerHTML += `\n<span style="color: #00ff00;">> Execution complete. Output received:</span>\n${data.output}`;
+                    term.innerHTML += `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
                 } else {
-                    term.innerHTML += `\n<span style="color: #ff0000;">> Agent failed: ${data.output}</span>`;
+                    term.innerHTML += `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
                 }
             } catch (e) {
-                term.innerHTML += `\n<span style="color: #ff0000;">> System Error: Unable to reach tool gateway at ${BASE_URL}. Check if backend is running.</span>`;
+                console.error("[GATEWAY_ERROR]", e);
+                term.innerHTML += `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Failed to reach ${BASE_URL}. ${e.message}</span>`;
             }
             term.scrollTop = term.scrollHeight;
         };
