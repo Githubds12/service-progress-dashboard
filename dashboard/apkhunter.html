@@ -1260,8 +1260,37 @@
 
         function copyRecon(id, btn) {
             const i = (window.apkhunterData || []).find(x => x.id === id);
-            navigator.clipboard.writeText(`service name: ${i.name}\nservice id: ${i.id}`);
-            btn.innerText = "COPIED"; setTimeout(() => btn.innerText = "📋 COPY RECON", 1500);
+            if (!i) return;
+            
+            const lines = [
+                `1: service name: ${i.name}`,
+                `2: service id: ${i.id}`,
+                `3: ${i.sms || 'No message recorded.'}`,
+                `4: Note: ${i.note || 'N/A'}`
+            ];
+            const text = lines.join('\n');
+            
+            const doCopy = (val) => {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    return navigator.clipboard.writeText(val);
+                } else {
+                    const textArea = document.createElement("textarea");
+                    textArea.value = val;
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    const success = document.execCommand("copy");
+                    document.body.removeChild(textArea);
+                    return success ? Promise.resolve() : Promise.reject();
+                }
+            };
+
+            doCopy(text).then(() => {
+                btn.innerText = "COPIED";
+                setTimeout(() => btn.innerText = "📋 COPY RECON", 1500);
+            }).catch(() => {
+                btn.innerText = "FAILED";
+                setTimeout(() => btn.innerText = "📋 COPY RECON", 1500);
+            });
         }
 
         function openAllMirrors(urls) { Object.values(urls).forEach(url => window.open(url, '_blank')); }
