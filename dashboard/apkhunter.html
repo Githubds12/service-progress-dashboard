@@ -147,9 +147,9 @@
         .chat-header-stealth {
             padding: 15px 25px;
             border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 10px 20px;
             background: rgba(3, 5, 8, 0.95);
             backdrop-filter: blur(20px);
             z-index: 100;
@@ -209,7 +209,8 @@
             max-width: 900px;
             margin: 0 auto;
             display: flex;
-            gap: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
             background: #0b0e14;
             padding: 8px;
             border-radius: 16px;
@@ -1262,11 +1263,19 @@
             const i = (window.apkhunterData || []).find(x => x.id === id);
             if (!i) return;
             
+            // Try to extract package name from Play Store URL if possible
+            let packageName = 'N/A';
+            if (i.urls && i.urls.play) {
+                const match = i.urls.play.match(/[?&]id=([^&]+)/);
+                if (match) packageName = match[1];
+            }
+
             const lines = [
                 `1: service name: ${i.name}`,
                 `2: service id: ${i.id}`,
                 `3: ${i.sms || 'No message recorded.'}`,
-                `4: Note: ${i.note || 'N/A'}`
+                `4: Package Name: ${packageName}`,
+                `5: Note: ${i.note || 'N/A'}`
             ];
             const text = lines.join('\n');
             
@@ -1276,11 +1285,21 @@
                 } else {
                     const textArea = document.createElement("textarea");
                     textArea.value = val;
+                    // Ensure it's not visible but part of the DOM for execCommand
+                    textArea.style.position = "fixed";
+                    textArea.style.left = "-9999px";
+                    textArea.style.top = "0";
                     document.body.appendChild(textArea);
+                    textArea.focus();
                     textArea.select();
-                    const success = document.execCommand("copy");
-                    document.body.removeChild(textArea);
-                    return success ? Promise.resolve() : Promise.reject();
+                    try {
+                        const success = document.execCommand("copy");
+                        document.body.removeChild(textArea);
+                        return success ? Promise.resolve() : Promise.reject();
+                    } catch (err) {
+                        document.body.removeChild(textArea);
+                        return Promise.reject();
+                    }
                 }
             };
 
@@ -1322,9 +1341,9 @@
                             </div>
                             <div class="apk-id">${i.id}</div>
                             <div class="apk-reason">🧠 Score 10: High Success (Active OTP Code/Keyword). (${i.category || 'RECON'})</div>
-                            <div class="apk-sms" style="background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center;">
-                                <span id="sms-text-${i.id}" style="color: #ffd700; font-weight: 700; font-family: 'JetBrains Mono';">${i.sms || 'No sample message recorded.'}</span>
-                                <button class="btn btn-recon" onclick="copyRecon('${i.id}', this)" style="padding: 5px 15px; font-size: 11px;">📋 COPY RECON</button>
+                            <div class="apk-sms" style="background: rgba(255, 215, 0, 0.05); border: 1px solid rgba(255, 215, 0, 0.2); padding: 15px; border-radius: 8px; margin-top: 15px; display: flex; justify-content: space-between; align-items: center; gap: 15px;">
+                                <span id="sms-text-${i.id}" style="color: #ffd700; font-weight: 700; font-family: 'JetBrains Mono'; min-width: 0; flex: 1; overflow-wrap: break-word;">${i.sms || 'No sample message recorded.'}</span>
+                                <button class="btn btn-recon" onclick="copyRecon('${i.id}', this)" style="padding: 5px 15px; font-size: 11px; flex-shrink: 0;">📋 COPY RECON</button>
                             </div>
                             <textarea class="note-area" placeholder="Add security notes..." onblur="syncUpdate('${i.id}', 'note', this.value)" style="width: 100%; margin-top: 15px;">${i.note || ''}</textarea>
                         </td>
