@@ -1267,7 +1267,14 @@
             let packageName = 'N/A';
             if (i.urls && i.urls.play) {
                 const match = i.urls.play.match(/[?&]id=([^&]+)/);
-                if (match) packageName = match[1];
+                if (match) {
+                    const potentialPkg = match[1];
+                    // Regex to check if it's a UUID. If it is, it's not a real package name in this dataset
+                    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+                    if (!uuidRegex.test(potentialPkg)) {
+                        packageName = potentialPkg;
+                    }
+                }
             }
 
             const lines = [
