@@ -3,3 +3,4 @@ service id: c81a0f61-f580-49fe-b650-ab54aea72b15
 Playdemic - Your Golf Clash code is: 6197
 Package Name: com.playdemic.golf.android
 Version: 3.4.3
+Status: Unsuccessful (Binary Payload)

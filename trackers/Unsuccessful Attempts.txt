@@ -1,3 +1,4 @@
 Unsuccessful Attempts Log
 
 1. [2026-05-10] Plenty Of Fish (com.pof.android) - Reason: Unsuccessful capture, strong encryption and anti-automation measures encountered.
+2. [2026-05-14] GolfClash (com.playdemic.golf.android) - Reason: Binary octet-stream payload over proprietary protocol preventing cleartext extraction of OTP flows.
