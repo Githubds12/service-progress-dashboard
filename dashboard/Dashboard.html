@@ -803,8 +803,6 @@
             const finalColors = (logEntry && logEntry.logs.length) ? ['#00f2ff', '#7000ff', '#3fb950', '#f85149', '#db6d28', '#e3b341'] : ['rgba(255, 255, 255, 0.05)'];
 
             $('effortPieChart').style.display = 'block';
-            $('noDataMessage').style.display = 'none';
-
             window.pieChartInst = new Chart(pieCtx, {
                 type: 'doughnut',
                 data: {
@@ -816,15 +814,60 @@
                         hoverOffset: (logEntry && logEntry.logs.length) ? 20 : 0
                     }]
                 },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { 
+                        legend: { position: 'bottom', labels: { color: '#e6edf3', font: { family: 'Outfit', size: 11 }, padding: 15 } }
+                    },
+                    cutout: '75%'
+                }
+            });
+
+            // Activity Bar Chart
+            const activityCtx = $('activityChart').getContext('2d');
+            if (window.activityChartInst) window.activityChartInst.destroy();
+            
+            const activityLog = JSON.parse(localStorage.getItem('activity_log') || '[]');
+            const todayActions = activityLog.filter(a => a.timestamp.startsWith(targetDate));
+            
+            if (todayActions.length === 0) {
+                $('activityChart').style.display = 'none';
+                $('noActivityMessage').style.display = 'block';
+            } else {
+                $('activityChart').style.display = 'block';
+                $('noActivityMessage').style.display = 'none';
+                
+                const hourlyData = new Array(24).fill(0);
+                todayActions.forEach(a => {
+                    const hour = new Date(a.timestamp).getHours();
+                    hourlyData[hour]++;
+                });
+
+                window.activityChartInst = new Chart(activityCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Array.from({length: 24}, (_, i) => `${i}:00`),
+                        datasets: [{
+                            label: 'ACTIONS',
+                            data: hourlyData,
+                            backgroundColor: 'rgba(112, 0, 255, 0.4)',
+                            borderColor: '#7000ff',
+                            borderWidth: 2,
+                            borderRadius: 4
+                        }]
+                    },
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        plugins: { 
-                            legend: { position: 'bottom', labels: { color: '#e6edf3', font: { family: 'Outfit', size: 11 }, padding: 15 } }
-                        },
-                        cutout: '75%'
+                        plugins: { legend: { display: false } },
+                        scales: {
+                            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#8b949e', font: { family: 'Orbitron', size: 9 }, stepSize: 1 } },
+                            x: { grid: { display: false }, ticks: { color: '#8b949e', font: { family: 'Orbitron', size: 8 } } }
+                        }
                     }
                 });
+            }
         };
 
         window.renderLogsAndReflections = () => {
