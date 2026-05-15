@@ -16,12 +16,13 @@ os.makedirs(RECON_DIR, exist_ok=True)
 class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
     def end_headers(self):
         self.send_header('Access-Control-Allow-Origin', '*')
-        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
-        self.send_header('Access-Control-Allow-Headers', 'Content-Type')
+        self.send_header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE')
+        self.send_header('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Requested-With')
+        self.send_header('Access-Control-Max-Age', '86400')
         super().end_headers()
 
     def do_OPTIONS(self):
-        self.send_response(200)
+        self.send_response(204)
         self.end_headers()
 
     def do_POST(self):
@@ -39,12 +40,16 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                     try:
                         v, m = cfg["ver"], cfg["mod"]
                         url = f"https://generativelanguage.googleapis.com/{v}/models/{m}:generateContent?key={api_key}"
-                        req = urllib.request.Request(url, data=json.dumps({"contents": [{"parts": [{"text": payload.get("message", "")}]}]}).encode(), headers={'Content-Type': 'application/json'}, method='POST')
+                        req = urllib.request.Request(url, data=json.dumps({
+                            "contents": [{"parts": [{"text": payload.get("message", "")}]}]
+                        }).encode(), headers={'Content-Type': 'application/json'}, method='POST')
                         with urllib.request.urlopen(req, timeout=30) as res:
                             data = res.read()
                             self.send_response(200); self.send_header('Content-type', 'application/json'); self.end_headers()
                             self.wfile.write(data); return
-                    except: continue
+                    except Exception as e:
+                        print(f"[!] Model {cfg['mod']} failed: {e}")
+                        continue
                 return self.send_error_json(500, "AI_MODELS_EXHAUSTED")
             except Exception as e: return self.send_error_json(500, str(e))
         
@@ -52,21 +57,24 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             try:
                 content_length = int(self.headers['Content-Length'])
                 payload = json.loads(self.rfile.read(content_length))
-                target = payload.get('target', 'unknown').replace('/', '_')
-                tool = payload.get('tool', 'manual')
+                target = payload.get('target', 'unknown').replace('/', '_').replace('\\', '_')
+                tool = payload.get('tool', 'manual').replace('/', '_')
                 content = payload.get('output', '')
                 
+                if not content.strip(): return self.send_error_json(400, "EMPTY_CONTENT")
+
                 filename = f"{target}_{tool}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.txt"
                 filepath = os.path.join(RECON_DIR, filename)
                 with open(filepath, 'w', encoding='utf-8') as f:
                     f.write(content)
                 
+                print(f"[+] Intelligence archived: {filename}")
                 self.send_response(200); self.send_header('Content-type', 'application/json'); self.end_headers()
-                self.wfile.write(json.dumps({"status": "success", "file": filename}).encode())
-            except Exception as e: self.send_error_json(500, str(e))
+                self.wfile.write(json.dumps({"status": "success", "file": filename, "path": f"/recon_storage/{filename}"}).encode())
+            except Exception as e: self.send_error_json(500, f"SAVE_FAILED: {str(e)}")
             return
         else:
-            super().do_POST()
+            self.send_error_json(404, "PATH_NOT_FOUND")
 
     def do_GET(self):
         if self.path.startswith('/api/tools/run'):
@@ -85,12 +93,20 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             return
             
         elif self.path == '/api/tools/list':
-            files = os.listdir(RECON_DIR)
-            self.send_response(200); self.send_header('Content-type', 'application/json'); self.end_headers()
-            self.wfile.write(json.dumps({"status": "success", "files": sorted(files, reverse=True)}).encode())
+            try:
+                files = os.listdir(RECON_DIR)
+                # Filter for txt files and ensure they exist
+                files = [f for f in files if f.endswith('.txt')]
+                self.send_response(200); self.send_header('Content-type', 'application/json'); self.end_headers()
+                self.wfile.write(json.dumps({"status": "success", "files": sorted(files, reverse=True)}).encode())
+            except Exception as e: self.send_error_json(500, str(e))
             return
             
-        return super().do_GET()
+        # Serve static files from recon_storage
+        if self.path.startswith('/recon_storage/'):
+            return super().do_GET()
+
+        return self.send_error_json(404, "NOT_FOUND")
 
     def run_tool(self, tool, target):
         commands = {
@@ -98,7 +114,7 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             "dnsx": ["dnsx", "-d", target, "-silent"],
             "amass": ["amass", "intel", "-d", target],
             "assetfinder": ["assetfinder", "--subs-only", target],
-            "naabu": ["naabu", "-host", target, "-c", "-silent"], # Added -c for Connect scan (libpcap-free)
+            "naabu": ["naabu", "-host", target, "-c", "-silent"],
             "httpx": ["httpx", "-u", target, "-silent"],
             "katana": ["katana", "-u", target, "-silent"]
         }
@@ -132,3 +148,4 @@ if __name__ == "__main__":
     server = ThreadingServer(("", PORT), SecureAgentHandler)
     print(f"[*] Gateway listening on port {PORT}")
     server.serve_forever()
+
