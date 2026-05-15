@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk, messagebox
+from tkinter import ttk, messagebox, simpledialog
 import requests
 import json
 import os
@@ -539,7 +539,51 @@ class SMSAutomationApp:
                         if vals[0] == self.selected_country and vals[2].lower().replace("*", "").strip() == self.selected_operator:
                             self.tree_live.item(item, values=(vals[0], vals[1], vals[2], vals[3], "VERIFIED"), tags=("verified",))
                 else:
-                    self.root.after(0, lambda: messagebox.showwarning("Not Found", f"Service '{service}' not found in the main database.\n\nPlease ensure the service is registered in APK Hunter first."))
+                    if messagebox.askyesno("Register New?", f"Service '{service}' not found in database.\n\nWould you like to QUICK-REGISTER it as a new Rotatory service?"):
+                        pkg_id = simpledialog.askstring("Package ID", f"Enter Package Name / UUID for '{service}':\n(e.g., com.example.app)")
+                        if not pkg_id:
+                            # Generate a random UUID-like string if none provided
+                            import uuid
+                            pkg_id = str(uuid.uuid4())
+                        
+                        new_item = {
+                            "id": pkg_id,
+                            "name": service,
+                            "sms": "",
+                            "claimed": true,
+                            "claimed_at": int(time.time()),
+                            "root_detected": false,
+                            "not_found": false,
+                            "note": f"[Quick-Registered] Verified via {self.selected_country} ({self.selected_operator}).",
+                            "is_new": true,
+                            "is_rotatory": true,
+                            "difficulty": 10,
+                            "category": "Telecom/OTP",
+                            "tier": "Tier 1 (Instant/Public)",
+                            "reason": "Score 10: High Success (Active OTP Code/Keyword).",
+                            "triggers": [],
+                            "history": [],
+                            "last_updated": time.strftime("%Y-%m-%d"),
+                            "urls": {
+                                "portal": None,
+                                "play": f"https://play.google.com/store/apps/details?id={pkg_id}",
+                                "pure": f"https://apkpure.com/search?q={pkg_id}",
+                                "mirror": f"https://www.apkmirror.com/?post_type=app_release&searchtype=apk&s={pkg_id}"
+                            }
+                        }
+                        
+                        data.append(new_item)
+                        with open(data_js, 'w', encoding='utf-8') as f:
+                            f.write(prefix + json.dumps(data, indent=4) + ';')
+                            
+                        self.root.after(0, lambda: self.update_raw_output(f"[+] Successfully registered, verified and claimed '{service}'."))
+                        self.root.after(0, lambda: messagebox.showinfo("Success", f"'{service}' has been registered and updated in the dashboard."))
+                        
+                        # Update UI
+                        for item in self.tree_live.get_children():
+                            vals = self.tree_live.item(item, 'values')
+                            if vals[0] == self.selected_country and vals[2].lower().replace("*", "").strip() == self.selected_operator:
+                                self.tree_live.item(item, values=(vals[0], vals[1], vals[2], vals[3], "VERIFIED"), tags=("verified",))
 
             except Exception as e:
                 self.root.after(0, lambda err=str(e): messagebox.showerror("Error", f"Failed to update dashboard: {err}"))
