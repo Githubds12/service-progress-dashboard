@@ -239,7 +239,7 @@ def sync():
                 "history": history,
                 "last_updated": last_updated,
                 "urls": {
-                    "portal": f"http://51.195.24.179:3000/services/{portal_id}" if portal_id else None,
+                    "portal": f"http://51.195.24.179:3000/services/{tid if tid == '686a2788-b609-42fb-bb45-6f8727334a5b' else portal_id}" if (portal_id or tid == '686a2788-b609-42fb-bb45-6f8727334a5b') else None,
                     "play": f"https://play.google.com/store/apps/details?id={tid}",
                     "pure": f"https://apkpure.com/search?q={tid}",
                     "mirror": f"https://www.apkmirror.com/?post_type=app_release&searchtype=apk&s={tid}",

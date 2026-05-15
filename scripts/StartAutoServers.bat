@@ -9,6 +9,9 @@ set PYTHON_EXE="c:\Users\Gorri\Documents\Reports\.venv\Scripts\python.exe"
 echo [*] Starting Secure Portal Backend (Port 10000)...
 start /min "Portal Backend" %PYTHON_EXE% scripts\secure_agent_backend.py
 
+echo [*] Syncing Cloud Rotatory Data...
+%PYTHON_EXE% scripts\cloud_rotatory_sync.py
+
 echo [*] Running Initial Dashboard Update...
 %PYTHON_EXE% scripts\update_dashboard.py
 
@@ -24,5 +27,3 @@ echo [!] Portal: http://localhost:10000
 echo [!] DroidPilot: http://localhost:7777
 timeout /t 5
 exit
-
-

@@ -238,7 +238,7 @@ class SMSAutomationApp:
             found_live = False
             try:
                 # Increased interval to 24h for better reach
-                res = requests.get(ACCESS_INFO_URL, params={"interval": "24h", "service": service, "token": TOKEN}, timeout=15)
+                res = requests.get(ACCESS_INFO_URL, params={"interval": "24hr", "service": service, "token": TOKEN}, timeout=15)
                 data = res.json()
                 if data.get("status") == "Data retrieved successfully" and data.get("data"):
                     found_live = True

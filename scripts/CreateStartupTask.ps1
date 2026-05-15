@@ -1,9 +1,9 @@
-$TaskName = "StartAutoServersAdmin"
-$TaskPath = "C:\HTB-Notes-Portal\StartAutoServers.bat"
-$TaskDescription = "Runs the HTB-Notes-Portal Auto Servers with Highest Privileges on Logon."
+$TaskName = "IntelligencePortalAutoStart"
+$TaskPath = "c:\Users\Gorri\Documents\Reports\scripts\StartAutoServers.bat"
+$TaskDescription = "Runs the Intelligence Portal Auto Servers with Highest Privileges on Logon."
 
 # Define the action
-$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$TaskPath`"" -WorkingDirectory "C:\HTB-Notes-Portal"
+$Action = New-ScheduledTaskAction -Execute "cmd.exe" -Argument "/c `"$TaskPath`"" -WorkingDirectory "c:\Users\Gorri\Documents\Reports"
 
 # Define the trigger (On Logon)
 $Trigger = New-ScheduledTaskTrigger -AtLogon

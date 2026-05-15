@@ -137,7 +137,7 @@ Daily Summary: 1 service, 400 rs
 2nd May, Saturday
 99. [10:30] Deriv - com.deriv.home - 400rs
 100. [10:50] jameda - de.jameda - 500rs
-101. [11:10] weststein - com.weststeincard.weststein - 400rs
+101. [10:10] weststein - com.weststeincard.weststein - 400rs
 102. [12:00] pro1bet - org.pro1bet.client - 400rs
 103. [12:10] xtb - com.xtb.xmobile2 - 400rs
 104. [13:15] Flowwow - com.flowwow - 400rs
@@ -172,12 +172,21 @@ Daily Summary: 3 services, 1200 rs
 115. [16:45] Kimi - com.moonshot.kimichat - 400rs
 Daily Summary: 1 service, 400 rs
 ----------
+14th May, Thursday
+116. [11:20] WebMoneyKeeper - com.webmoney.keeper - 400rs
+Daily Summary: 1 service, 400 rs
+----------
+15th May, Friday
+117. [10:30] TheChefz - com.thechefz.chefz - 400rs
+118. [14:45] StockBit - com.stockbit.android - 400rs
+Daily Summary: 2 services, 800 rs
+----------
 
 Dashboard Stats:
-- Total Services: 115
-- Total Earnings: 45800 rs
-- Average Daily Earning (over 32 days since Apr 10): 1431.25 rs/day
-- Average Daily Services: 3.59 services/day
+- Total Services: 118
+- Total Earnings: 47000 rs
+- Average Daily Earning (over 35 days since Apr 10): 1342.86 rs/day
+- Average Daily Services: 3.37 services/day
 - Target: 3000 rs / day
-- Services Needed to Goal: 110
+- Services Needed to Goal: 107
 - Recommended for Today (inc. buffer): 20 services

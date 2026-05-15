@@ -1,0 +1,6 @@
+Researcher: Deepanshu Singh
+Date: 2026-05-15
+com.stockbit.android 3.21.2
+Service: StockBit
+Service ID: 5bfb1bc0-a707-4b0e-a614-35498a8a9496
+Service SMS: 2860 is your verification code. For your security, do not share this code.

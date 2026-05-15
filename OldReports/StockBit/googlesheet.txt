@@ -1,3 +1,0 @@
-Date: 2026-05-14
-Service: StockBit
-com.stockbit.android 2026-05-14

@@ -1,0 +1,5 @@
+1: service name: StockBit
+2: service id: 5bfb1bc0-a707-4b0e-a614-35498a8a9496
+3: 2860 is your verification code. For your security, do not share this code.
+4: Package Name: com.stockbit.android
+5: Note: Version 3.21.2
