@@ -95,12 +95,14 @@ def sync():
             print(f"[+] Loaded history for {len(history_dict)} services.")
 
     final_data = []
+    processed_ids = set()
     
     with open(CSV_PATH, 'r', encoding='utf-8') as f:
         reader = csv.DictReader(f)
         for row in reader:
             tid = row.get("API_ID", row.get("Slug", "")).strip().lower()
-            if not tid: continue
+            if not tid or tid in processed_ids: continue
+            processed_ids.add(tid)
             
             name = row.get("Name", tid)
             name_key = name.strip().lower()  # short name key used in some DB entries
@@ -223,6 +225,7 @@ def sync():
                 "name": name,
                 "sms": latest_sms,
                 "claimed": claimed,
+                "claimed_at": int(datetime.strptime(updated_dict.get(tid, "2024-05-09 00:00:00"), "%Y-%m-%d %H:%M:%S").timestamp() * 1000) if claimed and tid in updated_dict else 0,
                 "root_detected": root_dict.get(tid, False),
                 "not_found": is_nf,
                 "note": note,

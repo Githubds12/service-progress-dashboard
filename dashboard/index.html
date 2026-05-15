@@ -231,8 +231,38 @@
 
         .main-content { margin-left: 80px; padding: 20px; transition: margin-left 0.3s; }
         @media (max-width: 768px) {
-            .sidebar { display: none; }
-            .main-content { margin-left: 0; }
+            .sidebar { 
+                position: fixed;
+                bottom: 0;
+                top: auto;
+                left: 0;
+                right: 0;
+                width: 100% !important;
+                height: 60px;
+                flex-direction: row;
+                padding: 0;
+                border-right: none;
+                border-top: 1px solid var(--border);
+                justify-content: space-around;
+            }
+            .sidebar-item {
+                width: auto;
+                padding: 0;
+                flex-direction: column;
+                gap: 5px;
+                justify-content: center;
+                border-right: none !important;
+            }
+            .sidebar-item i { font-size: 18px; min-width: auto; }
+            .sidebar-item span { display: none; }
+            .sidebar-item.active {
+                background: rgba(99, 102, 241, 0.1);
+                color: #6366f1;
+            }
+            .main-content { 
+                margin-left: 0; 
+                padding-bottom: 80px;
+            }
         }
     </style>
 </head>

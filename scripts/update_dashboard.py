@@ -1,6 +1,6 @@
 import os
 import re
-from datetime import datetime, date
+from datetime import datetime, date, timedelta
 import json
 import math
 import subprocess
@@ -354,6 +354,14 @@ def calculate_stats(days, mastery_data=None):
                     apk_claimed_count = sum(1 for item in apk_list if item.get('claimed'))
         except: pass
 
+    # 7-Day Rolling Stats
+    seven_days_ago = today_dt - timedelta(days=6)
+    last_7_days_data = [d for d in days if d.get('iso_date') and datetime.strptime(d['iso_date'], '%Y-%m-%d').date() >= seven_days_ago]
+    last_7_days_earnings = sum(d['earnings'] for d in last_7_days_data)
+    last_7_days_services = sum(d['count'] for d in last_7_days_data)
+    rolling_daily_avg = last_7_days_earnings / 7
+    rolling_daily_services = last_7_days_services / 7
+
     target_total = 90000
     remaining_target = target_total - cycle_earnings
     recovery_pace_services = remaining_target / 400 / days_remaining
@@ -363,9 +371,9 @@ def calculate_stats(days, mastery_data=None):
     today_str_check = f"{get_ordinal(today_dt.day)} {today_dt.strftime('%B')}"
     completed_today = next((len(d['services']) for d in days if today_str_check in d['date']), 0)
 
-    explanation = f"Target: ₹90,000. Cycle Day {days_elapsed}/31. Pace: {round(recovery_pace_services, 1)} services/day."
+    explanation = f"Target: ₹90,000. Cycle Day {days_elapsed}/31. 7-Day Avg: ₹{int(rolling_daily_avg)}/day."
     try:
-        prompt = f"Analyze progress for Cycle (Start: May 7): {cycle_earnings}/90000. Points: {cycle_points}. Day {days_elapsed}/31. Write 1-2 sentence tip with Sanskrit header."
+        prompt = f"Analyze progress: Cycle {cycle_earnings}/90000. 7-Day Rolling: {last_7_days_earnings}rs ({last_7_days_services} svcs). Day {days_elapsed}/31. Write 1-2 sentence tactical tip with Sanskrit header."
         response = client.models.generate_content(model='gemini-flash-latest', contents=prompt)
         if response and response.text: explanation = response.text.strip().replace('"', '')
     except: pass
@@ -380,6 +388,10 @@ def calculate_stats(days, mastery_data=None):
         'apk_claimed': apk_claimed_count,
         'avg_daily': round(avg_daily, 2), 
         'avg_daily_services': round(avg_daily_services, 2),
+        'last_7_days_earnings': last_7_days_earnings,
+        'last_7_days_services': last_7_days_services,
+        'rolling_daily_avg': round(rolling_daily_avg, 2),
+        'rolling_daily_services': round(rolling_daily_services, 2),
         'days_elapsed': days_elapsed, 
         'recovery_pace_services': round(recovery_pace_services, 1),
         'days_remaining': days_remaining, 
@@ -391,6 +403,7 @@ def calculate_stats(days, mastery_data=None):
         'today_date_raw': today_dt.strftime('%Y-%m-%d'),
         'projection_sentence': explanation
     }
+
 
 def update_txt(body, stats):
     new_stats = f"\nDashboard Stats:\n- Total Services: {stats['total_services']}\n- Total Earnings: {stats['total_earnings']} rs\n- Average Daily Earning: {stats['avg_daily']} rs/day\n- Average Daily Services: {stats['avg_daily_services']} services/day\n- Recovery Pace: {stats['recovery_pace_services']} Services / day\n- Projected Monthly Total: ₹{stats['projected_total']}\n"
@@ -797,16 +810,61 @@ def update_html(header, days, stats, complexity_stats=None):
         .status-syncing {{ background: rgba(112, 0, 255, 0.2); color: #a371f7; border: 1px solid #a371f7; }}
         .status-error {{ background: rgba(218, 54, 51, 0.2); color: #f85149; border: 1px solid #f85149; }}
 
-        @media (max-width: 1300px) {{
+        @media (max-width: 1024px) {{
+            .container {{ padding: 15px; }}
+            .dashboard-grid {{ grid-template-columns: 1fr; }}
             .main-layout {{ grid-template-columns: 1fr; }}
+            .sidebar {{
+                position: fixed;
+                bottom: 0;
+                top: auto !important;
+                left: 0;
+                right: 0;
+                width: 100% !important;
+                height: 65px;
+                flex-direction: row;
+                padding: 0;
+                border-right: none;
+                border-top: 1px solid var(--border-color);
+                justify-content: space-around;
+                background: rgba(3, 5, 8, 0.95);
+            }}
+            .sidebar:hover {{ width: 100%; }}
+            .sidebar-item {{
+                width: auto;
+                padding: 0;
+                flex-direction: column;
+                gap: 5px;
+                justify-content: center;
+                height: 100%;
+                flex: 1;
+            }}
+            .sidebar-item i {{ font-size: 18px; min-width: auto; opacity: 1; }}
+            .sidebar-item span {{ 
+                opacity: 1 !important; 
+                font-size: 8px; 
+                display: block !important;
+            }}
+            .sidebar-item.active::after {{ display: none; }}
+            
+            .main-content-wrapper {{ 
+                margin-left: 0 !important; 
+                width: 100% !important;
+                padding-bottom: 80px;
+            }}
+            
+            header {{ flex-direction: column; text-align: center; gap: 15px; }}
+            .header-meta {{ text-align: center; }}
+            .logo {{ font-size: 1.1rem; }}
+            
+            .card-header {{ flex-direction: column; gap: 15px; top: -15px; }}
+            .controls {{ flex-wrap: wrap; justify-content: center; }}
+            
+            .stat-value {{ font-size: 1.5rem; }}
         }}
 
         @media (max-width: 768px) {{
-            .sidebar {{ display: none; }}
-            .main-content-wrapper {{ 
-                margin-left: 0; 
-                width: 100%;
-            }}
+            .sidebar {{ display: flex !important; }} /* Override display:none */
         }}
     </style>
     <script src="tour_guide.js"></script>
@@ -929,6 +987,22 @@ def update_html(header, days, stats, complexity_stats=None):
                 <div class="stat-value">{round((stats['cycle_earnings'] / (90000/31 * stats['cycle_day'])) * 100, 1) if stats['cycle_day'] > 0 else 0}%</div>
                 <div class="stat-sub">OUTPUT VS PROJECTED</div>
                 <div style="font-size: 0.6rem; color: var(--text-dim); margin-top: 5px; line-height: 1.2;">Earnings vs. required pace for today.</div>
+            </div>
+        </div>
+
+        <div class="section-divider" style="margin: 40px 0 20px 0; border-bottom: 2px solid var(--accent-primary); width: fit-content; padding-right: 20px;">
+            <h3 style="font-family: 'Orbitron'; color: var(--accent-primary); letter-spacing: 2px; font-size: 0.9rem;">ROLLING 7-DAY PRODUCTIVITY</h3>
+        </div>
+        <div class="dashboard-grid" style="margin-bottom: 30px;">
+            <div class="stat-card" style="border-color: var(--accent-primary);">
+                <div class="stat-label">7D Revenue</div>
+                <div class="stat-value">₹{stats['last_7_days_earnings']:,}</div>
+                <div class="stat-sub">AVG: ₹{int(stats['rolling_daily_avg'])} / DAY</div>
+            </div>
+            <div class="stat-card" style="border-color: var(--accent-primary);">
+                <div class="stat-label">7D Velocity</div>
+                <div class="stat-value">{stats['last_7_days_services']}</div>
+                <div class="stat-sub">{stats['rolling_daily_services']} SVCS / DAY</div>
             </div>
         </div>
 

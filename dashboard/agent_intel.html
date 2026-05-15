@@ -265,14 +265,64 @@
 
         .back-link:hover { color: var(--accent-cyan); }
 
+        @media (max-width: 768px) {
+            body { flex-direction: column; }
+            .sidebar {
+                position: fixed;
+                left: 0;
+                top: 0;
+                bottom: 0;
+                width: 280px;
+                z-index: 2000;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.active { transform: translateX(0); }
+            .sidebar-overlay {
+                display: none;
+                position: fixed;
+                inset: 0;
+                background: rgba(0,0,0,0.5);
+                backdrop-filter: blur(4px);
+                z-index: 1999;
+            }
+            .sidebar-overlay.active { display: block; }
+            
+            .chat-header { padding: 15px 20px; }
+            .chat-messages { padding: 20px; gap: 20px; }
+            .message { max-width: 95%; padding: 15px; }
+            .input-container { padding: 15px 20px; }
+            .input-wrapper { gap: 10px; }
+            textarea { height: 50px; font-size: 14px; }
+            .send-btn { width: 50px; height: 50px; }
+            
+            .mobile-header-actions {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+            }
+            .menu-toggle {
+                display: block !important;
+                background: transparent;
+                border: 1px solid var(--border);
+                color: var(--accent-cyan);
+                padding: 8px;
+                border-radius: 4px;
+                cursor: pointer;
+            }
+        }
+
+        .menu-toggle { display: none; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
     </style>
 </head>
 <body>
 
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    
     <!-- Sidebar History -->
-    <div class="sidebar">
+    <div class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="logo">
                 <span style="font-size: 1.2rem;">🤖</span> AGENT INTEL
@@ -287,14 +337,17 @@
     <!-- Main Chat Window -->
     <div class="main-chat">
         <div class="chat-header">
-            <div class="agent-status">
-                <div class="status-dot"></div>
-                <div>
-                    <div class="agent-name">GEMINI-CORE v2.0</div>
-                    <div style="font-size: 0.7rem; color: var(--text-dim);">SYSTEM: Bug Bounty Specialist Mode</div>
+            <div class="mobile-header-actions">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <div class="agent-status">
+                    <div class="status-dot"></div>
+                    <div>
+                        <div class="agent-name">GEMINI-CORE v2.0</div>
+                        <div style="font-size: 0.7rem; color: var(--text-dim);">SYSTEM: Specialist Mode</div>
+                    </div>
                 </div>
             </div>
-            <a href="apkhunter.html" class="back-link">← RETURN TO HUB</a>
+            <a href="apkhunter.html" class="back-link">← HUB</a>
         </div>
 
         <div class="chat-messages" id="messageContainer">
@@ -341,6 +394,11 @@
         // Initialize UI & Sync
         syncFromBridge();
         renderHistory();
+
+        function toggleSidebar() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.getElementById('sidebarOverlay').classList.toggle('active');
+        }
 
         function handleKey(e) {
             if (e.key === 'Enter' && !e.shiftKey) {
