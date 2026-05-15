@@ -9,6 +9,10 @@ BIN_DIR="/opt/render/project/src/bin"
 mkdir -p $BIN_DIR
 export PATH=$PATH:$BIN_DIR
 
+echo ">> Installing system dependencies (if permitted)..."
+# Attempt to install libpcap for naabu
+apt-get update && apt-get install -y libpcap-dev || echo "   [!] Apt-get failed (expected on non-root). Proceeding with binary deployment."
+
 # Helper to download, extract, and flatten binaries
 download_tool() {
     local name=$1

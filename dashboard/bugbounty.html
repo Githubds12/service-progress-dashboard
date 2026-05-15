@@ -248,17 +248,45 @@
         .toast.error { border-left-color: var(--red); }
         .toast.success { border-left-color: var(--green); }
 
-        /* --- INLINE EDITING --- */
-        .session-item { position: relative; }
-        .session-item input {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--accent);
-            color: #fff; padding: 2px 5px; border-radius: 4px;
             font-family: inherit; font-size: inherit; width: 80%;
+        }
+
+        /* --- PREVIEW MODAL --- */
+        #preview-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            display: none; z-index: 20000; padding: 40px;
+            flex-direction: column;
+        }
+            box-shadow: 0 20px 50px rgba(0,0,0,1);
+        }
+
+        /* --- LIVE RECON TERMINAL --- */
+        .recon-terminal {
+            background: #000; border: 1px solid var(--border); border-radius: 15px;
+            height: 250px; margin-top: 20px; display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: #161b22; padding: 8px 15px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 10px; font-weight: 700; color: var(--text-dim);
+        }
+        #liveTerminal {
+            flex: 1; padding: 15px; font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: #0f0; overflow-y: auto; white-space: pre-wrap;
         }
     </style>
 </head>
 <body>
     <div id="toast-container"></div>
+    <div id="preview-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="preview-title" style="color: #fff; font-size: 18px;">Intelligence Preview</h2>
+            <button class="ui-btn" onclick="$('preview-modal').style.display='none'" style="color: var(--red); border-color: var(--red);">CLOSE PREVIEW</button>
+        </div>
+        <div id="preview-body" class="preview-content">Loading...</div>
+    </div>
 
     <div class="sidebar">
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>BB</i></div>
@@ -334,6 +362,15 @@
                                     <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
                                     <tbody id="reconBody"></tbody>
                                 </table>
+                            </div>
+
+                            <!-- Live Intelligence Feed Panel -->
+                            <div class="recon-terminal">
+                                <div class="terminal-header">
+                                    <span>LIVE INTELLIGENCE FEED</span>
+                                    <span id="reconTerminalStatus" style="color: var(--accent);">READY</span>
+                                </div>
+                                <div id="liveTerminal">> Waiting for agent deployment...</div>
                             </div>
                         </div>
                     </div>
@@ -663,16 +700,23 @@
             const targetName = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex]?.name;
             if (!targetName) return window.showToast("Select a target first.", "error");
             
-            window.switchSection('agents');
             const term = $('terminalContent');
+            const liveTerm = $('liveTerminal');
             const saveBtn = $('saveBtn');
+            const statusLabel = $('reconTerminalStatus');
             
-            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
+            const timestamp = `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
+            term.innerHTML += timestamp;
+            if (liveTerm) {
+                liveTerm.innerHTML = timestamp + `\n> Deployment initiated...`;
+                statusLabel.innerText = "AGENT RUNNING...";
+                statusLabel.style.color = var(--yellow);
+            }
+
             term.scrollTop = term.scrollHeight;
             
             saveBtn.disabled = true;
             saveBtn.style.opacity = '0.5';
-            saveBtn.style.cursor = 'not-allowed';
             saveBtn.innerText = "[ AGENT RUNNING... ]";
 
             try {
@@ -683,25 +727,43 @@
                     window.lastOutput = data.output;
                     window.lastTool = tool;
                     window.lastTarget = targetName;
-                    term.innerHTML += `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
+                    
+                    const successMsg = `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
+                    term.innerHTML += successMsg;
+                    if (liveTerm) {
+                        liveTerm.innerHTML = successMsg;
+                        statusLabel.innerText = "SUCCESS";
+                        statusLabel.style.color = var(--green);
+                    }
                     
                     saveBtn.disabled = false;
                     saveBtn.style.opacity = '1';
-                    saveBtn.style.cursor = 'pointer';
                     saveBtn.innerText = "[ ARCHIVE OUTPUT ]";
                     
-                    window.showToast("Scan complete. Ready to archive.", "success");
+                    window.showToast("Scan complete.", "success");
                 } else {
-                    term.innerHTML += `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
+                    const errMsg = `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
+                    term.innerHTML += errMsg;
+                    if (liveTerm) {
+                        liveTerm.innerHTML = errMsg;
+                        statusLabel.innerText = "FAILED";
+                        statusLabel.style.color = var(--red);
+                    }
                     saveBtn.innerText = "[ AGENT FAILED ]";
                     window.showToast("Agent failed: " + data.output, "error");
                 }
             } catch (e) {
-                term.innerHTML += `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Failed to reach backend. Check CORS/Server status.</span>`;
+                const gatewayMsg = `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Connection failed.</span>`;
+                term.innerHTML += gatewayMsg;
+                if (liveTerm) {
+                    liveTerm.innerHTML = gatewayMsg;
+                    statusLabel.innerText = "GATEWAY ERROR";
+                }
                 saveBtn.innerText = "[ GATEWAY ERROR ]";
                 window.showToast("Gateway connection failed.", "error");
             }
             term.scrollTop = term.scrollHeight;
+            if (liveTerm) liveTerm.scrollTop = liveTerm.scrollHeight;
         };
 
         window.saveTerminalOutput = async () => {
@@ -744,12 +806,33 @@
                 const d = await res.json();
                 list.innerHTML = d.files.map(f => `
                     <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 70%;">${f}</span>
-                        <a href="${BASE_URL}/recon_storage/${f}" target="_blank" style="color: var(--accent); text-decoration: none; font-size: 11px; font-weight: 700; border: 1px solid var(--accent); padding: 5px 12px; border-radius: 6px;">VIEW</a>
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">${f}</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="window.examineFile('${f}')" style="background: none; border: 1px solid var(--accent); color: var(--accent); font-size: 10px; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: 700;">EXAMINE</button>
+                            <a href="${BASE_URL}/recon_storage/${f}" target="_blank" style="background: var(--accent); color: #000; text-decoration: none; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 6px;">EXPORT</a>
+                        </div>
                     </div>
                 `).join('') || '<div style="color: var(--text-dim); text-align: center; padding: 40px;">No archived intelligence found.</div>';
             } catch (e) { 
                 list.innerHTML = `<div style="color: var(--red); padding: 20px; text-align: center;">Gateway connection failed.</div>`;
+            }
+        };
+
+        window.examineFile = async (filename) => {
+            const modal = $('preview-modal');
+            const body = $('preview-body');
+            const title = $('preview-title');
+            
+            modal.style.display = 'flex';
+            body.innerText = "RETRIEVING DATA...";
+            title.innerText = "EXAMINING: " + filename;
+
+            try {
+                const res = await fetch(`${BASE_URL}/recon_storage/${filename}`);
+                const text = await res.text();
+                body.innerText = text;
+            } catch (e) {
+                body.innerText = "ERROR: Failed to retrieve file content.";
             }
         };
 

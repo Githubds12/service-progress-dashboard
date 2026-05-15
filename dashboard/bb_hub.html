@@ -231,16 +231,71 @@
 
         @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
         
-        /* --- TABLES --- */
-        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 25px; }
-        .stat-value { font-size: 32px; font-weight: 700; color: #fff; }
-        .table-wrapper { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; min-width: 600px; }
-        th { text-align: left; padding: 15px; color: var(--text-dim); font-size: 11px; border-bottom: 1px solid var(--border); }
-        td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        /* --- TOAST SYSTEM --- */
+        #toast-container {
+            position: fixed; top: 20px; right: 20px; z-index: 10000;
+            display: flex; flex-direction: column; gap: 10px;
+        }
+        .toast {
+            background: var(--glass-bg); backdrop-filter: blur(10px);
+            border: 1px solid var(--border); border-left: 4px solid var(--accent);
+            padding: 12px 20px; border-radius: 8px; color: #fff;
+            font-size: 13px; font-weight: 600; min-width: 250px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            animation: slideIn 0.3s ease forwards;
+        }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .toast.error { border-left-color: var(--red); }
+        .toast.success { border-left-color: var(--green); }
+
+        .session-item { position: relative; }
+        .session-item input {
+            background: rgba(255,255,255,0.1); border: 1px solid var(--accent);
+            color: #fff; padding: 2px 5px; border-radius: 4px;
+            font-family: inherit; font-size: inherit; width: 80%;
+        }
+
+        /* --- PREVIEW MODAL --- */
+        #preview-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); backdrop-filter: blur(10px);
+            display: none; z-index: 20000; padding: 40px;
+            flex-direction: column;
+        }
+        .preview-content {
+            background: #000; border: 1px solid var(--border); border-radius: 20px;
+            flex: 1; padding: 30px; overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace; font-size: 13px; color: #0f0;
+            line-height: 1.6; white-space: pre-wrap;
+            box-shadow: 0 20px 50px rgba(0,0,0,1);
+        }
+
+        /* --- LIVE RECON TERMINAL --- */
+        .recon-terminal {
+            background: #000; border: 1px solid var(--border); border-radius: 15px;
+            height: 250px; margin-top: 20px; display: flex; flex-direction: column;
+            overflow: hidden;
+        }
+        .terminal-header {
+            background: #161b22; padding: 8px 15px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            font-size: 10px; font-weight: 700; color: var(--text-dim);
+        }
+        #liveTerminal {
+            flex: 1; padding: 15px; font-family: 'JetBrains Mono', monospace;
+            font-size: 11px; color: #0f0; overflow-y: auto; white-space: pre-wrap;
+        }
     </style>
 </head>
 <body>
+    <div id="toast-container"></div>
+    <div id="preview-modal">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <h2 id="preview-title" style="color: #fff; font-size: 18px;">Intelligence Preview</h2>
+            <button class="ui-btn" onclick="$('preview-modal').style.display='none'" style="color: var(--red); border-color: var(--red);">CLOSE PREVIEW</button>
+        </div>
+        <div id="preview-body" class="preview-content">Loading...</div>
+    </div>
 
     <div class="sidebar">
         <div class="logo" style="margin-bottom: 40px; font-size: 18px;"><i>BB</i></div>
@@ -252,6 +307,9 @@
         </div>
         <div class="sidebar-item" id="btn-agents" onclick="switchSection('agents', this)">
             <i class='bx bx-terminal'></i><span>AGENT HUB</span>
+        </div>
+        <div class="sidebar-item" id="btn-archive" onclick="switchSection('archive', this)">
+            <i class='bx bx-archive'></i><span>INTEL ARCHIVE</span>
         </div>
         <a href="apkhunter.html" class="sidebar-item">
             <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
@@ -314,6 +372,15 @@
                                     <tbody id="reconBody"></tbody>
                                 </table>
                             </div>
+
+                            <!-- Live Intelligence Feed Panel -->
+                            <div class="recon-terminal">
+                                <div class="terminal-header">
+                                    <span>LIVE INTELLIGENCE FEED</span>
+                                    <span id="reconTerminalStatus" style="color: var(--accent);">READY</span>
+                                </div>
+                                <div id="liveTerminal">> Waiting for agent deployment...</div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -367,7 +434,10 @@
                                 <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--green);"></div>
                                 <span style="font-size: 11px; color: var(--text-dim); margin-left: 10px; font-family: 'JetBrains Mono';">root@specialist:~/recon_ops</span>
                             </div>
-                            <button onclick="$('terminalContent').innerText = '> Console cleared.'" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 10px; font-weight: 700;">FLUSH LOGS</button>
+                            <div style="display: flex; gap: 15px;">
+                                <button id="saveBtn" onclick="window.saveTerminalOutput()" disabled style="background: none; border: none; color: var(--green); cursor: not-allowed; font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5;">[ ARCHIVE OUTPUT ]</button>
+                                <button onclick="$('terminalContent').innerText = '> Console cleared.'; $('saveBtn').disabled=true; $('saveBtn').style.opacity='0.5'; $('saveBtn').style.cursor='not-allowed';" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 10px; font-weight: 700;">FLUSH LOGS</button>
+                            </div>
                         </div>
                         <div id="terminalContent" style="flex: 1; padding: 25px; font-size: 12px; color: #0f0; font-family: 'JetBrains Mono', monospace; line-height: 1.5; overflow-y: auto; white-space: pre-wrap;">> Initializing secure toolchain...
 > Agents standby.
@@ -375,6 +445,22 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Intelligence Archive Section -->
+            <div id="section-archive" class="content-section">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
+                    <h1 style="font-size: 24px; font-weight: 700;">Intelligence Archive</h1>
+                    <div style="color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace;">STORAGE: /recon_storage</div>
+                </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <h2 style="font-size: 18px;">Stored Reconnaissance Data</h2>
+                        <button class="ui-btn" onclick="window.loadArchiveList()" style="font-size: 10px; padding: 5px 15px;">REFRESH STORAGE</button>
+                    </div>
+                    <div id="archiveList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
+                        <div style="color: var(--text-dim); padding: 20px; grid-column: span 3;">Initializing storage sync...</div>
+                    </div>
+                </div>
             </div>
 
             <div id="section-ai" class="content-section">
@@ -415,7 +501,7 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
-        const BASE_URL = "https://service-progress-portal.onrender.com"; // Hardcoded to bypass caching issues
+        const BASE_URL = "https://service-progress-portal.onrender.com"; // Explicitly target the API backend
 
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
@@ -520,6 +606,8 @@
 
             if (id === 'ai') document.body.classList.add('ai-mode');
             else document.body.classList.remove('ai-mode');
+
+            if (id === 'archive') loadArchiveList();
         };
 
         window.createNewAiSession = () => {
@@ -528,14 +616,41 @@
             save(); renderSessionList(); window.loadSession(id);
         };
 
+        window.showToast = (msg, type = 'info') => {
+            const container = $('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = msg;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(20px)';
+                toast.style.transition = '0.3s';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        };
+
         window.renameCurrentSession = () => {
             const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
-            const newTitle = prompt("Enter new session title:", s.title);
-            if (newTitle) {
+            const item = document.querySelector(`.session-item[data-id="${s.id}"]`);
+            if (!item) return;
+
+            const currentTitle = s.title;
+            item.innerHTML = `<input type="text" id="renameInput" value="${currentTitle}">`;
+            const input = $('renameInput');
+            input.focus();
+            input.select();
+
+            const finishRename = () => {
+                const newTitle = input.value.trim() || "Untitled Session";
                 s.title = newTitle;
-                save(); renderSessionList();
+                save();
+                renderSessionList();
                 $('currentSessionTitle').innerText = newTitle;
-            }
+            };
+
+            input.onblur = finishRename;
+            input.onkeypress = (e) => { if (e.key === 'Enter') finishRename(); };
         };
 
         window.loadSession = (id) => {
@@ -582,7 +697,9 @@
 
         function renderSessionList() {
             $('sessionList').innerHTML = window.state.aiSessions.map(s => `
-                <div class="session-item ${s.id === window.state.currentSessionId ? 'active' : ''}" onclick="loadSession('${s.id}')">
+                <div class="session-item ${s.id === window.state.currentSessionId ? 'active' : ''}" 
+                     data-id="${s.id}" 
+                     onclick="loadSession('${s.id}')">
                     ${s.title}
                 </div>
             `).join('');
@@ -590,30 +707,139 @@
 
         window.runSecurityTool = async (tool, targetOverride = null) => {
             const targetName = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex]?.name;
-            if (!targetName) return alert("Select a target first.");
+            if (!targetName) return window.showToast("Select a target first.", "error");
             
-            window.switchSection('agents');
             const term = $('terminalContent');
-            term.innerHTML += `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
-            term.scrollTop = term.scrollHeight;
+            const liveTerm = $('liveTerminal');
+            const saveBtn = $('saveBtn');
+            const statusLabel = $('reconTerminalStatus');
+            
+            const timestamp = `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
+            term.innerHTML += timestamp;
+            if (liveTerm) {
+                liveTerm.innerHTML = timestamp + `\n> Deployment initiated...`;
+                statusLabel.innerText = "AGENT RUNNING...";
+            }
 
-            console.log(`[DEBUG] Calling ${BASE_URL}/api/tools/run for ${tool} on ${targetName}`);
+            term.scrollTop = term.scrollHeight;
+            
+            saveBtn.disabled = true;
+            saveBtn.style.opacity = '0.5';
+            saveBtn.innerText = "[ AGENT RUNNING... ]";
 
             try {
                 const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${targetName}`);
-                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const data = await res.json();
                 
                 if (data.status === 'success') {
-                    term.innerHTML += `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
+                    window.lastOutput = data.output;
+                    window.lastTool = tool;
+                    window.lastTarget = targetName;
+                    
+                    const successMsg = `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
+                    term.innerHTML += successMsg;
+                    if (liveTerm) {
+                        liveTerm.innerHTML = successMsg;
+                        statusLabel.innerText = "SUCCESS";
+                    }
+                    
+                    saveBtn.disabled = false;
+                    saveBtn.style.opacity = '1';
+                    saveBtn.innerText = "[ ARCHIVE OUTPUT ]";
+                    
+                    window.showToast("Scan complete.", "success");
                 } else {
-                    term.innerHTML += `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
+                    const errMsg = `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
+                    term.innerHTML += errMsg;
+                    if (liveTerm) {
+                        liveTerm.innerHTML = errMsg;
+                        statusLabel.innerText = "FAILED";
+                    }
+                    saveBtn.innerText = "[ AGENT FAILED ]";
+                    window.showToast("Agent failed: " + data.output, "error");
                 }
             } catch (e) {
-                console.error("[GATEWAY_ERROR]", e);
-                term.innerHTML += `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Failed to reach ${BASE_URL}. ${e.message}</span>`;
+                const gatewayMsg = `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Connection failed.</span>`;
+                term.innerHTML += gatewayMsg;
+                if (liveTerm) {
+                    liveTerm.innerHTML = gatewayMsg;
+                    statusLabel.innerText = "GATEWAY ERROR";
+                }
+                saveBtn.innerText = "[ GATEWAY ERROR ]";
+                window.showToast("Gateway connection failed.", "error");
             }
             term.scrollTop = term.scrollHeight;
+            if (liveTerm) liveTerm.scrollTop = liveTerm.scrollHeight;
+        };
+
+        window.saveTerminalOutput = async () => {
+            if (!window.lastOutput) return;
+            const btn = $('saveBtn');
+            btn.innerText = "ARCHIVING...";
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(BASE_URL + "/api/tools/save", {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        target: window.lastTarget,
+                        tool: window.lastTool,
+                        output: window.lastOutput
+                    })
+                });
+                const d = await res.json();
+                if (d.status === 'success') {
+                    window.showToast("Intelligence Archived Successfully!", "success");
+                    btn.innerText = "[ ARCHIVED ]";
+                    if (window.loadArchiveList) window.loadArchiveList();
+                } else {
+                    throw new Error(d.error || "Unknown error");
+                }
+            } catch (e) {
+                window.showToast("Archival failed: " + e.message, "error");
+                btn.innerText = "[ RETRY ARCHIVE ]";
+                btn.disabled = false;
+            }
+        };
+
+        window.loadArchiveList = async () => {
+            const list = $('archiveList');
+            if (!list) return;
+            list.innerHTML = `<div style="padding: 20px; color: var(--accent); text-align: center;">REFRESHING ARCHIVE...</div>`;
+            try {
+                const res = await fetch(BASE_URL + "/api/tools/list");
+                const d = await res.json();
+                list.innerHTML = d.files.map(f => `
+                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">${f}</span>
+                        <div style="display: flex; gap: 10px;">
+                            <button onclick="window.examineFile('${f}')" style="background: none; border: 1px solid var(--accent); color: var(--accent); font-size: 10px; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: 700;">EXAMINE</button>
+                            <a href="${BASE_URL}/recon_storage/${f}" target="_blank" style="background: var(--accent); color: #000; text-decoration: none; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 6px;">EXPORT</a>
+                        </div>
+                    </div>
+                `).join('') || '<div style="color: var(--text-dim); text-align: center; padding: 40px;">No archived intelligence found.</div>';
+            } catch (e) { 
+                list.innerHTML = `<div style="color: var(--red); padding: 20px; text-align: center;">Gateway connection failed.</div>`;
+            }
+        };
+
+        window.examineFile = async (filename) => {
+            const modal = $('preview-modal');
+            const body = $('preview-body');
+            const title = $('preview-title');
+            
+            modal.style.display = 'flex';
+            body.innerText = "RETRIEVING DATA...";
+            title.innerText = "EXAMINING: " + filename;
+
+            try {
+                const res = await fetch(`${BASE_URL}/recon_storage/${filename}`);
+                const text = await res.text();
+                body.innerText = text;
+            } catch (e) {
+                body.innerText = "ERROR: Failed to retrieve file content.";
+            }
         };
 
         function save() { localStorage.setItem('ai_sessions', JSON.stringify(window.state.aiSessions)); }

@@ -111,10 +111,10 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
     def run_tool(self, tool, target):
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
-            "dnsx": ["dnsx", "-d", target, "-silent"],
-            "amass": ["amass", "intel", "-d", target],
+            "dnsx": ["dnsx", "-silent"], # Will pipe target to stdin
+            "amass": ["amass", "enum", "-passive", "-d", target],
             "assetfinder": ["assetfinder", "--subs-only", target],
-            "naabu": ["naabu", "-host", target, "-c", "-silent"],
+            "naabu": ["naabu", "-host", target, "-s", "c", "-silent"],
             "httpx": ["httpx", "-u", target, "-silent"],
             "katana": ["katana", "-u", target, "-silent"]
         }
@@ -130,7 +130,10 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
 
         try:
             print(f"[*] Running {tool} on {target}...")
-            result = subprocess.run(commands[tool], capture_output=True, text=True, timeout=300)
+            # For tools that prefer stdin or benefit from it
+            stdin_data = (target + "\n") if tool == "dnsx" else None
+            result = subprocess.run(commands[tool], input=stdin_data, capture_output=True, text=True, timeout=300)
+            
             if result.returncode == 0:
                 return True, result.stdout if result.stdout.strip() else "No results."
             return False, result.stderr or result.stdout
