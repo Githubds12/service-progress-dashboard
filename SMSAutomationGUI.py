@@ -138,7 +138,7 @@ class SMSAutomationApp:
         self.tree_country.bind("<<TreeviewSelect>>", self.on_tree_select)
 
     def create_treeview(self, parent):
-        columns = ("ccode", "country", "operator", "count", "high_success")
+        columns = ("ccode", "country", "operator", "count", "status")
         tree = ttk.Treeview(parent, columns=columns, show="headings", height=10)
         tree.heading("ccode", text="Code")
         tree.column("ccode", width=60, anchor="center")
@@ -148,10 +148,11 @@ class SMSAutomationApp:
         tree.column("operator", width=150)
         tree.heading("count", text="Available")
         tree.column("count", width=80, anchor="center")
-        tree.heading("high_success", text="Rating")
-        tree.column("high_success", width=120)
+        tree.heading("status", text="Status")
+        tree.column("status", width=120)
         
         tree.tag_configure("high", foreground="#10b981", font=("Segoe UI", 10, "bold"))
+        tree.tag_configure("verified", foreground="#34d399", font=("Segoe UI", 10, "bold"))
         tree.tag_configure("offline", foreground="#94a3b8")
         tree.pack(fill="both", expand=True, padx=15, pady=5)
         return tree
@@ -189,6 +190,9 @@ class SMSAutomationApp:
         
         self.btn_refresh_sms = ttk.Button(button_frame, text="Refresh SMS", command=self.refresh_sms, state="disabled")
         self.btn_refresh_sms.pack(side="left", padx=5)
+
+        self.btn_mark_verified = ttk.Button(button_frame, text="Mark Verified & Claim", command=self.log_verification, state="disabled")
+        self.btn_mark_verified.pack(side="left", padx=5)
         
         self.lbl_number = tk.Label(panel, text="", bg="#1e293b", fg="#10b981", font=("Segoe UI", 18, "bold"))
         self.lbl_number.pack(pady=5)
@@ -224,6 +228,7 @@ class SMSAutomationApp:
             
             self.lbl_selected.config(text=f"Selected: {self.selected_country} - {self.selected_operator}", fg="#f8fafc")
             self.btn_get_number.config(state="normal")
+            self.btn_mark_verified.config(state="normal")
 
     def search_live(self):
         service = self.service_entry.get().strip().lower()
@@ -477,6 +482,71 @@ class SMSAutomationApp:
                 self.root.after(0, lambda: self.btn_test_sms.config(state="normal"))
                 
         threading.Thread(target=send, daemon=True).start()
+
+    def log_verification(self):
+        service = self.service_entry.get().strip().lower()
+        if not service or not self.selected_country or not self.selected_operator:
+            messagebox.showwarning("Incomplete", "Please search for a service and select a provider first.")
+            return
+
+        if not messagebox.askyesno("Confirm", f"Mark '{service}' as Verified via {self.selected_country} ({self.selected_operator})?\n\nThis will update the main Intelligence Dashboard."):
+            return
+
+        # Disable button during update
+        self.btn_mark_verified.config(state="disabled")
+        self.update_raw_output(f"[*] Logging verification for '{service}'...")
+
+        def run_update():
+            try:
+                # Use the same logic as the separate python script but integrated
+                data_js = r'c:\Users\Gorri\Documents\Reports\dashboard\apkhunter_data.js'
+                if not os.path.exists(data_js):
+                    self.root.after(0, lambda: messagebox.showerror("Error", "Dashboard data file not found!"))
+                    return
+
+                with open(data_js, 'r', encoding='utf-8') as f:
+                    content = f.read()
+
+                prefix = 'window.apkhunterData = '
+                if not content.startswith(prefix):
+                    self.root.after(0, lambda: messagebox.showerror("Error", "Invalid dashboard data format."))
+                    return
+
+                json_str = content[len(prefix):].strip().strip(';')
+                data = json.loads(json_str)
+                
+                updated = False
+                for item in data:
+                    # Match by name (case-insensitive slug)
+                    if item.get('name', '').lower() == service:
+                        item['claimed'] = True
+                        item['claimed_at'] = int(time.time())
+                        item['last_updated'] = time.strftime("%Y-%m-%d")
+                        item['note'] = f"[Verified] SMS received successfully via {self.selected_country} ({self.selected_operator})."
+                        updated = True
+                        break
+                
+                if updated:
+                    with open(data_js, 'w', encoding='utf-8') as f:
+                        f.write(prefix + json.dumps(data, indent=4) + ';')
+                    
+                    self.root.after(0, lambda: self.update_raw_output(f"[+] Successfully verified and claimed '{service}'."))
+                    self.root.after(0, lambda: messagebox.showinfo("Success", f"'{service}' has been updated in the dashboard."))
+                    
+                    # Also update the UI list to show 'VERIFIED'
+                    for item in self.tree_live.get_children():
+                        vals = self.tree_live.item(item, 'values')
+                        if vals[0] == self.selected_country and vals[2].lower().replace("*", "").strip() == self.selected_operator:
+                            self.tree_live.item(item, values=(vals[0], vals[1], vals[2], vals[3], "VERIFIED"), tags=("verified",))
+                else:
+                    self.root.after(0, lambda: messagebox.showwarning("Not Found", f"Service '{service}' not found in the main database.\n\nPlease ensure the service is registered in APK Hunter first."))
+
+            except Exception as e:
+                self.root.after(0, lambda err=str(e): messagebox.showerror("Error", f"Failed to update dashboard: {err}"))
+            finally:
+                self.root.after(0, lambda: self.btn_mark_verified.config(state="normal"))
+
+        threading.Thread(target=run_update, daemon=True).start()
 
 if __name__ == "__main__":
     root = tk.Tk()
