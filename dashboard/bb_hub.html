@@ -65,98 +65,6 @@
         .content-section { display: none; }
         .content-section.active { display: block; }
 
-        /* --- STEALTH AI MODE --- */
-        body.ai-mode { overflow: hidden; }
-        body.ai-mode .sidebar, 
-        body.ai-mode header { display: none !important; }
-        body.ai-mode .main-content { margin-left: 0 !important; padding: 0 !important; }
-        body.ai-mode .container { max-width: 100% !important; padding: 0 !important; margin: 0 !important; }
-
-        .ai-workspace {
-            height: 100vh;
-            width: 100vw;
-            display: flex;
-            background: #030508;
-            overflow: hidden;
-        }
-
-        .ai-sidebar {
-            width: 300px;
-            background: #0b0e14;
-            border-right: 1px solid var(--border);
-            display: flex;
-            flex-direction: column;
-            padding: 25px;
-            flex-shrink: 0;
-        }
-        .ai-sidebar.collapsed { display: none; }
-
-        .ai-main-chat {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: #030508;
-            min-width: 0;
-        }
-
-        .chat-header {
-            padding: 12px 25px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: #030508;
-        }
-
-        .ai-messages {
-            flex: 1;
-            padding: 30px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-        }
-
-        .ai-bubble {
-            padding: 15px 22px;
-            border-radius: 18px;
-            max-width: 80%;
-            font-size: 14px;
-            line-height: 1.5;
-        }
-        .ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 600; }
-        .ai-bubble.bot { background: rgba(255,255,255,0.04); color: #f0f0f0; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid var(--border); }
-
-        .ai-input-area {
-            padding: 20px 25px 30px;
-            border-top: 1px solid var(--border);
-            background: #030508;
-            display: flex;
-            gap: 15px;
-        }
-        .ai-input-area input {
-            flex: 1;
-            background: #0b0e14;
-            border: 1px solid var(--border);
-            color: #fff;
-            padding: 15px 25px;
-            border-radius: 12px;
-            outline: none;
-            font-size: 14px;
-        }
-        .ai-input-area button {
-            background: var(--accent);
-            border: none;
-            padding: 0 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            color: #000;
-            font-weight: 700;
-            font-size: 11px;
-            text-transform: uppercase;
-            white-space: nowrap;
-        }
-
         /* --- UI COMPONENTS --- */
         .ui-btn {
             background: rgba(255,255,255,0.05); border: 1px solid var(--border);
@@ -179,58 +87,6 @@
         }
         .session-item.active { background: rgba(0,242,255,0.1); color: var(--accent); }
 
-        /* De-confliction: Kill all old floating buttons */
-        #exitAi, .floating-btn, .exit-btn { display: none !important; visibility: hidden !important; pointer-events: none !important; }
-
-        @media (max-width: 1024px) {
-            .container { padding: 0 15px; }
-            .main-content { margin-left: 0; }
-            .sidebar { 
-                position: fixed;
-                bottom: 0;
-                top: auto;
-                left: 0;
-                right: 0;
-                width: 100% !important;
-                height: 60px;
-                flex-direction: row;
-                padding: 0;
-                border-right: none;
-                border-top: 1px solid var(--border);
-                justify-content: space-around;
-                background: rgba(13, 17, 23, 0.95);
-            }
-            .sidebar .logo { display: none; }
-            .sidebar-item {
-                width: auto;
-                padding: 0;
-                flex-direction: column;
-                gap: 5px;
-                justify-content: center;
-            }
-            .sidebar-item i { font-size: 18px; min-width: auto; }
-            .sidebar-item span { font-size: 9px; opacity: 1; }
-            .sidebar-item.active { background: none; }
-            
-            .main-content { padding-bottom: 70px; }
-            
-            /* Recon Section Mobile */
-            #section-recon > div:first-child { flex-direction: column; align-items: stretch !important; gap: 15px; }
-            #section-recon > div:nth-child(2) { grid-template-columns: 1fr !important; }
-            .stats-grid { grid-template-columns: 1fr !important; }
-            
-            /* Agent Section Mobile */
-            #section-agents > div:nth-child(2) { grid-template-columns: 1fr !important; height: auto !important; }
-            #terminalContent { height: 300px; }
-            
-            /* AI Workspace Mobile */
-            .ai-workspace { flex-direction: column; }
-            .ai-sidebar { width: 100%; height: 150px; border-right: none; border-bottom: 1px solid var(--border); }
-            .ai-bubble { max-width: 95%; }
-        }
-
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-        
         /* --- TOAST SYSTEM --- */
         #toast-container {
             position: fixed; top: 20px; right: 20px; z-index: 10000;
@@ -247,13 +103,6 @@
         @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .toast.error { border-left-color: var(--red); }
         .toast.success { border-left-color: var(--green); }
-
-        .session-item { position: relative; }
-        .session-item input {
-            background: rgba(255,255,255,0.1); border: 1px solid var(--accent);
-            color: #fff; padding: 2px 5px; border-radius: 4px;
-            font-family: inherit; font-size: inherit; width: 80%;
-        }
 
         /* --- PREVIEW MODAL --- */
         #preview-modal {
@@ -285,6 +134,22 @@
             flex: 1; padding: 15px; font-family: 'JetBrains Mono', monospace;
             font-size: 11px; color: #0f0; overflow-y: auto; white-space: pre-wrap;
         }
+
+        .stat-card {
+            background: var(--card); border: 1px solid var(--border);
+            padding: 20px; border-radius: 15px; text-align: center;
+        }
+        .stat-value { font-size: 24px; font-weight: 700; color: #fff; }
+        .stat-card div:last-child { font-size: 10px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { text-align: left; padding: 12px; border-bottom: 1px solid var(--border); color: var(--text-dim); font-size: 11px; text-transform: uppercase; }
+        td { padding: 15px 12px; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 13px; }
+        
+        .ai-messages { height: 400px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; padding: 20px; }
+        .ai-bubble { padding: 12px 18px; border-radius: 12px; max-width: 80%; font-size: 14px; }
+        .ai-bubble.user { background: var(--accent); color: #000; align-self: flex-end; }
+        .ai-bubble.bot { background: rgba(255,255,255,0.05); align-self: flex-start; }
     </style>
 </head>
 <body>
@@ -311,15 +176,12 @@
         <div class="sidebar-item" id="btn-archive" onclick="switchSection('archive', this)">
             <i class='bx bx-archive'></i><span>INTEL ARCHIVE</span>
         </div>
-        <a href="apkhunter.html" class="sidebar-item">
-            <i class='bx bx-mobile-alt'></i><span>APK HUNTER</span>
-        </a>
     </div>
 
     <div class="main-content">
         <div class="container">
             <header>
-                <div class="logo"><i>BUG</i> BOUNTY PORTAL</div>
+                <div class="logo"><i>BUG</i> BOUNTY HUB</div>
                 <div id="syncStatus" style="font-size: 12px; font-weight: 700; color: var(--green);">SYSTEM ONLINE</div>
             </header>
 
@@ -341,22 +203,6 @@
                             <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 15px;">Target Scope</h3>
                             <div id="targetList" style="display: flex; flex-direction: column; gap: 8px;"></div>
                         </div>
-
-                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 20px;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                                <h3 style="font-size: 11px; color: var(--text-dim); text-transform: uppercase; letter-spacing: 1px;">Agent Hub</h3>
-                                <button onclick="window.switchSection('agents')" style="background: none; border: none; color: var(--accent); font-size: 10px; cursor: pointer;">FULL CONSOLE</button>
-                            </div>
-                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
-                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="font-size: 9px; padding: 6px 10px;">SUBFINDER</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="font-size: 9px; padding: 6px 10px;">DNSX</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="font-size: 9px; padding: 6px 10px;">AMASS</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="font-size: 9px; padding: 6px 10px;">ASSETFINDER</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="font-size: 9px; padding: 6px 10px;">NAABU</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="font-size: 9px; padding: 6px 10px;">HTTPX</button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="grid-column: span 2; font-size: 9px; padding: 6px 10px; border-color: var(--accent);">KATANA SPIDER</button>
-                            </div>
-                        </div>
                     </div>
 
                     <div style="display: flex; flex-direction: column; gap: 30px;">
@@ -364,16 +210,12 @@
                         <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                 <h2 id="panelTitle" style="font-size: 18px;">Intelligence Briefing</h2>
-                                <div id="targetMeta" style="font-size: 11px; color: var(--text-dim);"></div>
                             </div>
-                            <div class="table-wrapper">
-                                <table id="reconTable">
-                                    <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
-                                    <tbody id="reconBody"></tbody>
-                                </table>
-                            </div>
+                            <table id="reconTable">
+                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
+                                <tbody id="reconBody"></tbody>
+                            </table>
 
-                            <!-- Live Intelligence Feed Panel -->
                             <div class="recon-terminal">
                                 <div class="terminal-header">
                                     <span>LIVE INTELLIGENCE FEED</span>
@@ -387,111 +229,25 @@
             </div>
 
             <div id="section-agents" class="content-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h1 style="font-size: 24px; font-weight: 700;">Agent Deployment Center</h1>
-                    <div style="color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace;">GATEWAY: /api/tools/run</div>
-                </div>
-
-                <div style="display: grid; grid-template-columns: 350px 1fr; gap: 30px; height: calc(100vh - 200px);">
-                    <div style="display: flex; flex-direction: column; gap: 20px;">
-                        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 25px;">
-                            <h3 style="font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 20px;">Active Agents</h3>
-                            <div style="display: flex; flex-direction: column; gap: 10px;">
-                                <button class="ui-btn" onclick="window.runSecurityTool('subfinder')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-search-alt'></i> SUBFINDER
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('dnsx')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-globe'></i> DNSX
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('amass')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-map-alt'></i> AMASS
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('assetfinder')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-list-ul'></i> ASSETFINDER
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('naabu')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-radar'></i> NAABU
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('httpx')" style="justify-content: flex-start; padding: 12px 20px;">
-                                    <i class='bx bx-link-external'></i> HTTPX
-                                </button>
-                                <button class="ui-btn" onclick="window.runSecurityTool('katana')" style="justify-content: flex-start; padding: 12px 20px; border-color: var(--accent);">
-                                    <i class='bx bx-bug'></i> KATANA (SPIDER)
-                                </button>
-                            </div>
-                        </div>
-                        <div style="background: rgba(255,82,82,0.05); border: 1px solid rgba(255,82,82,0.2); border-radius: 15px; padding: 15px;">
-                            <p style="font-size: 11px; color: var(--red); font-weight: 700; margin-bottom: 5px;">WAR ROOM ADVISORY</p>
-                            <p style="font-size: 10px; color: var(--text-dim);">Agents consume significant resources. Deploy sequentially for maximum precision.</p>
-                        </div>
-                    </div>
-
-                    <div style="background: #000; border: 1px solid var(--border); border-radius: 20px; display: flex; flex-direction: column; overflow: hidden;">
-                        <div style="background: #161b22; padding: 12px 25px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border);">
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--red);"></div>
-                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--yellow);"></div>
-                                <div style="width: 10px; height: 10px; border-radius: 50%; background: var(--green);"></div>
-                                <span style="font-size: 11px; color: var(--text-dim); margin-left: 10px; font-family: 'JetBrains Mono';">root@specialist:~/recon_ops</span>
-                            </div>
-                            <div style="display: flex; gap: 15px;">
-                                <button id="saveBtn" onclick="window.saveTerminalOutput()" disabled style="background: none; border: none; color: var(--green); cursor: not-allowed; font-size: 10px; font-weight: 700; text-transform: uppercase; opacity: 0.5;">[ ARCHIVE OUTPUT ]</button>
-                                <button onclick="$('terminalContent').innerText = '> Console cleared.'; $('saveBtn').disabled=true; $('saveBtn').style.opacity='0.5'; $('saveBtn').style.cursor='not-allowed';" style="background: none; border: none; color: var(--accent); cursor: pointer; font-size: 10px; font-weight: 700;">FLUSH LOGS</button>
-                            </div>
-                        </div>
-                        <div id="terminalContent" style="flex: 1; padding: 25px; font-size: 12px; color: #0f0; font-family: 'JetBrains Mono', monospace; line-height: 1.5; overflow-y: auto; white-space: pre-wrap;">> Initializing secure toolchain...
-> Agents standby.
-> Ready for deployment.</div>
+                <div style="background: #000; border: 1px solid var(--border); border-radius: 20px; padding: 25px;">
+                    <h2 style="margin-bottom: 20px;">Agent Deployment Console</h2>
+                    <div id="terminalContent" style="height: 400px; overflow-y: auto; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: #0f0; background: #000; padding: 15px;"></div>
+                    <div style="margin-top: 20px; display: flex; gap: 10px;">
+                        <button id="saveBtn" class="ui-btn" onclick="window.saveTerminalOutput()">[ ARCHIVE OUTPUT ]</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Intelligence Archive Section -->
             <div id="section-archive" class="content-section">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px;">
-                    <h1 style="font-size: 24px; font-weight: 700;">Intelligence Archive</h1>
-                    <div style="color: var(--text-dim); font-size: 12px; font-family: 'JetBrains Mono', monospace;">STORAGE: /recon_storage</div>
-                </div>
-                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                        <h2 style="font-size: 18px;">Stored Reconnaissance Data</h2>
-                        <button class="ui-btn" onclick="window.loadArchiveList()" style="font-size: 10px; padding: 5px 15px;">REFRESH STORAGE</button>
-                    </div>
-                    <div id="archiveList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;">
-                        <div style="color: var(--text-dim); padding: 20px; grid-column: span 3;">Initializing storage sync...</div>
-                    </div>
-                </div>
+                <div id="archiveList" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 15px;"></div>
             </div>
 
             <div id="section-ai" class="content-section">
-                <div class="ai-workspace">
-                    <div class="ai-sidebar" id="aiSidebar">
-                        <button class="new-session-btn" onclick="window.createNewAiSession()">+ NEW SESSION</button>
-                        <div id="sessionList"></div>
-                    </div>
-                    <div class="ai-main-chat">
-                        <div class="chat-header">
-                            <div style="display: flex; align-items: center; gap: 15px;">
-                                <button class="ui-btn" onclick="window.toggleAiSidebar()">
-                                    <i class='bx bx-menu-alt-left'></i> PANEL
-                                </button>
-                                <h2 id="currentSessionTitle" style="font-size: 14px; color: #fff;">Research Console</h2>
-                                <button class="ui-btn" onclick="window.renameCurrentSession()">
-                                    <i class='bx bx-edit-alt'></i> RENAME
-                                </button>
-                            </div>
-                            <div style="display: flex; align-items: center; gap: 10px;">
-                                <button class="ui-btn" onclick="window.clearSession()" style="color: var(--red);">CLEAR</button>
-                                <button class="ui-btn" onclick="window.switchSection('recon')" style="background: var(--accent); color: #000; border: none;">
-                                    <i class='bx bx-exit'></i> EXIT
-                                </button>
-                            </div>
-                        </div>
-                        <div id="aiMessages" class="ai-messages"></div>
-                        <div class="ai-input-area">
-                            <input type="text" id="aiInput" onkeypress="if(event.key === 'Enter') window.sendAiMessage()" placeholder="Request intelligence analysis...">
-                            <button onclick="window.sendAiMessage()">Analyze</button>
-                        </div>
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; overflow: hidden;">
+                    <div id="aiMessages" class="ai-messages"></div>
+                    <div style="padding: 20px; border-top: 1px solid var(--border); display: flex; gap: 10px;">
+                        <input type="text" id="aiInput" style="flex: 1; background: #000; border: 1px solid var(--border); color: #fff; padding: 10px; border-radius: 8px;">
+                        <button onclick="window.sendAiMessage()" class="ui-btn">SEND</button>
                     </div>
                 </div>
             </div>
@@ -504,346 +260,141 @@
         const BASE_URL = "https://service-progress-portal.onrender.com"; 
 
         window.state = {
-            aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
-            currentSessionId: localStorage.getItem('current_session_id') || null,
-            sidebarCollapsed: false,
-            currentTargetIndex: 0
+            currentTargetIndex: 0,
+            aiSessions: [{id:'1', messages:[]}],
+            currentSessionId: '1'
         };
 
         function init() {
+            const stored = localStorage.getItem('custom_targets');
+            if (stored) {
+                const customTargets = JSON.parse(stored);
+                customTargets.forEach(ct => {
+                    if (!window.bugBountyData.targets.find(t => t.name === ct.name)) {
+                        window.bugBountyData.targets.unshift(ct);
+                    }
+                });
+            }
             renderTargets();
             switchTarget(0);
-            
-            if (!window.state.aiSessions.length) window.createNewAiSession();
-            else renderSessionList();
-            if (window.state.currentSessionId) window.loadSession(window.state.currentSessionId);
-
-            setTimeout(() => {
-                const term = $('terminalContent');
-                term.innerHTML += `\n<span style="color: var(--accent);">> [SYSTEM] New Feature: Agent Hub now active. Access via Sidebar.</span>`;
-            }, 1000);
         }
 
         function renderTargets() {
-            const data = window.bugBountyData;
-            if (!data) return;
-            $('targetList').innerHTML = data.targets.map((t, i) => `
+            $('targetList').innerHTML = window.bugBountyData.targets.map((t, i) => `
                 <div class="session-item ${i === window.state.currentTargetIndex ? 'active' : ''}" onclick="window.switchTarget(${i})">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <span>${t.name}</span>
-                        <span style="font-size: 9px; opacity: 0.6;">${t.stats.total} SUBs</span>
+                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;">${t.name}</span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 9px; opacity: 0.6;">${t.stats.total}</span>
+                            ${i < 3 && !localStorage.getItem('custom_targets')?.includes(t.name) ? '' : `<i class='bx bx-x' onclick="event.stopPropagation(); window.deleteTarget(${i})" style="color: var(--red); font-size: 14px; cursor: pointer;"></i>`}
+                        </div>
                     </div>
                 </div>
             `).join('');
         }
 
-        window.switchTarget = (index) => {
-            window.state.currentTargetIndex = index;
-            const target = window.bugBountyData.targets[index];
-            if (!target) return;
+        window.switchTarget = (i) => {
+            window.state.currentTargetIndex = i;
+            const t = window.bugBountyData.targets[i];
+            if (!t) return;
 
-            $('currentDomainName').innerText = target.name.toUpperCase();
-            $('panelTitle').innerText = `Intelligence Briefing: ${target.name}`;
-            $('targetMeta').innerText = `LAST SCANNED: ${window.bugBountyData.last_update}`;
-
-            $('statsGrid').innerHTML = `
-                <div class="stat-card"><div class="stat-value">${target.stats.total.toLocaleString()}</div><div>SUBDOMAINS</div></div>
-                <div class="stat-card"><div class="stat-value" style="color: var(--accent);">${target.stats.high_value_count.toLocaleString()}</div><div>HIGH VALUE</div></div>
-                <div class="stat-card"><div class="stat-value" style="color: var(--red);">${target.findings.length}</div><div>CRITICAL FINDINGS</div></div>
-            `;
+            $('currentDomainName').innerText = t.name.toUpperCase();
+            $('panelTitle').innerText = `Briefing: ${t.name}`;
             
-            $('reconBody').innerHTML = target.findings.map(f => `
+            $('statsGrid').innerHTML = `
+                <div class="stat-card"><div class="stat-value">${t.stats.total}</div><div>TOTAL</div></div>
+                <div class="stat-card"><div class="stat-value" style="color: var(--accent);">${t.stats.high_value_count}</div><div>VALUED</div></div>
+                <div class="stat-card"><div class="stat-value" style="color: var(--red);">${t.findings.length}</div><div>REPORTS</div></div>
+            `;
+
+            $('reconBody').innerHTML = t.findings.map(f => `
                 <tr>
-                    <td style="color: ${f.priority === 'Critical' ? 'var(--red)' : 'var(--yellow)'}; font-weight: 700;">${f.priority}</td>
-                    <td style="font-family: 'JetBrains Mono', monospace; font-size: 11px;">${f.target}</td>
-                    <td><div style="color: #fff; margin-bottom: 4px;">${f.category}</div><div style="font-size: 11px; color: var(--text-dim);">${f.recommendation}</div></td>
-                    <td>
-                        <select onchange="if(this.value) { window.runSecurityTool(this.value, '${f.target}'); this.value=''; }" style="background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--accent); padding: 5px; border-radius: 4px; font-size: 10px; cursor: pointer;">
-                            <option value="">DEPLOY...</option>
-                            <option value="subfinder">SUBFINDER</option>
-                            <option value="dnsx">DNSX</option>
-                            <option value="httpx">HTTPX</option>
-                            <option value="katana">KATANA</option>
-                        </select>
-                    </td>
+                    <td style="color: ${f.priority === 'Critical' ? 'var(--red)' : 'var(--yellow)'}">${f.priority}</td>
+                    <td style="font-family: 'JetBrains Mono'">${f.target}</td>
+                    <td>${f.category}</td>
+                    <td><button class="ui-btn" onclick="window.runSecurityTool('httpx', '${f.target}')">SCAN</button></td>
                 </tr>
             `).join('');
-            
             renderTargets();
-        };
+        }
 
         window.addCustomDomain = () => {
             const input = $('newDomainInput');
-            const domain = input.value.trim();
-            if (!domain) return;
-
-            const newTarget = {
-                name: domain,
-                stats: { total: 0, high_value_count: 0 },
-                findings: [
-                    { priority: 'Info', target: domain, category: 'Initial Scoping', recommendation: 'Trigger active reconnaissance to populate intelligence.' }
-                ]
-            };
-
-            window.bugBountyData.targets.unshift(newTarget);
+            const d = input.value.trim().toLowerCase();
+            if (!d) return;
+            const newT = { name: d, stats: {total:0, high_value_count:0}, findings: [{priority:'Info', target:d, category:'Scope', recommendation:'Run scans'}] };
+            window.bugBountyData.targets.unshift(newT);
+            saveCustomTargets();
             input.value = '';
-            window.switchTarget(0);
-        };
+            switchTarget(0);
+        }
 
-        window.toggleAiSidebar = () => {
-            window.state.sidebarCollapsed = !window.state.sidebarCollapsed;
-            $('aiSidebar').classList.toggle('collapsed', window.state.sidebarCollapsed);
-        };
+        window.deleteTarget = (i) => {
+            window.bugBountyData.targets.splice(i, 1);
+            saveCustomTargets();
+            switchTarget(0);
+        }
+
+        function saveCustomTargets() {
+            const defaultNames = ["Facebook", "Uber", "Tesla"];
+            const custom = window.bugBountyData.targets.filter(t => !defaultNames.includes(t.name) || localStorage.getItem('custom_targets')?.includes(t.name));
+            localStorage.setItem('custom_targets', JSON.stringify(custom));
+        }
+
+        window.runSecurityTool = async (tool, targetOverride) => {
+            const target = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex].name;
+            const live = $('liveTerminal');
+            const status = $('reconTerminalStatus');
+            
+            live.innerHTML = `> Deploying ${tool} for ${target}...`;
+            status.innerText = "RUNNING";
+            status.style.color = "var(--yellow)";
+
+            try {
+                const res = await fetch(`${BASE_URL}/api/tools/run?tool=${tool}&target=${target}`);
+                const data = await res.json();
+                if (data.status === 'success') {
+                    live.innerHTML = `> SUCCESS\n${data.output}`;
+                    status.innerText = "SUCCESS";
+                    status.style.color = "var(--green)";
+                    
+                    if (tool === 'subfinder' || tool === 'assetfinder' || tool === 'amass') {
+                        const lines = data.output.split('\n').filter(l => l.includes('.') && !l.includes(' '));
+                        const current = window.bugBountyData.targets[window.state.currentTargetIndex];
+                        lines.forEach(l => {
+                            if (!current.findings.find(f => f.target === l)) {
+                                current.findings.push({target:l, category:'Discovery', priority:'Low', recommendation:'Probe'});
+                            }
+                        });
+                        current.stats.total = current.findings.length;
+                        saveCustomTargets();
+                        switchTarget(window.state.currentTargetIndex);
+                    }
+                } else {
+                    live.innerHTML = `> ERROR: ${data.output}`;
+                    status.innerText = "FAILED";
+                    status.style.color = "var(--red)";
+                }
+            } catch (e) {
+                live.innerHTML = `> GATEWAY ERROR`;
+                status.innerText = "ERROR";
+            }
+        }
 
         window.switchSection = (id, el) => {
-            document.querySelectorAll('.sidebar-item').forEach(i => i.classList.remove('active'));
-            if (el) el.classList.add('active');
-            else if ($('btn-'+id)) $('btn-'+id).classList.add('active');
-
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
-            $('section-' + id).classList.add('active');
-
-            if (id === 'ai') document.body.classList.add('ai-mode');
-            else document.body.classList.remove('ai-mode');
-
-            if (id === 'archive') loadArchiveList();
-        };
-
-        window.createNewAiSession = () => {
-            const id = 's_' + Date.now();
-            window.state.aiSessions.unshift({ id, title: 'New Analysis', messages: [{ sender: 'bot', text: 'Welcome back Specialist.' }] });
-            save(); renderSessionList(); window.loadSession(id);
-        };
-
-        window.showToast = (msg, type = 'info') => {
-            const container = $('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = msg;
-            container.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(20px)';
-                toast.style.transition = '0.3s';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-
-        window.renameCurrentSession = () => {
-            const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
-            const item = document.querySelector(`.session-item[data-id="${s.id}"]`);
-            if (!item) return;
-
-            const currentTitle = s.title;
-            item.innerHTML = `<input type="text" id="renameInput" value="${currentTitle}">`;
-            const input = $('renameInput');
-            input.focus();
-            input.select();
-
-            const finishRename = () => {
-                const newTitle = input.value.trim() || "Untitled Session";
-                s.title = newTitle;
-                save();
-                renderSessionList();
-                $('currentSessionTitle').innerText = newTitle;
-            };
-
-            input.onblur = finishRename;
-            input.onkeypress = (e) => { if (e.key === 'Enter') finishRename(); };
-        };
-
-        window.loadSession = (id) => {
-            window.state.currentSessionId = id; localStorage.setItem('current_session_id', id);
-            const s = window.state.aiSessions.find(x => x.id === id);
-            if (!s) return;
-            $('currentSessionTitle').innerText = s.title;
-            renderMessages();
-            renderSessionList();
-        };
-
-        window.sendAiMessage = async () => {
-            const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
-            const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
-            
-            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
-            const context = target ? `[Target: ${target.name} | Stats: ${target.stats.total} subdomains, ${target.stats.high_value_count} high value targets] ` : "";
-            const fullPrompt = context + msg;
-
-            i.value = ''; s.messages.push({ sender: 'user', text: msg });
-            renderMessages();
-            
-            try {
-                const res = await fetch(BASE_URL + "/api/agent/chat", {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ message: fullPrompt })
-                });
-                const d = await res.json();
-                const botMsg = d.candidates[0].content.parts[0].text;
-                s.messages.push({ sender: 'bot', text: botMsg });
-                save(); renderMessages();
-            } catch (e) { 
-                s.messages.push({ sender: 'bot', text: "Error connecting to Intelligence Feed." });
-                renderMessages();
-            }
-        };
-
-        function renderMessages() {
-            const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
-            $('aiMessages').innerHTML = s.messages.map(m => `<div class="ai-bubble ${m.sender}">${m.text.replace(/\n/g, '<br>')}</div>`).join('');
-            $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
+            $('section-'+id).classList.add('active');
+            if (id === 'archive') window.loadArchiveList();
         }
-
-        function renderSessionList() {
-            $('sessionList').innerHTML = window.state.aiSessions.map(s => `
-                <div class="session-item ${s.id === window.state.currentSessionId ? 'active' : ''}" 
-                     data-id="${s.id}" 
-                     onclick="loadSession('${s.id}')">
-                    ${s.title}
-                </div>
-            `).join('');
-        }
-
-        window.runSecurityTool = async (tool, targetOverride = null) => {
-            const targetName = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex]?.name;
-            if (!targetName) return window.showToast("Select a target first.", "error");
-            
-            const term = $('terminalContent');
-            const liveTerm = $('liveTerminal');
-            const saveBtn = $('saveBtn');
-            const statusLabel = $('reconTerminalStatus');
-            
-            const timestamp = `\n\n> [${new Date().toLocaleTimeString()}] REQUESTING AGENT: ${tool.toUpperCase()} @ ${targetName}...`;
-            term.innerHTML += timestamp;
-            if (liveTerm) {
-                liveTerm.innerHTML = timestamp + `\n> Deployment initiated...`;
-                statusLabel.innerText = "AGENT RUNNING...";
-                statusLabel.style.color = "var(--yellow)";
-            }
-
-            term.scrollTop = term.scrollHeight;
-            
-            saveBtn.disabled = true;
-            saveBtn.style.opacity = '0.5';
-            saveBtn.innerText = "[ AGENT RUNNING... ]";
-
-            try {
-                const res = await fetch(BASE_URL + `/api/tools/run?tool=${tool}&target=${targetName}`);
-                const data = await res.json();
-                
-                if (data.status === 'success') {
-                    window.lastOutput = data.output;
-                    window.lastTool = tool;
-                    window.lastTarget = targetName;
-                    
-                    const successMsg = `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
-                    term.innerHTML += successMsg;
-                    if (liveTerm) {
-                        liveTerm.innerHTML = successMsg;
-                        statusLabel.innerText = "SUCCESS";
-                        statusLabel.style.color = "var(--green)";
-                    }
-                    
-                    saveBtn.disabled = false;
-                    saveBtn.style.opacity = '1';
-                    saveBtn.innerText = "[ ARCHIVE OUTPUT ]";
-                    
-                    window.showToast("Scan complete.", "success");
-                } else {
-                    const errMsg = `\n<span style="color: #ff0000;">> AGENT_ERROR: ${data.output}</span>`;
-                    term.innerHTML += errMsg;
-                    if (liveTerm) {
-                        liveTerm.innerHTML = errMsg;
-                        statusLabel.innerText = "FAILED";
-                        statusLabel.style.color = "var(--red)";
-                    }
-                    saveBtn.innerText = "[ AGENT FAILED ]";
-                    window.showToast("Agent failed: " + data.output, "error");
-                }
-            } catch (e) {
-                const gatewayMsg = `\n<span style="color: #ff0000;">> GATEWAY_ERROR: Connection failed.</span>`;
-                term.innerHTML += gatewayMsg;
-                if (liveTerm) {
-                    liveTerm.innerHTML = gatewayMsg;
-                    statusLabel.innerText = "GATEWAY ERROR";
-                }
-                saveBtn.innerText = "[ GATEWAY ERROR ]";
-                window.showToast("Gateway connection failed.", "error");
-            }
-            term.scrollTop = term.scrollHeight;
-            if (liveTerm) liveTerm.scrollTop = liveTerm.scrollHeight;
-        };
-
-        window.saveTerminalOutput = async () => {
-            if (!window.lastOutput) return;
-            const btn = $('saveBtn');
-            btn.innerText = "ARCHIVING...";
-            btn.disabled = true;
-
-            try {
-                const res = await fetch(BASE_URL + "/api/tools/save", {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        target: window.lastTarget,
-                        tool: window.lastTool,
-                        output: window.lastOutput
-                    })
-                });
-                const d = await res.json();
-                if (d.status === 'success') {
-                    window.showToast("Intelligence Archived Successfully!", "success");
-                    btn.innerText = "[ ARCHIVED ]";
-                    if (window.loadArchiveList) window.loadArchiveList();
-                } else {
-                    throw new Error(d.error || "Unknown error");
-                }
-            } catch (e) {
-                window.showToast("Archival failed: " + e.message, "error");
-                btn.innerText = "[ RETRY ARCHIVE ]";
-                btn.disabled = false;
-            }
-        };
 
         window.loadArchiveList = async () => {
             const list = $('archiveList');
-            if (!list) return;
-            list.innerHTML = `<div style="padding: 20px; color: var(--accent); text-align: center;">REFRESHING ARCHIVE...</div>`;
-            try {
-                const res = await fetch(BASE_URL + "/api/tools/list");
-                const d = await res.json();
-                list.innerHTML = d.files.map(f => `
-                    <div style="background: rgba(255,255,255,0.03); border: 1px solid var(--border); padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-                        <span style="font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 50%;">${f}</span>
-                        <div style="display: flex; gap: 10px;">
-                            <button onclick="window.examineFile('${f}')" style="background: none; border: 1px solid var(--accent); color: var(--accent); font-size: 10px; padding: 5px 12px; border-radius: 6px; cursor: pointer; font-weight: 700;">EXAMINE</button>
-                            <a href="${BASE_URL}/recon_storage/${f}" target="_blank" style="background: var(--accent); color: #000; text-decoration: none; font-size: 10px; font-weight: 700; padding: 6px 12px; border-radius: 6px;">EXPORT</a>
-                        </div>
-                    </div>
-                `).join('') || '<div style="color: var(--text-dim); text-align: center; padding: 40px;">No archived intelligence found.</div>';
-            } catch (e) { 
-                list.innerHTML = `<div style="color: var(--red); padding: 20px; text-align: center;">Gateway connection failed.</div>`;
-            }
-        };
+            const res = await fetch(`${BASE_URL}/api/tools/list`);
+            const d = await res.json();
+            list.innerHTML = d.files.map(f => `<div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><span>${f}</span><a href="${BASE_URL}/recon_storage/${f}" target="_blank" class="ui-btn">OPEN</a></div>`).join('');
+        }
 
-        window.examineFile = async (filename) => {
-            const modal = $('preview-modal');
-            const body = $('preview-body');
-            const title = $('preview-title');
-            
-            modal.style.display = 'flex';
-            body.innerText = "RETRIEVING DATA...";
-            title.innerText = "EXAMINING: " + filename;
-
-            try {
-                const res = await fetch(`${BASE_URL}/recon_storage/${filename}`);
-                const text = await res.text();
-                body.innerText = text;
-            } catch (e) {
-                body.innerText = "ERROR: Failed to retrieve file content.";
-            }
-        };
-
-        function save() { localStorage.setItem('ai_sessions', JSON.stringify(window.state.aiSessions)); }
+        window.showToast = (m) => alert(m);
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>

@@ -502,6 +502,18 @@
         };
 
         function init() {
+            // Load custom targets from localStorage
+            const stored = localStorage.getItem('custom_targets');
+            if (stored) {
+                const customTargets = JSON.parse(stored);
+                // Merge without duplicates
+                customTargets.forEach(ct => {
+                    if (!window.bugBountyData.targets.find(t => t.name === ct.name)) {
+                        window.bugBountyData.targets.unshift(ct);
+                    }
+                });
+            }
+
             renderTargets();
             switchTarget(0);
             
@@ -509,7 +521,6 @@
             else renderSessionList();
             if (window.state.currentSessionId) window.loadSession(window.state.currentSessionId);
 
-            // Visibility Hack: Show notification
             setTimeout(() => {
                 const term = $('terminalContent');
                 term.innerHTML += `\n<span style="color: var(--accent);">> [SYSTEM] New Feature: Agent Hub now active. Access via Sidebar.</span>`;
@@ -522,8 +533,11 @@
             $('targetList').innerHTML = data.targets.map((t, i) => `
                 <div class="session-item ${i === window.state.currentTargetIndex ? 'active' : ''}" onclick="window.switchTarget(${i})">
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%;">
-                        <span>${t.name}</span>
-                        <span style="font-size: 9px; opacity: 0.6;">${t.stats.total} SUBs</span>
+                        <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 150px;">${t.name}</span>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span style="font-size: 9px; opacity: 0.6;">${t.stats.total}</span>
+                            ${i < 3 && !localStorage.getItem('custom_targets')?.includes(t.name) ? '' : `<i class='bx bx-x' onclick="event.stopPropagation(); window.deleteTarget(${i})" style="color: var(--red); font-size: 14px; cursor: pointer;"></i>`}
+                        </div>
                     </div>
                 </div>
             `).join('');
@@ -566,8 +580,9 @@
 
         window.addCustomDomain = () => {
             const input = $('newDomainInput');
-            const domain = input.value.trim();
+            const domain = input.value.trim().toLowerCase();
             if (!domain) return;
+            if (window.bugBountyData.targets.find(t => t.name === domain)) return window.showToast("Target already exists.", "info");
 
             const newTarget = {
                 name: domain,
@@ -578,9 +593,29 @@
             };
 
             window.bugBountyData.targets.unshift(newTarget);
+            saveCustomTargets();
             input.value = '';
             window.switchTarget(0);
+            window.showToast(`Target ${domain} added.`, "success");
         };
+
+        window.deleteTarget = (index) => {
+            const name = window.bugBountyData.targets[index].name;
+            window.bugBountyData.targets.splice(index, 1);
+            saveCustomTargets();
+            if (window.state.currentTargetIndex >= window.bugBountyData.targets.length) {
+                window.state.currentTargetIndex = 0;
+            }
+            switchTarget(window.state.currentTargetIndex);
+            window.showToast(`Deleted ${name}`, "info");
+        };
+
+        function saveCustomTargets() {
+            // Only save the non-default targets (we can assume anything the user adds or has in localstorage is custom)
+            const defaultNames = ["Facebook", "Uber", "Tesla"]; // Rough list of original targets
+            const custom = window.bugBountyData.targets.filter(t => !defaultNames.includes(t.name) || localStorage.getItem('custom_targets')?.includes(t.name));
+            localStorage.setItem('custom_targets', JSON.stringify(custom));
+        }
 
         window.toggleAiSidebar = () => {
             window.state.sidebarCollapsed = !window.state.sidebarCollapsed;
@@ -728,6 +763,29 @@
                     window.lastTool = tool;
                     window.lastTarget = targetName;
                     
+                    // Parse subdomains and update findings if applicable
+                    if (tool === 'subfinder' || tool === 'assetfinder' || tool === 'amass') {
+                        const lines = data.output.split('\n').filter(l => l.includes('.') && !l.includes(' '));
+                        if (lines.length > 0) {
+                            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
+                            if (target) {
+                                lines.forEach(sub => {
+                                    if (!target.findings.find(f => f.target === sub)) {
+                                        target.findings.push({
+                                            target: sub,
+                                            category: 'Discovery',
+                                            priority: 'Low',
+                                            recommendation: 'Perform port scan and service discovery.'
+                                        });
+                                    }
+                                });
+                                target.stats.total = target.findings.length;
+                                saveCustomTargets(); // Persist the new findings
+                                switchTarget(window.state.currentTargetIndex); // Refresh view
+                            }
+                        }
+                    }
+
                     const successMsg = `\n<span style="color: #00ff00;">> AGENT_SUCCESS: Data received.</span>\n${data.output}`;
                     term.innerHTML += successMsg;
                     if (liveTerm) {
