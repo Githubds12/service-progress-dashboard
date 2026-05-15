@@ -762,26 +762,33 @@
                     window.lastOutput = data.output;
                     window.lastTool = tool;
                     window.lastTarget = targetName;
-                    
-                    // Parse subdomains and update findings if applicable
-                    if (tool === 'subfinder' || tool === 'assetfinder' || tool === 'amass') {
-                        const lines = data.output.split('\n').filter(l => l.includes('.') && !l.includes(' '));
-                        if (lines.length > 0) {
+                                    // Parse subdomains and update findings if applicable
+                    if (tool === 'subfinder' || tool === 'assetfinder' || tool === 'amass' || tool === 'katana') {
+                        const rawLines = data.output.split('\n');
+                        const subdomains = rawLines.map(l => l.trim().toLowerCase())
+                            .filter(l => l.includes('.') && !l.includes(' ') && l.length > 4 && !l.startsWith('http'));
+                        
+                        if (subdomains.length > 0) {
                             const target = window.bugBountyData.targets[window.state.currentTargetIndex];
                             if (target) {
-                                lines.forEach(sub => {
+                                let count = 0;
+                                subdomains.forEach(sub => {
                                     if (!target.findings.find(f => f.target === sub)) {
                                         target.findings.push({
                                             target: sub,
-                                            category: 'Discovery',
+                                            category: 'Subdomain',
                                             priority: 'Low',
-                                            recommendation: 'Perform port scan and service discovery.'
+                                            recommendation: 'Perform active port scanning and service discovery.'
                                         });
+                                        count++;
                                     }
                                 });
-                                target.stats.total = target.findings.length;
-                                saveCustomTargets(); // Persist the new findings
-                                switchTarget(window.state.currentTargetIndex); // Refresh view
+                                if (count > 0) {
+                                    target.stats.total = target.findings.length;
+                                    saveCustomTargets();
+                                    switchTarget(window.state.currentTargetIndex);
+                                    window.showToast(`Discovered ${count} new subdomains!`, "success");
+                                }
                             }
                         }
                     }
@@ -882,15 +889,16 @@
             const title = $('preview-title');
             
             modal.style.display = 'flex';
-            body.innerText = "RETRIEVING DATA...";
+            body.innerHTML = `<div style="color: var(--accent); animation: pulse 1.5s infinite;">RETRIEVING ENCRYPTED DATA...</div>`;
             title.innerText = "EXAMINING: " + filename;
 
             try {
                 const res = await fetch(`${BASE_URL}/recon_storage/${filename}`);
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
                 const text = await res.text();
-                body.innerText = text;
+                body.innerText = text || "FILE IS EMPTY";
             } catch (e) {
-                body.innerText = "ERROR: Failed to retrieve file content.";
+                body.innerHTML = `<div style="color: var(--red);">[!] DATA RETRIEVAL FAILED: ${e.message}</div>`;
             }
         };
 
