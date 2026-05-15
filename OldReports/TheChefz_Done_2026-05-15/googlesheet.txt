@@ -1,0 +1,19 @@
+Researcher: Deepanshu Singh
+Date: 15 May 2026
+com.nextwo.the_chefz 10.80.0
+Service: The Chefz
+Service ID: 686a2788-b609-42fb-bb45-6f8727334a5b
+Service SMS: [Example message: رمز التفعيل دخول موقع ذا شفز: 8207]
+Service Description: The Chefz is a premier Saudi Arabian platform for high-end food delivery, bakeries, and gourmet gifting.
+Captcha: Google Play Integrity Standard
+Rate Limits: Unknown
+Encryption: None (HTTPS only)
+Bot Protection: Google Play Integrity
+Flow: SmsRequest -> VerifyOtp
+Endpoints: 2
+Steps: /v9/user/auth, /v9/otp/verify
+Feasibility: Medium (65%)
+Proof: Cleartext JSON authentication endpoints captured on api.thechefz.co.
+Google Play Store: The Chefz - Food & Gifting
+APKPure: com.nextwo.the_chefz
+Official Website: thechefz.co

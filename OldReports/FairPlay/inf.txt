@@ -1,0 +1,5 @@
+1: service name: FairPlay
+2: service id: [48c1b536-cda7-4953-8db9-b6c81319b3ab]
+3: 2860 is your verification code. For your security, do not share this code.
+4: Package Name: poker21.fairplaycard.royalclub
+5: Note: Version 1.0

@@ -1,0 +1,5 @@
+1: service name: The Chefz
+2: service id: [686a2788-b609-42fb-bb45-6f8727334a5b]
+3: رمز التفعيل دخول موقع ذا شفز: 8207
+4: Package Name: com.nextwo.the_chefz
+5: Note: Version 10.80.0

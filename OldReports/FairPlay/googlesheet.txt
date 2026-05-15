@@ -1,0 +1,19 @@
+Researcher: Deepanshu Singh
+Date: 15 May 2026
+poker21.fairplaycard.royalclub 1.0
+Service: FairPlay
+Service ID: 48c1b536-cda7-4953-8db9-b6c81319b3ab
+Service SMS: [Example message: 2860 is your verification code.]
+Service Description: FairPlay is a mobile gaming and betting platform focusing on poker and casino games.
+Captcha: undefined
+Rate Limits: Unknown
+Encryption: Custom Hex-Encoded Binary
+Bot Protection: Custom Encryption/Signing
+Flow: SmsRequest -> VerifyOtp
+Endpoints: 2
+Steps: /app/sendPhoneMsg, /auth/playerRegister
+Feasibility: Medium (50%)
+Proof: Encrypted payloads and signatures observed on api.bnxdw4a.com.
+Google Play Store: FairPlay Royal Club
+APKPure: poker21.fairplaycard.royalclub
+Official Website: fairplay.club
