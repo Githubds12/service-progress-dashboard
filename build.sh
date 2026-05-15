@@ -1,29 +1,37 @@
 #!/bin/bash
 # Security Toolchain Direct Binary Installer for Render (No Root Needed)
+# Optimized for absolute path reliability and binary discovery
 
 echo ">> Initializing Security Toolchain Deployment (Binary Mode)..."
 
-# Setup local bin directory
-mkdir -p $HOME/bin
-export PATH=$PATH:$HOME/bin
+# Use absolute path for Render stability
+BIN_DIR="/opt/render/project/src/bin"
+mkdir -p $BIN_DIR
+export PATH=$PATH:$BIN_DIR
 
-# Helper to download and extract
+# Helper to download, extract, and flatten binaries
 download_tool() {
     local name=$1
     local url=$2
-    local zip_file="${name}.zip"
+    local temp_dir="temp_${name}"
+    mkdir -p $temp_dir
     
     echo ">> Downloading ${name}..."
-    wget -q $url -O $zip_file
+    wget -q $url -O "${temp_dir}.dist"
     
     if [[ $url == *.zip ]]; then
-        unzip -o -q $zip_file -d $HOME/bin/
+        unzip -o -q "${temp_dir}.dist" -d $temp_dir
     elif [[ $url == *.tar.gz ]] || [[ $url == *.tgz ]]; then
-        tar -xzf $zip_file -C $HOME/bin/
+        tar -xzf "${temp_dir}.dist" -C $temp_dir
     fi
     
-    rm $zip_file
-    chmod +x $HOME/bin/${name}* 2>/dev/null || true
+    # Move the actual binary to BIN_DIR (flattening any subfolders)
+    # Search for the binary file specifically
+    find $temp_dir -type f -executable -name "${name}*" -exec cp {} $BIN_DIR/$name \;
+    
+    rm -rf $temp_dir "${temp_dir}.dist"
+    chmod +x $BIN_DIR/$name
+    echo "   [+] Installed $name to $BIN_DIR/$name"
 }
 
 # 1. Subfinder
@@ -44,12 +52,8 @@ download_tool "katana" "https://github.com/projectdiscovery/katana/releases/down
 # 6. Assetfinder
 download_tool "assetfinder" "https://github.com/tomnomnom/assetfinder/releases/download/v0.1.1/assetfinder-linux-amd64-0.1.1.tgz"
 
-# Amass is special (nested folder)
-echo ">> Downloading Amass..."
-wget -q "https://github.com/owasp-amass/amass/releases/download/v4.2.0/amass_linux_amd64.zip" -O amass.zip
-unzip -o -q amass.zip
-cp amass_linux_amd64/amass $HOME/bin/
-rm -rf amass_linux_amd64 amass.zip
+# 7. Amass (Using simpler flattening)
+download_tool "amass" "https://github.com/owasp-amass/amass/releases/download/v4.2.0/amass_linux_amd64.zip"
 
-echo ">> Toolchain ready. Binaries in $HOME/bin"
-ls -F $HOME/bin/
+echo ">> Toolchain ready. Binaries in $BIN_DIR"
+ls -F $BIN_DIR

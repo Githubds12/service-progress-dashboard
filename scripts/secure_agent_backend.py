@@ -139,22 +139,25 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         binary = commands[tool][0]
         binary_path = shutil.which(binary)
         
-        # Search in common Go binary locations if not in PATH
+        # Expanded search paths for Render/Linux environments
         if not binary_path:
+            render_bin = "/opt/render/project/src/bin"
             alt_paths = [
+                os.path.join(render_bin, binary),
                 os.path.expanduser(f"~/bin/{binary}"),
                 os.path.expanduser(f"~/go/bin/{binary}"),
                 f"/usr/local/bin/{binary}",
                 f"/usr/bin/{binary}"
             ]
             for p in alt_paths:
-                if os.path.exists(p):
+                if os.path.exists(p) and os.access(p, os.X_OK):
                     binary_path = p
                     commands[tool][0] = p
                     break
         
         if not binary_path:
-            return False, f"BINARY_MISSING: '{binary}' is not installed or not in PATH on the server environment (Render/Linux). Please ensure 'bash build.sh' was run."
+            searched = ", ".join([os.path.expanduser("~/bin"), "/opt/render/project/src/bin", "/usr/bin"])
+            return False, f"BINARY_MISSING: '{binary}' not found. Checked: {searched}. Please ensure 'bash build.sh' was run in the Render Build Command."
 
         try:
             print(f"[*] Executing {tool} on {target}...")
