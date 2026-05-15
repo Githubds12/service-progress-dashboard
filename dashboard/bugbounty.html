@@ -415,7 +415,7 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
-        const BASE_URL = window.location.origin; // Dynamically target the current host
+        const BASE_URL = "https://service-progress-portal.onrender.com"; // Explicitly target the API backend
 
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
