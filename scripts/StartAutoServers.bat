@@ -14,8 +14,9 @@ echo [*] Running Initial Dashboard Update...
 
 echo [*] Starting DroidPilot Core Services...
 pushd "c:\Users\Gorri\Documents\Reports\DroidPilot"
-:: Ensure dependencies are checked and main service starts
-start /min "DroidPilot Core" run.bat
+set PYTHONPATH=src
+start /min "DroidPilot Web" .venv\Scripts\python -m uvicorn droidpilot.ui.web.app:app --host 127.0.0.1 --port 7777
+start /min "DroidPilot Listener" .venv\Scripts\python src/droidpilot/mission_listener.py
 popd
 
 echo [!] Auto Servers are now running in the background.
@@ -23,4 +24,5 @@ echo [!] Portal: http://localhost:10000
 echo [!] DroidPilot: http://localhost:7777
 timeout /t 5
 exit
+
 
