@@ -197,11 +197,14 @@ Daily Summary: 0 services, 0 rs
 1. [11:30] WebMoney - com.webmoney.my - 400rs
 Daily Summary: 1 services, 400 rs
 ----------
+15th May, Friday
+Daily Summary: 0 services, 0 rs
+----------
 
 Dashboard Stats:
 - Total Services: 125
 - Total Earnings: 49800 rs
-- Average Daily Earning: 850.0 rs/day
-- Average Daily Services: 15.62 services/day
-- Recovery Pace: 9.0 Services / day
-- Projected Monthly Total: ₹26350.0
+- Average Daily Earning: 755.56 rs/day
+- Average Daily Services: 13.89 services/day
+- Recovery Pace: 9.5 Services / day
+- Projected Monthly Total: ₹23422.22
