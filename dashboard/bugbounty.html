@@ -355,8 +355,17 @@
                         <div style="background: var(--card); border: 1px solid var(--border); border-radius: 20px; padding: 30px;">
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                                 <h2 id="panelTitle" style="font-size: 18px;">Intelligence Briefing</h2>
-                                <div id="targetMeta" style="font-size: 11px; color: var(--text-dim);"></div>
+                                <div style="display: flex; gap: 10px;">
+                                    <select id="bulkToolSelect" style="background: #000; border: 1px solid var(--border); color: var(--accent); padding: 5px 10px; border-radius: 5px; font-size: 10px; font-weight: 700;">
+                                        <option value="httpx">HTTPX (PROBE)</option>
+                                        <option value="naabu">NAABU (PORT SCAN)</option>
+                                        <option value="katana">KATANA (SPIDER)</option>
+                                        <option value="dnsx">DNSX (RESOLVE)</option>
+                                    </select>
+                                    <button class="ui-btn" onclick="window.runBulkScan()" style="border-color: var(--accent); color: var(--accent);">[ DEPLOY TO ALL ]</button>
+                                </div>
                             </div>
+                            <div id="targetMeta" style="font-size: 11px; color: var(--text-dim);"></div>
                             <div class="table-wrapper">
                                 <table id="reconTable">
                                     <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
@@ -640,6 +649,26 @@
             const id = 's_' + Date.now();
             window.state.aiSessions.unshift({ id, title: 'New Analysis', messages: [{ sender: 'bot', text: 'Welcome back Specialist.' }] });
             save(); renderSessionList(); window.loadSession(id);
+        };
+
+        window.runBulkScan = async () => {
+            const tool = $('bulkToolSelect').value;
+            const target = window.bugBountyData.targets[window.state.currentTargetIndex];
+            if (!target || !target.findings) return;
+
+            const subdomains = target.findings.map(f => f.target).filter(t => t !== target.name);
+            if (subdomains.length === 0) return window.showToast("No subdomains to scan.");
+
+            if (!confirm(`Deploy ${tool} to ${subdomains.length} targets? This may take time.`)) return;
+
+            window.showToast(`Starting bulk scan for ${subdomains.length} targets...`);
+            
+            for (let sub of subdomains) {
+                await window.runSecurityTool(tool, sub);
+                // 1.5s delay between targets to ensure backend stability
+                await new Promise(r => setTimeout(r, 1500));
+            }
+            window.showToast("Bulk scan sequence complete.", "success");
         };
 
         window.showToast = (msg, type = 'info') => {

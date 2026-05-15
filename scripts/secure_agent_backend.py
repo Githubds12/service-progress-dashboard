@@ -109,7 +109,7 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
     def run_tool(self, tool, target):
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
-            "dnsx": ["dnsx", "-silent"], 
+            "dnsx": ["dnsx", "-silent", "-a", "-resp"], 
             "amass": ["amass", "enum", "-passive", "-d", target],
             "assetfinder": ["assetfinder", "--subs-only", target],
             "naabu": ["naabu", "-host", target, "-s", "c", "-silent"],
