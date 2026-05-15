@@ -710,7 +710,7 @@
             if (liveTerm) {
                 liveTerm.innerHTML = timestamp + `\n> Deployment initiated...`;
                 statusLabel.innerText = "AGENT RUNNING...";
-                statusLabel.style.color = var(--yellow);
+                statusLabel.style.color = "var(--yellow)";
             }
 
             term.scrollTop = term.scrollHeight;
@@ -733,7 +733,7 @@
                     if (liveTerm) {
                         liveTerm.innerHTML = successMsg;
                         statusLabel.innerText = "SUCCESS";
-                        statusLabel.style.color = var(--green);
+                        statusLabel.style.color = "var(--green)";
                     }
                     
                     saveBtn.disabled = false;
@@ -747,7 +747,7 @@
                     if (liveTerm) {
                         liveTerm.innerHTML = errMsg;
                         statusLabel.innerText = "FAILED";
-                        statusLabel.style.color = var(--red);
+                        statusLabel.style.color = "var(--red)";
                     }
                     saveBtn.innerText = "[ AGENT FAILED ]";
                     window.showToast("Agent failed: " + data.output, "error");

@@ -501,7 +501,7 @@
     <script src="bugbounty_data.js"></script>
     <script>
         const $ = id => document.getElementById(id);
-        const BASE_URL = "https://service-progress-portal.onrender.com"; // Explicitly target the API backend
+        const BASE_URL = "https://service-progress-portal.onrender.com"; 
 
         window.state = {
             aiSessions: JSON.parse(localStorage.getItem('ai_sessions') || '[]'),
@@ -518,7 +518,6 @@
             else renderSessionList();
             if (window.state.currentSessionId) window.loadSession(window.state.currentSessionId);
 
-            // Visibility Hack: Show notification
             setTimeout(() => {
                 const term = $('terminalContent');
                 term.innerHTML += `\n<span style="color: var(--accent);">> [SYSTEM] New Feature: Agent Hub now active. Access via Sidebar.</span>`;
@@ -666,7 +665,6 @@
             const i = $('aiInput'); const msg = i.value.trim(); if (!msg) return;
             const s = window.state.aiSessions.find(x => x.id === window.state.currentSessionId);
             
-            // Inject context about current target
             const target = window.bugBountyData.targets[window.state.currentTargetIndex];
             const context = target ? `[Target: ${target.name} | Stats: ${target.stats.total} subdomains, ${target.stats.high_value_count} high value targets] ` : "";
             const fullPrompt = context + msg;
@@ -719,6 +717,7 @@
             if (liveTerm) {
                 liveTerm.innerHTML = timestamp + `\n> Deployment initiated...`;
                 statusLabel.innerText = "AGENT RUNNING...";
+                statusLabel.style.color = "var(--yellow)";
             }
 
             term.scrollTop = term.scrollHeight;
@@ -741,6 +740,7 @@
                     if (liveTerm) {
                         liveTerm.innerHTML = successMsg;
                         statusLabel.innerText = "SUCCESS";
+                        statusLabel.style.color = "var(--green)";
                     }
                     
                     saveBtn.disabled = false;
@@ -754,6 +754,7 @@
                     if (liveTerm) {
                         liveTerm.innerHTML = errMsg;
                         statusLabel.innerText = "FAILED";
+                        statusLabel.style.color = "var(--red)";
                     }
                     saveBtn.innerText = "[ AGENT FAILED ]";
                     window.showToast("Agent failed: " + data.output, "error");
