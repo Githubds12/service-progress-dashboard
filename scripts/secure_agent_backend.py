@@ -21,10 +21,6 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Max-Age', '86400')
         super().end_headers()
 
-class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
-    """Handle requests in a separate thread."""
-    daemon_threads = True
-
     def do_OPTIONS(self):
         self.send_response(204)
         self.end_headers()
@@ -99,18 +95,16 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
         elif self.path == '/api/tools/list':
             try:
                 files = os.listdir(RECON_DIR)
-                # Filter for txt files and ensure they exist
                 files = [f for f in files if f.endswith('.txt')]
                 self.send_response(200); self.send_header('Content-type', 'application/json'); self.end_headers()
                 self.wfile.write(json.dumps({"status": "success", "files": sorted(files, reverse=True)}).encode())
             except Exception as e: self.send_error_json(500, str(e))
             return
             
-        # Serve static files from recon_storage
         if self.path.startswith('/recon_storage/'):
             return super().do_GET()
 
-        return self.send_error_json(404, "NOT_FOUND")
+        return super().do_GET()
 
     def run_tool(self, tool, target):
         commands = {
@@ -142,9 +136,7 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
             if result.returncode == 0:
                 return True, result.stdout if result.stdout.strip() else "No results."
             
-            # Handle libpcap error for Naabu
             if tool == "naabu" and "libpcap" in (result.stderr or ""):
-                print("[!] Naabu libpcap error, using Python fallback.")
                 return True, "[SYSTEM] LIBPCAP_MISSING: Using internal engine...\n" + self.run_python_port_scan(target)
                 
             return False, result.stderr or result.stdout
@@ -152,7 +144,6 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
         except Exception as e: return False, str(e)
 
     def run_python_port_scan(self, target):
-        """Python-based fallback port scanner (no libpcap required)"""
         import socket
         common_ports = [80, 443, 21, 22, 25, 53, 110, 445, 3306, 3389, 5432, 8080, 8443, 9000, 9443]
         results = []
@@ -174,9 +165,9 @@ class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
 
 class ThreadingServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
     allow_reuse_address = True
+    daemon_threads = True
 
 if __name__ == "__main__":
     server = ThreadingServer(("", PORT), SecureAgentHandler)
     print(f"[*] Gateway listening on port {PORT}")
     server.serve_forever()
-
