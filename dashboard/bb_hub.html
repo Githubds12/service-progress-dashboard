@@ -208,18 +208,19 @@
                                     <button class="ui-btn" onclick="window.runBulkScan()" style="border-color: var(--accent); color: var(--accent);">[ DEPLOY TO ALL ]</button>
                                 </div>
                             </div>
-                            <table id="reconTable">
-                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
-                                <tbody id="reconBody"></tbody>
-                            </table>
 
-                            <div class="recon-terminal">
+                            <div class="recon-terminal" style="margin-top: 0; margin-bottom: 20px;">
                                 <div class="terminal-header">
                                     <span>LIVE INTELLIGENCE FEED</span>
                                     <span id="reconTerminalStatus" style="color: var(--accent);">READY</span>
                                 </div>
-                                <div id="liveTerminal">> Waiting for agent deployment...</div>
+                                <div id="liveTerminal" style="height: 250px;">> Waiting for agent deployment...</div>
                             </div>
+
+                            <table id="reconTable">
+                                <thead><tr><th>Priority</th><th>Target</th><th>Finding</th><th>Action</th></tr></thead>
+                                <tbody id="reconBody"></tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
