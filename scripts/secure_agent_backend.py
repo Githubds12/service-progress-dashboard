@@ -21,6 +21,10 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         self.send_header('Access-Control-Max-Age', '86400')
         super().end_headers()
 
+class ThreadedHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    """Handle requests in a separate thread."""
+    daemon_threads = True
+
     def do_OPTIONS(self):
         self.send_response(204)
         self.end_headers()
@@ -111,7 +115,7 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
     def run_tool(self, tool, target):
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
-            "dnsx": ["dnsx", "-silent"], # Will pipe target to stdin
+            "dnsx": ["dnsx", "-silent"], 
             "amass": ["amass", "enum", "-passive", "-d", target],
             "assetfinder": ["assetfinder", "--subs-only", target],
             "naabu": ["naabu", "-host", target, "-s", "c", "-silent"],
@@ -126,19 +130,43 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
             p = f"/opt/render/project/src/bin/{binary}"
             if os.path.exists(p) and os.access(p, os.X_OK): binary_path = p; commands[tool][0] = p
 
-        if not binary_path: return False, f"BINARY_MISSING: {binary}"
+        if not binary_path: 
+            if tool == "naabu": return True, self.run_python_port_scan(target)
+            return False, f"BINARY_MISSING: {binary}"
 
         try:
             print(f"[*] Running {tool} on {target}...")
-            # For tools that prefer stdin or benefit from it
             stdin_data = (target + "\n") if tool == "dnsx" else None
             result = subprocess.run(commands[tool], input=stdin_data, capture_output=True, text=True, timeout=300)
             
             if result.returncode == 0:
                 return True, result.stdout if result.stdout.strip() else "No results."
+            
+            # Handle libpcap error for Naabu
+            if tool == "naabu" and "libpcap" in (result.stderr or ""):
+                print("[!] Naabu libpcap error, using Python fallback.")
+                return True, "[SYSTEM] LIBPCAP_MISSING: Using internal engine...\n" + self.run_python_port_scan(target)
+                
             return False, result.stderr or result.stdout
         except subprocess.TimeoutExpired: return False, "TIMEOUT_300S"
         except Exception as e: return False, str(e)
+
+    def run_python_port_scan(self, target):
+        """Python-based fallback port scanner (no libpcap required)"""
+        import socket
+        common_ports = [80, 443, 21, 22, 25, 53, 110, 445, 3306, 3389, 5432, 8080, 8443, 9000, 9443]
+        results = []
+        host = target.split('://')[-1].split('/')[0]
+        try:
+            ip = socket.gethostbyname(host)
+            for port in common_ports:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.settimeout(0.4)
+                    if s.connect_ex((ip, port)) == 0:
+                        results.append(f"{ip}:{port} [OPEN]")
+            return "\n".join(results) if results else "No common ports open found on " + ip
+        except Exception as e:
+            return f"Port scan failed: {str(e)}"
 
     def send_error_json(self, code, msg):
         self.send_response(code); self.send_header('Content-type', 'application/json'); self.end_headers()

@@ -122,7 +122,7 @@
         /* --- LIVE RECON TERMINAL --- */
         .recon-terminal {
             background: #000; border: 1px solid var(--border); border-radius: 15px;
-            height: 250px; margin-top: 20px; display: flex; flex-direction: column;
+            height: 350px; margin-top: 20px; display: flex; flex-direction: column;
             overflow: hidden;
         }
         .terminal-header {
@@ -341,7 +341,10 @@
             localStorage.setItem('custom_targets', JSON.stringify(custom));
         }
 
-        window.runSecurityTool = async (tool, targetOverride) => {
+        window.runSecurityTool = async (tool, targetOverride = null) => {
+            if (window.lastScanTime && (Date.now() - window.lastScanTime < 1000)) return window.showToast("Cooldown...");
+            window.lastScanTime = Date.now();
+
             const target = targetOverride || window.bugBountyData.targets[window.state.currentTargetIndex].name;
             const live = $('liveTerminal');
             const status = $('reconTerminalStatus');
@@ -359,11 +362,11 @@
                     status.style.color = "var(--green)";
                     
                     if (tool === 'subfinder' || tool === 'assetfinder' || tool === 'amass') {
-                        const lines = data.output.split('\n').filter(l => l.includes('.') && !l.includes(' '));
+                        const lines = data.output.split('\n').filter(l => l.includes('.') && !l.includes(' ') && l.length > 4);
                         const current = window.bugBountyData.targets[window.state.currentTargetIndex];
                         lines.forEach(l => {
                             if (!current.findings.find(f => f.target === l)) {
-                                current.findings.push({target:l, category:'Discovery', priority:'Low', recommendation:'Probe'});
+                                current.findings.push({target:l.trim(), category:'Discovery', priority:'Low', recommendation:'Probe'});
                             }
                         });
                         current.stats.total = current.findings.length;
@@ -382,6 +385,8 @@
         }
 
         window.switchSection = (id, el) => {
+            document.querySelectorAll('.sidebar-item').forEach(s => s.classList.remove('active'));
+            if (el) el.classList.add('active');
             document.querySelectorAll('.content-section').forEach(s => s.classList.remove('active'));
             $('section-'+id).classList.add('active');
             if (id === 'archive') window.loadArchiveList();
@@ -394,7 +399,14 @@
             list.innerHTML = d.files.map(f => `<div style="background:var(--card); padding:15px; border-radius:10px; border:1px solid var(--border); display:flex; justify-content:space-between; align-items:center;"><span>${f}</span><a href="${BASE_URL}/recon_storage/${f}" target="_blank" class="ui-btn">OPEN</a></div>`).join('');
         }
 
-        window.showToast = (m) => alert(m);
+        window.showToast = (m) => {
+            const c = $('toast-container');
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.innerText = m;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
         document.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
