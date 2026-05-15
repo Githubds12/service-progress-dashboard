@@ -5,7 +5,6 @@ import socketserver
 import urllib.request
 import urllib.parse
 import subprocess
-import json
 
 # Load PORT from Render environment (default to 10000)
 PORT = int(os.environ.get("PORT", 10000))
@@ -32,7 +31,6 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 {"ver": "v1beta", "mod": "gemini-pro-latest"},
                 {"ver": "v1", "mod": "gemini-pro-latest"}
             ]
-            last_error = ""
 
             for cfg in configs:
                 try:
@@ -56,7 +54,6 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                         self.end_headers()
                         self.wfile.write(res_data)
                         return 
-
                 except Exception:
                     continue
             
@@ -105,13 +102,13 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                 self.send_error_msg(400, "Tool and Target are required")
                 return
             
-            # Normalize target: lower() and check if it's a label like 'Facebook'
+            # Normalize target
             domain = target.lower()
             if domain == 'facebook': domain = 'facebook.com'
             if domain == 'google': domain = 'google.com'
             
             success, output = self.run_tool(tool, domain)
-            self.send_response(200) # Always 200 to let UI handle the error message
+            self.send_response(200)
             self.send_header('Content-type', 'application/json')
             self.send_header('Access-Control-Allow-Origin', '*')
             self.end_headers()
@@ -121,8 +118,6 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
 
     def run_tool(self, tool, target):
         import shutil
-        import os
-        
         commands = {
             "subfinder": ["subfinder", "-d", target, "-silent"],
             "dnsx": ["dnsx", "-d", target, "-silent"],
@@ -134,20 +129,18 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
         }
         
         if tool not in commands:
-            return False, f"UNKNOWN_TOOL: Agent '{tool}' is not registered in the gateway."
+            return False, f"UNKNOWN_TOOL: Agent '{tool}' is not registered."
             
         binary = commands[tool][0]
         binary_path = shutil.which(binary)
         
-        # Expanded search paths for Render/Linux environments
         if not binary_path:
             render_bin = "/opt/render/project/src/bin"
             alt_paths = [
                 os.path.join(render_bin, binary),
                 os.path.expanduser(f"~/bin/{binary}"),
                 os.path.expanduser(f"~/go/bin/{binary}"),
-                f"/usr/local/bin/{binary}",
-                f"/usr/bin/{binary}"
+                f"/usr/local/bin/{binary}"
             ]
             for p in alt_paths:
                 if os.path.exists(p) and os.access(p, os.X_OK):
@@ -156,63 +149,44 @@ class SecureAgentHandler(http.server.SimpleHTTPRequestHandler):
                     break
         
         if not binary_path:
-            searched = ", ".join([os.path.expanduser("~/bin"), "/opt/render/project/src/bin", "/usr/bin"])
-            return False, f"BINARY_MISSING: '{binary}' not found. Checked: {searched}. Please ensure 'bash build.sh' was run in the Render Build Command."
+            return False, f"BINARY_MISSING: '{binary}' not found in PATH or Render bin directory."
 
         try:
             print(f"[*] Executing {tool} on {target}...")
             result = subprocess.run(commands[tool], capture_output=True, text=True, timeout=300)
             if result.returncode == 0:
-                return True, result.stdout if result.stdout.strip() else f"Execution finished. No results found for {target}."
+                return True, result.stdout if result.stdout.strip() else f"No results found for {target}."
             else:
                 return False, f"TOOL_ERROR: {result.stderr or result.stdout}"
         except subprocess.TimeoutExpired:
-            return False, "TIMEOUT: The agent execution exceeded the 300s limit."
+            return False, "TIMEOUT: Agent execution exceeded 300s."
         except Exception as e:
             return False, f"SYSTEM_ERROR: {str(e)}"
 
     def install_package(self, tid):
         try:
-            # 1. Search Aptoide for exact package
             search_url = f"https://ws75.aptoide.com/api/7/apps/search?query={tid}"
             with urllib.request.urlopen(search_url) as response:
                 data = json.loads(response.read().decode())
                 apps = data.get("datalist", {}).get("list", [])
-                
-                # Filter for exact package name match
-                app = next((a for a in apps if a.get("package") == tid), None)
-                if not app and apps: app = apps[0] # Fallback to first result
-                
-                if not app:
-                    return False, f"Package {tid} not found on Aptoide."
-                
+                app = next((a for a in apps if a.get("package") == tid), None) or (apps[0] if apps else None)
+                if not app: return False, f"Package {tid} not found."
                 download_url = app.get("file", {}).get("path")
-                if not download_url:
-                    return False, "Download URL not found."
-                
-                # 2. Download to local temp
+                if not download_url: return False, "Download URL not found."
                 temp_apk = f"temp_{tid}.apk"
-                print(f"[*] Downloading {tid}...")
                 urllib.request.urlretrieve(download_url, temp_apk)
-                
-                # 3. ADB Install
-                print(f"[*] Installing {tid} via ADB...")
                 cmd = ["adb", "install", "-r", temp_apk]
                 result = subprocess.run(cmd, capture_output=True, text=True)
-                
-                # Cleanup
-                if os.path.exists(temp_apk):
-                    os.remove(temp_apk)
-                
-                if result.returncode == 0:
-                    return True, f"Successfully installed {tid} on device."
-                else:
-                    return False, f"ADB Error: {result.stderr or result.stdout}"
-                    
+                if os.path.exists(temp_apk): os.remove(temp_apk)
+                return (result.returncode == 0), (result.stderr or result.stdout)
         except Exception as e:
-            return False, f"Bridge Error: {str(e)}"
+            return False, str(e)
 
-with socketserver.TCPServer(("", PORT), SecureAgentHandler) as httpd:
-    print(f"[*] SECURE PORTAL ACTIVE ON PORT {PORT}")
-    print(f"[*] ADB INSTALL BRIDGE ENABLED")
-    httpd.serve_forever()
+class ThreadingHTTPServer(socketserver.ThreadingMixIn, http.server.HTTPServer):
+    daemon_threads = True
+    allow_reuse_address = True
+
+if __name__ == "__main__":
+    with ThreadingHTTPServer(("", PORT), SecureAgentHandler) as httpd:
+        print(f"[*] SECURE PORTAL ACTIVE ON PORT {PORT}")
+        httpd.serve_forever()
