@@ -1,0 +1,17 @@
+services:
+  - type: web
+    name: bug-bounty-intelligence-portal
+    env: python
+    buildCommand: "./build.sh"
+    startCommand: "python scripts/secure_agent_backend.py"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.0
+      - key: GEMINI_API_KEY
+        sync: false # Set this in Render dashboard
+      - key: PORT
+        value: 10000
+    disk:
+      name: recon-data
+      mountPath: /opt/render/project/src/recon_storage
+      sizeGB: 1

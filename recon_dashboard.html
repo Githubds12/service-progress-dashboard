@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bug Bounty Intelligence Portal</title>
+    <link rel="stylesheet" href="recon_dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Roboto+Mono&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <aside class="sidebar">
+            <div class="logo">
+                <i class="fas fa-shield-alt"></i> BB PORTAL
+            </div>
+            <ul class="nav-links">
+                <li class="nav-item active">
+                    <i class="fas fa-home"></i> Dashboard
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-search"></i> Recon Suite
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-project-diagram"></i> Asset Map
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-history"></i> Scan History
+                </li>
+                <li class="nav-item">
+                    <i class="fas fa-cog"></i> Settings
+                </li>
+            </ul>
+        </aside>
+
+        <main class="main-content">
+            <header class="header">
+                <div class="header-info">
+                    <h1>Intelligence Dashboard</h1>
+                    <p style="color: var(--text-dim);">Live monitoring of global assets</p>
+                </div>
+                <div class="header-actions">
+                    <button id="startScanBtn" class="nav-item active" style="border: none; padding: 10px 20px; font-weight: 600;">
+                        NEW SCAN
+                    </button>
+                </div>
+            </header>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-label">Total Subdomains</div>
+                    <div id="totalSubdomains" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Live Hosts</div>
+                    <div id="liveHosts" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Open Ports</div>
+                    <div id="openPorts" class="stat-value">0</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Vulnerabilities</div>
+                    <div id="vulnsFound" class="stat-value" style="color: var(--danger);">0</div>
+                </div>
+            </div>
+
+            <div class="recon-section">
+                <div class="data-table-container">
+                    <h3>Discovered Assets</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Subdomain</th>
+                                <th>IP Address</th>
+                                <th>Status</th>
+                                <th>Tech Stack</th>
+                            </tr>
+                        </thead>
+                        <tbody id="assetTableBody">
+                            <!-- Rows will be populated by JS -->
+                            <tr>
+                                <td colspan="4" style="text-align: center; color: var(--text-dim); padding: 2rem;">
+                                    Waiting for scan initialization...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="terminal-window">
+                    <div class="terminal-header">
+                        <div class="dot red"></div>
+                        <div class="dot yellow"></div>
+                        <div class="dot green"></div>
+                        <span style="margin-left: 10px; font-size: 0.75rem; color: var(--text-dim);">recon_engine.py — bash</span>
+                    </div>
+                    <div class="terminal-body" id="terminalOutput">
+                        <div class="terminal-line"><span class="prompt">guest@bbportal:~$</span> python3 recon_engine.py --help</div>
+                        <div class="terminal-line">Initialized Intelligence Portal Recon Engine v2.0</div>
+                        <div class="terminal-line">Waiting for target input...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="recon_dashboard.js"></script>
+</body>
+</html>

@@ -1,0 +1,47 @@
+@echo off
+set LOGFILE="%TEMP%\startup_dev_env.log"
+echo [%DATE% %TIME%] Starting Dev Environment... > %LOGFILE%
+
+:: 1. Run the auto servers batch script
+echo Starting Auto Servers...
+:: Log that the main HTB-Notes-Portal servers are now managed by Task Scheduler
+echo [%DATE% %TIME%] Note: Main HTB-Notes-Portal servers are managed by Scheduled Task (StartAutoServersAdmin) >> %LOGFILE%
+
+if exist "c:\Users\Gorri\Documents\Reports\scripts\StartAutoServers.bat" (
+    echo [%DATE% %TIME%] Launching local Reports StartAutoServers.bat >> %LOGFILE%
+    start "" "c:\Users\Gorri\Documents\Reports\scripts\StartAutoServers.bat"
+) else (
+    echo [%DATE% %TIME%] ERROR: local StartAutoServers.bat not found! >> %LOGFILE%
+)
+
+:: 2. Start HTTP Toolkit
+echo Starting HTTP Toolkit...
+if exist "C:\Users\Gorri\AppData\Local\Programs\HTTP Toolkit\HTTP Toolkit.exe" (
+    start "" "C:\Users\Gorri\AppData\Local\Programs\HTTP Toolkit\HTTP Toolkit.exe"
+) else (
+    echo Could not find HTTP Toolkit, trying default start...
+    start httptoolkit 2>nul
+)
+
+:: 3. Open Brave browser to Dashboard
+echo Opening Brave Browser...
+set URL1="http://127.0.0.1:5000/"
+set URL2="http://51.195.24.179:3000/"
+set URL3="http://localhost:7777/"
+if exist "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" (
+    start "" "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" %URL1% %URL2% %URL3%
+) else (
+    start brave %URL1% %URL2% %URL3% 2>nul
+)
+
+:: Wait a few seconds for things to settle before opening Antigravity
+timeout /t 5 /nobreak >nul
+
+:: 4. Start Antigravity with the Reports folder
+echo Starting Antigravity with Reports folder...
+if exist "C:\Users\Gorri\Desktop\Antigravity.lnk" (
+    start "" "C:\Users\Gorri\Desktop\Antigravity.lnk" "C:\Users\Gorri\Documents\Reports"
+)
+
+echo [%DATE% %TIME%] Startup sequence complete. >> %LOGFILE%
+exit

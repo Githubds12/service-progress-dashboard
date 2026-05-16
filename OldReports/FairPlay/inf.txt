@@ -1,0 +1,6 @@
+1: service name: fairplay
+2: service id: 48c1b536-cda7-4953-8db9-b6c81319b3ab
+4: Package Name: N/A
+5: Note: N/A
+Package Name: poker21.fairplaycard.royalclub
+Version: 1.0
