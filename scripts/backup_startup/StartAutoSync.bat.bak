@@ -1,0 +1,4 @@
+@echo off
+cd /d "C:\Users\Gorri\Documents\Reports"
+echo Starting Dashboard Auto-Sync (15 min interval)...
+start "" /min python scripts/auto_sync.py
